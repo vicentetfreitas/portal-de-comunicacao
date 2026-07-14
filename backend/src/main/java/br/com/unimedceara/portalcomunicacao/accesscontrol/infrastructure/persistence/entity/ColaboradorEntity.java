@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 /**
- * Entidade JPA do colaborador (mínimo FT-AUTH).
+ * Entidade JPA do colaborador (FT-AUTH scaffold evoluído por FT-COLABORADOR).
  */
 @Getter
 @Setter
@@ -28,26 +29,57 @@ public class ColaboradorEntity {
     @Column(name = "COD_COLABORADOR", nullable = false)
     private Long id;
 
-    @Column(name = "DES_EMAIL", nullable = false, length = 255)
-    private String email;
-
-    @Column(name = "NOM_COLABORADOR", nullable = false, length = 200)
-    private String nome;
-
-    @Column(name = "ID_ZIMBRA", length = 255)
-    private String zimbraId;
-
-    @Column(name = "FLG_ATIVO", nullable = false, length = 1)
-    private String ativo;
-
     @Column(name = "COD_FEDERACAO", nullable = false)
     private Long federacaoId;
+
+    @Column(name = "COD_SINGULAR")
+    private Long singularId;
+
+    @Column(name = "COD_AREA")
+    private Long areaId;
 
     @Column(name = "COD_EQUIPE")
     private Long equipeId;
 
+    @Column(name = "COD_GESTOR")
+    private Long gestorId;
+
+    @Column(name = "NOM_COLABORADOR", nullable = false, length = 200)
+    private String nome;
+
+    @Column(name = "DES_EMAIL", nullable = false, length = 255)
+    private String email;
+
+    @Column(name = "DES_CARGO", length = 100)
+    private String cargo;
+
+    @Column(name = "ID_ZIMBRA", length = 255)
+    private String zimbraId;
+
+    @Column(name = "NUM_CPF", length = 11)
+    private String cpf;
+
+    @Lob
+    @Column(name = "DES_BIOGRAFIA")
+    private String biografia;
+
+    @Column(name = "FLG_ATIVO", nullable = false, length = 1)
+    private String ativo;
+
+    @Column(name = "DAT_NASCIMENTO")
+    private Instant dataNascimento;
+
+    @Column(name = "DAT_CONTRATACAO")
+    private Instant dataContratacao;
+
+    @Column(name = "DAT_ULTIMO_ACESSO")
+    private Instant dataUltimoAcesso;
+
     @Column(name = "DAT_CADASTRO", nullable = false)
     private Instant dataCadastro;
+
+    @Column(name = "DAT_ATUALIZACAO")
+    private Instant dataAtualizacao;
 
     public boolean isAtivo() {
         return "S".equalsIgnoreCase(ativo);

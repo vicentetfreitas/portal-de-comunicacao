@@ -11,7 +11,33 @@
 | Versão | 3.1 |
 | Última atualização | 2026-07-14 |
 
-> **Workflow:** Estado operacional em `platform-foundation/construction-state.yaml` (phase: `closed`). FT-AUTH em `construction/features/FT-AUTH/construction-state.yaml` (phase: `closed`). FT-AREA em `construction/features/FT-AREA/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`). FT-SINGULAR em `construction/features/FT-SINGULAR/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`). FT-EQUIPE em `construction/features/FT-EQUIPE/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`).
+> **Workflow:** Estado operacional em `platform-foundation/construction-state.yaml` (phase: `closed`). FT-AUTH em `construction/features/FT-AUTH/construction-state.yaml` (phase: `closed`). FT-AREA em `construction/features/FT-AREA/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`). FT-SINGULAR em `construction/features/FT-SINGULAR/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`). FT-EQUIPE em `construction/features/FT-EQUIPE/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`). FT-COLABORADOR em `construction/features/FT-COLABORADOR/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`).
+
+---
+
+# FT-COLABORADOR — Colaborador (Sprint 3)
+
+| Métrica | Valor |
+|---------|-------|
+| Feature Code | FT-COLABORADOR |
+| PKGs | 6 / 6 DONE |
+| Build | SUCCESS — `mvn clean verify` |
+| Testes FT-COLABORADOR | 12 (0 falhas) |
+| Review | Aprovado com ressalvas |
+| Audit | Conforme |
+| Readiness | Aprovada |
+| **Estado final** | **FEATURE_APPROVED** |
+
+| PKG | Estado | Reviewer | Auditor |
+|-----|--------|----------|---------|
+| PKG-01 — Colaborador Persistence Evolution | DONE | reviewer | auditor |
+| PKG-02 — Create Colaborador | DONE | reviewer | auditor |
+| PKG-03 — Read & List | DONE | reviewer | auditor |
+| PKG-04 — Update Colaborador | DONE | reviewer | auditor |
+| PKG-05 — Status Change | DONE | reviewer | auditor |
+| PKG-06 — Acceptance & Closure | DONE | reviewer | auditor |
+
+Encerramento: `construction/features/FT-COLABORADOR/closure-report.md`
 
 ---
 
@@ -162,7 +188,7 @@ Encerramento: `construction/features/FT-AUTH/closure-report.md`
 
 # Próximo Passo
 
-**Sprint 3** — próxima Feature organizacional conforme `construction/06-development-order.md` (ex.: FT-COLABORADOR).
+**Sprint 3 Backend — Organização Corporativa concluída** (FT-SINGULAR, FT-EQUIPE, FT-COLABORADOR). Próximas Features conforme roadmap de produto (ex.: Gestão Documental).
 
 ---
 

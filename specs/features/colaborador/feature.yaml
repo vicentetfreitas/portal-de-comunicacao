@@ -1,0 +1,10 @@
+feature:
+  id: FT-COLABORADOR
+  name: Colaborador
+
+template:
+  name: crud-feature
+  version: "1.1"
+
+status:
+  specification: APPROVED

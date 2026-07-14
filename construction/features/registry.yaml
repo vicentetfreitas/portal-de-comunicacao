@@ -38,3 +38,10 @@ features:
     sprint: 3
     manifest: FT-EQUIPE/feature-manifest.yaml
     status: closed
+
+  - code: FT-COLABORADOR
+    slug: colaborador
+    name: Colaborador
+    sprint: 3
+    manifest: FT-COLABORADOR/feature-manifest.yaml
+    status: closed
