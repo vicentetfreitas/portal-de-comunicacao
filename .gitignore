@@ -145,3 +145,4 @@ cms/wp-content/upgrade/
 *.rej
 *.seed
 *.pid
+*:Zone.Identifier
