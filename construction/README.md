@@ -61,6 +61,8 @@ specs/ (especificação — fonte da verdade)
         ↓
 construction/ (governança da construção — Sprint 1A)
         ↓
+engineering/ (governança da integração — Sprint de Integração)
+        ↓
 backend/ (implementação)
 ```
 
@@ -73,6 +75,7 @@ backend/ (implementação)
 | `docs/implementation/` | Padrões técnicos de implementação |
 | `docs/construction/` | Guias operacionais de construção (Sprint 0) |
 | `docs/governance/` | Roadmap, riscos e decisões do projeto |
+| **`engineering/integration/`** | **Sprint de Integração — validação backend integrado** |
 
 ---
 
@@ -124,6 +127,15 @@ construction/
     ├── readiness-checklist.md
     ├── completion-report.md
     └── reconciliation-report.md
+
+engineering/                       — Sprint de Integração (v1.0 Stable)
+├── README.md
+├── CHANGELOG.md
+├── templates/
+└── integration/
+    ├── 01-integration-sprint-workflow.md  — SSOT integração
+    ├── registry.yaml
+    └── sprints/<SPRINT_ID>/
 ```
 
 ---

@@ -1,0 +1,117 @@
+# Integration Manifest — Template (SSOD v1.0)
+# Localização: engineering/integration/sprints/<SPRINT_ID>/integration-manifest.yaml
+# Papel: Single Source of Discovery (SSOD-INT-01) — consultar ANTES de qualquer outro artefato.
+
+version: 1
+role: ssod
+
+sprint:
+  id: {{SPRINT_ID}}                    # ex.: sprint-03-org-backend
+  name: {{SPRINT_NAME}}
+  description: {{SPRINT_DESCRIPTION}}
+  construction_sprint: {{CONSTRUCTION_SPRINT}}  # ex.: 3
+
+status:
+  phase: planned                       # espelho inicial — estado operacional em integration-state.yaml
+
+scope:
+  layer: backend
+  domain: {{DOMAIN}}                   # ex.: organization
+  features:
+    - code: {{FEATURE_CODE_1}}
+      slug: {{FEATURE_SLUG_1}}
+      manifest: ../../../construction/features/{{FEATURE_CODE_1}}/feature-manifest.yaml
+      closure: ../../../construction/features/{{FEATURE_CODE_1}}/closure-report.md
+    # adicionar Features conforme escopo
+
+cross_feature_flows:
+  - id: xft-01
+    name: {{FLOW_NAME}}
+    steps:
+      - feature: {{FEATURE_CODE}}
+        action: {{ACTION}}
+        endpoint: {{ENDPOINT}}
+
+validation:
+  phases:
+    - id: ENV
+      name: Ambiente
+      checklist_prefix: INT-ENV
+    - id: INF
+      name: Infraestrutura
+      checklist_prefix: INT-INF
+    - id: API
+      name: APIs
+      checklist_prefix: INT-API
+    - id: DB
+      name: Banco
+      checklist_prefix: INT-DB
+    - id: XFT
+      name: Cross-Feature
+      checklist_prefix: INT-XFT
+    - id: FUN
+      name: Funcional
+      checklist_prefix: INT-FUN
+    - id: OUT
+      name: Resultado
+      checklist_prefix: INT-OUT
+
+integration:
+  path: .
+  root: engineering/integration/sprints/{{SPRINT_ID}}/
+
+artifacts:
+  manifest: integration-manifest.yaml
+  state: integration-state.yaml
+  plan: integration-plan.md
+  checklist: integration-checklist.md
+  report: integration-report.md
+  readiness: integration-readiness.md
+  issues: issues.md
+
+dependencies:
+  construction:
+    - code: platform-foundation
+      path: ../../../construction/platform-foundation/
+  features_registry: ../../../construction/features/registry.yaml
+
+engineering:
+  workflow: ../01-integration-sprint-workflow.md
+  rules: ../02-integration-rules.md
+  phases: ../03-phases-and-activities.md
+  state_machine: ../04-state-machine.md
+  entry_exit: ../05-entry-exit-criteria.md
+  implementation:
+    - ../../../docs/implementation/
+  construction:
+    - ../../../docs/construction/
+
+owners:
+  lead: integration-lead
+  validator: validator
+  reviewer: reviewer
+  auditor: auditor
+
+metrics:
+  checklist_total: 0
+  checklist_approved: 0
+  checklist_pending: 0
+  checklist_blocked: 0
+  checklist_waived: 0
+  issues_open: 0
+  issues_critical: 0
+
+evidence:
+  build_log: ../../../backend/runtime/
+  test_reports: ../../../backend/target/surefire-reports/
+
+invalidation:
+  triggers:
+    - scope_change
+    - feature_reopened
+    - manifest
+    - checklist_template
+
+discovery:
+  version: 1
+  rule: SSOD-INT-01 — este manifesto é o ponto de entrada obrigatório para localizar artefatos da Sprint de Integração

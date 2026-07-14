@@ -47,7 +47,6 @@ public class EquipeApplicationService {
     @Transactional
     public EquipeResponse create(CreateEquipeRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
-
         equipeDomainService.validateActiveArea(request.areaId());
         equipeDomainService.validateUniqueName(request.areaId(), request.name(), null);
         equipeDomainService.validateLeader(request.leaderId());
@@ -73,7 +72,6 @@ public class EquipeApplicationService {
         String ativoFlag = status == null ? null : status.toFlag();
         Pageable normalizedPageable = remapSort(pageable);
         Page<EquipeEntity> page = equipeRepository.findByFilters(areaId, ativoFlag, name, normalizedPageable);
-
         List<EquipeResponse> content = page.getContent().stream().map(equipeMapper::toResponse).toList();
         return PageResponse.of(
                 content,
@@ -88,7 +86,6 @@ public class EquipeApplicationService {
     @Transactional
     public EquipeResponse update(Long id, UpdateEquipeRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
-
         EquipeEntity equipe = equipeDomainService.loadEquipeOrThrow(id);
         equipeDomainService.validateAreaActiveForUpdate(equipe);
         equipeDomainService.validateUniqueName(equipe.getAreaId(), request.name(), id);
@@ -105,14 +102,13 @@ public class EquipeApplicationService {
     @Transactional
     public EquipeResponse updateStatus(Long id, UpdateEquipeStatusRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
-
         EquipeEntity equipe = equipeDomainService.loadEquipeOrThrow(id);
 
         if (request.status() == EquipeStatus.INACTIVE) {
             equipeDomainService.validateDeactivation(equipe);
             equipe.setAtivo(EquipeStatus.INACTIVE.toFlag());
         } else {
-            equipeDomainService.validateActiveArea(equipe.getAreaId());
+            equipeDomainService.validateAreaActiveForUpdate(equipe);
             equipe.setAtivo(EquipeStatus.ACTIVE.toFlag());
         }
 
@@ -126,11 +122,9 @@ public class EquipeApplicationService {
                     PaginationUtils.normalizePage(pageable.getPageNumber()),
                     PaginationUtils.normalizeSize(pageable.getPageSize()));
         }
-
         List<Sort.Order> orders = pageable.getSort().stream()
                 .map(order -> new Sort.Order(order.getDirection(), mapSortProperty(order.getProperty())))
                 .toList();
-
         return PageRequest.of(
                 PaginationUtils.normalizePage(pageable.getPageNumber()),
                 PaginationUtils.normalizeSize(pageable.getPageSize()),

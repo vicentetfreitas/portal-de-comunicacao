@@ -11,6 +11,8 @@
 | Versão | 3.1 |
 | Última atualização | 2026-07-14 |
 
+> **Integração:** Sprint `sprint-03-org-backend` **APPROVED** — `engineering/integration/sprints/sprint-03-org-backend/integration-state.yaml` (phase: `completed`). Backend validado: 230 testes, 0 falhas (`backend/runtime/integration-verify.log`).
+
 > **Workflow:** Estado operacional em `platform-foundation/construction-state.yaml` (phase: `closed`). FT-AUTH em `construction/features/FT-AUTH/construction-state.yaml` (phase: `closed`). FT-AREA em `construction/features/FT-AREA/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`). FT-SINGULAR em `construction/features/FT-SINGULAR/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`). FT-EQUIPE em `construction/features/FT-EQUIPE/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`). FT-COLABORADOR em `construction/features/FT-COLABORADOR/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`).
 
 ---
@@ -188,7 +190,7 @@ Encerramento: `construction/features/FT-AUTH/closure-report.md`
 
 # Próximo Passo
 
-**Sprint 3 Backend — Organização Corporativa concluída** (FT-SINGULAR, FT-EQUIPE, FT-COLABORADOR). Próximas Features conforme roadmap de produto (ex.: Gestão Documental).
+**Frontend** — iniciar consumo do backend validado (baseline `sprint-03-org-backend` APPROVED). Referência: `docs/construction/frontend/`. Próximo domínio de Features: Gestão Documental.
 
 ---
 
@@ -233,3 +235,4 @@ Encerramento: `construction/features/FT-AUTH/closure-report.md`
 - `platform-foundation/construction-state.yaml` — SSOT (phase: closed)
 - `review/completion-report.md` — Encerramento formal
 - `review/construction-audit.md` — Auditoria
+- `engineering/integration/sprints/sprint-03-org-backend/` — Sprint de Integração pendente

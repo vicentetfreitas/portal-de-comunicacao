@@ -9,10 +9,10 @@ import java.time.Instant;
  */
 public record SingularResponse(
         Long id,
-        Long federacaoId,
+        Long federationId,
         String name,
         String acronym,
-        String codigoUnimed,
+        String unimedCode,
         SingularStatus status,
         Instant createdAt,
         Instant updatedAt) {

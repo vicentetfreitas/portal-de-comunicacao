@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/colaboradores")
 @ConditionalOnProperty(prefix = "application.persistence", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Tag(name = "Colaboradores", description = "Gestão administrativa de colaboradores")
+@Tag(name = "Colaboradores", description = "Gestão de colaboradores")
 public class ColaboradorController {
 
     private final ColaboradorApplicationService colaboradorApplicationService;
@@ -44,7 +44,7 @@ public class ColaboradorController {
     }
 
     @PostMapping
-    @Operation(summary = "Criar colaborador", description = "Cadastra colaborador com vínculo organizacional")
+    @Operation(summary = "Criar colaborador")
     public ResponseEntity<ApiResponse<ColaboradorResponse>> create(
             @Valid @RequestBody CreateColaboradorRequest request,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
@@ -53,13 +53,13 @@ public class ColaboradorController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Consultar colaborador", description = "Retorna colaborador por identificador")
+    @Operation(summary = "Consultar colaborador")
     public ApiResponse<ColaboradorResponse> findById(@PathVariable Long id) {
         return ApiResponse.success(colaboradorApplicationService.findById(id));
     }
 
     @GetMapping
-    @Operation(summary = "Listar colaboradores", description = "Listagem paginada com filtros corporativos")
+    @Operation(summary = "Listar colaboradores")
     public ApiResponse<PageResponse<ColaboradorResponse>> list(
             @RequestParam(required = false) ColaboradorStatus status,
             @RequestParam(required = false) Long singularId,
@@ -68,12 +68,12 @@ public class ColaboradorController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email,
             @PageableDefault(size = 20, sort = "nome") Pageable pageable) {
-        return ApiResponse.success(colaboradorApplicationService.list(
-                status, singularId, areaId, teamId, name, email, pageable));
+        return ApiResponse.success(
+                colaboradorApplicationService.list(status, singularId, areaId, teamId, name, email, pageable));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar colaborador", description = "Atualiza dados cadastrais (e-mail imutável)")
+    @Operation(summary = "Atualizar colaborador")
     public ApiResponse<ColaboradorResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateColaboradorRequest request,
@@ -82,7 +82,7 @@ public class ColaboradorController {
     }
 
     @PatchMapping("/{id}/status")
-    @Operation(summary = "Alterar status", description = "Ativa ou inativa logicamente o colaborador")
+    @Operation(summary = "Alterar status do colaborador")
     public ApiResponse<ColaboradorResponse> updateStatus(
             @PathVariable Long id,
             @Valid @RequestBody UpdateColaboradorStatusRequest request,

@@ -23,7 +23,7 @@ import java.time.Instant;
 import java.util.List;
 
 /**
- * Casos de uso administrativos do colaborador (FT-COLABORADOR).
+ * Casos de uso de colaborador (FT-COLABORADOR).
  */
 @Service
 @ConditionalOnProperty(prefix = "application.persistence", name = "enabled", havingValue = "true", matchIfMissing = true)
@@ -48,25 +48,23 @@ public class ColaboradorApplicationService {
     @Transactional
     public ColaboradorResponse create(CreateColaboradorRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
-
-        String email = request.email().trim().toLowerCase();
-        colaboradorDomainService.validateUniqueEmail(email, null);
+        colaboradorDomainService.validateUniqueEmail(request.email(), null);
         colaboradorDomainService.validateUniqueCpf(request.cpf(), null);
-        colaboradorDomainService.validateOrganizationalContext(
-                request.singularId(), request.areaId(), request.teamId());
         colaboradorDomainService.validateManager(request.managerId(), null);
+
+        ColaboradorDomainService.OrganizationalContext context = colaboradorDomainService.resolveOrganizationalLinks(
+                request.singularId(), request.areaId(), request.teamId());
 
         ColaboradorEntity colaborador = new ColaboradorEntity();
         colaborador.setFederacaoId(request.federationId());
-        colaborador.setSingularId(request.singularId());
-        colaborador.setAreaId(request.areaId());
-        colaborador.setEquipeId(request.teamId());
+        colaborador.setSingularId(context.singularId());
+        colaborador.setAreaId(context.areaId());
+        colaborador.setEquipeId(context.teamId());
         colaborador.setGestorId(request.managerId());
         colaborador.setNome(request.name().trim());
-        colaborador.setEmail(email);
+        colaborador.setEmail(request.email().trim().toLowerCase());
         colaborador.setCargo(request.jobTitle());
         colaborador.setCpf(request.cpf());
-        colaborador.setZimbraId(request.zimbraId());
         colaborador.setBiografia(request.biography());
         colaborador.setAtivo(ColaboradorStatus.ACTIVE.toFlag());
         colaborador.setDataCadastro(Instant.now());
@@ -92,7 +90,6 @@ public class ColaboradorApplicationService {
         Pageable normalizedPageable = remapSort(pageable);
         Page<ColaboradorEntity> page = colaboradorRepository.findByFilters(
                 singularId, areaId, teamId, ativoFlag, name, email, normalizedPageable);
-
         List<ColaboradorResponse> content =
                 page.getContent().stream().map(colaboradorMapper::toResponse).toList();
         return PageResponse.of(
@@ -108,18 +105,20 @@ public class ColaboradorApplicationService {
     @Transactional
     public ColaboradorResponse update(Long id, UpdateColaboradorRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
-
         ColaboradorEntity colaborador = colaboradorDomainService.loadColaboradorOrThrow(id);
+        colaboradorDomainService.validateUniqueEmail(request.email(), id);
         colaboradorDomainService.validateUniqueCpf(request.cpf(), id);
-        colaboradorDomainService.validateOrganizationalContext(
-                request.singularId(), request.areaId(), request.teamId());
         colaboradorDomainService.validateManager(request.managerId(), id);
 
-        colaborador.setSingularId(request.singularId());
-        colaborador.setAreaId(request.areaId());
-        colaborador.setEquipeId(request.teamId());
+        ColaboradorDomainService.OrganizationalContext context = colaboradorDomainService.resolveOrganizationalLinks(
+                request.singularId(), request.areaId(), request.teamId());
+
+        colaborador.setSingularId(context.singularId());
+        colaborador.setAreaId(context.areaId());
+        colaborador.setEquipeId(context.teamId());
         colaborador.setGestorId(request.managerId());
         colaborador.setNome(request.name().trim());
+        colaborador.setEmail(request.email().trim().toLowerCase());
         colaborador.setCargo(request.jobTitle());
         colaborador.setCpf(request.cpf());
         colaborador.setBiografia(request.biography());
@@ -131,14 +130,12 @@ public class ColaboradorApplicationService {
     @Transactional
     public ColaboradorResponse updateStatus(Long id, UpdateColaboradorStatusRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
-
         ColaboradorEntity colaborador = colaboradorDomainService.loadColaboradorOrThrow(id);
 
         if (request.status() == ColaboradorStatus.INACTIVE) {
             colaboradorDomainService.validateDeactivation(colaborador);
             colaborador.setAtivo(ColaboradorStatus.INACTIVE.toFlag());
         } else {
-            colaboradorDomainService.validateOrganizationalContextForUpdate(colaborador);
             colaborador.setAtivo(ColaboradorStatus.ACTIVE.toFlag());
         }
 
@@ -152,11 +149,9 @@ public class ColaboradorApplicationService {
                     PaginationUtils.normalizePage(pageable.getPageNumber()),
                     PaginationUtils.normalizeSize(pageable.getPageSize()));
         }
-
         List<Sort.Order> orders = pageable.getSort().stream()
                 .map(order -> new Sort.Order(order.getDirection(), mapSortProperty(order.getProperty())))
                 .toList();
-
         return PageRequest.of(
                 PaginationUtils.normalizePage(pageable.getPageNumber()),
                 PaginationUtils.normalizeSize(pageable.getPageSize()),

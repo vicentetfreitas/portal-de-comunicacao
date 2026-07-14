@@ -8,8 +8,8 @@ import jakarta.validation.constraints.Size;
  * Payload de criação de singular.
  */
 public record CreateSingularRequest(
-        @NotNull Long federacaoId,
+        @NotNull Long federationId,
         @NotBlank @Size(max = 200) String name,
         @NotBlank @Size(max = 30) String acronym,
-        @NotBlank @Size(max = 20) String codigoUnimed) {
+        @NotBlank @Size(max = 20) String unimedCode) {
 }

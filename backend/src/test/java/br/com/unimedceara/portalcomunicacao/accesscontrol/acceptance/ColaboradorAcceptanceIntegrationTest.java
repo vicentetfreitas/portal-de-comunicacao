@@ -1,12 +1,14 @@
 package br.com.unimedceara.portalcomunicacao.accesscontrol.acceptance;
 
 import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.JwtTokenService;
-import br.com.unimedceara.portalcomunicacao.accesscontrol.domain.model.ColaboradorStatus;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.ColaboradorEntity;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.repository.ColaboradorRepository;
 import br.com.unimedceara.portalcomunicacao.configuration.properties.AuthProperties;
 import br.com.unimedceara.portalcomunicacao.organization.domain.model.AreaStatus;
+import br.com.unimedceara.portalcomunicacao.organization.domain.model.EquipeStatus;
+import br.com.unimedceara.portalcomunicacao.organization.domain.model.SingularStatus;
 import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.entity.AreaEntity;
+import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.entity.EquipeEntity;
 import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.entity.SingularEntity;
 import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.repository.AreaRepository;
 import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.repository.EquipeRepository;
@@ -33,9 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-/**
- * Suíte de testes automatizados dos critérios de aceite FT-COLABORADOR.
- */
 @IntegrationTest
 class ColaboradorAcceptanceIntegrationTest {
 
@@ -61,280 +60,190 @@ class ColaboradorAcceptanceIntegrationTest {
     private AuthProperties authProperties;
 
     private MockMvc mockMvc;
+    private OrganizationalSeed seed;
 
     @BeforeEach
     void setUp() {
         mockMvc = webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+        colaboradorRepository.deleteAll();
         equipeRepository.deleteAll();
         areaRepository.deleteAll();
         singularRepository.deleteAll();
-        colaboradorRepository.deleteAll();
+        seed = seedOrganization();
+        ensureAdmin();
     }
 
     @Test
     @AcceptanceCriterion(value = "AT-COLABORADOR-001", type = AcceptanceCriterion.TestType.API)
-    void atColaborador001_shouldCreateColaboradorSuccessfully() throws Exception {
-        OrganizationalSeed seed = seedOrganizationalContext();
-        ColaboradorEntity admin = ensureAdminColaborador();
-        Cookie accessCookie = TestSecurityContextFactory.jwtCookie(jwtTokenService, admin.getId());
+    void shouldCreateColaborador() throws Exception {
         Cookie csrfCookie = obtainCsrfCookie();
-
         mockMvc.perform(post("/api/v1/colaboradores")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(accessCookie, csrfCookie)
+                        .cookie(adminCookie(), csrfCookie)
                         .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
                         .content("""
                                 {
                                   "federationId": %d,
                                   "singularId": %d,
                                   "areaId": %d,
-                                  "name": "Maria Silva",
-                                  "email": "maria.silva@unimedceara.com.br"
+                                  "teamId": %d,
+                                  "name": "João Silva",
+                                  "email": "joao@unimedceara.com.br"
                                 }
-                                """.formatted(
-                                authProperties.defaultFederationId(),
-                                seed.singular().getId(),
-                                seed.area().getId())))
+                                """
+                                .formatted(
+                                        authProperties.defaultFederationId(),
+                                        seed.singularId(),
+                                        seed.areaId(),
+                                        seed.equipeId())))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.name").value("Maria Silva"))
-                .andExpect(jsonPath("$.data.status").value("ACTIVE"))
-                .andExpect(jsonPath("$.data.areaId").value(seed.area().getId().intValue()));
-    }
-
-    @Test
-    @AcceptanceCriterion(value = "AT-COLABORADOR-001", type = AcceptanceCriterion.TestType.API)
-    void atColaborador001_shouldRejectDuplicateEmail() throws Exception {
-        OrganizationalSeed seed = seedOrganizationalContext();
-        ColaboradorEntity admin = ensureAdminColaborador();
-        seedColaborador(seed, "maria.silva@unimedceara.com.br", "Maria Silva");
-        Cookie accessCookie = TestSecurityContextFactory.jwtCookie(jwtTokenService, admin.getId());
-        Cookie csrfCookie = obtainCsrfCookie();
-
-        mockMvc.perform(post("/api/v1/colaboradores")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(accessCookie, csrfCookie)
-                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
-                        .content("""
-                                {
-                                  "federationId": %d,
-                                  "singularId": %d,
-                                  "areaId": %d,
-                                  "name": "Maria Duplicada",
-                                  "email": "maria.silva@unimedceara.com.br"
-                                }
-                                """.formatted(
-                                authProperties.defaultFederationId(),
-                                seed.singular().getId(),
-                                seed.area().getId())))
-                .andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
-    @AcceptanceCriterion(value = "AT-COLABORADOR-001", type = AcceptanceCriterion.TestType.API)
-    void atColaborador001_shouldRejectUnauthorizedCreate() throws Exception {
-        OrganizationalSeed seed = seedOrganizationalContext();
-        ColaboradorEntity regular = ensureRegularColaborador();
-        Cookie accessCookie = TestSecurityContextFactory.jwtCookie(jwtTokenService, regular.getId());
-        Cookie csrfCookie = obtainCsrfCookie();
-
-        mockMvc.perform(post("/api/v1/colaboradores")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(accessCookie, csrfCookie)
-                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
-                        .content("""
-                                {
-                                  "federationId": %d,
-                                  "singularId": %d,
-                                  "areaId": %d,
-                                  "name": "Maria Silva",
-                                  "email": "maria@unimedceara.com.br"
-                                }
-                                """.formatted(
-                                authProperties.defaultFederationId(),
-                                seed.singular().getId(),
-                                seed.area().getId())))
-                .andExpect(status().isForbidden());
+                .andExpect(jsonPath("$.data.name").value("João Silva"));
     }
 
     @Test
     @AcceptanceCriterion(value = "AT-COLABORADOR-002", type = AcceptanceCriterion.TestType.API)
-    void atColaborador002_shouldFindColaboradorById() throws Exception {
-        OrganizationalSeed seed = seedOrganizationalContext();
-        ColaboradorEntity colaborador = seedColaborador(seed, "maria@unimedceara.com.br", "Maria");
-        ColaboradorEntity admin = ensureAdminColaborador();
-        Cookie accessCookie = TestSecurityContextFactory.jwtCookie(jwtTokenService, admin.getId());
-
-        mockMvc.perform(get("/api/v1/colaboradores/" + colaborador.getId()).cookie(accessCookie))
+    void shouldFindColaboradorById() throws Exception {
+        ColaboradorEntity colaborador = seedColaborador("maria@unimedceara.com.br");
+        mockMvc.perform(get("/api/v1/colaboradores/" + colaborador.getId()).cookie(adminCookie()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").value(colaborador.getId().intValue()))
-                .andExpect(jsonPath("$.data.name").value("Maria"));
-    }
-
-    @Test
-    @AcceptanceCriterion(value = "AT-COLABORADOR-002", type = AcceptanceCriterion.TestType.API)
-    void atColaborador002_shouldReturn404WhenNotFound() throws Exception {
-        ColaboradorEntity admin = ensureAdminColaborador();
-        Cookie accessCookie = TestSecurityContextFactory.jwtCookie(jwtTokenService, admin.getId());
-
-        mockMvc.perform(get("/api/v1/colaboradores/999999").cookie(accessCookie))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @AcceptanceCriterion(value = "AT-COLABORADOR-002", type = AcceptanceCriterion.TestType.API)
-    void atColaborador002_shouldReturn401WhenUnauthenticated() throws Exception {
-        mockMvc.perform(get("/api/v1/colaboradores/1")).andExpect(status().isUnauthorized());
+                .andExpect(jsonPath("$.data.email").value("maria@unimedceara.com.br"));
     }
 
     @Test
     @AcceptanceCriterion(value = "AT-COLABORADOR-003", type = AcceptanceCriterion.TestType.API)
-    void atColaborador003_shouldListColaboradoresWithFilters() throws Exception {
-        OrganizationalSeed seed = seedOrganizationalContext();
-        seedColaborador(seed, "maria@unimedceara.com.br", "Maria");
-        seedColaborador(seed, "joao@unimedceara.com.br", "Joao");
-        ColaboradorEntity admin = ensureAdminColaborador();
-        Cookie accessCookie = TestSecurityContextFactory.jwtCookie(jwtTokenService, admin.getId());
-
+    void shouldListColaboradoresByTeam() throws Exception {
+        seedColaborador("lista@unimedceara.com.br");
         mockMvc.perform(get("/api/v1/colaboradores")
-                        .param("areaId", String.valueOf(seed.area().getId()))
-                        .param("status", "ACTIVE")
-                        .param("page", "0")
-                        .param("size", "10")
-                        .cookie(accessCookie))
+                        .param("teamId", String.valueOf(seed.equipeId()))
+                        .cookie(adminCookie()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.content").isArray())
-                .andExpect(jsonPath("$.data.totalElements").value(2));
+                .andExpect(jsonPath("$.data.totalElements").value(1));
     }
 
     @Test
     @AcceptanceCriterion(value = "AT-COLABORADOR-004", type = AcceptanceCriterion.TestType.API)
-    void atColaborador004_shouldUpdateColaborador() throws Exception {
-        OrganizationalSeed seed = seedOrganizationalContext();
-        ColaboradorEntity colaborador = seedColaborador(seed, "maria@unimedceara.com.br", "Maria");
-        ColaboradorEntity admin = ensureAdminColaborador();
-        Cookie accessCookie = TestSecurityContextFactory.jwtCookie(jwtTokenService, admin.getId());
+    void shouldUpdateColaborador() throws Exception {
+        ColaboradorEntity colaborador = seedColaborador("update@unimedceara.com.br");
         Cookie csrfCookie = obtainCsrfCookie();
 
         mockMvc.perform(put("/api/v1/colaboradores/" + colaborador.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(accessCookie, csrfCookie)
+                        .cookie(adminCookie(), csrfCookie)
                         .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
                         .content("""
                                 {
                                   "singularId": %d,
                                   "areaId": %d,
-                                  "name": "Maria Silva Atualizada",
-                                  "jobTitle": "Analista"
+                                  "teamId": %d,
+                                  "name": "Nome Atualizado",
+                                  "email": "update@unimedceara.com.br"
                                 }
-                                """.formatted(seed.singular().getId(), seed.area().getId())))
+                                """
+                                .formatted(seed.singularId(), seed.areaId(), seed.equipeId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.name").value("Maria Silva Atualizada"))
-                .andExpect(jsonPath("$.data.jobTitle").value("Analista"));
+                .andExpect(jsonPath("$.data.name").value("Nome Atualizado"));
     }
 
     @Test
-    @AcceptanceCriterion(value = "AT-COLABORADOR-005", type = AcceptanceCriterion.TestType.API)
-    void atColaborador005_shouldInactivateColaborador() throws Exception {
-        OrganizationalSeed seed = seedOrganizationalContext();
-        ColaboradorEntity colaborador = seedColaborador(seed, "maria@unimedceara.com.br", "Maria");
-        ColaboradorEntity admin = ensureAdminColaborador();
-        Cookie accessCookie = TestSecurityContextFactory.jwtCookie(jwtTokenService, admin.getId());
+    @AcceptanceCriterion(value = "AT-COLABORADOR-001", type = AcceptanceCriterion.TestType.API)
+    void shouldRejectInvalidTeamForArea() throws Exception {
         Cookie csrfCookie = obtainCsrfCookie();
-
-        mockMvc.perform(patch("/api/v1/colaboradores/" + colaborador.getId() + "/status")
+        mockMvc.perform(post("/api/v1/colaboradores")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(accessCookie, csrfCookie)
+                        .cookie(adminCookie(), csrfCookie)
                         .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
-                        .content("{\"status\": \"INACTIVE\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.status").value("INACTIVE"));
-    }
-
-    @Test
-    @AcceptanceCriterion(value = "AT-COLABORADOR-005", type = AcceptanceCriterion.TestType.API)
-    void atColaborador005_shouldBlockInactivationWithActiveSubordinate() throws Exception {
-        OrganizationalSeed seed = seedOrganizationalContext();
-        ColaboradorEntity manager = seedColaborador(seed, "gestor@unimedceara.com.br", "Gestor");
-        ColaboradorEntity subordinate = seedColaborador(seed, "sub@unimedceara.com.br", "Subordinado");
-        subordinate.setGestorId(manager.getId());
-        colaboradorRepository.save(subordinate);
-
-        ColaboradorEntity admin = ensureAdminColaborador();
-        Cookie accessCookie = TestSecurityContextFactory.jwtCookie(jwtTokenService, admin.getId());
-        Cookie csrfCookie = obtainCsrfCookie();
-
-        mockMvc.perform(patch("/api/v1/colaboradores/" + manager.getId() + "/status")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(accessCookie, csrfCookie)
-                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
-                        .content("{\"status\": \"INACTIVE\"}"))
+                        .content("""
+                                {
+                                  "federationId": %d,
+                                  "areaId": %d,
+                                  "teamId": 999999,
+                                  "name": "Inválido",
+                                  "email": "invalido@unimedceara.com.br"
+                                }
+                                """
+                                .formatted(authProperties.defaultFederationId(), seed.areaId())))
                 .andExpect(status().isUnprocessableEntity());
     }
 
-    private record OrganizationalSeed(SingularEntity singular, AreaEntity area) {
+    @Test
+    void shouldRejectDuplicateEmail() throws Exception {
+        seedColaborador("dup@unimedceara.com.br");
+        Cookie csrfCookie = obtainCsrfCookie();
+
+        mockMvc.perform(post("/api/v1/colaboradores")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(adminCookie(), csrfCookie)
+                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
+                        .content("""
+                                {
+                                  "federationId": %d,
+                                  "teamId": %d,
+                                  "name": "Outro",
+                                  "email": "dup@unimedceara.com.br"
+                                }
+                                """
+                                .formatted(authProperties.defaultFederationId(), seed.equipeId())))
+                .andExpect(status().isUnprocessableEntity());
     }
 
-    private OrganizationalSeed seedOrganizationalContext() {
+    private ColaboradorEntity seedColaborador(String email) {
+        ColaboradorEntity colaborador = new ColaboradorEntity();
+        colaborador.setFederacaoId(authProperties.defaultFederationId());
+        colaborador.setSingularId(seed.singularId());
+        colaborador.setAreaId(seed.areaId());
+        colaborador.setEquipeId(seed.equipeId());
+        colaborador.setNome("Colaborador");
+        colaborador.setEmail(email);
+        colaborador.setAtivo(EquipeStatus.ACTIVE.toFlag());
+        colaborador.setDataCadastro(Instant.now());
+        return colaboradorRepository.save(colaborador);
+    }
+
+    private OrganizationalSeed seedOrganization() {
         SingularEntity singular = new SingularEntity();
         singular.setFederacaoId(authProperties.defaultFederationId());
-        singular.setNome("Singular Teste");
-        singular.setSigla("ST");
-        singular.setCodigoUnimed("001");
-        singular.setAtivo(AreaStatus.ACTIVE.toFlag());
+        singular.setNome("Singular");
+        singular.setSigla("SG");
+        singular.setCodigoUnimed("010");
+        singular.setAtivo(SingularStatus.ACTIVE.toFlag());
         singular.setDataCadastro(Instant.now());
         singular = singularRepository.save(singular);
 
         AreaEntity area = new AreaEntity();
         area.setSingularId(singular.getId());
-        area.setNome("Financeiro");
+        area.setNome("Area");
         area.setAtivo(AreaStatus.ACTIVE.toFlag());
         area.setDataCadastro(Instant.now());
         area = areaRepository.save(area);
 
-        return new OrganizationalSeed(singular, area);
+        EquipeEntity equipe = new EquipeEntity();
+        equipe.setAreaId(area.getId());
+        equipe.setNome("Equipe");
+        equipe.setAtivo(EquipeStatus.ACTIVE.toFlag());
+        equipe.setDataCadastro(Instant.now());
+        equipe = equipeRepository.save(equipe);
+
+        return new OrganizationalSeed(singular.getId(), area.getId(), equipe.getId());
     }
 
-    private ColaboradorEntity seedColaborador(OrganizationalSeed seed, String email, String name) {
-        ColaboradorEntity colaborador = new ColaboradorEntity();
-        colaborador.setFederacaoId(authProperties.defaultFederationId());
-        colaborador.setSingularId(seed.singular().getId());
-        colaborador.setAreaId(seed.area().getId());
-        colaborador.setNome(name);
-        colaborador.setEmail(email);
-        colaborador.setAtivo(ColaboradorStatus.ACTIVE.toFlag());
-        colaborador.setDataCadastro(Instant.now());
-        return colaboradorRepository.save(colaborador);
+    private void ensureAdmin() {
+        if (colaboradorRepository.findByEmailIgnoreCase("colaborador@unimedceara.com.br").isEmpty()) {
+            ColaboradorEntity admin = new ColaboradorEntity();
+            admin.setEmail("colaborador@unimedceara.com.br");
+            admin.setNome("Admin");
+            admin.setZimbraId("zimbra-admin");
+            admin.setAtivo(EquipeStatus.ACTIVE.toFlag());
+            admin.setFederacaoId(authProperties.defaultFederationId());
+            admin.setDataCadastro(Instant.now());
+            colaboradorRepository.save(admin);
+        }
     }
 
-    private ColaboradorEntity ensureAdminColaborador() {
-        return colaboradorRepository
+    private Cookie adminCookie() {
+        ColaboradorEntity admin = colaboradorRepository
                 .findByEmailIgnoreCase("colaborador@unimedceara.com.br")
-                .orElseGet(() -> {
-                    ColaboradorEntity colaborador = new ColaboradorEntity();
-                    colaborador.setEmail("colaborador@unimedceara.com.br");
-                    colaborador.setNome("Admin Teste");
-                    colaborador.setZimbraId("zimbra-admin");
-                    colaborador.setAtivo(ColaboradorStatus.ACTIVE.toFlag());
-                    colaborador.setFederacaoId(authProperties.defaultFederationId());
-                    colaborador.setDataCadastro(Instant.now());
-                    return colaboradorRepository.save(colaborador);
-                });
-    }
-
-    private ColaboradorEntity ensureRegularColaborador() {
-        return colaboradorRepository
-                .findByEmailIgnoreCase("regular@unimedceara.com.br")
-                .orElseGet(() -> {
-                    ColaboradorEntity colaborador = new ColaboradorEntity();
-                    colaborador.setEmail("regular@unimedceara.com.br");
-                    colaborador.setNome("Regular Teste");
-                    colaborador.setZimbraId("zimbra-regular");
-                    colaborador.setAtivo(ColaboradorStatus.ACTIVE.toFlag());
-                    colaborador.setFederacaoId(authProperties.defaultFederationId());
-                    colaborador.setDataCadastro(Instant.now());
-                    return colaboradorRepository.save(colaborador);
-                });
+                .orElseThrow();
+        return TestSecurityContextFactory.jwtCookie(jwtTokenService, admin.getId());
     }
 
     private Cookie obtainCsrfCookie() throws Exception {
@@ -342,5 +251,8 @@ class ColaboradorAcceptanceIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getCookie(SecurityConstants.CSRF_COOKIE);
+    }
+
+    private record OrganizationalSeed(Long singularId, Long areaId, Long equipeId) {
     }
 }

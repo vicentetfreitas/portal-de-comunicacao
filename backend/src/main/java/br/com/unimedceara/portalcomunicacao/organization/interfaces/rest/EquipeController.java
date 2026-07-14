@@ -44,7 +44,7 @@ public class EquipeController {
     }
 
     @PostMapping
-    @Operation(summary = "Criar equipe", description = "Cadastra nova equipe organizacional")
+    @Operation(summary = "Criar equipe")
     public ResponseEntity<ApiResponse<EquipeResponse>> create(
             @Valid @RequestBody CreateEquipeRequest request,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
@@ -53,13 +53,13 @@ public class EquipeController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Consultar equipe", description = "Retorna equipe por identificador")
+    @Operation(summary = "Consultar equipe")
     public ApiResponse<EquipeResponse> findById(@PathVariable Long id) {
         return ApiResponse.success(equipeApplicationService.findById(id));
     }
 
     @GetMapping
-    @Operation(summary = "Listar equipes", description = "Listagem paginada com filtros corporativos")
+    @Operation(summary = "Listar equipes")
     public ApiResponse<PageResponse<EquipeResponse>> list(
             @RequestParam(required = false) EquipeStatus status,
             @RequestParam(required = false) Long areaId,
@@ -69,7 +69,7 @@ public class EquipeController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar equipe", description = "Atualiza dados cadastrais da equipe")
+    @Operation(summary = "Atualizar equipe")
     public ApiResponse<EquipeResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateEquipeRequest request,
@@ -78,7 +78,7 @@ public class EquipeController {
     }
 
     @PatchMapping("/{id}/status")
-    @Operation(summary = "Alterar status", description = "Ativa ou inativa logicamente a equipe")
+    @Operation(summary = "Alterar status da equipe")
     public ApiResponse<EquipeResponse> updateStatus(
             @PathVariable Long id,
             @Valid @RequestBody UpdateEquipeStatusRequest request,

@@ -1,0 +1,63 @@
+# Integration State — Template
+# SSOT do estado operacional (Integration Sprint v1.0)
+# Descoberta: localizar via integration-manifest.yaml (SSOD-INT-01) — artifacts.state
+
+version: 1
+
+scope:
+  type: integration_sprint
+  layer: engineering/integration/sprints/{{SPRINT_ID}}
+
+sprint:
+  id: {{SPRINT_ID}}
+  name: {{SPRINT_NAME}}
+  construction_sprint: {{CONSTRUCTION_SPRINT}}
+
+depends_on:
+  - platform_foundation
+  # listar Features do escopo
+
+state:
+  phase: planned  # planned | in_progress | validation | review | ready | approved | completed
+
+validation:
+  active_phase: null  # ENV | INF | API | DB | XFT | FUN | OUT
+  phases_completed: []
+
+manifest:
+  version: 1
+  path: integration-manifest.yaml
+
+review:
+  status: pending  # pending | in_progress | done
+  reviewer: null
+  completed_at: null
+
+readiness:
+  status: pending  # pending | in_progress | approved | rejected
+  executor: null
+  completed_at: null
+
+approval:
+  status: pending  # pending | approved | rejected
+  approved_by: null
+  approved_at: null
+
+build:
+  full_verify: pending  # pending | success | failure
+  last_run: null
+
+metrics:
+  checklist_total: 0
+  checklist_approved: 0
+  checklist_pending: 0
+  checklist_blocked: 0
+  checklist_waived: 0
+  issues_open: 0
+  issues_critical: 0
+  phases_total: 7
+  phases_completed: 0
+
+metadata:
+  created_at: null
+  updated_at: null

@@ -17,10 +17,11 @@ O agente NÃO deve explorar o repositório arbitrariamente.
 
 Toda consulta deve iniciar por este índice.
 
-O conhecimento do projeto está dividido em duas categorias:
+O conhecimento do projeto está dividido em três categorias:
 
 - `specs/` → especificação oficial do produto.
 - `docs/` → documentação consultiva da engenharia e do sistema legado.
+- `engineering/` → governança da Sprint de Integração (processo manual, pós-construction).
 
 ---
 
@@ -75,6 +76,16 @@ construction/
 │   └── pkg-XX/status.md
 ├── features/registry.yaml            ← Índice de Features
 
+engineering/
+
+├── integration/                      ← Sprint de Integração (v1.0)
+│   ├── 01-integration-sprint-workflow.md  ← SSOT
+│   ├── registry.yaml
+│   └── sprints/<SPRINT_ID>/        ← Instância por sprint
+│       ├── integration-manifest.yaml ← SSOD
+│       ├── integration-state.yaml  ← SSOT
+│       └── integration-checklist.md
+
 docs/
 
 ├── discovery/
@@ -116,6 +127,32 @@ Consultar obrigatoriamente:
 ```
 
 Durante PKGs: consultar `construction-state.yaml` para estado; Snapshot em `session.md` para contexto — não reler documentos já carregados (CACHE-01, RULE-CONTEXT-01).
+
+---
+
+## Para executar uma Sprint de Integração
+
+Consultar obrigatoriamente:
+
+```text
+1. engineering/integration/01-integration-sprint-workflow.md   ← SSOT integração
+
+2. integration-manifest.yaml (SSOD-INT-01) — descobrir paths:
+   - Registry: engineering/integration/registry.yaml
+   - Sprint:   engineering/integration/sprints/<SPRINT_ID>/integration-manifest.yaml
+
+3. integration-state.yaml (STATE-INT-01) — estado operacional da sprint
+
+4. integration-plan.md + integration-checklist.md
+
+5. construction/features/registry.yaml — Features no escopo (todas FEATURE_APPROVED)
+
+6. specs/features/ (contratos das Features no escopo)
+
+7. docs/implementation/ e docs/construction/
+```
+
+Durante validação: consultar `integration-state.yaml` para estado; não alterar código nem especificações nesta fase (RULE-INT-02).
 
 ---
 
@@ -241,6 +278,18 @@ Utilizar durante a construção do backend, frontend, banco de dados e infraestr
 
 ---
 
+## engineering/integration
+
+Utilizar para:
+
+- executar Sprint de Integração do backend;
+- validar ambiente, infraestrutura, APIs, banco e fluxos cross-feature;
+- registrar evidências, issues e readiness pós-construction.
+
+Não substitui `specs/` nem `construction/`. Não altera código nesta fase documental.
+
+---
+
 # Processo de Trabalho
 
 Sempre seguir a sequência abaixo:
@@ -314,6 +363,7 @@ Architecture      CONCLUÍDO
 Solution Design   CONCLUÍDO
 Implementation    CONCLUÍDO
 Construction      EM EVOLUÇÃO
+Integration       CONCLUÍDA (sprint-03-org-backend APPROVED)
 ```
 
 ---
@@ -321,13 +371,13 @@ Construction      EM EVOLUÇÃO
 # Próxima Prioridade
 
 ```text
-Especificar novas Features
+Iniciar Frontend (consumo do backend validado)
+
+↓
+
+Especificar Features Gestão Documental
 
 ↓
 
 Implementar conforme specs/
-
-↓
-
-Validar aderência entre especificação e código
 ```

@@ -1,0 +1,27 @@
+# Integration Sprint Registry — Engineering Framework v1.0
+
+version: 1
+
+convention:
+  format: "sprint-<NN>-<scope>"
+  case: lowercase
+  directory: "engineering/integration/sprints/<id>/"
+  reference: "engineering/integration/README.md"
+
+sprints:
+  - id: sprint-03-org-backend
+    name: Organização Corporativa — Backend
+    construction_sprint: 3
+    manifest: sprint-03-org-backend/integration-manifest.yaml
+    status: completed
+    approval: approved
+    completed_at: "2026-07-14"
+    features:
+      - FT-AUTH
+      - FT-SINGULAR
+      - FT-AREA
+      - FT-EQUIPE
+      - FT-COLABORADOR
+    evidence:
+      build_log: backend/runtime/integration-verify.log
+      tests: "230 run, 0 failures"

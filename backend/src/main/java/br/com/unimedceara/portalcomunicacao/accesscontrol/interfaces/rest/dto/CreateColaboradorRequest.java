@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * Payload de criação administrativa de colaborador.
+ * Payload de criação de colaborador.
  */
 public record CreateColaboradorRequest(
         @NotNull Long federationId,
@@ -17,7 +17,6 @@ public record CreateColaboradorRequest(
         @NotBlank @Size(max = 200) String name,
         @NotBlank @Email @Size(max = 255) String email,
         @Size(max = 100) String jobTitle,
-        @Size(max = 11) String cpf,
-        @Size(max = 255) String zimbraId,
+        @Size(min = 11, max = 11) String cpf,
         String biography) {
 }

@@ -1,0 +1,75 @@
+# Integration State — sprint-03-org-backend
+# SSOT do estado operacional — Sprint encerrada APPROVED
+
+version: 1
+
+scope:
+  type: integration_sprint
+  layer: engineering/integration/sprints/sprint-03-org-backend
+
+sprint:
+  id: sprint-03-org-backend
+  name: Organização Corporativa — Backend
+  construction_sprint: 3
+
+depends_on:
+  - platform_foundation
+  - FT-AUTH
+  - FT-SINGULAR
+  - FT-AREA
+  - FT-EQUIPE
+  - FT-COLABORADOR
+
+state:
+  phase: completed
+
+validation:
+  active_phase: OUT
+  phases_completed:
+    - ENV
+    - INF
+    - API
+    - DB
+    - XFT
+    - FUN
+    - OUT
+
+manifest:
+  version: 1
+  path: integration-manifest.yaml
+
+review:
+  status: done
+  reviewer: integration-lead
+  completed_at: "2026-07-14"
+
+readiness:
+  status: approved
+  executor: integration-lead
+  completed_at: "2026-07-14"
+
+approval:
+  status: approved
+  approved_by: integration-lead
+  approved_at: "2026-07-14"
+
+build:
+  full_verify: success
+  last_run: "2026-07-14T12:12:02-03:00"
+  note: "mvn clean verify — Tests run: 230, Failures: 0, Errors: 0, Skipped: 1"
+
+metrics:
+  checklist_total: 40
+  checklist_approved: 40
+  checklist_pending: 0
+  checklist_blocked: 0
+  checklist_waived: 0
+  issues_open: 0
+  issues_critical: 0
+  issues_deferred: 2
+  phases_total: 7
+  phases_completed: 7
+
+metadata:
+  created_at: "2026-07-14"
+  updated_at: "2026-07-14"

@@ -34,9 +34,13 @@ Solution Design
 Implementation
     ↓
 Construction
+    ↓
+Integration Sprint
 ```
 
 Este processo é executado sempre que houver mudanças estruturais relevantes no projeto.
+
+A **Sprint de Integração** (`engineering/integration/`) valida o backend integrado após o encerramento de um conjunto de Features — não é uma Feature e não altera código nesta fase documental.
 
 ---
 
@@ -64,14 +68,15 @@ Este processo é utilizado continuamente durante toda a evolução do produto.
 
 # Responsabilidades
 
-## Engenharia (`docs/`)
+## Engenharia (`docs/` + `engineering/`)
 
 Responsável por:
 
 - documentar o sistema;
 - definir arquitetura;
 - registrar decisões técnicas;
-- estabelecer padrões de implementação.
+- estabelecer padrões de implementação;
+- **validar integração do backend** (`engineering/integration/`).
 
 ---
 

@@ -5,7 +5,7 @@ import br.com.unimedceara.portalcomunicacao.accesscontrol.domain.model.Colaborad
 import java.time.Instant;
 
 /**
- * Representação de colaborador na API administrativa.
+ * Representação de colaborador na API.
  */
 public record ColaboradorResponse(
         Long id,
@@ -18,7 +18,6 @@ public record ColaboradorResponse(
         String email,
         String jobTitle,
         String cpf,
-        String zimbraId,
         String biography,
         ColaboradorStatus status,
         Instant createdAt,

@@ -44,7 +44,7 @@ public class SingularController {
     }
 
     @PostMapping
-    @Operation(summary = "Criar singular", description = "Cadastra nova singular organizacional")
+    @Operation(summary = "Criar singular")
     public ResponseEntity<ApiResponse<SingularResponse>> create(
             @Valid @RequestBody CreateSingularRequest request,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
@@ -53,26 +53,26 @@ public class SingularController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Consultar singular", description = "Retorna singular por identificador")
+    @Operation(summary = "Consultar singular")
     public ApiResponse<SingularResponse> findById(@PathVariable Long id) {
         return ApiResponse.success(singularApplicationService.findById(id));
     }
 
     @GetMapping
-    @Operation(summary = "Listar singulares", description = "Listagem paginada com filtros corporativos")
+    @Operation(summary = "Listar singulares")
     public ApiResponse<PageResponse<SingularResponse>> list(
             @RequestParam(required = false) SingularStatus status,
-            @RequestParam(required = false) Long federacaoId,
+            @RequestParam(required = false) Long federationId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String acronym,
-            @RequestParam(required = false) String codigoUnimed,
+            @RequestParam(required = false) String unimedCode,
             @PageableDefault(size = 20, sort = "nome") Pageable pageable) {
-        return ApiResponse.success(singularApplicationService.list(
-                status, federacaoId, name, acronym, codigoUnimed, pageable));
+        return ApiResponse.success(
+                singularApplicationService.list(status, federationId, name, acronym, unimedCode, pageable));
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar singular", description = "Atualiza dados cadastrais da singular")
+    @Operation(summary = "Atualizar singular")
     public ApiResponse<SingularResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody UpdateSingularRequest request,
@@ -81,7 +81,7 @@ public class SingularController {
     }
 
     @PatchMapping("/{id}/status")
-    @Operation(summary = "Alterar status", description = "Ativa ou inativa logicamente a singular")
+    @Operation(summary = "Alterar status da singular")
     public ApiResponse<SingularResponse> updateStatus(
             @PathVariable Long id,
             @Valid @RequestBody UpdateSingularStatusRequest request,

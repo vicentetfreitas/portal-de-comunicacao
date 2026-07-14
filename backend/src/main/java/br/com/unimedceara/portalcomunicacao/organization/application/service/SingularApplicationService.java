@@ -47,16 +47,14 @@ public class SingularApplicationService {
     @Transactional
     public SingularResponse create(CreateSingularRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
-
-        singularDomainService.validateActiveFederacao(request.federacaoId());
         singularDomainService.validateUniqueAcronym(request.acronym(), null);
-        singularDomainService.validateUniqueCodigoUnimed(request.codigoUnimed(), null);
+        singularDomainService.validateUniqueUnimedCode(request.unimedCode(), null);
 
         SingularEntity singular = new SingularEntity();
-        singular.setFederacaoId(request.federacaoId());
+        singular.setFederacaoId(request.federationId());
         singular.setNome(request.name().trim());
         singular.setSigla(request.acronym().trim());
-        singular.setCodigoUnimed(request.codigoUnimed().trim());
+        singular.setCodigoUnimed(request.unimedCode().trim());
         singular.setAtivo(SingularStatus.ACTIVE.toFlag());
         singular.setDataCadastro(Instant.now());
 
@@ -71,16 +69,15 @@ public class SingularApplicationService {
     @Transactional(readOnly = true)
     public PageResponse<SingularResponse> list(
             SingularStatus status,
-            Long federacaoId,
+            Long federationId,
             String name,
             String acronym,
-            String codigoUnimed,
+            String unimedCode,
             Pageable pageable) {
         String ativoFlag = status == null ? null : status.toFlag();
         Pageable normalizedPageable = remapSort(pageable);
         Page<SingularEntity> page = singularRepository.findByFilters(
-                federacaoId, ativoFlag, name, acronym, codigoUnimed, normalizedPageable);
-
+                federationId, ativoFlag, name, acronym, unimedCode, normalizedPageable);
         List<SingularResponse> content = page.getContent().stream().map(singularMapper::toResponse).toList();
         return PageResponse.of(
                 content,
@@ -95,15 +92,13 @@ public class SingularApplicationService {
     @Transactional
     public SingularResponse update(Long id, UpdateSingularRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
-
         SingularEntity singular = singularDomainService.loadSingularOrThrow(id);
-        singularDomainService.validateFederacaoActiveForUpdate(singular);
         singularDomainService.validateUniqueAcronym(request.acronym(), id);
-        singularDomainService.validateUniqueCodigoUnimed(request.codigoUnimed(), id);
+        singularDomainService.validateUniqueUnimedCode(request.unimedCode(), id);
 
         singular.setNome(request.name().trim());
         singular.setSigla(request.acronym().trim());
-        singular.setCodigoUnimed(request.codigoUnimed().trim());
+        singular.setCodigoUnimed(request.unimedCode().trim());
         singular.setDataAtualizacao(Instant.now());
 
         return singularMapper.toResponse(singularRepository.save(singular));
@@ -112,14 +107,12 @@ public class SingularApplicationService {
     @Transactional
     public SingularResponse updateStatus(Long id, UpdateSingularStatusRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
-
         SingularEntity singular = singularDomainService.loadSingularOrThrow(id);
 
         if (request.status() == SingularStatus.INACTIVE) {
             singularDomainService.validateDeactivation(singular);
             singular.setAtivo(SingularStatus.INACTIVE.toFlag());
         } else {
-            singularDomainService.validateActiveFederacao(singular.getFederacaoId());
             singular.setAtivo(SingularStatus.ACTIVE.toFlag());
         }
 
@@ -133,11 +126,9 @@ public class SingularApplicationService {
                     PaginationUtils.normalizePage(pageable.getPageNumber()),
                     PaginationUtils.normalizeSize(pageable.getPageSize()));
         }
-
         List<Sort.Order> orders = pageable.getSort().stream()
                 .map(order -> new Sort.Order(order.getDirection(), mapSortProperty(order.getProperty())))
                 .toList();
-
         return PageRequest.of(
                 PaginationUtils.normalizePage(pageable.getPageNumber()),
                 PaginationUtils.normalizeSize(pageable.getPageSize()),
@@ -148,6 +139,7 @@ public class SingularApplicationService {
         return switch (property) {
             case "name" -> "nome";
             case "acronym" -> "sigla";
+            case "unimedCode" -> "codigoUnimed";
             case "createdAt" -> "dataCadastro";
             case "updatedAt" -> "dataAtualizacao";
             case "status" -> "ativo";

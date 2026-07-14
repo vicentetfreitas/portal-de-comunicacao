@@ -31,10 +31,10 @@ class SingularMapperTest {
         SingularResponse response = singularMapper.toResponse(entity);
 
         assertThat(response.id()).isEqualTo(1L);
-        assertThat(response.federacaoId()).isEqualTo(10L);
+        assertThat(response.federationId()).isEqualTo(10L);
         assertThat(response.name()).isEqualTo("Unimed Ceará");
         assertThat(response.acronym()).isEqualTo("UNI-CE");
-        assertThat(response.codigoUnimed()).isEqualTo("UC001");
+        assertThat(response.unimedCode()).isEqualTo("UC001");
         assertThat(response.status()).isEqualTo(SingularStatus.ACTIVE);
         assertThat(response.createdAt()).isEqualTo(createdAt);
         assertThat(response.updatedAt()).isEqualTo(updatedAt);

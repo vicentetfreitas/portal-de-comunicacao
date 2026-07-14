@@ -23,7 +23,6 @@ public class ColaboradorMapper {
                 entity.getEmail(),
                 entity.getCargo(),
                 entity.getCpf(),
-                entity.getZimbraId(),
                 entity.getBiografia(),
                 ColaboradorStatus.fromFlag(entity.getAtivo()),
                 entity.getDataCadastro(),

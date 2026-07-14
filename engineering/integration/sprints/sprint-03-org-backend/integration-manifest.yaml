@@ -1,0 +1,146 @@
+# Integration Manifest — sprint-03-org-backend (SSOD v1.0)
+# Single Source of Discovery — consultar ANTES de qualquer outro artefato da Sprint.
+# Localização: engineering/integration/sprints/sprint-03-org-backend/integration-manifest.yaml
+
+version: 1
+role: ssod
+
+sprint:
+  id: sprint-03-org-backend
+  name: Organização Corporativa — Backend
+  description: >
+    Validação integrada do backend de Organização Corporativa após encerramento
+    das Features FT-AUTH, FT-SINGULAR, FT-AREA, FT-EQUIPE e FT-COLABORADOR.
+  construction_sprint: 3
+
+status:
+  phase: completed
+
+scope:
+  layer: backend
+  domain: organization
+  features:
+    - code: FT-AUTH
+      slug: authentication
+      manifest: ../../../../construction/features/FT-AUTH/feature-manifest.yaml
+      closure: ../../../../construction/features/FT-AUTH/closure-report.md
+    - code: FT-SINGULAR
+      slug: singular
+      manifest: ../../../../construction/features/FT-SINGULAR/feature-manifest.yaml
+      closure: ../../../../construction/features/FT-SINGULAR/closure-report.md
+    - code: FT-AREA
+      slug: area
+      manifest: ../../../../construction/features/FT-AREA/feature-manifest.yaml
+      closure: ../../../../construction/features/FT-AREA/closure-report.md
+    - code: FT-EQUIPE
+      slug: equipe
+      manifest: ../../../../construction/features/FT-EQUIPE/feature-manifest.yaml
+      closure: ../../../../construction/features/FT-EQUIPE/closure-report.md
+    - code: FT-COLABORADOR
+      slug: colaborador
+      manifest: ../../../../construction/features/FT-COLABORADOR/feature-manifest.yaml
+      closure: ../../../../construction/features/FT-COLABORADOR/closure-report.md
+
+cross_feature_flows:
+  - id: xft-org-01
+    name: Hierarquia Organizacional Completa
+    steps:
+      - feature: FT-AUTH
+        action: Autenticar (login/callback ou contexto de teste)
+        endpoint: GET /api/v1/auth/me
+      - feature: FT-SINGULAR
+        action: Criar Singular
+        endpoint: POST /api/v1/singulares
+      - feature: FT-AREA
+        action: Criar Área vinculada à Singular
+        endpoint: POST /api/v1/areas
+      - feature: FT-EQUIPE
+        action: Criar Equipe vinculada à Área
+        endpoint: POST /api/v1/equipes
+      - feature: FT-COLABORADOR
+        action: Criar Colaborador vinculado à hierarquia
+        endpoint: POST /api/v1/colaboradores
+
+validation:
+  phases:
+    - id: ENV
+      name: Ambiente
+      checklist_prefix: INT-ENV
+    - id: INF
+      name: Infraestrutura
+      checklist_prefix: INT-INF
+    - id: API
+      name: APIs
+      checklist_prefix: INT-API
+    - id: DB
+      name: Banco
+      checklist_prefix: INT-DB
+    - id: XFT
+      name: Cross-Feature
+      checklist_prefix: INT-XFT
+    - id: FUN
+      name: Funcional
+      checklist_prefix: INT-FUN
+    - id: OUT
+      name: Resultado
+      checklist_prefix: INT-OUT
+
+integration:
+  path: .
+  root: engineering/integration/sprints/sprint-03-org-backend/
+
+artifacts:
+  manifest: integration-manifest.yaml
+  state: integration-state.yaml
+  plan: integration-plan.md
+  checklist: integration-checklist.md
+  report: integration-report.md
+  readiness: integration-readiness.md
+  issues: issues.md
+
+dependencies:
+  construction:
+    - code: platform-foundation
+      path: ../../../../construction/platform-foundation/
+  features_registry: ../../../../construction/features/registry.yaml
+
+engineering:
+  workflow: ../../01-integration-sprint-workflow.md
+  rules: ../../02-integration-rules.md
+  phases: ../../03-phases-and-activities.md
+  state_machine: ../../04-state-machine.md
+  entry_exit: ../../05-entry-exit-criteria.md
+  implementation:
+    - ../../../../docs/implementation/
+  construction:
+    - ../../../../docs/construction/
+
+owners:
+  lead: integration-lead
+  validator: validator
+  reviewer: reviewer
+  auditor: auditor
+
+metrics:
+  checklist_total: 40
+  checklist_approved: 40
+  checklist_pending: 0
+  checklist_blocked: 0
+  checklist_waived: 0
+  issues_open: 0
+  issues_critical: 0
+
+evidence:
+  build_log: ../../../../backend/runtime/
+  test_reports: ../../../../backend/target/surefire-reports/
+
+invalidation:
+  triggers:
+    - scope_change
+    - feature_reopened
+    - manifest
+    - checklist_template
+
+discovery:
+  version: 1
+  rule: SSOD-INT-01 — este manifesto é o ponto de entrada obrigatório para localizar artefatos da Sprint de Integração
