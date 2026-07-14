@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 /**
- * Entidade JPA mínima de equipe para validação de inativação de área (FT-AREA).
+ * Entidade JPA da equipe organizacional (FT-EQUIPE).
  */
 @Getter
 @Setter
@@ -33,6 +34,13 @@ public class EquipeEntity {
 
     @Column(name = "NOM_EQUIPE", nullable = false, length = 200)
     private String nome;
+
+    @Lob
+    @Column(name = "DSC_EQUIPE")
+    private String descricao;
+
+    @Column(name = "COD_LIDER")
+    private Long liderId;
 
     @Column(name = "FLG_ATIVO", nullable = false, length = 1)
     private String ativo;

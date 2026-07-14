@@ -31,3 +31,10 @@ features:
     sprint: 3
     manifest: FT-SINGULAR/feature-manifest.yaml
     status: closed
+
+  - code: FT-EQUIPE
+    slug: equipe
+    name: Equipe
+    sprint: 3
+    manifest: FT-EQUIPE/feature-manifest.yaml
+    status: closed

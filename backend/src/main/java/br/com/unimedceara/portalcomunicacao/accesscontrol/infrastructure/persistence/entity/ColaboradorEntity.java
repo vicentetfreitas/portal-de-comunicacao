@@ -43,6 +43,9 @@ public class ColaboradorEntity {
     @Column(name = "COD_FEDERACAO", nullable = false)
     private Long federacaoId;
 
+    @Column(name = "COD_EQUIPE")
+    private Long equipeId;
+
     @Column(name = "DAT_CADASTRO", nullable = false)
     private Instant dataCadastro;
 

@@ -1,0 +1,94 @@
+# Construction State — FT-EQUIPE
+# SSOT do estado operacional (Feature-centric v3.2)
+
+version: 3
+
+scope:
+  type: business_feature
+  layer: construction/features/FT-EQUIPE
+
+feature:
+  id: equipe
+  code: FT-EQUIPE
+  name: Equipe
+
+depends_on:
+  - platform_foundation
+  - FT-AUTH
+  - FT-AREA
+
+state:
+  phase: closed
+
+  current_pkg: null
+
+  completed:
+    - pkg-01
+    - pkg-02
+    - pkg-03
+    - pkg-04
+    - pkg-05
+    - pkg-06
+
+  pending: []
+
+snapshot:
+  version: 1
+  created_at: "2026-07-14T10:45:00-03:00"
+  immutable: true
+
+cache:
+  valid: true
+  reason: "Feature encerrada — Session preservada como histórico"
+
+manifest:
+  version: 2
+  path: feature-manifest.yaml
+
+specification:
+  version: "1.0"
+  sprint_scope: backend_only
+
+review:
+  status: done
+  verdict: approved_with_reservations
+  executed_at: "2026-07-14T11:15:00-03:00"
+  note: "Sprint 3 Backend — CRUD Equipe aprovado com ressalvas OQ-020"
+
+audit:
+  status: done
+  verdict: conforming
+  executed_at: "2026-07-14T11:15:00-03:00"
+  note: "Specification v1.0 conforme no escopo backend"
+
+build:
+  incremental: false
+  full_verify: success
+  last_command: "mvn clean verify"
+  last_run_at: "2026-07-14T11:10:00-03:00"
+
+readiness:
+  status: approved
+  scope: sprint_3_backend
+  note: "Sprint 3 Backend aprovada — FE fora de escopo"
+
+closure:
+  status: done
+  final_state: FEATURE_APPROVED
+  scope: sprint_3_backend
+  note: "Encerramento Sprint 3 Backend — spec v1.0 atendida"
+
+metrics:
+  pkgs_total: 6
+  pkgs_completed: 6
+  tasks_total: 5
+  tasks_completed: 5
+  tests_ft_equipe: 14
+  tests_ft_equipe_passed: 14
+  acceptance_criteria_covered: 5
+  acceptance_criteria_total: 5
+
+metadata:
+  created_at: "2026-07-14T10:45:00-03:00"
+  updated_at: "2026-07-14T11:15:00-03:00"
+  closed_at: "2026-07-14T11:15:00-03:00"

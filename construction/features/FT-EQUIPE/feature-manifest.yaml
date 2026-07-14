@@ -1,0 +1,114 @@
+# Feature Manifest — FT-EQUIPE (SSOD v3.2)
+
+version: 2
+role: ssod
+
+feature:
+  id: equipe
+  code: FT-EQUIPE
+  name: Equipe
+  description: >
+    Cadastro, consulta, listagem, atualização e ativação/inativação de Equipes
+    organizacionais vinculadas a Áreas, com líder opcional.
+
+status:
+  phase: closed
+
+specification:
+  path: ../../../specs/features/equipe/
+  documents:
+    specification: specification.md
+    api: api.md
+    use_cases: use-cases.md
+    tasks: tasks.md
+    acceptance_tests: acceptance-tests.md
+    traceability: traceability.md
+
+construction:
+  path: .
+  root: construction/features/FT-EQUIPE/
+
+implementation:
+  backend:
+    - ../../../backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/
+  frontend: []
+
+artifacts:
+  manifest: feature-manifest.yaml
+  state: construction-state.yaml
+  execution_plan: execution-plan.md
+  session: session.md
+  closure: closure-report.md
+  review: review/
+  reports: reports/
+  pkgs:
+    - pkg-01/status.md
+    - pkg-02/status.md
+    - pkg-03/status.md
+    - pkg-04/status.md
+    - pkg-05/status.md
+    - pkg-06/status.md
+
+dependencies:
+  construction:
+    - code: platform-foundation
+      path: ../../platform-foundation/
+      manifest: ../../platform-foundation/feature-manifest.yaml
+  features:
+    - code: FT-AUTH
+      path: ../FT-AUTH/
+      manifest: ../FT-AUTH/feature-manifest.yaml
+    - code: FT-AREA
+      path: ../FT-AREA/
+      manifest: ../FT-AREA/feature-manifest.yaml
+  foundation:
+    - ../../../specs/foundation/
+    - ../../../specs/features/FEATURE_BASELINE.md
+
+engineering:
+  implementation:
+    - ../../../docs/implementation/
+  construction:
+    - ../../../docs/construction/
+  architecture:
+    - ../../../docs/architecture/
+
+owners:
+  architect: platform-architect
+  implementer: feature-implementer
+  orchestrator: construction-orchestrator
+
+metrics:
+  pkgs: 6
+  stories: null
+  tasks: 5
+
+pkgs:
+  - id: pkg-01
+    name: Equipe Persistence Evolution
+  - id: pkg-02
+    name: Create Equipe
+  - id: pkg-03
+    name: Read & List
+  - id: pkg-04
+    name: Update Equipe
+  - id: pkg-05
+    name: Status Change
+  - id: pkg-06
+    name: Acceptance & Closure
+
+invalidation:
+  triggers:
+    - specification
+    - api
+    - use_cases
+    - domain
+    - decisions
+    - adr
+    - pkg_added
+    - pkg_removed
+    - manifest
+
+discovery:
+  version: 1
+  rule: SSOD-01 — este manifesto é o ponto de entrada obrigatório para localizar artefatos da Feature

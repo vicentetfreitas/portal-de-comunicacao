@@ -13,4 +13,6 @@ public interface ColaboradorRepository extends JpaRepository<ColaboradorEntity, 
     Optional<ColaboradorEntity> findByEmailIgnoreCase(String email);
 
     Optional<ColaboradorEntity> findByZimbraId(String zimbraId);
+
+    boolean existsByEquipeIdAndAtivo(Long equipeId, String ativo);
 }
