@@ -1,0 +1,67 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:h2:mem:portal-test;MODE=Oracle;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;INIT=CREATE SCHEMA IF NOT EXISTS unmportcom
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+
+application:
+  name: portal-comunicacao
+  version: 0.0.1-SNAPSHOT
+  timezone: UTC
+  locale: pt-BR
+  security:
+    jwt-issuer: portal-comunicacao
+    jwt-secret: test-jwt-secret-32-characters-minimum
+    jwt-access-ttl-minutes: 15
+    refresh-token-ttl-hours: 8
+    refresh-token-remember-me-days: 30
+    max-concurrent-sessions: 3
+    csrf-enabled: true
+    cors-allowed-origins:
+      - http://localhost:4200
+  auth:
+    frontend-redirect-url: http://localhost:4200/
+    default-federation-id: 1
+    session-administrator-emails:
+      - colaborador@unimedceara.com.br
+  persistence:
+    pool-max-size: 2
+    pool-min-idle: 1
+    show-sql: false
+    ddl-auto: create-drop
+    enabled: true
+  integration:
+    connect-timeout-ms: 5000
+    read-timeout-ms: 5000
+    max-retry-attempts: 3
+    circuit-breaker-threshold: 50
+  zimbra:
+    auth-url: http://localhost/zimbra/auth
+    validate-url: http://localhost/zimbra/validate
+    timeout-ms: 10000
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+
+logging:
+  level:
+    root: WARN

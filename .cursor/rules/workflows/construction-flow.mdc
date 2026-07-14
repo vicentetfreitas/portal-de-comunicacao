@@ -1,0 +1,84 @@
+---
+description: Construction Workflow
+alwaysApply: false
+---
+
+# Objetivo
+
+Definir o fluxo operacional da fase de Construction do Portal de Comunicação.
+
+**Padrão permanente:** workflow orientado à Feature — ver `feature-construction-workflow.mdc` e `construction/11-feature-execution-workflow.md`.
+
+---
+
+# Modelo em Três Fases
+
+```text
+Sessão da Feature        (uma vez — carregar contexto)
+        ↓
+Execução dos PKGs        (focado — status local)
+        ↓
+Encerramento da Feature  (uma vez — docs, build, audit)
+```
+
+---
+
+# Fase 1 — Sessão da Feature
+
+Identificar a Feature e carregar artefatos **uma única vez**.
+
+Verificar:
+
+- Specification, Use Cases, API, Acceptance Tests, Tasks
+- `construction/features/<FEATURE_CODE>/session.md` produzido
+- Definition of Ready atendida
+
+Sem sessão concluída, nenhum PKG deve iniciar.
+
+---
+
+# Fase 2 — Execução dos PKGs
+
+Implementar exclusivamente o escopo do PKG.
+
+Durante esta fase:
+
+- seguir padrões em `docs/`
+- reutilizar contexto de `session.md` — **não reler** documentação já carregada
+- executar validações **locais** (testes do módulo, compilação)
+- atualizar `construction/features/<FEATURE_CODE>/construction-state.yaml` e `pkg-XX/status.md`
+
+**Proibido durante PKG:**
+
+- atualizar `09-progress.md`, `review.md`, readiness, changelog global
+- `mvn clean verify` global
+- review, audit, relatório consolidado
+
+---
+
+# Fase 3 — Encerramento da Feature
+
+Após último PKG em `DONE`:
+
+- `mvn clean verify` e testes completos
+- review e audit consolidados
+- Feature Readiness Review
+- atualizar documentação compartilhada
+- gerar `closure-report.md`
+
+---
+
+# Tratamento de Bloqueios
+
+Bloqueios locais → `pkg-XX/status.md`.
+
+Bloqueios que impedem a Feature → registrar e interromper até resolução.
+
+---
+
+# Regra de Ouro
+
+```text
+specs/ → docs/ → código
+Carregar uma vez → implementar em PKGs → consolidar uma vez
+```

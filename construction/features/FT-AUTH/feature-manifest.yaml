@@ -1,0 +1,111 @@
+# Feature Manifest — FT-AUTH (SSOD v3.2)
+# Single Source of Discovery — consultar ANTES de qualquer outro artefato da Feature.
+# Localização: construction/features/FT-AUTH/feature-manifest.yaml
+
+version: 2
+role: ssod
+
+feature:
+  id: authentication
+  code: FT-AUTH
+  name: Authentication
+  description: >
+    Autenticação stateless via Zimbra, JWT próprio, Refresh Token em cookies HttpOnly
+    e integração com a Platform Foundation.
+
+status:
+  phase: closed
+
+specification:
+  path: ../../../specs/features/authentication/
+  documents:
+    specification: specification.md
+    api: api.md
+    use_cases: use-cases.md
+    tasks: tasks.md
+    decisions: decisions.md
+    acceptance_tests: acceptance-tests.md
+
+construction:
+  path: .
+  root: construction/features/FT-AUTH/
+
+implementation:
+  backend:
+    - ../../../backend/src/main/java/
+  frontend: []
+
+artifacts:
+  manifest: feature-manifest.yaml
+  state: construction-state.yaml
+  execution_plan: execution-plan.md
+  session: session.md
+  closure: closure-report.md
+  review: review/
+  reports: reports/
+  pkgs:
+    - pkg-01/status.md
+    - pkg-02/status.md
+    - pkg-03/status.md
+    - pkg-04/status.md
+    - pkg-05/status.md
+    - pkg-06/status.md
+
+dependencies:
+  construction:
+    - code: platform-foundation
+      path: ../../platform-foundation/
+      manifest: ../../platform-foundation/feature-manifest.yaml
+  features: []
+  foundation:
+    - ../../../specs/foundation/
+    - ../../../specs/features/FEATURE_BASELINE.md
+
+engineering:
+  implementation:
+    - ../../../docs/implementation/
+  construction:
+    - ../../../docs/construction/
+  architecture:
+    - ../../../docs/architecture/
+    - ../../../specs/architecture/authentication-architecture.md
+
+owners:
+  architect: platform-architect
+  implementer: feature-implementer
+  orchestrator: construction-orchestrator
+
+metrics:
+  pkgs: 6
+  stories: null
+  tasks: null
+
+pkgs:
+  - id: pkg-01
+    name: Security & Tokens
+  - id: pkg-02
+    name: Zimbra Integration
+  - id: pkg-03
+    name: Login & Callback
+  - id: pkg-04
+    name: Session & Refresh
+  - id: pkg-05
+    name: Identity & Access
+  - id: pkg-06
+    name: Audit & Closure
+
+invalidation:
+  triggers:
+    - specification
+    - api
+    - use_cases
+    - domain
+    - decisions
+    - adr
+    - pkg_added
+    - pkg_removed
+    - manifest
+
+discovery:
+  version: 1
+  rule: SSOD-01 — este manifesto é o ponto de entrada obrigatório para localizar artefatos da Feature

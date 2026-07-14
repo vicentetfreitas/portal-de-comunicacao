@@ -1,0 +1,96 @@
+# Feature Manifest — Template (SSOD v3.2)
+# Localização: construction/features/<FEATURE_CODE>/feature-manifest.yaml
+#           ou construction/platform-foundation/feature-manifest.yaml (fundação)
+# Papel: Single Source of Discovery (SSOD) — consultar ANTES de qualquer outro artefato.
+# O agente NUNCA deve usar paths hardcoded — toda navegação inicia aqui.
+
+version: 2
+role: ssod
+
+feature:
+  id: {{FEATURE_SLUG}}              # slug da camada specs (ex.: authentication)
+  code: {{FEATURE_CODE}}            # identificador oficial (ex.: FT-AUTH)
+  name: {{FEATURE_NAME}}
+  description: {{FEATURE_DESCRIPTION}}
+
+status:
+  phase: not_started                # espelho inicial — estado operacional em construction-state.yaml
+
+specification:
+  path: ../../../specs/features/{{FEATURE_SLUG}}/
+  documents:
+    specification: specification.md
+    api: api.md
+    use_cases: use-cases.md
+    tasks: tasks.md
+    decisions: decisions.md
+    acceptance_tests: acceptance-tests.md
+
+construction:
+  path: .
+  root: construction/features/{{FEATURE_CODE}}/
+
+implementation:
+  backend:
+    - ../../../backend/src/main/java/
+  frontend: []
+
+artifacts:
+  manifest: feature-manifest.yaml
+  state: construction-state.yaml
+  execution_plan: execution-plan.md
+  session: session.md
+  closure: closure-report.md
+  review: review/
+  reports: reports/
+  pkgs:
+    - pkg-01/status.md
+    - pkg-02/status.md
+
+dependencies:
+  construction:
+    - code: platform-foundation
+      path: ../../platform-foundation/
+      manifest: ../../platform-foundation/feature-manifest.yaml
+  features: []
+  foundation:
+    - ../../../specs/foundation/
+    - ../../../specs/features/FEATURE_BASELINE.md
+
+engineering:
+  implementation:
+    - ../../../docs/implementation/
+  construction:
+    - ../../../docs/construction/
+  architecture:
+    - ../../../docs/architecture/
+
+owners:
+  architect: platform-architect
+  implementer: feature-implementer
+  orchestrator: construction-orchestrator
+
+metrics:
+  pkgs: 0
+  stories: null
+  tasks: null
+
+pkgs:
+  - id: pkg-01
+    name: {{PKG_01_NAME}}
+
+invalidation:
+  triggers:
+    - specification
+    - api
+    - use_cases
+    - domain
+    - decisions
+    - adr
+    - pkg_added
+    - pkg_removed
+    - manifest
+
+discovery:
+  version: 1
+  rule: SSOD-01 — este manifesto é o ponto de entrada obrigatório para localizar artefatos da Feature

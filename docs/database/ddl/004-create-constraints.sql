@@ -1,0 +1,727 @@
+--------------------------------------------------------------------------------
+-- Projeto : Portal de Comunicação
+-- Arquivo : 004-create-constraints.sql
+-- Versão  : 2.0
+--
+-- Objetivo
+--   Criar todas as restrições do banco de dados.
+--
+-- Contém
+--   Primary Keys
+--   Foreign Keys
+--   Unique Constraints
+--   Check Constraints
+--
+-- Banco
+--   Oracle Database 11g+
+--
+-- Dependências
+--   001-create-users.sql
+--   002-create-sequences.sql
+--   003-create-tables.sql
+--------------------------------------------------------------------------------
+
+SET DEFINE OFF
+SET SERVEROUTPUT ON
+
+PROMPT ==========================================================
+PROMPT Portal de Comunicação
+PROMPT Criação das Constraints
+PROMPT ==========================================================
+
+--------------------------------------------------------------------------------
+-- ORGANIZAÇÃO CORPORATIVA
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- FEDERACAO
+--------------------------------------------------------------------------------
+
+ALTER TABLE FEDERACAO
+    ADD CONSTRAINT PK_FEDERACAO
+    PRIMARY KEY (COD_FEDERACAO);
+
+ALTER TABLE FEDERACAO
+    ADD CONSTRAINT UK_FEDERACAO_SIGLA
+    UNIQUE (SIG_FEDERACAO);
+
+ALTER TABLE FEDERACAO
+    ADD CONSTRAINT UK_FEDERACAO_COD_UNIMED
+    UNIQUE (COD_UNIMED);
+
+ALTER TABLE FEDERACAO
+    ADD CONSTRAINT CK_FEDERACAO_ATIVO
+    CHECK (FLG_ATIVO IN ('S','N'));
+
+--------------------------------------------------------------------------------
+-- SINGULAR
+--------------------------------------------------------------------------------
+
+ALTER TABLE SINGULAR
+    ADD CONSTRAINT PK_SINGULAR
+    PRIMARY KEY (COD_SINGULAR);
+
+ALTER TABLE SINGULAR
+    ADD CONSTRAINT UK_SINGULAR_SIGLA
+    UNIQUE (SIG_SINGULAR);
+
+ALTER TABLE SINGULAR
+    ADD CONSTRAINT UK_SINGULAR_COD_UNIMED
+    UNIQUE (COD_UNIMED);
+
+ALTER TABLE SINGULAR
+    ADD CONSTRAINT CK_SINGULAR_ATIVO
+    CHECK (FLG_ATIVO IN ('S','N'));
+
+ALTER TABLE SINGULAR
+    ADD CONSTRAINT FK_SINGULAR_FEDERACAO
+    FOREIGN KEY (COD_FEDERACAO)
+    REFERENCES FEDERACAO (COD_FEDERACAO);
+
+--------------------------------------------------------------------------------
+-- ENDERECO
+--------------------------------------------------------------------------------
+
+ALTER TABLE ENDERECO
+    ADD CONSTRAINT PK_ENDERECO
+    PRIMARY KEY (COD_ENDERECO);
+
+ALTER TABLE ENDERECO
+    ADD CONSTRAINT FK_ENDERECO_FEDERACAO
+    FOREIGN KEY (COD_FEDERACAO)
+    REFERENCES FEDERACAO (COD_FEDERACAO);
+
+ALTER TABLE ENDERECO
+    ADD CONSTRAINT FK_ENDERECO_SINGULAR
+    FOREIGN KEY (COD_SINGULAR)
+    REFERENCES SINGULAR (COD_SINGULAR);
+
+ALTER TABLE ENDERECO
+    ADD CONSTRAINT CK_ENDERECO_PROPRIETARIO
+    CHECK (
+        (COD_FEDERACAO IS NOT NULL AND COD_SINGULAR IS NULL)
+        OR
+        (COD_FEDERACAO IS NULL AND COD_SINGULAR IS NOT NULL)
+    );
+
+ALTER TABLE ENDERECO
+    ADD CONSTRAINT CK_ENDERECO_PRINCIPAL
+    CHECK (FLG_PRINCIPAL IN ('S', 'N'));
+
+--------------------------------------------------------------------------------
+-- CONTATO
+--------------------------------------------------------------------------------
+
+ALTER TABLE CONTATO
+    ADD CONSTRAINT PK_CONTATO
+    PRIMARY KEY (COD_CONTATO);
+
+ALTER TABLE CONTATO
+    ADD CONSTRAINT FK_CONTATO_FEDERACAO
+    FOREIGN KEY (COD_FEDERACAO)
+    REFERENCES FEDERACAO (COD_FEDERACAO);
+
+ALTER TABLE CONTATO
+    ADD CONSTRAINT FK_CONTATO_SINGULAR
+    FOREIGN KEY (COD_SINGULAR)
+    REFERENCES SINGULAR (COD_SINGULAR);
+
+ALTER TABLE CONTATO
+    ADD CONSTRAINT CK_CONTATO_PROPRIETARIO
+    CHECK (
+        (
+            CASE WHEN COD_FEDERACAO IS NOT NULL THEN 1 ELSE 0 END
+          + CASE WHEN COD_SINGULAR IS NOT NULL THEN 1 ELSE 0 END
+          + CASE WHEN COD_AREA IS NOT NULL THEN 1 ELSE 0 END
+          + CASE WHEN COD_EQUIPE IS NOT NULL THEN 1 ELSE 0 END
+          + CASE WHEN COD_COLABORADOR IS NOT NULL THEN 1 ELSE 0 END
+        ) = 1
+    );
+
+ALTER TABLE CONTATO
+    ADD CONSTRAINT CK_CONTATO_PRINCIPAL
+    CHECK (FLG_PRINCIPAL IN ('S', 'N'));
+
+--------------------------------------------------------------------------------
+-- AREA
+--------------------------------------------------------------------------------
+
+ALTER TABLE AREA
+    ADD CONSTRAINT PK_AREA
+    PRIMARY KEY (COD_AREA);
+
+ALTER TABLE AREA
+    ADD CONSTRAINT CK_AREA_ATIVO
+    CHECK (FLG_ATIVO IN ('S','N'));
+
+ALTER TABLE AREA
+    ADD CONSTRAINT FK_AREA_SINGULAR
+    FOREIGN KEY (COD_SINGULAR)
+    REFERENCES SINGULAR (COD_SINGULAR);
+
+ALTER TABLE AREA
+    ADD CONSTRAINT FK_AREA_PAI
+    FOREIGN KEY (COD_AREA_PAI)
+    REFERENCES AREA (COD_AREA);
+
+--------------------------------------------------------------------------------
+-- EQUIPE
+--------------------------------------------------------------------------------
+
+ALTER TABLE EQUIPE
+    ADD CONSTRAINT PK_EQUIPE
+    PRIMARY KEY (COD_EQUIPE);
+
+ALTER TABLE EQUIPE
+    ADD CONSTRAINT CK_EQUIPE_ATIVO
+    CHECK (FLG_ATIVO IN ('S','N'));
+
+ALTER TABLE EQUIPE
+    ADD CONSTRAINT FK_EQUIPE_AREA
+    FOREIGN KEY (COD_AREA)
+    REFERENCES AREA (COD_AREA);
+
+ALTER TABLE CONTATO
+    ADD CONSTRAINT FK_CONTATO_AREA
+    FOREIGN KEY (COD_AREA)
+    REFERENCES AREA (COD_AREA);
+
+ALTER TABLE CONTATO
+    ADD CONSTRAINT FK_CONTATO_EQUIPE
+    FOREIGN KEY (COD_EQUIPE)
+    REFERENCES EQUIPE (COD_EQUIPE);
+
+--------------------------------------------------------------------------------
+-- COLABORADOR
+--------------------------------------------------------------------------------
+
+ALTER TABLE COLABORADOR
+    ADD CONSTRAINT PK_COLABORADOR
+    PRIMARY KEY (COD_COLABORADOR); -- Feito
+
+ALTER TABLE COLABORADOR
+    ADD CONSTRAINT UK_COLABORADOR_EMAIL -- Feito
+    UNIQUE (DES_EMAIL);
+
+ALTER TABLE COLABORADOR
+    ADD CONSTRAINT UK_COLABORADOR_CPF 
+    UNIQUE (NUM_CPF); -- Identificado Inválido
+
+ALTER TABLE COLABORADOR
+    ADD CONSTRAINT UK_COLABORADOR_ZIMBRA
+    UNIQUE (ID_ZIMBRA);
+
+ALTER TABLE COLABORADOR
+    ADD CONSTRAINT CK_COLABORADOR_ATIVO
+    CHECK (FLG_ATIVO IN ('S','N'));
+
+ALTER TABLE COLABORADOR
+    ADD CONSTRAINT FK_COLABORADOR_FEDERACAO
+    FOREIGN KEY (COD_FEDERACAO)
+    REFERENCES FEDERACAO (COD_FEDERACAO);
+
+ALTER TABLE COLABORADOR
+    ADD CONSTRAINT FK_COLABORADOR_SINGULAR
+    FOREIGN KEY (COD_SINGULAR)
+    REFERENCES SINGULAR (COD_SINGULAR);
+
+ALTER TABLE COLABORADOR
+    ADD CONSTRAINT FK_COLABORADOR_AREA
+    FOREIGN KEY (COD_AREA)
+    REFERENCES AREA (COD_AREA);
+
+ALTER TABLE COLABORADOR
+    ADD CONSTRAINT FK_COLABORADOR_EQUIPE
+    FOREIGN KEY (COD_EQUIPE)
+    REFERENCES EQUIPE (COD_EQUIPE);
+
+ALTER TABLE COLABORADOR
+    ADD CONSTRAINT FK_COLABORADOR_GESTOR
+    FOREIGN KEY (COD_GESTOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+ALTER TABLE CONTATO
+    ADD CONSTRAINT FK_CONTATO_COLABORADOR
+    FOREIGN KEY (COD_COLABORADOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+ALTER TABLE AREA
+    ADD CONSTRAINT FK_AREA_GESTOR
+    FOREIGN KEY (COD_GESTOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+ALTER TABLE EQUIPE
+    ADD CONSTRAINT FK_EQUIPE_LIDER
+    FOREIGN KEY (COD_LIDER)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+--------------------------------------------------------------------------------
+-- ONBOARDING_SOLICITACAO
+--------------------------------------------------------------------------------
+
+ALTER TABLE ONBOARDING_SOLICITACAO
+    ADD CONSTRAINT PK_ONBOARDING_SOLICITACAO
+    PRIMARY KEY (COD_ONBOARDING_SOLICITACAO);
+
+ALTER TABLE ONBOARDING_SOLICITACAO
+    ADD CONSTRAINT CK_ONBOARDING_STATUS
+    CHECK (STA_SOLICITACAO IN
+           ('PENDENTE','APROVADA','REJEITADA'));
+
+ALTER TABLE ONBOARDING_SOLICITACAO
+    ADD CONSTRAINT FK_COLABORADOR_ONBOARDING
+    FOREIGN KEY (COD_COLABORADOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+PROMPT
+PROMPT Bloco Organização Corporativa concluído.
+PROMPT
+
+--------------------------------------------------------------------------------
+-- GESTÃO DOCUMENTAL
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- CATEGORIA_DOCUMENTAL
+--------------------------------------------------------------------------------
+
+ALTER TABLE CATEGORIA_DOCUMENTAL
+    ADD CONSTRAINT PK_CATEGORIA_DOCUMENTAL
+    PRIMARY KEY (COD_CATEGORIA_DOCUMENTAL);
+
+ALTER TABLE CATEGORIA_DOCUMENTAL
+    ADD CONSTRAINT UK_CATEGORIA_DOCUMENTAL_NOME
+    UNIQUE (NOM_CATEGORIA);
+
+ALTER TABLE CATEGORIA_DOCUMENTAL
+    ADD CONSTRAINT CK_CATEGORIA_DOCUMENTAL_ATIVO
+    CHECK (FLG_ATIVO IN ('S','N'));
+
+--------------------------------------------------------------------------------
+-- PASTA
+--------------------------------------------------------------------------------
+
+ALTER TABLE PASTA
+    ADD CONSTRAINT PK_PASTA
+    PRIMARY KEY (COD_PASTA);
+
+ALTER TABLE PASTA
+    ADD CONSTRAINT CK_PASTA_HERDA_PERMISSAO
+    CHECK (FLG_HERDA_PERMISSAO IN ('S','N'));
+
+ALTER TABLE PASTA
+    ADD CONSTRAINT CK_PASTA_ATIVO
+    CHECK (FLG_ATIVO IN ('S','N'));
+
+ALTER TABLE PASTA
+    ADD CONSTRAINT FK_PASTA_PAI
+    FOREIGN KEY (COD_PASTA_PAI)
+    REFERENCES PASTA (COD_PASTA);
+
+--------------------------------------------------------------------------------
+-- DOCUMENTO
+--------------------------------------------------------------------------------
+
+ALTER TABLE DOCUMENTO
+    ADD CONSTRAINT PK_DOCUMENTO
+    PRIMARY KEY (COD_DOCUMENTO);
+
+ALTER TABLE DOCUMENTO
+    ADD CONSTRAINT CK_DOCUMENTO_STATUS
+    CHECK (STA_DOCUMENTO IN
+           ('ATIVO','ARQUIVADO','EXPIRADO'));
+
+ALTER TABLE DOCUMENTO
+    ADD CONSTRAINT FK_DOCUMENTO_CATEGORIA
+    FOREIGN KEY (COD_CATEGORIA_DOCUMENTAL)
+    REFERENCES CATEGORIA_DOCUMENTAL (COD_CATEGORIA_DOCUMENTAL); -- Não há chave exclusiva ou primária compatível para estar lista de colunas
+
+ALTER TABLE DOCUMENTO
+    ADD CONSTRAINT FK_DOCUMENTO_PASTA
+    FOREIGN KEY (COD_PASTA)
+    REFERENCES PASTA (COD_PASTA);
+
+ALTER TABLE DOCUMENTO
+    ADD CONSTRAINT FK_DOCUMENTO_COLABORADOR
+    FOREIGN KEY (COD_COLABORADOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+--------------------------------------------------------------------------------
+-- ARQUIVO_BINARIO
+--------------------------------------------------------------------------------
+
+ALTER TABLE ARQUIVO_BINARIO
+    ADD CONSTRAINT PK_ARQUIVO_BINARIO
+    PRIMARY KEY (COD_ARQUIVO_BINARIO);
+
+ALTER TABLE ARQUIVO_BINARIO
+    ADD CONSTRAINT UK_ARQUIVO_HASH
+    UNIQUE (HASH_ARQUIVO);
+
+--------------------------------------------------------------------------------
+-- DOCUMENTO_VERSAO
+--------------------------------------------------------------------------------
+
+ALTER TABLE DOCUMENTO_VERSAO
+    ADD CONSTRAINT PK_DOCUMENTO_VERSAO
+    PRIMARY KEY (COD_DOCUMENTO_VERSAO);
+
+ALTER TABLE DOCUMENTO_VERSAO
+    ADD CONSTRAINT UK_DOCUMENTO_VERSAO
+    UNIQUE (COD_DOCUMENTO, NUM_VERSAO);
+
+ALTER TABLE DOCUMENTO_VERSAO
+    ADD CONSTRAINT CK_DOCUMENTO_VERSAO_ATUAL
+    CHECK (FLG_VERSAO_ATUAL IN ('S','N'));
+
+ALTER TABLE DOCUMENTO_VERSAO
+    ADD CONSTRAINT FK_DOC_DOC_VERS
+    FOREIGN KEY (COD_DOCUMENTO)
+    REFERENCES DOCUMENTO (COD_DOCUMENTO);
+
+ALTER TABLE DOCUMENTO_VERSAO
+    ADD CONSTRAINT FK_ARQUIVO_DOCUMENTO_VERSAO
+    FOREIGN KEY (COD_ARQUIVO_BINARIO)
+    REFERENCES ARQUIVO_BINARIO (COD_ARQUIVO_BINARIO);
+
+ALTER TABLE DOCUMENTO_VERSAO
+    ADD CONSTRAINT FK_COLAB_DOC_VERS
+    FOREIGN KEY (COD_COLABORADOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+--------------------------------------------------------------------------------
+-- COMPARTILHAMENTO
+--------------------------------------------------------------------------------
+
+ALTER TABLE COMPARTILHAMENTO
+    ADD CONSTRAINT PK_COMPARTILHAMENTO
+    PRIMARY KEY (COD_COMPARTILHAMENTO);
+
+ALTER TABLE COMPARTILHAMENTO
+    ADD CONSTRAINT UK_COMPARTILHAMENTO
+    UNIQUE
+    (
+        TIP_ORIGEM,
+        COD_ORIGEM,
+        TIP_DESTINATARIO,
+        COD_DESTINATARIO,
+        TIP_ACESSO
+    );
+
+ALTER TABLE COMPARTILHAMENTO
+    ADD CONSTRAINT CK_COMPARTILHAMENTO_ORIGEM
+    CHECK
+    (
+        TIP_ORIGEM IN
+        (
+            'DOCUMENTO',
+            'PASTA',
+            'COMUNICADO'
+        )
+    );
+
+ALTER TABLE COMPARTILHAMENTO
+    ADD CONSTRAINT CK_COMPARTILHAMENTO_DESTINO
+    CHECK
+    (
+        TIP_DESTINATARIO IN
+        (
+            'FEDERACAO',
+            'SINGULAR',
+            'AREA',
+            'EQUIPE',
+            'COLABORADOR'
+        )
+    );
+
+ALTER TABLE COMPARTILHAMENTO
+    ADD CONSTRAINT CK_COMPARTILHAMENTO_ACESSO
+    CHECK
+    (
+        TIP_ACESSO IN
+        (
+            'LEITURA',
+            'DOWNLOAD',
+            'EDICAO',
+            'ADMINISTRACAO'
+        )
+    );
+
+PROMPT
+PROMPT Bloco Gestão Documental concluído.
+PROMPT
+
+--------------------------------------------------------------------------------
+-- CONTROLE DE ACESSO
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- AUTH_SESSAO
+--------------------------------------------------------------------------------
+
+ALTER TABLE AUTH_SESSAO
+    ADD CONSTRAINT PK_AUTH_SESSAO
+    PRIMARY KEY (COD_SESSAO); -- A tabela só pode ter uma chave primária
+
+ALTER TABLE AUTH_SESSAO
+    ADD CONSTRAINT UK_AUTH_SESSAO_ID
+    UNIQUE (ID_SESSAO);
+
+ALTER TABLE AUTH_SESSAO
+    ADD CONSTRAINT UK_AUTH_SESSAO_HASH
+    UNIQUE (HASH_REFRESH_TOKEN);
+
+ALTER TABLE AUTH_SESSAO
+    ADD CONSTRAINT FK_AUTH_SESSAO_COLABORADOR
+    FOREIGN KEY (COD_COLABORADOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+ALTER TABLE AUTH_SESSAO
+    ADD CONSTRAINT CK_AUTH_SESSAO_FLG_REMEMBER
+    CHECK (FLG_REMEMBER_ME IN ('S','N'));
+
+ALTER TABLE AUTH_SESSAO
+    ADD CONSTRAINT CK_AUTH_SESSAO_FLG_REVOGADA
+    CHECK (FLG_REVOGADA IN ('S','N'));
+
+--------------------------------------------------------------------------------
+-- PAPEL
+--------------------------------------------------------------------------------
+
+ALTER TABLE PAPEL
+    ADD CONSTRAINT PK_PAPEL
+    PRIMARY KEY (COD_PAPEL);
+
+ALTER TABLE PAPEL
+    ADD CONSTRAINT UK_PAPEL_NOME
+    UNIQUE (NOM_PAPEL);
+
+ALTER TABLE PAPEL
+    ADD CONSTRAINT CK_PAPEL_ATIVO
+    CHECK (FLG_ATIVO IN ('S','N'));
+
+--------------------------------------------------------------------------------
+-- PAPEL_ATRIBUICAO
+--------------------------------------------------------------------------------
+
+ALTER TABLE PAPEL_ATRIBUICAO
+    ADD CONSTRAINT PK_PAPEL_ATRIBUICAO
+    PRIMARY KEY (COD_PAPEL_ATRIBUICAO);
+
+ALTER TABLE PAPEL_ATRIBUICAO
+    ADD CONSTRAINT CK_PAPEL_ATRIBUICAO_ATIVO
+    CHECK (FLG_ATIVO IN ('S','N'));
+
+ALTER TABLE PAPEL_ATRIBUICAO
+    ADD CONSTRAINT FK_PAPEL_ATRIB_COLAB
+    FOREIGN KEY (COD_COLABORADOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+ALTER TABLE PAPEL_ATRIBUICAO
+    ADD CONSTRAINT FK_PAPEL_ATRIBUICAO_PAPEL
+    FOREIGN KEY (COD_PAPEL)
+    REFERENCES PAPEL (COD_PAPEL);
+
+ALTER TABLE PAPEL_ATRIBUICAO
+    ADD CONSTRAINT FK_PAPEL_ATRIBUICAO_FEDERACAO
+    FOREIGN KEY (COD_FEDERACAO)
+    REFERENCES FEDERACAO (COD_FEDERACAO);
+
+ALTER TABLE PAPEL_ATRIBUICAO
+    ADD CONSTRAINT FK_PAPEL_ATRIBUICAO_SINGULAR
+    FOREIGN KEY (COD_SINGULAR)
+    REFERENCES SINGULAR (COD_SINGULAR);
+
+ALTER TABLE PAPEL_ATRIBUICAO
+    ADD CONSTRAINT FK_PAPEL_ATRIBUICAO_AREA
+    FOREIGN KEY (COD_AREA)
+    REFERENCES AREA (COD_AREA);
+
+ALTER TABLE PAPEL_ATRIBUICAO
+    ADD CONSTRAINT FK_PAPEL_ATRIBUICAO_EQUIPE
+    FOREIGN KEY (COD_EQUIPE)
+    REFERENCES EQUIPE (COD_EQUIPE);
+
+--------------------------------------------------------------------------------
+-- PERMISSAO_PASTA
+--------------------------------------------------------------------------------
+
+ALTER TABLE PERMISSAO_PASTA
+    ADD CONSTRAINT PK_PERMISSAO_PASTA
+    PRIMARY KEY (COD_PERMISSAO_PASTA);
+
+ALTER TABLE PERMISSAO_PASTA
+    ADD CONSTRAINT FK_PERMISSAO_PASTA_PASTA
+    FOREIGN KEY (COD_PASTA)
+    REFERENCES PASTA (COD_PASTA);
+
+ALTER TABLE PERMISSAO_PASTA
+    ADD CONSTRAINT CK_PERMISSAO_PASTA_DESTINO
+    CHECK
+    (
+        TIP_DESTINATARIO IN
+        (
+            'FEDERACAO',
+            'SINGULAR',
+            'AREA',
+            'EQUIPE',
+            'COLABORADOR'
+        )
+    );
+
+ALTER TABLE PERMISSAO_PASTA
+    ADD CONSTRAINT CK_PERMISSAO_PASTA_ACESSO
+    CHECK
+    (
+        TIP_ACESSO IN
+        (
+            'LEITURA',
+            'DOWNLOAD',
+            'EDICAO',
+            'ADMINISTRACAO'
+        )
+    );
+
+--------------------------------------------------------------------------------
+-- SOLICITACAO_PERMISSAO
+--------------------------------------------------------------------------------
+
+ALTER TABLE SOLICITACAO_PERMISSAO
+    ADD CONSTRAINT PK_SOLICITACAO_PERMISSAO
+    PRIMARY KEY (COD_SOLICITACAO_PERMISSAO);
+
+ALTER TABLE SOLICITACAO_PERMISSAO
+    ADD CONSTRAINT CK_SOLICITACAO_STATUS
+    CHECK
+    (
+        STA_SOLICITACAO IN
+        (
+            'PENDENTE',
+            'APROVADA',
+            'REJEITADA'
+        )
+    );
+
+ALTER TABLE SOLICITACAO_PERMISSAO
+    ADD CONSTRAINT FK_SOLICITACAO_COLABORADOR
+    FOREIGN KEY (COD_COLABORADOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+ALTER TABLE SOLICITACAO_PERMISSAO
+    ADD CONSTRAINT FK_SOLICITACAO_PASTA
+    FOREIGN KEY (COD_PASTA)
+    REFERENCES PASTA (COD_PASTA);
+
+ALTER TABLE SOLICITACAO_PERMISSAO
+    ADD CONSTRAINT FK_SOLICITACAO_DOCUMENTO
+    FOREIGN KEY (COD_DOCUMENTO)
+    REFERENCES DOCUMENTO (COD_DOCUMENTO);
+
+--------------------------------------------------------------------------------
+-- REGISTRO_AUDITORIA
+--------------------------------------------------------------------------------
+
+ALTER TABLE REGISTRO_AUDITORIA
+    ADD CONSTRAINT PK_REGISTRO_AUDITORIA
+    PRIMARY KEY (COD_REGISTRO_AUDITORIA);
+
+ALTER TABLE REGISTRO_AUDITORIA
+    ADD CONSTRAINT FK_REG_AUDIT_COLAB
+    FOREIGN KEY (COD_COLABORADOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+PROMPT
+PROMPT Bloco Controle de Acesso concluído.
+PROMPT  
+
+--------------------------------------------------------------------------------
+-- COMUNICAÇÃO
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- COMUNICADO
+--------------------------------------------------------------------------------
+
+ALTER TABLE COMUNICADO
+    ADD CONSTRAINT PK_COMUNICADO
+    PRIMARY KEY (COD_COMUNICADO);
+
+ALTER TABLE COMUNICADO
+    ADD CONSTRAINT FK_COMUNICADO_COLABORADOR
+    FOREIGN KEY (COD_COLABORADOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+ALTER TABLE COMUNICADO
+    ADD CONSTRAINT CK_COMUNICADO_PUBLICADO
+    CHECK (FLG_PUBLICADO IN ('S','N'));
+
+ALTER TABLE COMUNICADO
+    ADD CONSTRAINT CK_COMUNICADO_DESTAQUE
+    CHECK (FLG_DESTAQUE IN ('S','N'));
+
+--------------------------------------------------------------------------------
+-- NOTIFICACAO
+--------------------------------------------------------------------------------
+
+ALTER TABLE NOTIFICACAO
+    ADD CONSTRAINT PK_NOTIFICACAO
+    PRIMARY KEY (COD_NOTIFICACAO);
+
+ALTER TABLE NOTIFICACAO
+    ADD CONSTRAINT FK_NOTIFICACAO_COLABORADOR
+    FOREIGN KEY (COD_COLABORADOR)
+    REFERENCES COLABORADOR (COD_COLABORADOR);
+
+ALTER TABLE NOTIFICACAO
+    ADD CONSTRAINT CK_NOTIFICACAO_LIDA
+    CHECK (FLG_LIDA IN ('S','N'));
+
+ALTER TABLE NOTIFICACAO
+    ADD CONSTRAINT CK_NOTIFICACAO_TIPO
+    CHECK
+    (
+        TIP_NOTIFICACAO IN
+        (
+            'SISTEMA',
+            'DOCUMENTO',
+            'COMUNICADO',
+            'PERMISSAO',
+            'ONBOARDING'
+        )
+    );
+
+--------------------------------------------------------------------------------
+-- CONFIGURAÇÃO
+--------------------------------------------------------------------------------
+
+ALTER TABLE CONFIGURACAO_PORTAL
+    ADD CONSTRAINT PK_CONFIGURACAO_PORTAL
+    PRIMARY KEY (COD_CONFIGURACAO_PORTAL);
+
+ALTER TABLE CONFIGURACAO_PORTAL
+    ADD CONSTRAINT UK_CONFIG_PORT_FED
+    UNIQUE (COD_FEDERACAO);
+
+ALTER TABLE CONFIGURACAO_PORTAL
+    ADD CONSTRAINT FK_CONFIG_PORT_FED
+    FOREIGN KEY (COD_FEDERACAO)
+    REFERENCES FEDERACAO (COD_FEDERACAO);
+
+ALTER TABLE CONFIGURACAO_PORTAL
+    ADD CONSTRAINT CK_CONFIG_ONBOARDING
+    CHECK (FLG_ONBOARDING_ATIVO IN ('S','N'));
+
+ALTER TABLE CONFIGURACAO_PORTAL
+    ADD CONSTRAINT CK_CONFIG_NOTIFICACAO_EMAIL
+    CHECK (FLG_NOTIFICACAO_EMAIL IN ('S','N'));
+
+ALTER TABLE CONFIGURACAO_PORTAL
+    ADD CONSTRAINT CK_CONFIG_COMUNICADO_DESTAQUE
+    CHECK (FLG_COMUNICADO_DESTAQUE IN ('S','N'));
+
+PROMPT
+PROMPT ==========================================================
+PROMPT Todas as constraints foram criadas com sucesso.
+PROMPT Fim do script 004-create-constraints.sql
+PROMPT ==========================================================
+PROMPT

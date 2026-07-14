@@ -1,0 +1,17 @@
+spring:
+  config:
+    activate:
+      on-profile: hml
+
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        default_schema: UNMPORTCOM
+
+application:
+  security:
+    cors-allowed-origins:
+      - https://hml.portal.unimedceara.com.br
+  persistence:
+    pool-max-size: 20

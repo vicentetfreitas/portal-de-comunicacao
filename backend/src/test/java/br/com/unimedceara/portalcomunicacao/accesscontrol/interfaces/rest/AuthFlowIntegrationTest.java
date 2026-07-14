@@ -1,0 +1,144 @@
+package br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest;
+
+import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.JwtTokenService;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.OAuthStateService;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.RefreshTokenService;
+import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationRequest;
+import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationResult;
+import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityProviderClient;
+import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
+import br.com.unimedceara.portalcomunicacao.support.annotation.IntegrationTest;
+import jakarta.servlet.http.Cookie;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.context.WebApplicationContext;
+
+import java.net.URI;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+@IntegrationTest
+@Import(AuthFlowIntegrationTest.MockIdentityProviderConfiguration.class)
+class AuthFlowIntegrationTest {
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private JwtTokenService jwtTokenService;
+
+    @Autowired
+    private OAuthStateService oAuthStateService;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    private MockMvc mockMvc;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        mockMvc = webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+    }
+
+    @Test
+    void shouldCompleteLoginCallbackMeRefreshAndLogoutFlow() throws Exception {
+        String state = oAuthStateService.createState(false);
+
+        MvcResult callbackResult = mockMvc.perform(get("/api/v1/auth/callback")
+                        .param("token", "valid-callback-token")
+                        .param("state", state))
+                .andExpect(status().isFound())
+                .andExpect(header().string("Location", "http://localhost:4200/"))
+                .andReturn();
+
+        Cookie accessCookie = findCookie(callbackResult, SecurityConstants.ACCESS_TOKEN_COOKIE);
+        Cookie refreshCookie = findCookie(callbackResult, SecurityConstants.REFRESH_TOKEN_COOKIE);
+        assertThat(accessCookie).isNotNull();
+        assertThat(refreshCookie).isNotNull();
+
+        mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.email").value("colaborador@unimedceara.com.br"))
+                .andExpect(jsonPath("$.data.name").value("Colaborador Teste"))
+                .andExpect(jsonPath("$.data.sessionId").isNotEmpty());
+
+        MvcResult csrfResult = mockMvc.perform(get("/actuator/health")).andReturn();
+        Cookie csrfCookie = findCookie(csrfResult, SecurityConstants.CSRF_COOKIE);
+        assertThat(csrfCookie).isNotNull();
+
+        mockMvc.perform(post("/api/v1/auth/refresh")
+                        .cookie(refreshCookie, csrfCookie)
+                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Access token renovado"));
+
+        mockMvc.perform(post("/api/v1/auth/logout")
+                        .cookie(accessCookie, refreshCookie, csrfCookie)
+                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldRedirectLoginToZimbra() throws Exception {
+        mockMvc.perform(get("/api/v1/auth/login"))
+                .andExpect(status().isFound())
+                .andExpect(result -> {
+                    String location = result.getResponse().getHeader("Location");
+                    assertThat(location).isNotNull();
+                    assertThat(URI.create(location).getHost()).isEqualTo("localhost");
+                });
+    }
+
+    private Cookie findCookie(MvcResult result, String name) {
+        if (result.getResponse().getCookies() == null) {
+            return null;
+        }
+        for (Cookie cookie : result.getResponse().getCookies()) {
+            if (name.equals(cookie.getName())) {
+                return cookie;
+            }
+        }
+        return null;
+    }
+
+    @TestConfiguration
+    static class MockIdentityProviderConfiguration {
+
+        @Bean
+        @Primary
+        IdentityProviderClient mockIdentityProviderClient() {
+            return new IdentityProviderClient() {
+                @Override
+                public IdentityValidationResult validateIdentity(IdentityValidationRequest request) {
+                    if ("valid-callback-token".equals(request.validationToken())) {
+                        return new IdentityValidationResult(
+                                "colaborador@unimedceara.com.br",
+                                "Colaborador Teste",
+                                "zimbra-id-test");
+                    }
+                    throw new IllegalStateException("Invalid token");
+                }
+
+                @Override
+                public URI buildAuthorizationUrl(String state, String callbackUrl) {
+                    return URI.create("http://localhost/zimbra/auth?state=" + state);
+                }
+            };
+        }
+    }
+}

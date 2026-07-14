@@ -1,0 +1,53 @@
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: portal-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-portal}
+      POSTGRES_USER: ${DB_USER:-portal}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-portal}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - portal-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-portal} -d ${DB_NAME:-portal}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: portal-backend
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-portal}
+      DB_USER: ${DB_USER:-portal}
+      DB_PASSWORD: ${DB_PASSWORD:-portal}
+      SERVER_PORT: 8080
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    networks:
+      - portal-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+networks:
+  portal-network:
+    driver: bridge
+
+volumes:
+  postgres-data:

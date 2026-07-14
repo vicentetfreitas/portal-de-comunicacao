@@ -1,0 +1,14 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        default_schema: UNMPORTCOM
+
+application:
+  persistence:
+    pool-max-size: 20

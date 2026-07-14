@@ -1,0 +1,166 @@
+---
+description: Documentation Audit Rules
+alwaysApply: false
+---
+
+# Objetivo
+
+Definir as regras para auditoria dos artefatos do Portal de Comunicação.
+
+A auditoria deve verificar a qualidade, consistência, rastreabilidade e aderência dos documentos produzidos em `specs/` e `docs/`.
+
+---
+
+# Escopo
+
+Estas regras aplicam-se a:
+
+- revisão de especificações;
+- revisão da documentação técnica;
+- auditoria de consistência;
+- validação de rastreabilidade;
+- verificação de conformidade com os padrões do projeto.
+
+---
+
+# Princípios
+
+Toda auditoria deve:
+
+- preservar a fonte oficial da verdade;
+- identificar inconsistências;
+- evitar duplicação de informações;
+- respeitar as dependências entre os artefatos;
+- produzir recomendações objetivas.
+
+O agente nunca deve alterar documentos automaticamente.
+
+---
+
+# Fonte da Verdade
+
+Durante a auditoria, utilizar a seguinte prioridade:
+
+```text
+specs/
+
+↓
+
+docs/
+
+↓
+
+código existente
+```
+
+Caso existam divergências:
+
+- registrar a inconsistência;
+- indicar o artefato afetado;
+- não assumir qual informação está correta sem evidência.
+
+---
+
+# Evidências
+
+Toda conclusão deve estar fundamentada em pelo menos uma das seguintes fontes:
+
+- especificações (`specs/`);
+- documentação (`docs/`);
+- código-fonte;
+- arquivos de configuração.
+
+Na ausência de evidências suficientes, informar explicitamente:
+
+> Não foi possível determinar com as informações disponíveis.
+
+---
+
+# Escopo da Auditoria
+
+O agente deve limitar a análise ao escopo solicitado.
+
+Não deve:
+
+- revisar módulos não relacionados;
+- criar novos artefatos;
+- propor alterações fora do contexto da auditoria.
+
+---
+
+# Critérios de Verificação
+
+Sempre que aplicável, verificar:
+
+- consistência interna;
+- consistência entre documentos relacionados;
+- aderência às convenções do projeto;
+- ausência de duplicidade;
+- rastreabilidade entre os artefatos;
+- alinhamento entre especificação e documentação técnica.
+
+---
+
+# Rastreabilidade
+
+Quando a auditoria envolver uma Feature, verificar a consistência entre:
+
+```text
+Specification
+
+↓
+
+Use Cases
+
+↓
+
+API
+
+↓
+
+Acceptance Tests
+
+↓
+
+Tasks
+```
+
+Nenhum artefato deve contradizer outro.
+
+---
+
+# Otimização de Contexto
+
+Durante a auditoria:
+
+- analisar apenas os documentos necessários;
+- reutilizar contexto previamente obtido;
+- evitar releitura de documentos já auditados;
+- evitar reproduzir arquivos completos;
+- resumir evidências sempre que possível.
+
+---
+
+# Resultado Esperado
+
+A auditoria deve produzir:
+
+- conclusão da análise;
+- inconsistências encontradas;
+- impacto identificado;
+- recomendações de correção, quando necessárias.
+
+Quando nenhuma inconsistência for encontrada, registrar explicitamente que o artefato está consistente com o estado atual do projeto.
+
+---
+
+# Restrições
+
+O agente não deve:
+
+- modificar código;
+- alterar documentação automaticamente;
+- criar novos documentos durante a auditoria;
+- propor mudanças fora do escopo solicitado.
+
+Toda alteração deverá ser realizada apenas mediante solicitação explícita do usuário.

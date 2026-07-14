@@ -1,0 +1,95 @@
+# Feature Manifest — platform-foundation
+# SSOT de localização de artefatos. Navegação exclusiva via Manifest (RULE-CONTEXT-01).
+
+feature:
+  id: platform-foundation
+  type: construction
+  sprint: 1A
+
+documents:
+  specification:
+    - ../01-platform-foundation.md
+  packages:
+    - ../03-construction-packages.md
+  rules:
+    - ../04-construction-rules.md
+  readiness:
+    - ../05-readiness-review.md
+  development_order:
+    - ../06-development-order.md
+  decisions:
+    - ../07-open-decisions.md
+  risks:
+    - ../08-open-risks.md
+  progress:
+    - ../09-progress.md
+  workflow:
+    - ../11-feature-execution-workflow.md
+  decision_log:
+    - ../10-decision-log.md
+  tasks:
+    - configuration/tasks.md
+    - persistence/tasks.md
+    - security/tasks.md
+    - integration/tasks.md
+    - web/tasks.md
+    - observability/tasks.md
+    - testing/tasks.md
+  review:
+    - configuration/review.md
+    - persistence/review.md
+    - security/review.md
+    - integration/review.md
+    - web/review.md
+    - observability/review.md
+    - testing/review.md
+
+foundation:
+  - ../../specs/foundation/
+
+engineering:
+  implementation:
+    - ../../docs/implementation/
+  construction:
+    - ../../docs/construction/
+  architecture:
+    - ../../docs/architecture/
+
+pkgs:
+  - pkg-01
+  - pkg-02
+  - pkg-03
+  - pkg-04
+  - pkg-05
+  - pkg-06
+  - pkg-07
+  - pkg-08
+
+construction:
+  state:
+    - construction-state.yaml
+  session:
+    - session.md
+  status:
+    - pkg-01/status.md
+    - pkg-02/status.md
+    - pkg-03/status.md
+    - pkg-04/status.md
+    - pkg-05/status.md
+    - pkg-06/status.md
+    - pkg-07/status.md
+    - pkg-08/status.md
+  closure:
+    - closure-report.md
+
+invalidation:
+  triggers:
+    - specification
+    - packages
+    - rules
+    - development_order
+    - decisions
+    - adr
+    - pkg_added
+    - pkg_removed
+    - manifest

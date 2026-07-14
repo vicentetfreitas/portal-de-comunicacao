@@ -1,0 +1,57 @@
+package br.com.unimedceara.portalcomunicacao.accesscontrol.application.service;
+
+import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.ColaboradorEntity;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.repository.ColaboradorRepository;
+import br.com.unimedceara.portalcomunicacao.configuration.properties.AuthProperties;
+import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationResult;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+
+/**
+ * Localização e criação automática de colaboradores após autenticação Zimbra.
+ */
+@Service
+@ConditionalOnProperty(prefix = "application.persistence", name = "enabled", havingValue = "true", matchIfMissing = true)
+public class ColaboradorService {
+
+    private final ColaboradorRepository colaboradorRepository;
+    private final AuthProperties authProperties;
+
+    public ColaboradorService(ColaboradorRepository colaboradorRepository, AuthProperties authProperties) {
+        this.colaboradorRepository = colaboradorRepository;
+        this.authProperties = authProperties;
+    }
+
+    /**
+     * Localiza colaborador por e-mail ou Zimbra ID; cria automaticamente se inexistente.
+     */
+    @Transactional
+    public ColaboradorEntity locateOrCreate(IdentityValidationResult identity) {
+        return colaboradorRepository.findByEmailIgnoreCase(identity.email())
+                .or(() -> colaboradorRepository.findByZimbraId(identity.zimbraId()))
+                .orElseGet(() -> createColaborador(identity));
+    }
+
+    /**
+     * Carrega colaborador por identificador.
+     */
+    @Transactional(readOnly = true)
+    public ColaboradorEntity findById(long colaboradorId) {
+        return colaboradorRepository.findById(colaboradorId)
+                .orElseThrow(() -> new IllegalStateException("Colaborador não encontrado"));
+    }
+
+    private ColaboradorEntity createColaborador(IdentityValidationResult identity) {
+        ColaboradorEntity colaborador = new ColaboradorEntity();
+        colaborador.setEmail(identity.email().toLowerCase());
+        colaborador.setNome(identity.displayName());
+        colaborador.setZimbraId(identity.zimbraId());
+        colaborador.setAtivo("S");
+        colaborador.setFederacaoId(authProperties.defaultFederationId());
+        colaborador.setDataCadastro(Instant.now());
+        return colaboradorRepository.save(colaborador);
+    }
+}

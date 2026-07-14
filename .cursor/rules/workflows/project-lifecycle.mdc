@@ -1,0 +1,183 @@
+---
+description: Project Lifecycle Workflow
+alwaysApply: false
+---
+
+# Objetivo
+
+Definir o fluxo operacional utilizado pelo agente durante a evolução do Portal de Comunicação.
+
+Este workflow descreve como uma solicitação percorre as etapas de especificação, implementação e validação.
+
+---
+
+# Princípio Fundamental
+
+Toda alteração deve iniciar por uma necessidade claramente identificada.
+
+O agente nunca deve iniciar implementação diretamente no código.
+
+---
+
+# Fluxo Oficial
+
+```text
+Necessidade
+        ↓
+Análise
+        ↓
+Specification
+        ↓
+Definition of Ready
+        ↓
+Implementação
+        ↓
+Testes
+        ↓
+Definition of Done
+        ↓
+Entrega
+```
+
+---
+
+# Etapa 1 — Análise
+
+Objetivo:
+
+Compreender a solicitação.
+
+O agente deve identificar:
+
+- objetivo;
+- escopo;
+- Feature envolvida;
+- impacto esperado.
+
+---
+
+# Etapa 2 — Specification
+
+Verificar se existe uma Feature correspondente.
+
+Caso exista:
+
+Atualizar a Feature.
+
+Caso não exista:
+
+Criar uma nova Feature utilizando os templates do projeto.
+
+---
+
+# Etapa 3 — Definition of Ready
+
+Antes da implementação verificar:
+
+- Specification concluída;
+- Use Cases definidos;
+- API documentada (quando aplicável);
+- Acceptance Tests definidos;
+- Tasks criadas.
+
+Caso contrário:
+
+Não implementar.
+
+---
+
+# Etapa 4 — Implementação
+
+Consultar:
+
+```text
+specs/
+
+↓
+
+docs/
+
+↓
+
+código
+```
+
+Implementar apenas o escopo aprovado.
+
+---
+
+# Etapa 5 — Testes
+
+Executar os testes previstos para a Feature.
+
+Sempre validar os cenários definidos em:
+
+```text
+acceptance-tests.md
+```
+
+---
+
+# Etapa 6 — Definition of Done
+
+Verificar:
+
+- implementação concluída;
+- testes aprovados;
+- documentação atualizada;
+- critérios da Definition of Done atendidos.
+
+---
+
+# Etapa 7 — Entrega
+
+Concluir a atividade.
+
+Registrar alterações documentais quando necessário.
+
+---
+
+# Tratamento de Bloqueios
+
+Quando existir:
+
+- documentação insuficiente;
+- conflito entre especificações;
+- dependências ausentes;
+- decisões pendentes;
+
+o agente deve interromper a implementação e registrar o bloqueio.
+
+Nunca assumir comportamento não documentado.
+
+---
+
+# Regra de Ouro
+
+Toda alteração deve seguir obrigatoriamente:
+
+```text
+Necessidade
+
+↓
+
+Specification
+
+↓
+
+Definition of Ready
+
+↓
+
+Implementação
+
+↓
+
+Testes
+
+↓
+
+Definition of Done
+```
+
+Nenhuma etapa deve ser ignorada.

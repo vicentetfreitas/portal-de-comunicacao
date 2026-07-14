@@ -1,0 +1,68 @@
+# Construction State — Template
+# SSOT do estado operacional (Feature-centric v3.2)
+# Descoberta: localizar via feature-manifest.yaml (SSOD) — artifacts.state
+# Atualizar em: Execute Feature, Execute PKG, Encerrar Feature
+
+version: 3
+
+scope:
+  type: {{SCOPE_TYPE}}              # platform_foundation | business_feature
+  layer: {{SCOPE_LAYER}}            # construction/platform-foundation | construction/features/<FEATURE_CODE>
+
+feature:
+  id: {{FEATURE_SLUG}}              # slug specs (ex.: authentication)
+  code: {{FEATURE_CODE}}            # identificador oficial (ex.: FT-AUTH)
+  name: {{FEATURE_NAME}}
+
+depends_on: []
+# Exemplo FT-AUTH:
+# depends_on:
+#   - platform_foundation
+
+state:
+  phase: not_started  # not_started | session | execution | closure | closed
+
+  current_pkg: null
+
+  completed: []
+
+  pending: []
+
+snapshot:
+  version: 0
+  created_at: null
+  immutable: false
+
+cache:
+  valid: false
+  reason: null
+
+manifest:
+  version: 2
+  path: feature-manifest.yaml
+
+review:
+  status: pending  # pending | in_progress | done
+
+audit:
+  status: pending  # pending | in_progress | done
+
+build:
+  incremental: true
+  full_verify: pending  # pending | success | failure
+
+readiness:
+  status: pending  # pending | in_progress | approved | rejected
+
+closure:
+  status: pending  # pending | in_progress | done
+
+metrics:
+  pkgs_total: 0
+  pkgs_completed: 0
+  tasks_total: null
+  tasks_completed: null
+
+metadata:
+  created_at: null
+  updated_at: null

@@ -1,0 +1,132 @@
+---
+description: Token Economy Rules
+alwaysApply: true
+---
+
+# Objetivo
+
+Reduzir consumo de contexto sem comprometer qualidade da análise.
+
+---
+
+# Princípio Fundamental
+
+Reutilizar conhecimento já consolidado antes de consultar fontes adicionais.
+
+---
+
+# Ordem de Consulta
+
+Sempre consultar na seguinte ordem:
+
+1. Documento atual em construção
+2. Índices da camada atual
+3. Resumos (_summary)
+4. Artefatos da mesma camada
+5. Camada imediatamente inferior
+
+---
+
+# Evitar
+
+Não reanalisar documentos completos quando:
+
+- a informação já estiver consolidada
+- existir resumo oficial
+- existir índice navegável
+- existir decisão arquitetural registrada
+
+---
+
+# Priorizar
+
+Sempre preferir:
+
+- architecture/_summary/*
+- architecture/00-architecture-index.md
+
+antes de consultar:
+
+- domain/*
+- discovery/*
+
+---
+
+# Reutilização
+
+Informações já documentadas devem ser referenciadas.
+
+Não devem ser reescritas.
+
+Não devem ser redescobertas.
+
+---
+
+# Cache de Contexto (Construction v3.1)
+
+Durante execução de PKGs após Sessão da Feature:
+
+Hierarquia obrigatória:
+
+```text
+Construction State → Snapshot → Cache → Documento
+```
+
+| Regra | Ação |
+|-------|------|
+| SSOD-01 | Consultar `feature-manifest.yaml` antes de inferir paths |
+| STATE-01 | `construction-state.yaml` é SSOT do estado operacional |
+| STATE-02 | Consultar Construction State antes de inferir progresso |
+| SESSION-01 | `session.md` é READ ONLY — não modificar durante PKGs |
+| STATE-04 | Session nunca armazena progresso |
+| CACHE-01 | Não reler documento se informação está no Snapshot |
+| CACHE-02 | Reutilizar Session ativa salvo invalidação |
+| RULE-CONTEXT-01 | Consultar State/Snapshot/Cache antes de abrir documento |
+
+Navegação exclusiva via `feature-manifest.yaml` (SSOD-01) — **não explorar a árvore nem usar paths hardcoded**.
+
+Referência: `construction/11-feature-execution-workflow.md` v3.2
+
+---
+
+# Leitura Incremental
+
+Consultar apenas os documentos necessários para responder a pergunta atual.
+
+Evitar carregamento de diretórios inteiros.
+
+Evitar leitura de documentos não relacionados ao artefato em construção.
+
+---
+
+# Produção de Artefatos
+
+Gerar apenas o documento solicitado.
+
+Não gerar documentos auxiliares sem solicitação explícita.
+
+Não criar versões alternativas.
+
+Não criar arquivos temporários.
+
+---
+
+# Atualização
+
+Ao atualizar um documento:
+
+- preservar conteúdo existente
+- alterar apenas seções impactadas
+- evitar regeneração completa do artefato
+
+---
+
+# Critério de Escalada
+
+Consultar documentos adicionais somente quando:
+
+- existir conflito entre fontes
+- existir lacuna de informação
+- existir questão aberta relacionada
+- a documentação atual não responder à necessidade
+- a informação **não** existir no Snapshot da Session ativa

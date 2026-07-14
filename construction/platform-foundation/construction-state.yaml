@@ -1,0 +1,57 @@
+# Construction State — platform-foundation
+# SSOT do estado operacional da Feature (Feature-centric v3.0)
+
+version: 1
+
+feature:
+  id: platform-foundation
+  name: Platform Foundation
+
+state:
+  phase: closed
+
+  current_pkg: null
+
+  completed:
+    - pkg-01
+    - pkg-02
+    - pkg-03
+    - pkg-04
+    - pkg-05
+    - pkg-06
+    - pkg-07
+    - pkg-08
+
+  pending: []
+
+snapshot:
+  version: 2
+  created_at: "2026-07-09T09:00:00-03:00"
+  immutable: true
+
+cache:
+  valid: true
+  reason: null
+
+manifest:
+  version: 1
+
+review:
+  status: done
+
+audit:
+  status: done
+
+build:
+  incremental: true
+  full_verify: success
+
+readiness:
+  status: approved
+
+closure:
+  status: done
+
+metadata:
+  created_at: "2026-07-09T09:00:00-03:00"
+  updated_at: "2026-07-09T11:00:00-03:00"

@@ -1,0 +1,147 @@
+# ============================================================================
+# Operating System
+# ============================================================================
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# ============================================================================
+# Environment
+# ============================================================================
+
+.env
+.env.*
+!.env.example
+
+## Local Spring profiles (developer-specific, never commit secrets)
+**/application-local.yaml
+**/application-local.yml
+
+# ============================================================================
+# IDEs and Editors
+# ============================================================================
+
+## IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+## Visual Studio Code
+.vscode/
+*.swp
+*.swo
+
+## Eclipse / Spring Tool Suite
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+## NetBeans
+/nbproject/private/
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+
+# ============================================================================
+# Logs
+# ============================================================================
+
+logs/
+*.log
+!**/.gitkeep
+
+# ============================================================================
+# Backend runtime artifacts
+# ============================================================================
+
+backend/runtime/logs/**
+!backend/runtime/logs/.gitkeep
+backend/runtime/reports/**
+!backend/runtime/reports/.gitkeep
+backend/runtime/dumps/**
+!backend/runtime/dumps/.gitkeep
+backend/runtime/coverage/**
+!backend/runtime/coverage/.gitkeep
+
+# ============================================================================
+# Java / Maven / Gradle
+# ============================================================================
+
+## Maven
+**/target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+## Maven Wrapper
+.mvn/timing.properties
+
+## Gradle
+**/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+## Compiled classes
+*.class
+
+# ============================================================================
+# Node.js / Frontend
+# ============================================================================
+
+**/node_modules/
+**/dist/
+**/.next/
+**/.vite/
+**/.quasar/
+
+# ============================================================================
+# Test / Coverage
+# ============================================================================
+
+**/coverage/
+.nyc_output/
+**/.coverage
+**/jacoco/
+**/jacoco.exec
+
+# ============================================================================
+# Docker
+# ============================================================================
+
+docker-data/
+docker-volumes/
+
+# ============================================================================
+# WordPress (CMS)
+# ============================================================================
+
+cms/wp-content/uploads/
+cms/wp-content/cache/
+cms/wp-content/upgrade/
+
+# ============================================================================
+# Database
+# ============================================================================
+
+*.dmp
+*.dump
+*.sqlite
+*.db
+
+# ============================================================================
+# Temporary Files
+# ============================================================================
+
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.seed
+*.pid

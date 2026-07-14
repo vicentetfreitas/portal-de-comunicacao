@@ -1,0 +1,102 @@
+# Construction State — FT-AUTH
+# SSOT do estado operacional (Feature-centric v3.2)
+
+version: 3
+
+scope:
+  type: business_feature
+  layer: construction/features/FT-AUTH
+
+feature:
+  id: authentication
+  code: FT-AUTH
+  name: Authentication
+
+depends_on:
+  - platform_foundation
+
+state:
+  phase: closed
+
+  current_pkg: null
+
+  completed:
+    - pkg-01
+    - pkg-02
+    - pkg-03
+    - pkg-04
+    - pkg-05
+    - pkg-06
+
+  pending: []
+
+  blockers_resolved:
+    - RN-AUTH-013
+    - RNF-AUTH-006
+
+  rf_auth_010:
+    status: implemented
+    task: TASK-AUTH-BE-020
+    implemented_at: "2026-07-09T20:15:00-03:00"
+    endpoint: "DELETE /api/v1/admin/sessions/{sessionId}"
+    note: "RN-AUTH-013 authz administrador implementada"
+
+snapshot:
+  version: 1
+  created_at: "2026-07-09T13:55:00-03:00"
+  immutable: true
+
+cache:
+  valid: true
+  reason: "Review/Audit/Readiness pós-correção bloqueadores concluídos"
+
+manifest:
+  version: 2
+  path: feature-manifest.yaml
+
+specification:
+  version: "2.2"
+  sprint_scope: backend_only
+
+review:
+  status: done
+  verdict: approved_with_reservations
+  executed_at: "2026-07-09T20:25:00-03:00"
+  note: "Sprint 1 Backend — bloqueadores resolvidos; ressalvas arquiteturais documentadas"
+
+audit:
+  status: done
+  verdict: partially_conforming
+  executed_at: "2026-07-09T20:25:00-03:00"
+  note: "RF-AUTH-011 parcial + boundary PF; RN-AUTH-013 e RNF-AUTH-006 conformes"
+
+build:
+  incremental: false
+  full_verify: success
+  last_command: "mvn clean verify"
+  last_run_at: "2026-07-09T20:15:00-03:00"
+
+readiness:
+  status: approved
+  scope: sprint_1_backend
+  note: "Sprint 1 Backend aprovada — FE fora de escopo"
+
+closure:
+  status: closed
+  final_state: FEATURE_APPROVED
+  scope: sprint_1_backend
+  note: "Encerramento Sprint 1 Backend — spec v2.2 atendida"
+
+metrics:
+  pkgs_total: 6
+  pkgs_completed: 6
+  tests_total: 188
+  tests_passed: 188
+  tests_skipped: 1
+  acceptance_criteria_covered: 14
+  acceptance_criteria_total: 14
+
+metadata:
+  created_at: "2026-07-09T13:55:00-03:00"
+  updated_at: "2026-07-09T20:25:00-03:00"
+  closed_at: "2026-07-09T20:25:00-03:00"

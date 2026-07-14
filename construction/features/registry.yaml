@@ -1,0 +1,26 @@
+# Feature Registry — Construction Framework v3.2
+# Índice de descoberta: localizar manifestos SSOD sem hardcode de paths.
+# Agentes devem consultar este registry OU o manifesto diretamente.
+
+version: 1
+
+convention:
+  format: "FT-<DOMAIN>"
+  case: uppercase
+  directory: "construction/features/<code>/"
+  reference: "construction/features/README.md"
+
+features:
+  - code: FT-AUTH
+    slug: authentication
+    name: Authentication
+    sprint: 1
+    manifest: FT-AUTH/feature-manifest.yaml
+    status: closed
+
+  - code: FT-AREA
+    slug: area
+    name: Área
+    sprint: 2
+    manifest: FT-AREA/feature-manifest.yaml
+    status: closed

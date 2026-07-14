@@ -1,0 +1,176 @@
+# Documentation Rules
+
+## Objetivo
+
+Definir as regras gerais para criação, alteração, revisão e validação da documentação do Portal de Comunicação.
+
+Estas regras aplicam-se a todos os artefatos produzidos em `specs/` e `docs/`.
+
+---
+
+# Regra Fundamental
+
+Todo desenvolvimento deve ser orientado por documentação.
+
+O agente nunca deve implementar funcionalidades sem uma especificação correspondente.
+
+---
+
+# Fonte da Verdade
+
+## specs/
+
+É a fonte oficial para:
+
+- especificações funcionais;
+- regras de negócio consolidadas;
+- contratos;
+- critérios de aceite;
+- tarefas de implementação.
+
+Toda implementação deve ser baseada em `specs/`.
+
+---
+
+## docs/
+
+É documentação consultiva.
+
+Seu objetivo é fornecer contexto sobre:
+
+- legado;
+- domínio;
+- arquitetura;
+- engenharia;
+- implementação.
+
+Informações provenientes de `docs/` devem ser consolidadas em `specs/` antes de orientar desenvolvimento.
+
+---
+
+# Produção de Documentação
+
+Ao criar ou alterar qualquer documento, o agente deve:
+
+- trabalhar em apenas um artefato por execução;
+- preservar o propósito do documento;
+- evitar duplicação de informação;
+- manter consistência com os demais artefatos;
+- utilizar a terminologia definida em `specs/foundation/glossary.md`.
+
+---
+
+# Especificações
+
+Ao produzir documentos em `specs/`, o agente deve:
+
+- manter foco em comportamento funcional;
+- evitar detalhes de implementação;
+- preservar rastreabilidade entre os artefatos;
+- utilizar os templates oficiais quando aplicável.
+
+Uma Feature deve evoluir de forma incremental.
+
+---
+
+# Documentação Consultiva
+
+Ao produzir documentos em `docs/`, o agente deve:
+
+- registrar contexto técnico;
+- documentar decisões arquiteturais;
+- registrar padrões de implementação;
+- evitar reproduzir especificações já existentes em `specs/`.
+
+---
+
+# Consistência
+
+O agente deve verificar:
+
+- coerência entre documentos relacionados;
+- ausência de contradições;
+- ausência de duplicidade;
+- aderência às convenções do projeto.
+
+Quando identificar inconsistências, deve registrá-las explicitamente.
+
+---
+
+# Rastreabilidade
+
+Sempre que aplicável, manter a ligação entre:
+
+```text
+Feature
+
+↓
+
+Casos de Uso
+
+↓
+
+API
+
+↓
+
+Testes de Aceitação
+
+↓
+
+Tarefas
+```
+
+A rastreabilidade deve ser preservada durante toda a evolução da documentação.
+
+---
+
+# Evolução
+
+A documentação deve evoluir de forma incremental.
+
+O agente não deve:
+
+- criar documentação especulativa;
+- antecipar necessidades futuras;
+- criar diretórios ou artefatos sem demanda real.
+
+---
+
+# Otimização de Contexto
+
+Durante a produção da documentação:
+
+- não copiar arquivos inteiros;
+- não reproduzir código desnecessariamente;
+- não reproduzir JSONs extensos;
+- não reproduzir YAMLs extensos;
+- resumir informações quando possível;
+- reutilizar artefatos existentes;
+- evitar leituras repetidas da mesma documentação.
+
+---
+
+# Dependências
+
+O agente deve respeitar as dependências entre os artefatos.
+
+Sempre que possível:
+
+- reutilizar especificações existentes;
+- evitar redocumentar informações já aprovadas;
+- atualizar o documento de origem quando necessário, em vez de criar duplicações.
+
+---
+
+# Validação
+
+Antes de considerar um documento concluído, verificar:
+
+- objetivo atendido;
+- escopo definido;
+- consistência com os demais artefatos;
+- rastreabilidade preservada;
+- aderência às convenções do projeto.
+
+Caso qualquer um desses critérios não seja atendido, o documento deve permanecer em elaboração.

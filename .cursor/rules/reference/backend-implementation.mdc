@@ -1,0 +1,272 @@
+---
+description: Backend Implementation Rules
+alwaysApply: false
+---
+
+# Objetivo
+
+Definir as regras de implementação do Backend do Portal de Comunicação.
+
+Este documento orienta o agente durante a construção do código-fonte, complementando as especificações (`specs/`) e a documentação técnica (`docs/`).
+
+---
+
+# Escopo
+
+Aplica-se à implementação de:
+
+- APIs REST;
+- casos de uso;
+- serviços de aplicação;
+- persistência;
+- integrações;
+- segurança;
+- testes.
+
+---
+
+# Stack Oficial
+
+A implementação deve seguir a stack definida em `docs/technology/`.
+
+Atualmente:
+
+- Java 25
+- Spring Boot
+- Maven
+- Oracle Database
+- Flyway
+
+---
+
+# Ordem de Consulta
+
+Antes de implementar qualquer funcionalidade consultar:
+
+```text
+1. specs/features/<feature>/
+
+2. specs/foundation/
+
+3. docs/implementation/
+
+4. docs/construction/
+
+5. código existente
+```
+
+---
+
+# Estrutura do Projeto
+
+Todo código deve respeitar a estrutura oficial do projeto.
+
+O agente não deve criar diretórios ou módulos fora da organização existente.
+
+---
+
+# Organização em Camadas
+
+A implementação deve respeitar a separação entre:
+
+```text
+Domain
+
+Application
+
+Infrastructure
+
+Interfaces
+```
+
+Cada camada deve possuir responsabilidade única.
+
+---
+
+# Responsabilidades
+
+## Domain
+
+Responsável por:
+
+- entidades;
+- value objects;
+- agregados;
+- regras de negócio;
+- contratos de repositório.
+
+Não deve possuir dependências de frameworks.
+
+---
+
+## Application
+
+Responsável por:
+
+- casos de uso;
+- orquestração;
+- portas;
+- serviços de aplicação.
+
+Não deve conter detalhes de infraestrutura.
+
+---
+
+## Infrastructure
+
+Responsável por:
+
+- persistência;
+- integrações;
+- clientes externos;
+- implementações técnicas.
+
+---
+
+## Interfaces
+
+Responsável por:
+
+- Controllers;
+- DTOs;
+- validação de entrada;
+- exposição das APIs.
+
+Não deve conter regras de negócio.
+
+---
+
+# Controllers
+
+Os Controllers devem:
+
+- receber a requisição;
+- validar a entrada;
+- delegar a execução ao caso de uso;
+- retornar a resposta.
+
+Não devem implementar regras de negócio.
+
+---
+
+# Casos de Uso
+
+Cada caso de uso deve representar uma única ação do sistema.
+
+Utilizar nomes baseados em verbos.
+
+Exemplos:
+
+```text
+AuthenticateUserUseCase
+
+CreateDocumentUseCase
+
+PublishCampaignUseCase
+```
+
+Evitar classes genéricas como:
+
+```text
+UserService
+
+BusinessFacade
+
+Manager
+```
+
+---
+
+# Persistência
+
+Toda persistência deve seguir os padrões definidos em `docs/database/`.
+
+Utilizar:
+
+- Oracle Database;
+- Flyway para versionamento;
+- Spring Data JPA quando aplicável.
+
+Nunca executar alterações estruturais diretamente em produção.
+
+---
+
+# APIs
+
+Toda API deve:
+
+- possuir contrato definido na Feature;
+- utilizar DTOs para entrada e saída;
+- nunca expor entidades de domínio.
+
+---
+
+# Segurança
+
+Toda implementação deve seguir os padrões definidos em `docs/implementation/`.
+
+O agente não deve criar mecanismos próprios de autenticação ou autorização.
+
+---
+
+# Configuração
+
+Toda configuração deve utilizar os arquivos oficiais do projeto.
+
+É proibido:
+
+- credenciais no código;
+- valores específicos de ambiente;
+- configuração duplicada.
+
+---
+
+# Testes
+
+Quando aplicável, implementar:
+
+- testes unitários;
+- testes de integração;
+- testes definidos em `acceptance-tests.md`.
+
+---
+
+# Qualidade
+
+Toda implementação deve ser:
+
+- simples;
+- coesa;
+- legível;
+- testável;
+- rastreável.
+
+Evitar abstrações prematuras e código não utilizado.
+
+---
+
+# Restrições
+
+O agente não deve:
+
+- implementar funcionalidades fora da Specification;
+- alterar arquitetura;
+- criar módulos não documentados;
+- gerar código especulativo;
+- duplicar lógica existente.
+
+---
+
+# Regra de Ouro
+
+Durante a implementação do Backend aplicar sempre a seguinte prioridade:
+
+```text
+Specification
+        ↓
+Documentação Técnica
+        ↓
+Código
+```
+
+O código deve implementar fielmente a Specification, respeitando os padrões técnicos definidos pelo projeto.

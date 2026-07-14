@@ -1,0 +1,87 @@
+---
+description: Specification Phase Rules
+globs:
+alwaysApply: true
+---
+
+# Specification Phase
+
+Esta regra define os limites da fase de Especificação.
+
+---
+
+# Objetivo
+
+Transformar os requisitos de negócio em especificações completas e consistentes.
+
+Nenhuma implementação deve ocorrer nesta fase.
+
+---
+
+# Permitido
+
+Durante Specification é permitido:
+
+- escrever documentação;
+- revisar documentação;
+- atualizar documentação;
+- complementar requisitos;
+- definir API;
+- definir Casos de Uso;
+- definir Critérios de Aceitação;
+- definir Tasks;
+- consolidar rastreabilidade (`traceability.md`);
+- registrar decisões funcionais.
+
+---
+
+# Proibido
+
+Durante Specification é proibido:
+
+- implementar código;
+- criar endpoints;
+- alterar banco de dados;
+- produzir migrations;
+- criar testes automatizados;
+- executar builds;
+- modificar Construction Framework;
+- modificar Templates oficiais.
+
+---
+
+# Fonte Oficial
+
+Toda Feature deve possuir:
+
+specs/features/<feature>/feature.yaml
+
+Este arquivo representa a identidade oficial da Feature.
+
+Contrato formal: `specs/foundation/feature-yaml.md`.
+
+---
+
+# Template
+
+Toda Feature deve referenciar um template oficial.
+
+Exemplo:
+
+crud-feature@1.1
+
+Os templates nunca são modificados durante a especificação.
+
+---
+
+# Critério de Conclusão
+
+A fase somente termina quando:
+
+- todos os artefatos obrigatórios estiverem consistentes;
+- a rastreabilidade estiver completa;
+- a Feature estiver pronta para Review.
+
+Resultado esperado:
+
+READY_FOR_REVIEW

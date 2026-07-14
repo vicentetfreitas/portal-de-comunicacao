@@ -1,0 +1,85 @@
+```gitattributes
+###############################################################################
+# Portal de Comunicação
+# Git Attributes
+###############################################################################
+
+# Normalize arquivos texto para LF por padrão
+* text=auto eol=lf
+
+###############################################################################
+# Maven Wrapper
+###############################################################################
+
+/backend/mvnw text eol=lf
+/backend/mvnw.cmd text eol=crlf
+
+###############################################################################
+# Shell Scripts
+###############################################################################
+
+*.sh text eol=lf
+
+###############################################################################
+# Windows Scripts
+###############################################################################
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+###############################################################################
+# Arquivos de Configuração
+###############################################################################
+
+*.java       text
+*.kt         text
+*.kts        text
+
+*.xml        text
+*.xsd        text
+
+*.properties text
+
+*.yml        text
+*.yaml       text
+
+*.json       text
+*.md         text
+
+*.sql        text
+
+*.js         text
+*.ts         text
+*.vue        text
+
+*.html       text
+*.css        text
+*.scss       text
+
+*.dockerfile text
+Dockerfile   text
+
+###############################################################################
+# Arquivos Binários
+###############################################################################
+
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.svg  binary
+*.ico  binary
+*.webp binary
+
+*.pdf  binary
+
+*.jar  binary
+*.war  binary
+*.ear  binary
+
+*.zip  binary
+*.7z   binary
+*.gz   binary
+*.tar  binary
+```

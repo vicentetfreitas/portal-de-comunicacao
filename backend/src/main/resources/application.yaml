@@ -1,0 +1,86 @@
+application:
+  name: portal-comunicacao
+  version: 0.0.1-SNAPSHOT
+  timezone: UTC
+  locale: pt-BR
+  security:
+    jwt-issuer: ${JWT_ISSUER:portal-comunicacao}
+    jwt-secret: ${APPLICATION_SECURITY_JWT_SECRET}
+    access-token-expiration: ${APPLICATION_SECURITY_ACCESS_TOKEN_EXPIRATION:900}
+    refresh-token-expiration: ${APPLICATION_SECURITY_REFRESH_TOKEN_EXPIRATION:28800}
+    jwt-access-ttl-minutes: 15
+    refresh-token-ttl-hours: 8
+    refresh-token-remember-me-days: 30
+    max-concurrent-sessions: 3
+    csrf-enabled: true
+    cors-allowed-origins:
+      - http://localhost:4200
+  auth:
+    frontend-redirect-url: ${AUTH_FRONTEND_REDIRECT_URL:http://localhost:4200/}
+    default-federation-id: ${AUTH_DEFAULT_FEDERATION_ID:1}
+  persistence:
+    pool-max-size: 10
+    pool-min-idle: 2
+  integration:
+    connect-timeout-ms: 5000
+    read-timeout-ms: 5000
+    max-retry-attempts: 3
+    circuit-breaker-threshold: 50
+  zimbra:
+    auth-url: ${ZIMBRA_AUTH_URL:http://localhost/zimbra/auth}
+    validate-url: ${ZIMBRA_VALIDATE_URL:http://localhost/zimbra/validate}
+    timeout-ms: 10000
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+spring:
+  application:
+    name: portal-comunicacao
+  profiles:
+    default: local
+
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      maximum-pool-size: ${application.persistence.pool-max-size}
+      minimum-idle: ${application.persistence.pool-min-idle}
+      pool-name: portal-comunicacao-pool
+
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+
+logging:
+  level:
+    root: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger - %msg%n"
+  file:
+    name: ${RUNTIME_LOG_DIR:runtime/logs}/application.log
+
+server:
+   port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true

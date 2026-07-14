@@ -1,0 +1,168 @@
+---
+description: Construction Phase Governance
+alwaysApply: false
+---
+
+# Objetivo
+
+Definir as regras para a fase de Construction do Portal de Comunicação.
+
+A fase Construction transforma as especificações e a documentação técnica em software executável.
+
+Ela é responsável pela implementação do código, configuração dos ambientes, execução dos testes e atualização da documentação impactada.
+
+---
+
+# Princípio Fundamental
+
+Durante a fase Construction, o agente implementa funcionalidades.
+
+Não é responsabilidade desta fase:
+
+- definir regras de negócio;
+- criar arquitetura;
+- alterar decisões arquiteturais;
+- expandir o escopo da Feature.
+
+Toda implementação deve partir de uma Feature especificada.
+
+---
+
+# Pré-requisitos
+
+Antes de iniciar qualquer implementação, verificar:
+
+- a Feature existe em `specs/features/`;
+- a Feature atende à Definition of Ready;
+- existe documentação técnica suficiente;
+- as dependências da Feature estão disponíveis.
+
+Caso algum pré-requisito não seja atendido, interromper a implementação.
+
+---
+
+# Ordem de Consulta
+
+Durante a implementação utilizar:
+
+```text
+1. specs/features/
+
+2. specs/foundation/
+
+3. docs/implementation/
+
+4. docs/construction/
+
+5. código existente
+```
+
+O código nunca possui prioridade sobre a documentação.
+
+---
+
+# Fluxo da Construction
+
+Toda atividade deve seguir a sequência:
+
+```text
+Ler Especificação
+        ↓
+Analisar Dependências
+        ↓
+Implementar
+        ↓
+Executar Testes
+        ↓
+Validar
+        ↓
+Atualizar Documentação
+```
+
+---
+
+# Escopo
+
+A fase Construction compreende:
+
+- implementação de código;
+- configuração dos componentes;
+- integração entre módulos;
+- criação de testes;
+- configuração dos ambientes;
+- atualização da documentação técnica impactada.
+
+---
+
+# Restrições
+
+Durante a Construction o agente não deve:
+
+- implementar funcionalidades não especificadas;
+- alterar arquitetura sem documentação correspondente;
+- criar componentes fora do escopo;
+- assumir comportamento não documentado;
+- antecipar funcionalidades futuras.
+
+Quando houver dúvida, registrar o bloqueio em vez de inferir uma solução.
+
+---
+
+# Qualidade
+
+Toda implementação deve:
+
+- seguir os padrões definidos em `docs/`;
+- preservar a arquitetura existente;
+- manter código legível;
+- evitar duplicação de lógica;
+- respeitar a separação de responsabilidades.
+
+---
+
+# Testes
+
+Toda implementação deve executar os testes previstos para a Feature.
+
+Quando aplicável:
+
+- testes unitários;
+- testes de integração;
+- testes de aceitação.
+
+A Feature somente pode prosseguir quando os cenários definidos em `acceptance-tests.md` forem atendidos.
+
+---
+
+# Atualização da Documentação
+
+Sempre que uma implementação impactar documentação existente, o agente deve identificar os artefatos afetados e atualizá-los.
+
+A documentação deve permanecer consistente com o código.
+
+---
+
+# Critério de Conclusão
+
+Uma atividade da fase Construction somente pode ser considerada concluída quando:
+
+- a implementação estiver finalizada;
+- os testes obrigatórios forem aprovados;
+- a documentação impactada estiver atualizada;
+- a Definition of Done da Feature for atendida.
+
+---
+
+# Regra de Ouro
+
+Durante a Construction, aplicar sempre a seguinte prioridade:
+
+```text
+specs/
+        ↓
+docs/
+        ↓
+código
+```
+
+Toda implementação deve ser rastreável até uma Feature e respeitar a documentação técnica do projeto.

@@ -1,0 +1,182 @@
+---
+description: Construction Document Dependencies
+alwaysApply: false
+---
+
+# Objetivo
+
+Definir como o agente deve identificar e consumir as dependências necessárias durante a fase de Construction.
+
+Esta regra orienta o carregamento mínimo de contexto para implementar uma Feature, reduzindo consumo de tokens e evitando consultas desnecessárias.
+
+---
+
+# Princípio Fundamental
+
+Durante a Construction, o agente deve carregar apenas os artefatos necessários para a atividade em execução.
+
+Nunca utilizar o repositório completo como contexto.
+
+---
+
+# Ordem de Dependência
+
+Toda implementação deve seguir a seguinte prioridade:
+
+```text
+1. specs/features/
+
+2. specs/foundation/
+
+3. docs/implementation/
+
+4. docs/construction/
+
+5. código existente
+```
+
+Cada camada complementa a anterior.
+
+---
+
+# Seleção de Contexto
+
+Antes de iniciar uma implementação, o agente deve:
+
+1. Identificar a Feature.
+2. Identificar a tarefa a ser executada.
+3. Identificar a tecnologia envolvida.
+4. Carregar apenas os documentos relacionados.
+
+---
+
+# Dependências por Tipo de Trabalho
+
+## Backend
+
+Consultar apenas:
+
+```text
+specs/features/<feature>/
+
+docs/implementation/
+
+docs/construction/backend/
+```
+
+---
+
+## Frontend
+
+Consultar apenas:
+
+```text
+specs/features/<feature>/
+
+docs/implementation/
+
+docs/construction/frontend/
+```
+
+---
+
+## Banco de Dados
+
+Consultar apenas:
+
+```text
+specs/features/<feature>/
+
+docs/database/
+
+docs/implementation/
+```
+
+---
+
+## Infraestrutura
+
+Consultar apenas:
+
+```text
+specs/features/<feature>/
+
+docs/construction/infrastructure/
+```
+
+---
+
+## Entrega
+
+Consultar apenas:
+
+```text
+specs/features/<feature>/
+
+docs/construction/delivery/
+```
+
+---
+
+# Minimização de Contexto
+
+O agente deve:
+
+- carregar somente os documentos relacionados ao escopo atual;
+- reutilizar contexto já disponível;
+- evitar leitura de diretórios completos;
+- evitar releitura de documentos já consultados.
+
+---
+
+# Restrições
+
+O agente não deve:
+
+- utilizar documentos sem relação com a atividade;
+- carregar toda a documentação do projeto;
+- reinterpretar especificações;
+- criar dependências inexistentes;
+- inferir comportamento não documentado.
+
+---
+
+# Tratamento de Lacunas
+
+Quando uma informação necessária não estiver disponível:
+
+1. registrar a dependência ausente;
+2. interromper a implementação;
+3. solicitar a atualização da documentação.
+
+Nunca substituir documentação ausente por hipóteses.
+
+---
+
+# Critério de Qualidade
+
+Toda implementação deve possuir dependências documentais identificáveis.
+
+A implementação deve ser rastreável até:
+
+```text
+Feature
+        ↓
+Specification
+        ↓
+Use Cases
+        ↓
+API
+        ↓
+Acceptance Tests
+        ↓
+Tasks
+```
+
+---
+
+# Regra de Ouro
+
+Carregar o menor conjunto possível de documentos capaz de responder à tarefa solicitada.
+
+Mais contexto não significa melhor implementação.

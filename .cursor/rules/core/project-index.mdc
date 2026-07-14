@@ -1,0 +1,333 @@
+---
+description: Project Knowledge Index
+alwaysApply: true
+---
+
+# Objetivo
+
+Centralizar a navegação do conhecimento do projeto.
+
+Este documento define onde o agente deve buscar informações antes de analisar, especificar, implementar, revisar ou validar qualquer artefato.
+
+---
+
+# Regra Fundamental
+
+O agente NÃO deve explorar o repositório arbitrariamente.
+
+Toda consulta deve iniciar por este índice.
+
+O conhecimento do projeto está dividido em duas categorias:
+
+- `specs/` → especificação oficial do produto.
+- `docs/` → documentação consultiva da engenharia e do sistema legado.
+
+---
+
+# Fonte Oficial da Verdade
+
+## specs/
+
+O diretório `specs/` é a fonte oficial para todo desenvolvimento.
+
+Ele define:
+
+- comportamento esperado;
+- regras funcionais;
+- contratos;
+- critérios de aceite;
+- tarefas de implementação.
+
+Quando existir conflito entre `specs/` e qualquer outra documentação, prevalece `specs/`.
+
+---
+
+## docs/
+
+O diretório `docs/` contém documentação consultiva.
+
+Seu objetivo é fornecer contexto técnico, histórico e arquitetural.
+
+A documentação em `docs/` nunca deve ser utilizada diretamente para orientar implementação sem que a informação esteja consolidada em `specs/`.
+
+---
+
+# Estrutura do Projeto
+
+```text
+specs/
+
+├── foundation/
+├── templates/
+└── features/
+
+construction/
+
+├── platform-foundation/              ← Sprint 1A (histórico, phase: closed)
+│   └── construction-state.yaml
+├── features/<FEATURE_CODE>/          ← Features de negócio (ex.: FT-AUTH)
+│   ├── feature-manifest.yaml       ← SSOD (consultar primeiro)
+│   ├── construction-state.yaml     ← SSOT estado operacional (v3)
+│   ├── execution-plan.md
+│   ├── session.md
+│   ├── review/
+│   ├── reports/
+│   └── pkg-XX/status.md
+├── features/registry.yaml            ← Índice de Features
+
+docs/
+
+├── discovery/
+├── domain/
+├── architecture/
+├── solution-design/
+├── implementation/
+└── construction/
+```
+
+---
+
+# Ordem de Consulta
+
+## Para implementar uma Feature
+
+Consultar obrigatoriamente:
+
+```text
+1. construction/11-feature-execution-workflow.md   ← workflow v3.2
+
+2. feature-manifest.yaml (SSOD-01) — descobrir paths:
+   - Registry: construction/features/registry.yaml
+   - Feature:  construction/features/<FEATURE_CODE>/feature-manifest.yaml
+
+3. construction-state.yaml (STATE-02) — estado operacional:
+   - Fundação: construction/platform-foundation/construction-state.yaml
+   - Feature:  construction/features/<FEATURE_CODE>/construction-state.yaml
+
+4. execution-plan.md + session.md (Snapshot imutável)
+
+5. specs/features/ (path em manifest.specification.path)
+
+6. specs/foundation/
+
+7. docs/implementation/
+
+8. docs/construction/
+```
+
+Durante PKGs: consultar `construction-state.yaml` para estado; Snapshot em `session.md` para contexto — não reler documentos já carregados (CACHE-01, RULE-CONTEXT-01).
+
+---
+
+## Para criar uma nova especificação
+
+Consultar:
+
+```text
+1. specs/foundation/
+
+2. specs/templates/
+
+3. docs/domain/
+
+4. docs/discovery/
+```
+
+---
+
+## Para compreender o legado
+
+Consultar:
+
+```text
+docs/discovery/
+
+↓
+
+docs/domain/
+
+↓
+
+docs/architecture/
+```
+
+---
+
+## Para compreender a arquitetura técnica
+
+Consultar:
+
+```text
+docs/architecture/
+
+↓
+
+docs/solution-design/
+
+↓
+
+docs/implementation/
+```
+
+---
+
+# Quando Consultar Cada Camada
+
+## specs/foundation
+
+Utilizar para:
+
+- princípios;
+- convenções;
+- workflow;
+- glossário;
+- Definition of Ready;
+- Definition of Done.
+
+---
+
+## specs/templates
+
+Utilizar para criar novas Features.
+
+---
+
+## specs/features
+
+Utilizar para:
+
+- desenvolvimento;
+- testes;
+- validação;
+- evolução funcional.
+
+É a principal fonte utilizada durante a implementação.
+
+---
+
+## docs/discovery
+
+Utilizar apenas para compreender o sistema legado.
+
+---
+
+## docs/domain
+
+Utilizar para compreender regras de negócio existentes.
+
+---
+
+## docs/architecture
+
+Utilizar para compreender decisões arquiteturais.
+
+---
+
+## docs/solution-design
+
+Utilizar para compreender a decomposição da solução.
+
+---
+
+## docs/implementation
+
+Utilizar para compreender padrões de implementação.
+
+---
+
+## docs/construction
+
+Utilizar durante a construção do backend, frontend, banco de dados e infraestrutura.
+
+---
+
+# Processo de Trabalho
+
+Sempre seguir a sequência abaixo:
+
+```text
+Necessidade
+
+↓
+
+Consultar specs/
+
+↓
+
+Consultar docs/ (quando necessário)
+
+↓
+
+Produzir ou atualizar especificação
+
+↓
+
+Implementar
+
+↓
+
+Validar
+
+↓
+
+Atualizar documentação impactada
+```
+
+---
+
+# Regras de Governança
+
+O agente deve obedecer às seguintes prioridades:
+
+```text
+specs/
+
+↓
+
+docs/
+
+↓
+
+código existente
+```
+
+O código nunca deve ser utilizado como fonte da verdade.
+
+Quando existir divergência:
+
+- atualizar a especificação, quando necessário;
+- corrigir a implementação;
+- registrar inconsistências encontradas.
+
+---
+
+# Estado Atual do Projeto
+
+```text
+Foundation        CONCLUÍDA
+Templates         CONCLUÍDA
+Features          EM EVOLUÇÃO
+
+Discovery         CONCLUÍDO
+Domain            CONCLUÍDO
+Architecture      CONCLUÍDO
+Solution Design   CONCLUÍDO
+Implementation    CONCLUÍDO
+Construction      EM EVOLUÇÃO
+```
+
+---
+
+# Próxima Prioridade
+
+```text
+Especificar novas Features
+
+↓
+
+Implementar conforme specs/
+
+↓
+
+Validar aderência entre especificação e código
+```

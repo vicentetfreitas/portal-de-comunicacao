@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        default_schema: UNMPORTCOM
+
+application:
+  security:
+    cors-allowed-origins:
+      - https://dev.portal.unimedceara.com.br
