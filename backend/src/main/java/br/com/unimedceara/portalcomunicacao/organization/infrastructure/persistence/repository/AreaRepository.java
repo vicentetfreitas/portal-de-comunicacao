@@ -21,6 +21,8 @@ public interface AreaRepository extends JpaRepository<AreaEntity, Long> {
 
     boolean existsByParentAreaIdAndAtivo(Long parentAreaId, String ativo);
 
+    boolean existsBySingularIdAndAtivo(Long singularId, String ativo);
+
     @Query("""
             SELECT a FROM AreaEntity a
             WHERE (:singularId IS NULL OR a.singularId = :singularId)

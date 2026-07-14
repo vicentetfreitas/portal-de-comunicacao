@@ -9,9 +9,35 @@
 | Consumidor primário | Construction Orchestrator (Workflow Controller) |
 | Status Sprint | **Concluída** |
 | Versão | 3.1 |
-| Última atualização | 2026-07-09 |
+| Última atualização | 2026-07-14 |
 
-> **Workflow:** Estado operacional em `platform-foundation/construction-state.yaml` (phase: `closed`). FT-AUTH em `construction/features/FT-AUTH/construction-state.yaml` (phase: `closed`). FT-AREA em `construction/features/FT-AREA/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`).
+> **Workflow:** Estado operacional em `platform-foundation/construction-state.yaml` (phase: `closed`). FT-AUTH em `construction/features/FT-AUTH/construction-state.yaml` (phase: `closed`). FT-AREA em `construction/features/FT-AREA/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`). FT-SINGULAR em `construction/features/FT-SINGULAR/construction-state.yaml` (phase: `closed`, closure: `FEATURE_APPROVED`).
+
+---
+
+# FT-SINGULAR — Singular (Sprint 3)
+
+| Métrica | Valor |
+|---------|-------|
+| Feature Code | FT-SINGULAR |
+| PKGs | 6 / 6 DONE |
+| Build | SUCCESS — `mvn clean verify` |
+| Testes | 226 (0 falhas, 1 ignorado) |
+| Review | Aprovado com ressalvas |
+| Audit | Conforme |
+| Readiness | Aprovada |
+| **Estado final** | **FEATURE_APPROVED** |
+
+| PKG | Estado | Reviewer | Auditor |
+|-----|--------|----------|---------|
+| PKG-01 — Singular Scaffold & Persistence | DONE | reviewer | auditor |
+| PKG-02 — Create Singular | DONE | reviewer | auditor |
+| PKG-03 — Read & List | DONE | reviewer | auditor |
+| PKG-04 — Update Singular | DONE | reviewer | auditor |
+| PKG-05 — Status Change | DONE | reviewer | auditor |
+| PKG-06 — Acceptance & Closure | DONE | reviewer | auditor |
+
+Encerramento: `construction/features/FT-SINGULAR/closure-report.md`
 
 ---
 
@@ -110,13 +136,7 @@ Encerramento: `construction/features/FT-AUTH/closure-report.md`
 
 # Próximo Passo
 
-**FT-AUTH** — corrigir bloqueadores (ver `construction/features/FT-AUTH/closure-report.md`) e re-encerrar para `FEATURE_APPROVED`.
-
-| Bloqueador | Prioridade |
-|------------|------------|
-| Testes AC-AUTH (9 cenários sem cobertura) | Alta |
-| RF-AUTH-010 revogação administrativa | Alta |
-| Boundary `JwtAuthenticationFilter` / `AuthProperties` | Média |
+**Sprint 3** — próxima Feature organizacional conforme `construction/06-development-order.md` (ex.: FT-EQUIPE, FT-COLABORADOR).
 
 ---
 

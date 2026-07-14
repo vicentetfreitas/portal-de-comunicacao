@@ -1,0 +1,10 @@
+feature:
+  id: FT-SINGULAR
+  name: Singular
+
+template:
+  name: crud-feature
+  version: "1.1"
+
+status:
+  specification: APPROVED
