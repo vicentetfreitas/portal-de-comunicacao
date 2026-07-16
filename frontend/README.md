@@ -39,7 +39,9 @@ External configuration via `VITE_*` variables (see `.env.example`):
 
 ```text
 src/
+├── app/           # Application bootstrap (PKG-FE-S0-01)
 ├── boot/          # Quasar boot files
+├── features/      # Feature modules (placeholder — PKG-FE-S0-01)
 ├── components/ds/ # Design system (PKG-FE-S0-03)
 ├── composables/
 ├── config/        # Runtime env

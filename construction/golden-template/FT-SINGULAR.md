@@ -35,7 +35,7 @@ construction/features/FT-SINGULAR/
 ├── construction-state.yaml        ← SSOT Workstream backend
 ├── execution-plan.md
 ├── session.md
-├── pkg-01/ … pkg-06/status.md
+├── pkg-01/ … pkg-06/status.md      ← VALIDATION SUMMARY (VAL-01) + entregas
 ├── review/
 ├── reports/
 └── closure-report.md
@@ -46,7 +46,7 @@ construction/frontend/features/FT-SINGULAR/
 ├── execution-plan.md
 ├── frontend-tasks.md
 ├── session.md
-├── pkg-fe-01/ … pkg-fe-06/status.md
+├── pkg-fe-01/ … pkg-fe-06/status.md  ← VALIDATION SUMMARY (VAL-01) + entregas
 ├── review/
 ├── reports/
 └── closure-report.md

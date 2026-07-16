@@ -5,10 +5,12 @@ import { SingularApiService, singularService } from "@/services/organization/sin
 import type { ApiResponse, PageResponse } from "@/types/api";
 import type { SingularResponse } from "@/types/organization/singular.types";
 
-const getMock = vi.fn();
-const postMock = vi.fn();
-const putMock = vi.fn();
-const patchMock = vi.fn();
+const { getMock, postMock, putMock, patchMock } = vi.hoisted(() => ({
+  getMock: vi.fn(),
+  postMock: vi.fn(),
+  putMock: vi.fn(),
+  patchMock: vi.fn()
+}));
 
 vi.mock("@/services/http", async importOriginal => {
   const actual = await importOriginal<typeof import("@/services/http")>();

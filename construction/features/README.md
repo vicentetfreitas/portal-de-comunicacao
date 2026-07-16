@@ -81,7 +81,8 @@ construction/features/<FEATURE_CODE>/
 ├── execution-plan.md          ← Ponto de entrada da execução
 ├── session.md                 ← Snapshot (Execute Feature)
 ├── pkg-01/ … pkg-N/
-│   └── status.md
+│   ├── status.md              ← VALIDATION SUMMARY (VAL-01) + entregas
+│   └── evidence/              ← logs completos (opcional por PKG)
 ├── review/
 ├── reports/
 └── closure-report.md

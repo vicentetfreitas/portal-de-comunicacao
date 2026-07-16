@@ -106,7 +106,8 @@ Como implementar corretamente os módulos PF-* da Platform Foundation seguindo a
 | Código da Platform Foundation | Pacotes em `backend/` conforme módulos PF-* |
 | Testes do módulo | Unitários e integração local do PKG |
 | Status local | `construction-state.yaml` + `pkg-XX/status.md` em `DONE` |
-| Resumo operacional | 3–8 linhas — não relatório completo |
+| VALIDATION SUMMARY | Seção obrigatória em `pkg-XX/status.md` (VAL-01) — ver `templates/pkg-validation-summary.md` |
+| Resumo operacional | 3–8 linhas — não duplicar validação |
 
 ---
 
@@ -135,6 +136,8 @@ Consultar construction-state.yaml + Snapshot + pkg-XX/status.md (STATE-02, RULE-
 Implementar tarefas PF-* (sem reler docs no Snapshot)
         ↓
 Executar validações incrementais (mvn test, mvn test -Dtest=...)
+        ↓
+Gravar log em pkg-XX/evidence/; preencher VALIDATION SUMMARY em pkg-XX/status.md (VAL-01)
         ↓
 Atualizar construction-state.yaml + pkg-XX/status.md → DONE (PARALLEL-01)
         ↓

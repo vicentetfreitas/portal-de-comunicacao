@@ -7,7 +7,7 @@
       <template #actions>
         <DsButton
           variant="primary"
-          :to="{ name: ROUTE_NAMES.SINGULAR_CREATE }"
+          :to="ROUTE_PATHS.SINGULAR_CREATE"
         >
           {{ $t("singular.list.createAction") }}
         </DsButton>
@@ -28,7 +28,7 @@
       >
         <DsButton
           variant="primary"
-          :to="{ name: ROUTE_NAMES.SINGULAR_CREATE }"
+          :to="ROUTE_PATHS.SINGULAR_CREATE"
         >
           {{ $t("singular.list.createAction") }}
         </DsButton>
@@ -78,7 +78,7 @@ import AppEmptyState from "@/components/shared/AppEmptyState.vue";
 import { DsBadge, DsButton, DsCard, DsDataTable, DsPageHeader } from "@/components/ds";
 import type { DsTableColumn } from "@/components/ds";
 import { useSingularList } from "@/composables/organization/useSingularList";
-import { ROUTE_NAMES } from "@/constants/routes";
+import { ROUTE_PATHS, singularDetailPath } from "@/constants/routes";
 import type { SingularStatus } from "@/types/organization/singular.types";
 
 const { t } = useI18n();
@@ -148,10 +148,7 @@ function statusVariant(status: SingularStatus): "positive" | "negative" {
 }
 
 function detailRoute(id: number) {
-  return {
-    name: ROUTE_NAMES.SINGULAR_DETAIL,
-    params: { id: String(id) }
-  };
+  return singularDetailPath(id);
 }
 
 onMounted(() => {

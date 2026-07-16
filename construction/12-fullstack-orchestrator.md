@@ -79,8 +79,9 @@ Feature (FT-<DOMAIN>)
 | EXEC-STRAT-01 | Execution Strategy | `execution_strategy` padrão `sequential`; `parallel` reservado — não altera Orchestrator atual |
 | HANDOFF-01 | Handoff por dependências | Transição entre Features usa `dependencies` do Manifest + registry |
 | RETRO-01 | Retrocompatibilidade | Paths v3.2/v4.0, registries legados e comandos internos permanecem válidos |
+| VAL-01 | Validation Summary | Resumo padronizado de validação em todo PKG — `templates/pkg-validation-summary.md` |
 
-Regras v3.2 (SESSION-01, CACHE-01, BUILD-01, PARALLEL-01, RULE-CONTEXT-01) **permanecem** aplicáveis **por Workstream**.
+Regras v3.2 (SESSION-01, CACHE-01, BUILD-01, PARALLEL-01, RULE-CONTEXT-01, VAL-01) **permanecem** aplicáveis **por Workstream**.
 
 ---
 

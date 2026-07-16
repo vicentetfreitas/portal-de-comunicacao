@@ -30,16 +30,16 @@
 import { useRouter } from "vue-router";
 
 import { DsActionCard, DsCard, DsPageHeader } from "@/components/ds";
-import { ROUTE_NAMES } from "@/constants/routes";
+import { ROUTE_PATHS } from "@/constants/routes";
 
 const router = useRouter();
 
 function goToList(): void {
-  void router.push({ name: ROUTE_NAMES.SINGULAR_LIST });
+  void router.push(ROUTE_PATHS.SINGULAR_LIST);
 }
 
 function goToCreate(): void {
-  void router.push({ name: ROUTE_NAMES.SINGULAR_CREATE });
+  void router.push(ROUTE_PATHS.SINGULAR_CREATE);
 }
 </script>
 

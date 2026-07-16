@@ -92,6 +92,8 @@ Consulta obrigatória antes de inferir progresso (STATE-02).
 
 | BUILD-01 | `mvn clean verify` somente no Encerramento |
 
+| VAL-01 | **VALIDATION SUMMARY** em `pkg-XX/status.md` — `templates/pkg-validation-summary.md` |
+
 | PARALLEL-01 | PKG altera `construction-state.yaml` + `pkg-XX/status.md` |
 
 | RULE-CONTEXT-01 | State → Snapshot → Cache → documento |
@@ -211,6 +213,8 @@ Cada PKG é **totalmente independente** (PARALLEL-01).
 - implementar código e testes
 
 - validações locais incrementais (BUILD-01)
+
+- **VALIDATION SUMMARY** em `pkg-XX/status.md` (VAL-01); log em `pkg-XX/evidence/`
 
 - atualizar `construction-state.yaml` e `pkg-XX/status.md`
 

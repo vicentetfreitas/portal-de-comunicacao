@@ -86,6 +86,21 @@
 
 ---
 
+# DL-EF-4.1-007 — Validation Summary padronizado (VAL-01)
+
+| Campo | Valor |
+|-------|-------|
+| Decisão | Todo PKG documenta validação em formato único **VALIDATION SUMMARY** |
+| Contexto | Relatórios extensos de validação por PKG geravam ruído e inconsistência |
+| Relatório principal | `pkg-XX/status.md` — seção VALIDATION SUMMARY |
+| Evidência | `pkg-XX/evidence/build-verify-YYYY-MM-DD.log` — log completo |
+| Processo | Comandos de validação inalterados (BUILD-01) — apenas apresentação |
+| Status | `PASS` \| `BUILD_FAILURE` \| `ENVIRONMENT_FAILURE` |
+| Template | `construction/templates/pkg-validation-summary.md` |
+| Regra | VAL-01 / R-22 em `construction/04-construction-rules.md` |
+
+---
+
 # Referências
 
 - `construction/CHANGELOG.md` — [4.1.0]

@@ -4,8 +4,8 @@
 |--------|--------|
 | Package | PKG-FE-S0-01 — Project Bootstrap |
 | Sprint | Frontend Foundation (Sprint 0) |
-| Status | **PENDING_REVIEW** |
-| Data | 2026-07-15 |
+| Status | **DONE** |
+| Data | 2026-07-16 |
 | Executor | feature-implementer |
 
 ---
@@ -23,7 +23,7 @@ Inicializar o projeto Quasar/Vue 3/TypeScript com estrutura oficial, configuraç
 | # | Entregável | Evidência | Status |
 |---|------------|-----------|--------|
 | D-01 | Projeto Quasar em `frontend/` | `quasar.config.ts`, `package.json` | ✅ |
-| D-02 | Estrutura de diretórios oficial | `src/layouts`, `services`, `components/ds`, `stores`, `router`, `composables`, `types`, `config`, `i18n` | ✅ |
+| D-02 | Estrutura de diretórios oficial | `src/app`, `src/features`, `src/layouts`, `services`, `components/ds`, `stores`, `router`, `composables`, `types`, `config`, `i18n` | ✅ |
 | D-03 | Configuração multi-ambiente | `.env.example`, `src/config/env.ts`, `VITE_*` em `env.d.ts` | ✅ |
 | — | Build e scripts dev/build/test | `package.json` scripts | ✅ |
 | — | Pinia | `src/stores/index.ts` | ✅ |
@@ -41,6 +41,9 @@ Inicializar o projeto Quasar/Vue 3/TypeScript com estrutura oficial, configuraç
 ### Criados
 
 ```text
+frontend/src/app/config.ts
+frontend/src/app/index.ts
+frontend/src/features/.gitkeep
 frontend/src/config/env.ts
 frontend/src/i18n/index.ts
 frontend/src/i18n/pt-BR.ts

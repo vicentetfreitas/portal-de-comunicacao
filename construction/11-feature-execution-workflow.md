@@ -158,6 +158,7 @@ O Construction State responde imediatamente:
 | CACHE-01 | Cache de contexto | Não reler documento se informação já está no Snapshot |
 | CACHE-02 | Reutilização obrigatória | Sem evento de invalidação, reutilizar Session ativa |
 | BUILD-01 | Build incremental | `mvn clean verify` somente no Encerramento |
+| VAL-01 | Validation Summary | Resumo único em `pkg-XX/status.md`; logs em `evidence/` — ver `templates/pkg-validation-summary.md` |
 | PARALLEL-01 | Independência de PKGs | Cada PKG altera `construction-state.yaml` e `pkg-XX/status.md` |
 | RULE-CONTEXT-01 | Hierarquia de consulta | SSOD → State → Snapshot → Cache → documento |
 
@@ -362,7 +363,7 @@ construction/features/<FEATURE_CODE>/construction-state.yaml   ← estado operac
 construction/features/<FEATURE_CODE>/pkg-XX/status.md          ← histórico detalhado do PKG
 ```
 
-Templates: `construction/templates/construction-state.yaml`, `construction/templates/pkg-status.md`
+Templates: `construction/templates/construction-state.yaml`, `construction/templates/pkg-status.md`, `construction/templates/pkg-validation-summary.md`
 
 ### Atualizações no Construction State (por PKG)
 
@@ -422,7 +423,11 @@ Estado global em `construction-state.yaml`. Detalhamento em `pkg-XX/status.md`:
 
 ## Saída do PKG
 
-Resumo operacional curto (3–8 linhas). Não relatório completo.
+**VALIDATION SUMMARY** em `pkg-XX/status.md` (VAL-01) + resumo operacional curto (3–8 linhas).
+
+Não relatório extenso de validação no arquivo principal. Logs completos em `pkg-XX/evidence/`.
+
+Template: `construction/templates/pkg-validation-summary.md`
 
 ---
 
@@ -633,5 +638,7 @@ construction/features/<FEATURE_CODE>/
 - `construction/templates/construction-state.yaml`
 - `construction/templates/feature-session.md`
 - `construction/templates/pkg-status.md`
+- `construction/templates/pkg-validation-summary.md`
+- `construction/templates/pkg-implementation-report.md`
 - `construction/templates/feature-closure-report.md`
 - `construction/04-construction-rules.md` — regras R-12 a R-27, STATE-01 a STATE-06

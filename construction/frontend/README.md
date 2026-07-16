@@ -44,7 +44,8 @@ construction/frontend/features/<FEATURE_CODE>/
 ├── frontend-tasks.md          ← Backlog técnico frontend
 ├── session.md                 ← Snapshot (Execute Feature — frontend)
 ├── pkg-fe-01/ … pkg-fe-N/
-│   └── status.md
+│   ├── status.md              ← VALIDATION SUMMARY (VAL-01) + entregas
+│   └── evidence/              ← logs completos (build-verify-*.log)
 ├── review/
 └── reports/
 ```

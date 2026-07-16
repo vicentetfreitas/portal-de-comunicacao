@@ -14,6 +14,6 @@
 import DsCard from "../molecules/DsCard.vue";
 
 defineProps<{
-  title?: string;
+  title?: string | undefined;
 }>();
 </script>

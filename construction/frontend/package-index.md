@@ -13,9 +13,9 @@
 
 | # | Identifier | Nome | Pasta | Dependências | Status |
 |---|------------|------|-------|--------------|--------|
-| 1 | PKG-FE-S0-01 | Project Bootstrap | `pkg-fe-s0-01/` | Backend Sprint 0; Docker Compose | Pending Review |
-| 2 | PKG-FE-S0-02 | Theme | `pkg-fe-s0-02/` | PKG-FE-S0-01 | Pending |
-| 3 | PKG-FE-S0-03 | Design System | `pkg-fe-s0-03/` | PKG-FE-S0-02 | Pending |
+| 1 | PKG-FE-S0-01 | Project Bootstrap | `pkg-fe-s0-01/` | Backend Sprint 0; Docker Compose | **Done** |
+| 2 | PKG-FE-S0-02 | Theme | `pkg-fe-s0-02/` | PKG-FE-S0-01 | **Done** |
+| 3 | PKG-FE-S0-03 | Design System | `pkg-fe-s0-03/` | PKG-FE-S0-02 | **Done** |
 | 4 | PKG-FE-S0-04 | Layouts | `pkg-fe-s0-04/` | PKG-FE-S0-02, PKG-FE-S0-03 | Pending |
 | 5 | PKG-FE-S0-05 | Routing | `pkg-fe-s0-05/` | PKG-FE-S0-04 | Pending |
 | 6 | PKG-FE-S0-06 | HTTP Client | `pkg-fe-s0-06/` | PKG-FE-S0-01 | Pending |

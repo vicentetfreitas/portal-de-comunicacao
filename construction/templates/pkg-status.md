@@ -63,14 +63,32 @@ Exploração da árvore da Feature é **proibida** (RULE-CONTEXT-01).
 
 ## Validações locais executadas (BUILD-01)
 
-| Comando | Resultado |
-|---------|-----------|
-| `mvn test` | |
-| `mvn verify -pl backend` | |
-| `mvn test -Dtest=...` | |
-| `mvn -pl backend -am test` | |
+> **VAL-01:** ao concluir o PKG, preencher a seção **VALIDATION SUMMARY** abaixo.  
+> Template e regras: `construction/templates/pkg-validation-summary.md`  
+> Log completo: `evidence/build-verify-YYYY-MM-DD.log` (scripts em `construction/templates/pkg-evidence-run-*.sh`)
 
 **Proibido:** `mvn clean verify` (reservado ao Encerramento da Feature).
+
+### VALIDATION SUMMARY
+
+Status
+NOT_RUN
+
+Validation
+
+✗ (pendente)
+
+Correções aplicadas
+
+• (nenhuma)
+
+Revalidation
+
+✗ (pendente)
+
+Evidence
+
+evidence/build-verify-YYYY-MM-DD.log
 
 ---
 
@@ -95,7 +113,7 @@ Exploração da árvore da Feature é **proibida** (RULE-CONTEXT-01).
 
 # Resumo operacional
 
-(3–8 linhas — o que foi feito, testes executados, pendências locais)
+(3–8 linhas — o que foi feito, pendências locais. **Não** duplicar VALIDATION SUMMARY.)
 
 ---
 

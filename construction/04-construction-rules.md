@@ -203,6 +203,18 @@ Durante PKG, são permitidos apenas: `mvn test`, `mvn verify -pl backend`, `mvn 
 
 `mvn clean verify` é reservado exclusivamente ao Encerramento da Feature.
 
+## R-22 — Validation Summary (VAL-01)
+
+Ao concluir um PKG, o relatório principal (`pkg-XX/status.md`) deve conter a seção **VALIDATION SUMMARY** no formato de `construction/templates/pkg-validation-summary.md`.
+
+| Regra | Descrição |
+|-------|-----------|
+| Resumo único | Status, comandos, correções por causa raiz, revalidação e path da evidência |
+| Logs completos | Somente em `pkg-XX/evidence/*.log` |
+| Status | `PASS`, `BUILD_FAILURE` ou `ENVIRONMENT_FAILURE` (apenas quando o comando não pôde executar) |
+| Proibido | Stack traces, logs extensos ou tabelas de exit code no relatório principal |
+| Processo | Comandos de validação inalterados (BUILD-01) — apenas apresentação |
+
 ## R-21 — Independência de PKGs (PARALLEL-01)
 
 Cada PKG altera `construction-state.yaml` e `pkg-XX/status.md`. Não compartilha outros arquivos de escrita com PKGs paralelos.

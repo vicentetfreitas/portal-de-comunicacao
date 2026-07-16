@@ -13,7 +13,7 @@
       :description="$t('singular.detail.notFoundDescription')"
       icon="mdi-alert-circle-outline"
     >
-      <DsButton variant="primary" :to="{ name: ROUTE_NAMES.SINGULAR_LIST }">
+      <DsButton variant="primary" :to="ROUTE_PATHS.SINGULAR_LIST">
         {{ $t("singular.detail.backToList") }}
       </DsButton>
     </AppEmptyState>
@@ -22,7 +22,7 @@
       <template #actions>
         <DsButton
           variant="ghost"
-          :to="{ name: ROUTE_NAMES.SINGULAR_LIST }"
+          :to="ROUTE_PATHS.SINGULAR_LIST"
         >
           {{ $t("singular.detail.backToList") }}
         </DsButton>
@@ -64,7 +64,7 @@ import {
   isSingularDeactivation
 } from "@/composables/organization/singular-status";
 import { useStandardErrorHandling } from "@/composables/useStandardErrorHandling";
-import { ROUTE_NAMES } from "@/constants/routes";
+import { ROUTE_PATHS, singularEditPath } from "@/constants/routes";
 import { singularService } from "@/services/organization";
 import type { SingularResponse, SingularStatus } from "@/types/organization/singular.types";
 
@@ -85,10 +85,7 @@ const pageTitle = computed(() =>
   singular.value?.name ?? t("singular.detail.title")
 );
 
-const editRoute = computed(() => ({
-  name: ROUTE_NAMES.SINGULAR_EDIT,
-  params: { id: props.id }
-}));
+const editRoute = computed(() => singularEditPath(props.id));
 
 const statusActionLabel = computed(() => {
   if (!singular.value) {

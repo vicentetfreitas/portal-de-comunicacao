@@ -3,11 +3,34 @@
 | Item | Valor |
 |------|-------|
 | Nome | **Engineering Framework** |
-| Versão atual | **v4.1** |
+| Versão atual | **v4.1.1** |
 | Baseline | **v4.0** |
 | Status | **Stable** |
 | Camada | `construction/` |
 | Última atualização | 2026-07-16 |
+
+---
+
+## [4.1.1] — 2026-07-16 — Validation Summary (VAL-01)
+
+### Marco
+
+- Padronização da **apresentação** de validação em todos os PKGs — processo BUILD-01 inalterado.
+
+### Adicionado
+
+- Regra **VAL-01** / **R-22** — Validation Summary em `pkg-XX/status.md`
+- Templates: `pkg-validation-summary.md`, `pkg-implementation-report.md`
+- Scripts de evidência: `pkg-evidence-run-frontend.sh`, `pkg-evidence-run-backend.sh`
+- Decisão **DL-EF-4.1-007** em `14-framework-decisions-v4.1.md`
+- Seção VALIDATION SUMMARY em `templates/pkg-status.md`
+- Orchestrator: emissão obrigatória do resumo ao concluir PKG
+
+### Preservado
+
+- Critérios de aceite e fluxo de execução dos PKGs
+- BUILD-01 — comandos permitidos / proibidos
+- Logs completos em `evidence/` (não no relatório principal)
 
 ---
 

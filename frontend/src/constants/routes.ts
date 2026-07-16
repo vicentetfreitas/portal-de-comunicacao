@@ -33,3 +33,13 @@ export const ROUTE_NAMES = {
 } as const;
 
 export type RoutePath = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
+
+/** Resolves detail path for programmatic singular routes (outside file-based RouteNamedMap). */
+export function singularDetailPath(id: string | number): string {
+  return `/app/administrador/singulares/${id}`;
+}
+
+/** Resolves edit path for programmatic singular routes (outside file-based RouteNamedMap). */
+export function singularEditPath(id: string | number): string {
+  return `/app/administrador/singulares/${id}/editar`;
+}

@@ -31,13 +31,13 @@ import type { DsInputVariant } from "../types";
 
 withDefaults(
   defineProps<{
-    label?: string;
-    placeholder?: string;
+    label?: string | undefined;
+    placeholder?: string | undefined;
     type?: "text" | "password" | "email" | "number" | "search" | "tel" | "url";
     disable?: boolean;
     readonly?: boolean;
-    error?: string;
-    hint?: string;
+    error?: string | undefined;
+    hint?: string | undefined;
     dense?: boolean;
     variant?: DsInputVariant;
   }>(),

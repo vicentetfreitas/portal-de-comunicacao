@@ -48,6 +48,7 @@ Durante esta fase:
 - seguir padrões em `docs/`
 - reutilizar contexto de `session.md` — **não reler** documentação já carregada
 - executar validações **locais** (testes do módulo, compilação)
+- gravar log em `pkg-XX/evidence/` e preencher **VALIDATION SUMMARY** em `pkg-XX/status.md` (VAL-01)
 - atualizar `construction/features/<FEATURE_CODE>/construction-state.yaml` e `pkg-XX/status.md`
 
 **Proibido durante PKG:**

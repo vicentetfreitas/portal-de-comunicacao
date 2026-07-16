@@ -1,32 +1,28 @@
-// Quasar Sass variables — synchronized with src/css/tokens/_palette.scss
+// Quasar Sass variables — synchronized with src/css/tokens/
 // https://quasar.dev/style/sass-scss-variables
 
-$primary: #007b5e;
-$secondary: #9e9e9e;
-$accent: #4dc8a9;
+@use "tokens/palette" as palette;
+@use "tokens/typography" as typography;
+@use "tokens/spacing" as spacing;
+@use "tokens/radius" as radius;
+
+$primary: palette.$color-primary-500;
+$secondary: palette.$color-gray-500;
+$accent: palette.$color-primary-300;
 
 $dark: #1d1d1d;
 $dark-page: #121212;
 
-$positive: #2e7d32;
-$negative: #c62828;
-$info: #1565c0;
-$warning: #ef6c00;
+$positive: palette.$color-success-500;
+$negative: palette.$color-error-500;
+$info: palette.$color-info-500;
+$warning: palette.$color-warning-500;
 
-$typography-font-family:
-  "Unimed Sans",
-  "Inter",
-  system-ui,
-  -apple-system,
-  "Segoe UI",
-  Roboto,
-  "Helvetica Neue",
-  Arial,
-  sans-serif;
+$typography-font-family: typography.$font-family-sans;
 
-$button-border-radius: 8px;
-$generic-border-radius: 8px;
+$button-border-radius: radius.$radius-md;
+$generic-border-radius: radius.$radius-md;
 
-$space-base: 8px;
-$space-x-base: 8px;
-$space-y-base: 8px;
+$space-base: spacing.$spacing-2;
+$space-x-base: spacing.$spacing-2;
+$space-y-base: spacing.$spacing-2;

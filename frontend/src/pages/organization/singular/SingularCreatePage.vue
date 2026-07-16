@@ -29,7 +29,7 @@ import {
   useSingularForm
 } from "@/composables/organization/useSingularForm";
 import { useStandardErrorHandling } from "@/composables/useStandardErrorHandling";
-import { ROUTE_NAMES } from "@/constants/routes";
+import { ROUTE_PATHS, singularDetailPath } from "@/constants/routes";
 import { singularService } from "@/services/organization";
 
 const router = useRouter();
@@ -54,10 +54,7 @@ async function onSubmit(): Promise<void> {
   try {
     const created = await singularService.create(toCreateRequest());
     dsNotifySuccess(t("singular.create.success"));
-    await router.push({
-      name: ROUTE_NAMES.SINGULAR_DETAIL,
-      params: { id: String(created.id) }
-    });
+    await router.push(singularDetailPath(created.id));
   } catch (error) {
     const apiError = handleError(error);
     if (apiError.fieldErrors && apiError.fieldErrors.length > 0) {
@@ -69,7 +66,7 @@ async function onSubmit(): Promise<void> {
 }
 
 function onCancel(): void {
-  void router.push({ name: ROUTE_NAMES.SINGULAR_LIST });
+  void router.push(ROUTE_PATHS.SINGULAR_LIST);
 }
 </script>
 
