@@ -16,6 +16,7 @@
         :greeting="profileGreeting"
         :avatar-initials="profileInitials"
         :edit-label="profileEditLabel"
+        :show-edit="showEdit"
         :mini="sidebarMini"
         @edit="$emit('profileEdit')"
       />
@@ -79,13 +80,15 @@ const props = withDefaults(
     profileGreeting?: string;
     profileInitials?: string;
     profileEditLabel?: string;
+    showEdit?: boolean;
   }>(),
   {
     showProfile: true,
     profileName: "Colaborador",
     profileGreeting: "Olá,",
     profileInitials: "CO",
-    profileEditLabel: "Editar perfil"
+    profileEditLabel: "Editar perfil",
+    showEdit: true
   }
 );
 

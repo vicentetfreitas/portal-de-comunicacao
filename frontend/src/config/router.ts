@@ -3,7 +3,7 @@
  * FT-AUTH enables authentication; Features enable authorization rules.
  */
 export const routerGuardConfig = {
-  enforceAuthentication: false,
+  enforceAuthentication: true,
   enforceAuthorization: false
 } as const;
 

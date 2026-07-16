@@ -1,0 +1,89 @@
+# Workstream State — Template v4.0
+# SSOT do estado operacional de um Workstream (equivalente a construction-state.yaml v3)
+# Localização: <workstream-root>/construction-state.yaml
+
+version: 4
+
+scope:
+  type: business_feature_workstream
+  workstream:
+    id: {{WORKSTREAM_ID}}           # backend | frontend | cms | mobile
+    type: {{WORKSTREAM_TYPE}}
+    order: {{WORKSTREAM_ORDER}}
+  feature:
+    code: {{FEATURE_CODE}}
+  layer: {{SCOPE_LAYER}}
+  path: {{WORKSTREAM_PATH}}
+
+feature:
+  id: {{FEATURE_SLUG}}
+  code: {{FEATURE_CODE}}
+  name: {{FEATURE_NAME}}
+
+depends_on:
+  workstreams: []
+  # Exemplo frontend:
+  # - backend
+  features: []
+  foundations: []
+
+definition_of_ready:
+  status: pending
+  criteria: {}
+
+state:
+  phase: not_started
+  current_pkg: null
+  completed: []
+  pending: []
+
+snapshot:
+  version: 0
+  created_at: null
+  immutable: false
+
+cache:
+  valid: false
+  reason: null
+
+manifest:
+  version: 2
+  path: feature-manifest.yaml
+
+review:
+  status: pending
+  verdict: null
+  executed_at: null
+
+audit:
+  status: pending
+  verdict: null
+  executed_at: null
+
+build:
+  incremental: true
+  full_verify: null
+  last_command: null
+  last_run_at: null
+
+readiness:
+  status: pending
+  scope: null
+
+closure:
+  status: pending
+  final_state: null
+  scope: null
+
+metrics:
+  pkgs_total: 0
+  pkgs_completed: 0
+
+metadata:
+  created_at: null
+  updated_at: null
+  closed_at: null
+  last_pkg_completed: null
+
+# Nota v4.0: o estado da Feature (agregado) NÃO é persistido aqui.
+# Consultar construction/12-fullstack-orchestrator.md — STATE-AGG-01

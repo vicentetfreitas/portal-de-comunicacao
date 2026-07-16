@@ -155,11 +155,50 @@ Evento: Criação e preenchimento integral da camada `construction/`.
 
 ---
 
+## 2026-07-16 — Engineering Framework v4.0 Full Stack Orchestrator
+
+**Evento:** Evolução do framework para orquestrador Full Stack com **FT-SINGULAR** como Golden Template.
+
+**Marco:**
+
+- Engineering Framework **v4.0** — Workstream model + estado agregado computado
+- `construction/registry.yaml` — registry unificado
+- `construction/12-fullstack-orchestrator.md` — SSOT v4.0
+- Comando `Execute FT-<FEATURE>` — roteamento automático
+- Retrocompatibilidade RETRO-01 — Features FEATURE_APPROVED inalteradas
+
+**Evidências:**
+
+- Golden Template: `construction/golden-template/FT-SINGULAR.md`
+- Decisões: `construction/13-framework-decisions-v4.md` (DL-EF-4.0-001..009)
+- FT-SINGULAR: backend + frontend Workstreams closed
+
+---
+
+## 2026-07-16 — Engineering Framework v4.1 — Capabilities & Operational Model
+
+**Evento:** Refinamento incremental sobre v4.0 — retrocompatibilidade total.
+
+**Marco:**
+
+- Engineering Framework **v4.1** — Capabilities opcionais, Execution Strategy, CMD-FEATURE-01
+- `current_capability` no registry unificado
+- Comandos: `Execute`, `Continue`, `Review`, `Close FT-<FEATURE>`
+- `construction/14-framework-decisions-v4.1.md` — DL-EF-4.1-001..006
+
+**Evidências:**
+
+- FT-SINGULAR validado sem migração — `current_capability: null`
+- Template: `construction/templates/feature-manifest-v4.yaml`
+- SSOT: `construction/12-fullstack-orchestrator.md` v4.1
+
+---
+
 # Eventos Futuros (A Preencher)
 
 | Data | Evento | Referência |
 |------|--------|------------|
-| — | Sprint 2 — próxima Feature | `construction/features/registry.yaml` |
+| — | Próxima Feature Full Stack | `construction/registry.yaml` |
 
 ---
 

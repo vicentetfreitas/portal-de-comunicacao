@@ -3,10 +3,84 @@
 | Item | Valor |
 |------|-------|
 | Nome | **Engineering Framework** |
-| Versão atual | **v3.2** |
+| Versão atual | **v4.1** |
+| Baseline | **v4.0** |
 | Status | **Stable** |
 | Camada | `construction/` |
-| Última atualização | 2026-07-09 |
+| Última atualização | 2026-07-16 |
+
+---
+
+## [4.1.0] — 2026-07-16 — Capabilities & Operational Model
+
+### Marco
+
+- Refinamento incremental sobre v4.0 — **retrocompatibilidade total**.
+- **Capabilities** opcionais como agrupadores funcionais no Feature Manifest.
+- **Execution Strategy** declarativa (`sequential` padrão; `parallel` reservado).
+- Registry com **Current Capability** computado (CAP-02).
+- Modelo operacional simplificado — **entrada exclusiva Feature** (CMD-FEATURE-01).
+
+### Adicionado
+
+- Seção `capabilities[]` opcional em `templates/feature-manifest-v4.yaml`
+- Campo `execution_strategy` opcional no manifest (padrão: `sequential`)
+- `current_capability` em `construction/registry.yaml` (registry v3, framework 4.1)
+- `construction/14-framework-decisions-v4.1.md` — decisões DL-EF-4.1-001..006
+- Regras CAP-01, CAP-02, EXEC-STRAT-01, CMD-FEATURE-01
+- Comandos oficiais: `Execute`, `Continue`, `Review`, `Close FT-<FEATURE>`
+
+### Preservado (RETRO-01)
+
+- Todos os manifests, states e PKGs de Features FEATURE_APPROVED
+- FT-SINGULAR como Golden Template **sem migração**
+- Comportamento Orchestrator v4.0 quando capabilities ausentes
+- `execution_strategy` omitido = `sequential` = WS-ORDER-01
+- Comandos legados (`Execute PKG-XX`, `Encerrar Feature`)
+
+### Validação
+
+- FT-SINGULAR: `current_capability: null`; manifest v2 inalterado
+- Documentação: `12-fullstack-orchestrator.md` v4.1, `golden-template/FT-SINGULAR.md`
+
+### Referências
+
+- `construction/14-framework-decisions-v4.1.md`
+- `construction/12-fullstack-orchestrator.md`
+
+---
+
+## [4.0.0] — 2026-07-16 — Full Stack Orchestrator
+
+### Marco
+
+- Evolução do framework para **orquestrador Full Stack** com **FT-SINGULAR** como Golden Template.
+- Feature como unidade de construção; Workstream como modelo genérico de camada.
+- Estado agregado **computado** (STATE-AGG-01) — sem duplicar states.
+- Comando `Execute FT-<FEATURE>` resolve Workstream e PKG ativos.
+- Retrocompatibilidade total com v3.2 e Features FEATURE_APPROVED.
+
+### Adicionado
+
+- `construction/12-fullstack-orchestrator.md` — SSOT orquestração v4.0
+- `construction/registry.yaml` — registry unificado Features + Workstreams
+- `construction/golden-template/FT-SINGULAR.md` — Golden Template Full Stack
+- `construction/13-framework-decisions-v4.md` — decisões DL-EF-4.0-001..009
+- `construction/templates/feature-manifest-v4.yaml`
+- `construction/templates/workstream-state.yaml`
+- Regras REGISTRY-01, STATE-AGG-01, WS-ORDER-01, WS-ROUTING-01, CMD-FT-01, HANDOFF-01, RETRO-01
+
+### Preservado (RETRO-01)
+
+- Paths `construction/features/` e `construction/frontend/features/`
+- `construction-state.yaml` por Workstream
+- `11-feature-execution-workflow.md` (v3.2 por Workstream)
+- Registries legados como aliases
+
+### Referências
+
+- `construction/13-framework-decisions-v4.md`
+- `construction/golden-template/FT-SINGULAR.md`
 
 ---
 
@@ -103,7 +177,7 @@
 | Tipo de mudança | Quando aplicar |
 |-----------------|----------------|
 | **Major** (v4.0) | Mudança estrutural no workflow, artefatos obrigatórios ou SSOD |
-| **Minor** (v3.x) | Novas regras, templates ou fases sem quebra de compatibilidade |
+| **Minor** (v4.1, v3.x) | Novas regras opcionais, templates ou campos sem quebra de compatibilidade |
 | **Stable** | Primeira Feature de negócio aprovada + retrospectiva emitida |
 
 Evoluções futuras devem ser motivadas por **necessidades recorrentes observadas em múltiplas Features**, documentadas em Sprint Retrospectives — não por ajustes específicos de uma única implementação (ver RULE-04 e `construction/README.md` § Evolução do Framework).

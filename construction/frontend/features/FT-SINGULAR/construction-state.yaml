@@ -1,0 +1,158 @@
+# Construction State — FT-SINGULAR (Frontend)
+# SSOT do estado operacional — camada frontend (Feature-centric v3.2)
+
+version: 3
+
+scope:
+  type: business_feature
+  layer: frontend
+  path: construction/frontend/features/FT-SINGULAR
+
+feature:
+  id: singular
+  code: FT-SINGULAR
+  name: Singular
+
+depends_on:
+  - frontend_foundation
+  - FT-AUTH
+  - FT-SINGULAR_backend
+
+prerequisites:
+  frontend_foundation:
+    status: FEATURE_APPROVED
+    ssot: construction/frontend/construction-state.yaml
+    pkgs: pkg-fe-s0-01..10
+    verified_at: "2026-07-16T09:25:00-03:00"
+  ft_auth_frontend:
+    status: FEATURE_APPROVED
+    ssot: construction/features/FT-AUTH/construction-state.yaml
+    scope: frontend.phase done
+    verified_at: "2026-07-16T09:25:00-03:00"
+  ft_singular_backend:
+    status: FEATURE_APPROVED
+    ssot: construction/features/FT-SINGULAR/construction-state.yaml
+    verified_at: "2026-07-16T09:25:00-03:00"
+  api_contract:
+    version: "1.1.1"
+    path: specs/features/singular/api.md
+    status: APPROVED
+
+definition_of_ready:
+  status: satisfied
+  synchronized_at: "2026-07-16T09:25:00-03:00"
+  criteria:
+    frontend_foundation: true
+    ft_auth_frontend: true
+    ft_singular_backend: true
+    api_contract_v1_1_1: true
+  note: "DoR sincronizado com estado real do repositório — sem ressalvas de infraestrutura"
+
+infrastructure_reuse:
+  confirmed: true
+  parallel_infrastructure_required: false
+  components:
+    - name: BaseApiClient
+      path: frontend/src/services/http/base-api-client.ts
+    - name: HTTP Client
+      path: frontend/src/services/http/axios-instance.ts
+    - name: Auth Store
+      path: frontend/src/stores/auth-store.ts
+    - name: Auth Service
+      path: frontend/src/services/auth/auth.service.ts
+    - name: Router
+      path: frontend/src/router/index.ts
+    - name: Router Guards
+      path: frontend/src/router/guards/
+    - name: Layouts
+      path: frontend/src/layouts/
+    - name: Design System
+      path: frontend/src/components/ds/
+    - name: Shared Components
+      path: frontend/src/components/shared/
+    - name: AppShell
+      path: frontend/src/components/app/
+    - name: Composables
+      path: frontend/src/composables/
+
+backend:
+  code: FT-SINGULAR
+  path: ../../../features/FT-SINGULAR/
+  phase: closed
+  closure: FEATURE_APPROVED
+
+state:
+  phase: closed
+
+  current_pkg: null
+
+  completed:
+    - pkg-fe-01
+    - pkg-fe-02
+    - pkg-fe-03
+    - pkg-fe-04
+    - pkg-fe-05
+    - pkg-fe-06
+
+  pending: []
+
+snapshot:
+  version: 2
+  created_at: "2026-07-16T09:25:00-03:00"
+  immutable: true
+  superseded_version: 1
+  reason: "State Sync — correção DoR e pré-requisitos"
+
+cache:
+  valid: false
+  reason: "Feature encerrada — PKG-FE-06 concluído"
+
+manifest:
+  version: 2
+  path: feature-manifest.yaml
+
+specification:
+  version: "1.1.1"
+  sprint_scope: frontend_crud_mvp
+
+review:
+  status: approved
+  verdict: approved
+  executed_at: "2026-07-16T09:55:00-03:00"
+
+audit:
+  status: approved
+  verdict: conforme
+  executed_at: "2026-07-16T09:55:00-03:00"
+
+build:
+  incremental: false
+  full_verify: pending_local
+  last_command: "yarn lint:check && yarn test:unit && yarn test:e2e && yarn build"
+  last_run_at: null
+  note: "Validação documentada em reports/validation-2026-07-16.md"
+
+readiness:
+  status: approved
+  scope: sprint_2_frontend_mvp
+  note: "AT-FE-001..005 cobertos por Playwright com mocks"
+
+closure:
+  status: approved
+  final_state: FEATURE_APPROVED
+  scope: sprint_2_frontend_mvp
+
+metrics:
+  pkgs_total: 6
+  pkgs_completed: 6
+  frontend_tasks_total: 5
+  frontend_tasks_completed: 5
+  acceptance_criteria_covered: 5
+  acceptance_criteria_total: 5
+
+metadata:
+  created_at: "2026-07-16T09:15:00-03:00"
+  updated_at: "2026-07-16T09:55:00-03:00"
+  closed_at: "2026-07-16T09:55:00-03:00"
+  last_state_sync: "2026-07-16T09:25:00-03:00"
+  last_pkg_completed: pkg-fe-06

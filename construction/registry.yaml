@@ -1,0 +1,199 @@
+# Feature Registry — Engineering Framework v4.1 (Full Stack)
+# SSOD de índice: localizar Features e Workstreams sem hardcode de paths.
+# O Feature Manifest permanece SSOT de cada Feature; este registry agrega Workstreams.
+# v4.1: current_capability indica Capability em execução quando declarada no manifest.
+
+version: 3
+framework: "4.1"
+role: registry
+
+convention:
+  feature_format: "FT-<DOMAIN>"
+  feature_directory_backend: "construction/features/<code>/"
+  workstream_directory_frontend: "construction/frontend/features/<code>/"
+  golden_template: FT-SINGULAR
+  reference: "construction/golden-template/FT-SINGULAR.md"
+  current_capability:
+    description: Capability atualmente em execução (quando manifest declara capabilities[])
+    default: null
+    note: Omitir ou null quando Feature não usa capabilities ou está encerrada
+
+# Fundações — unidades especiais (não são Features de negócio)
+foundations:
+  - code: platform-foundation
+    type: platform-foundation
+    name: Platform Foundation
+    sprint: 1A
+    manifest: platform-foundation/feature-manifest.yaml
+    state: platform-foundation/construction-state.yaml
+    status: closed
+    closure: FEATURE_APPROVED
+
+  - code: frontend-foundation
+    type: frontend-foundation
+    name: Frontend Foundation
+    sprint: 0
+    manifest: frontend/sprint-0-manifest.yaml
+    state: frontend/construction-state.yaml
+    status: closed
+    closure: FEATURE_APPROVED
+
+# Features de negócio — unidade de construção
+features:
+  - code: FT-AUTH
+    slug: authentication
+    name: Authentication
+    sprint: 1
+    golden: false
+    manifest: features/FT-AUTH/feature-manifest.yaml
+    aggregate_state: computed
+    current_capability: null
+    status: closed
+    closure: FEATURE_APPROVED
+    workstreams:
+      - id: backend
+        type: backend
+        order: 1
+        manifest: features/FT-AUTH/feature-manifest.yaml
+        state: features/FT-AUTH/construction-state.yaml
+        status: closed
+        closure: FEATURE_APPROVED
+        pkgs_pattern: "pkg-{NN}"
+
+  - code: FT-AREA
+    slug: area
+    name: Área
+    sprint: 2
+    golden: false
+    manifest: features/FT-AREA/feature-manifest.yaml
+    aggregate_state: computed
+    current_capability: null
+    status: closed
+    closure: FEATURE_APPROVED
+    workstreams:
+      - id: backend
+        type: backend
+        order: 1
+        manifest: features/FT-AREA/feature-manifest.yaml
+        state: features/FT-AREA/construction-state.yaml
+        status: closed
+        closure: FEATURE_APPROVED
+        pkgs_pattern: "pkg-{NN}"
+
+  - code: FT-SINGULAR
+    slug: singular
+    name: Singular
+    golden: true
+    manifest: features/FT-SINGULAR/feature-manifest.yaml
+    aggregate_state: computed
+    current_capability: null
+    status: closed
+    closure: FEATURE_APPROVED
+    workstreams:
+      - id: backend
+        type: backend
+        order: 1
+        sprint: 3
+        manifest: features/FT-SINGULAR/feature-manifest.yaml
+        state: features/FT-SINGULAR/construction-state.yaml
+        execution_plan: features/FT-SINGULAR/execution-plan.md
+        session: features/FT-SINGULAR/session.md
+        status: closed
+        closure: FEATURE_APPROVED
+        pkgs_pattern: "pkg-{NN}"
+        pkgs_total: 6
+      - id: frontend
+        type: frontend
+        order: 2
+        sprint: 2
+        manifest: frontend/features/FT-SINGULAR/feature-manifest.yaml
+        state: frontend/features/FT-SINGULAR/construction-state.yaml
+        execution_plan: frontend/features/FT-SINGULAR/execution-plan.md
+        session: frontend/features/FT-SINGULAR/session.md
+        frontend_tasks: frontend/features/FT-SINGULAR/frontend-tasks.md
+        status: closed
+        closure: FEATURE_APPROVED
+        depends_on_workstreams:
+          - backend
+        pkgs_pattern: "pkg-fe-{NN}"
+        pkgs_total: 6
+
+  - code: FT-EQUIPE
+    slug: equipe
+    name: Equipe
+    sprint: 3
+    golden: false
+    manifest: features/FT-EQUIPE/feature-manifest.yaml
+    aggregate_state: computed
+    current_capability: null
+    status: closed
+    closure: FEATURE_APPROVED
+    workstreams:
+      - id: backend
+        type: backend
+        order: 1
+        manifest: features/FT-EQUIPE/feature-manifest.yaml
+        state: features/FT-EQUIPE/construction-state.yaml
+        status: closed
+        closure: FEATURE_APPROVED
+        pkgs_pattern: "pkg-{NN}"
+
+  - code: FT-COLABORADOR
+    slug: colaborador
+    name: Colaborador
+    sprint: 3
+    golden: false
+    manifest: features/FT-COLABORADOR/feature-manifest.yaml
+    aggregate_state: computed
+    current_capability: null
+    status: closed
+    closure: FEATURE_APPROVED
+    workstreams:
+      - id: backend
+        type: backend
+        order: 1
+        manifest: features/FT-COLABORADOR/feature-manifest.yaml
+        state: features/FT-COLABORADOR/construction-state.yaml
+        status: closed
+        closure: FEATURE_APPROVED
+        pkgs_pattern: "pkg-{NN}"
+
+# Tipos de Workstream suportados pelo framework (extensível)
+workstream_types:
+  - id: platform-foundation
+    description: Infraestrutura backend compartilhada (Sprint 1A)
+    legacy_path: construction/platform-foundation/
+  - id: frontend-foundation
+    description: Infraestrutura frontend compartilhada (Sprint 0)
+    legacy_path: construction/frontend/
+  - id: backend
+    description: Implementação backend da Feature
+    legacy_path: construction/features/<FEATURE_CODE>/
+  - id: frontend
+    description: Implementação frontend da Feature
+    legacy_path: construction/frontend/features/<FEATURE_CODE>/
+  - id: cms
+    description: Camada CMS (futuro)
+    legacy_path: construction/cms/features/<FEATURE_CODE>/
+  - id: mobile
+    description: Camada mobile (futuro)
+    legacy_path: construction/mobile/features/<FEATURE_CODE>/
+
+discovery:
+  rule: REGISTRY-01 — consultar construction/registry.yaml antes de paths hardcoded
+  ssot_feature: feature-manifest.yaml em cada Workstream ou raiz backend
+  ssot_workstream_state: construction-state.yaml por Workstream
+  aggregate_state: computado pelo Orchestrator (STATE-AGG-01)
+  current_capability: computado pelo Orchestrator quando manifest declara capabilities[] (CAP-01)
+
+retrocompatibility:
+  legacy_registries:
+    - construction/features/registry.yaml
+    - construction/frontend/registry.yaml
+  framework_v4_0:
+    note: >
+      Registry v2 (framework 4.0) permanece válido. Campos novos (current_capability)
+      são opcionais — ausência equivale a null (RETRO-01).
+  note: >
+    Registries legados permanecem válidos como aliases. O registry unificado
+    construction/registry.yaml é a fonte preferencial a partir da v4.0.

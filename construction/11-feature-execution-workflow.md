@@ -7,8 +7,8 @@
 | Camada | Construction |
 | Tipo | **SSOT — Workflow de Execução** |
 | Status | **Stable** |
-| Versão | **3.2** |
-| Última atualização | 2026-07-09 |
+| Versão | **3.2** (+ **v4.0 / v4.1 Full Stack** — ver `12-fullstack-orchestrator.md`) |
+| Última atualização | 2026-07-16 |
 | Changelog | `construction/CHANGELOG.md` |
 
 ---
@@ -26,7 +26,20 @@ Esta versão evolui o workflow v3.1 com:
 - Session imutável, Snapshot estruturado, cache com invalidação formal
 - Build incremental e PKGs independentes
 
-**Status Stable (v3.2):** validado com **FEATURE_APPROVED** da FT-AUTH. O framework permanece congelado durante execução de Features (RULE-02).
+**Status Stable (v3.2):** validado com **FEATURE_APPROVED** da FT-AUTH. Evoluído para **v4.0 Full Stack Orchestrator** e refinado em **v4.1** (Capabilities, CMD-FEATURE-01) — este documento permanece SSOT **por Workstream**; agregação Feature em `construction/12-fullstack-orchestrator.md`.
+
+---
+
+# Relação com v4.0 / v4.1 Full Stack
+
+| v3.2 (este documento) | v4.0 / v4.1 |
+|----------------------|------|
+| Unidade de execução = Feature path | Unidade de execução = **Workstream** dentro da Feature |
+| `construction-state.yaml` por path | `construction-state.yaml` = **Workstream State** |
+| `Execute Feature <CODE>` | `Execute FT-<CODE>` resolve Workstream ativo (v4.1: entrada exclusiva Feature) |
+| Registry por camada | `construction/registry.yaml` unificado (+ `current_capability` v4.1) |
+
+O workflow de três fases (Sessão → PKGs → Encerramento) aplica-se **a cada Workstream**. Capabilities (v4.1) organizam funcionalidades **sem alterar** este lifecycle.
 
 ---
 
@@ -540,8 +553,9 @@ construction/features/<FEATURE_CODE>/
 
 | Comando | Fase | Descrição |
 |---------|------|-----------|
-| `Execute Feature <FEATURE_CODE>` | 1 | SSOD → State → Snapshot → Session congelada |
-| `Execute PKG-XX` | 2 | PKG focado (requer State `execution` + Session ativa) |
+| `Execute FT-<FEATURE>` | 1/2 | **v4.0** — Orchestrator resolve Workstream + PKG/sessão |
+| `Execute Feature <FEATURE_CODE>` | 1 | SSOD → State → Snapshot → Session congelada (Workstream ativo) |
+| `Execute PKG-XX [FT-<FEATURE>]` | 2 | PKG focado (roteamento por prefixo — WS-ROUTING-01) |
 | `Encerrar Feature <FEATURE_CODE>` | 3 | State, closure, review, audit, build completo |
 
 ---

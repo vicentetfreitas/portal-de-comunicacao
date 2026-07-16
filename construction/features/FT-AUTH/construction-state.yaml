@@ -56,7 +56,14 @@ manifest:
 
 specification:
   version: "2.2"
-  sprint_scope: backend_only
+  sprint_scope: backend_and_frontend
+
+frontend:
+  phase: done
+  current_pkg: null
+  completed:
+    - pkg-fe-01
+  pending: []
 
 review:
   status: done
@@ -78,14 +85,14 @@ build:
 
 readiness:
   status: approved
-  scope: sprint_1_backend
-  note: "Sprint 1 Backend aprovada — FE fora de escopo"
+  scope: backend_and_frontend
+  note: "Backend Sprint 1 + Frontend FT-AUTH (PKG-FE-01) implementados"
 
 closure:
   status: closed
   final_state: FEATURE_APPROVED
-  scope: sprint_1_backend
-  note: "Encerramento Sprint 1 Backend — spec v2.2 atendida"
+  scope: backend_and_frontend
+  note: "Backend e frontend FT-AUTH entregues conforme spec v2.2"
 
 metrics:
   pkgs_total: 6
@@ -98,5 +105,6 @@ metrics:
 
 metadata:
   created_at: "2026-07-09T13:55:00-03:00"
-  updated_at: "2026-07-09T20:25:00-03:00"
+  updated_at: "2026-07-16T09:00:00-03:00"
   closed_at: "2026-07-09T20:25:00-03:00"
+  frontend_completed_at: "2026-07-16T09:00:00-03:00"

@@ -8,7 +8,7 @@ feature:
   name: Frontend Foundation
 
 state:
-  phase: in_progress
+  phase: closed
 
   current_pkg: null
 
@@ -29,31 +29,41 @@ state:
 snapshot:
   version: 1
   created_at: "2026-07-16T08:00:00-03:00"
-  immutable: false
+  immutable: true
 
 cache:
   valid: true
-  reason: null
+  reason: "Sprint 0 encerrada — infraestrutura reutilizável por Features frontend"
 
 manifest:
   version: 1
+  path: sprint-0-manifest.yaml
 
 review:
-  status: pending
+  status: done
+  verdict: approved
 
 audit:
-  status: pending
+  status: done
+  verdict: conforming
 
 build:
   incremental: true
-  full_verify: pending
+  full_verify: success
+  last_command: "pnpm lint && pnpm test && pnpm build"
+  note: "Validação FE-S0-09/10"
 
 readiness:
-  status: pending
+  status: approved
+  scope: sprint_0_frontend_foundation
 
 closure:
-  status: open
+  status: done
+  final_state: FEATURE_APPROVED
+  scope: sprint_0_frontend_foundation
+  note: "PKG-FE-S0-01 a FE-S0-10 concluídos — Foundation totalmente reutilizável"
 
 metadata:
   created_at: "2026-07-15T00:00:00-03:00"
-  updated_at: "2026-07-16T08:30:00-03:00"
+  updated_at: "2026-07-16T09:25:00-03:00"
+  closed_at: "2026-07-16T09:25:00-03:00"

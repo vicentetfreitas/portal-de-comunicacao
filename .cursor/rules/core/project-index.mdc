@@ -64,17 +64,24 @@ specs/
 
 construction/
 
+├── registry.yaml                     ← v4.1 — índice unificado Features + Workstreams
+├── 12-fullstack-orchestrator.md      ← v4.1 — SSOT orquestração Full Stack
+├── 14-framework-decisions-v4.1.md    ← decisões v4.1
+├── golden-template/FT-SINGULAR.md    ← Golden Template Full Stack
 ├── platform-foundation/              ← Sprint 1A (histórico, phase: closed)
 │   └── construction-state.yaml
-├── features/<FEATURE_CODE>/          ← Features de negócio (ex.: FT-AUTH)
-│   ├── feature-manifest.yaml       ← SSOD (consultar primeiro)
-│   ├── construction-state.yaml     ← SSOT estado operacional (v3)
+├── features/<FEATURE_CODE>/          ← Workstream backend (ex.: FT-AUTH)
+│   ├── feature-manifest.yaml         ← SSOT Feature (consultar primeiro)
+│   ├── construction-state.yaml       ← SSOT Workstream backend
 │   ├── execution-plan.md
 │   ├── session.md
 │   ├── review/
 │   ├── reports/
 │   └── pkg-XX/status.md
-├── features/registry.yaml            ← Índice de Features
+├── features/registry.yaml            ← Alias legado → registry.yaml
+├── frontend/
+│   ├── registry.yaml                 ← Alias legado → registry.yaml
+│   └── features/<FEATURE_CODE>/      ← Workstream frontend (quando existir)
 
 engineering/
 
@@ -105,17 +112,20 @@ docs/
 Consultar obrigatoriamente:
 
 ```text
-1. construction/11-feature-execution-workflow.md   ← workflow v3.2
+1. construction/12-fullstack-orchestrator.md      ← workflow v4.1 Full Stack
+2. construction/11-feature-execution-workflow.md    ← workflow v3.2 por Workstream
 
-2. feature-manifest.yaml (SSOD-01) — descobrir paths:
-   - Registry: construction/features/registry.yaml
+3. construction/registry.yaml (REGISTRY-01) — descobrir Feature e Workstreams
+
+4. feature-manifest.yaml (SSOD-01) — SSOT Feature:
    - Feature:  construction/features/<FEATURE_CODE>/feature-manifest.yaml
 
-3. construction-state.yaml (STATE-02) — estado operacional:
-   - Fundação: construction/platform-foundation/construction-state.yaml
-   - Feature:  construction/features/<FEATURE_CODE>/construction-state.yaml
+5. construction-state.yaml (STATE-WS-01) — SSOT por Workstream:
+   - Backend:  construction/features/<FEATURE_CODE>/construction-state.yaml
+   - Frontend: construction/frontend/features/<FEATURE_CODE>/construction-state.yaml
+   - Agregado: computado (STATE-AGG-01) — não inferir sem ler cada Workstream
 
-4. execution-plan.md + session.md (Snapshot imutável)
+6. execution-plan.md + session.md (Snapshot imutável do Workstream ativo)
 
 5. specs/features/ (path em manifest.specification.path)
 

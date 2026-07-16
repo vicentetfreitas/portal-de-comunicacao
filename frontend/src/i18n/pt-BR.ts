@@ -43,10 +43,21 @@ export default {
     },
     auth: {
       title: "Autenticação",
-      subtitle: "Estrutura preparada para FT-AUTH",
-      placeholder:
-        "Área reservada para fluxos de autenticação. Nenhuma regra de negócio implementada nesta Sprint.",
-      footer: "Layout de autenticação — infraestrutura"
+      subtitle: "Acesse o Portal de Comunicação",
+      description:
+        "Utilize suas credenciais corporativas do Zimbra para entrar no portal.",
+      loginAction: "Entrar com Zimbra",
+      rememberMe: "Lembrar-me neste dispositivo",
+      logout: "Sair",
+      editProfile: "Editar perfil",
+      footer: "Autenticação corporativa — Unimed Ceará",
+      errors: {
+        unauthorized: "Não foi possível autenticar. Tente novamente.",
+        forbidden: "Você não possui autorização para acessar o Portal.",
+        unavailable:
+          "O serviço de autenticação está indisponível. Tente mais tarde.",
+        unknown: "Ocorreu um erro durante a autenticação."
+      }
     },
     admin: {
       badge: "Admin",
@@ -58,14 +69,16 @@ export default {
     },
     app: {
       title: "Área autenticada",
-      subtitle: "Placeholder estrutural até FT-AUTH",
-      cardTitle: "Bem-vindo",
-      placeholder:
-        "Rota /app reservada para a área autenticada. Guards de autenticação serão ativados em FT-AUTH."
+      subtitle: "Bem-vindo ao Portal de Comunicação",
+      cardTitle: "Sessão ativa",
+      placeholder: "Área autenticada protegida por FT-AUTH.",
+      welcome: "Olá, {name}"
     },
     unauthorized: {
       title: "Acesso não autorizado",
-      subtitle: "Você não possui permissão para acessar este recurso."
+      subtitle: "Você não possui permissão para acessar este recurso.",
+      message:
+        "Se você acredita que deveria ter acesso, entre em contato com o administrador do portal."
     },
     notFound: {
       goHome: "Voltar ao início"
@@ -135,5 +148,98 @@ export default {
     actionCardDescription: "Gerenciar colaboradores",
     actionCardAreas: "Áreas",
     actionCardServices: "Serviços"
+  },
+  singular: {
+    hub: {
+      title: "Singulares",
+      subtitle: "Gestão de singulares organizacionais",
+      cardTitle: "Ações rápidas",
+      listAction: "Listar singulares",
+      listDescription: "Consulte singulares cadastradas com filtros e paginação",
+      createAction: "Cadastrar singular",
+      createDescription: "Inclua uma nova singular organizacional"
+    },
+    list: {
+      title: "Listagem de singulares",
+      subtitle: "Consulte e filtre singulares cadastradas",
+      cardTitle: "Resultados",
+      createAction: "Nova singular",
+      viewAction: "Ver detalhe",
+      emptyTitle: "Nenhuma singular encontrada",
+      emptyDescription: "Ajuste os filtros ou cadastre uma nova singular.",
+      columns: {
+        status: "Status",
+        actions: "Ações"
+      },
+      filters: {
+        title: "Filtros",
+        status: "Status",
+        apply: "Aplicar filtros",
+        clear: "Limpar"
+      }
+    },
+    create: {
+      title: "Cadastrar singular",
+      subtitle: "Nova singular organizacional",
+      cardTitle: "Dados cadastrais",
+      placeholder: "Placeholder — implementação visual em PKG-FE-02.",
+      success: "Singular cadastrada com sucesso."
+    },
+    detail: {
+      title: "Detalhe da singular",
+      subtitle: "Identificador: {id}",
+      cardTitle: "Informações",
+      editAction: "Editar",
+      activateAction: "Ativar",
+      deactivateAction: "Inativar",
+      changeStatusAction: "Alterar status",
+      backToList: "Voltar para listagem",
+      notFoundTitle: "Singular não encontrada",
+      notFoundDescription: "O identificador informado não corresponde a um registro existente.",
+      fields: {
+        id: "Identificador",
+        createdAt: "Cadastro",
+        updatedAt: "Última atualização",
+        notAvailable: "—"
+      }
+    },
+    edit: {
+      title: "Editar singular",
+      subtitle: "Identificador: {id}",
+      cardTitle: "Formulário de edição",
+      success: "Singular atualizada com sucesso."
+    },
+    form: {
+      federationId: "Federação",
+      federationHint: "Vínculo fixo conforme seed até FT-FEDERACAO",
+      name: "Nome",
+      acronym: "Sigla",
+      unimedCode: "Código Unimed",
+      submitCreate: "Cadastrar singular",
+      submitEdit: "Salvar alterações",
+      cancel: "Cancelar"
+    },
+    status: {
+      ACTIVE: "Ativa",
+      INACTIVE: "Inativa"
+    },
+    statusDialog: {
+      cancel: "Cancelar",
+      successActivate: "Singular ativada com sucesso.",
+      successDeactivate: "Singular inativada com sucesso.",
+      activate: {
+        title: "Ativar singular",
+        subtitle: "Confirme a reativação de {name}",
+        message: "A singular voltará ao status ativo e poderá ser utilizada normalmente.",
+        confirm: "Ativar singular"
+      },
+      deactivate: {
+        title: "Inativar singular",
+        subtitle: "Confirme a inativação de {name}",
+        message:
+          "A singular será marcada como inativa. A operação falhará se existirem áreas ativas vinculadas.",
+        confirm: "Inativar singular"
+      }
+    }
   }
 };

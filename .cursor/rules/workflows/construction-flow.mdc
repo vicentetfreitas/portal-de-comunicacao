@@ -7,7 +7,9 @@ alwaysApply: false
 
 Definir o fluxo operacional da fase de Construction do Portal de Comunicação.
 
-**Padrão permanente:** workflow orientado à Feature — ver `feature-construction-workflow.mdc` e `construction/11-feature-execution-workflow.md`.
+**Padrão permanente:** workflow orientado à Feature com **Workstreams** — ver `construction/12-fullstack-orchestrator.md` (v4.1), `feature-construction-workflow.mdc` e `construction/11-feature-execution-workflow.md` (v3.2 por Workstream).
+
+**Entrada do usuário (v4.1):** exclusivamente comandos `Execute`, `Continue`, `Review`, `Close FT-<FEATURE>`. O Orchestrator resolve Workstream, Capability e PKG internamente.
 
 ---
 

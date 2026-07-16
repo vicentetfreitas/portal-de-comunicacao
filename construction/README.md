@@ -3,11 +3,12 @@
 | Item | Valor |
 |------|-------|
 | Nome | **Engineering Framework** |
-| Version | **v3.2** |
+| Version | **v4.1** |
+| Baseline | **v4.0** |
 | Status | **Stable** |
 | Projeto | Portal de Comunicação |
 | Camada | `construction/` |
-| Última atualização | 2026-07-09 |
+| Última atualização | 2026-07-16 |
 | Histórico de versões | `CHANGELOG.md` |
 
 ---
@@ -16,7 +17,27 @@
 
 Estabelecer a governança oficial da construção do Portal de Comunicação — desde a **Platform Foundation** até **Features de negócio** — com workflow orientado à Feature, rastreabilidade e critérios de encerramento.
 
-O framework foi **estabilizado** após o **FEATURE_APPROVED** da **FT-AUTH** (primeira Feature de negócio) e passa a ser a **base oficial** para as próximas Features.
+O framework foi **estabilizado** na v3.2 após **FEATURE_APPROVED** da **FT-AUTH**, evoluiu para **v4.0 Full Stack Orchestrator** e recebeu refinamento **v4.1** (Capabilities, Execution Strategy) com **FT-SINGULAR** como Golden Template.
+
+---
+
+# Full Stack Orchestrator (v4.1)
+
+A partir da v4.0, o framework opera como **orquestrador Full Stack**. A v4.1 adiciona organização opcional por **Capabilities** e simplifica o modelo operacional:
+
+| Conceito | Descrição |
+|----------|-----------|
+| **Feature** | Unidade de construção (`FT-<DOMAIN>`) — **único ponto de entrada do usuário** |
+| **Capability** *(v4.1, opcional)* | Agrupador funcional — Tasks, PKGs, Acceptance |
+| **Workstream** | Camada executável (backend, frontend, cms, mobile…) |
+| **Execution Strategy** *(v4.1)* | `sequential` (padrão) ou `parallel` (reservado) |
+| **Estado agregado** | Computado a partir dos Workstreams (STATE-AGG-01) |
+| **Registry unificado** | `construction/registry.yaml` — inclui `current_capability` |
+| **Comandos** | `Execute`, `Continue`, `Review`, `Close FT-<FEATURE>` |
+
+Documentação: `construction/12-fullstack-orchestrator.md`  
+Golden Template: `construction/golden-template/FT-SINGULAR.md`  
+Decisões: `construction/13-framework-decisions-v4.md`, `construction/14-framework-decisions-v4.1.md`
 
 ---
 
@@ -84,7 +105,7 @@ backend/ (implementação)
 ```text
 construction/
 
-├── README.md                      — Este documento (Engineering Framework v3.2 Stable)
+├── README.md                      — Este documento (Engineering Framework v4.0)
 ├── CHANGELOG.md                   — Histórico de versões do framework
 ├── 01-platform-foundation.md      — Visão e definição da Platform Foundation
 ├── 02-construction-roadmap.md     — Roadmap da Sprint 1A
@@ -95,10 +116,16 @@ construction/
 ├── 07-open-decisions.md           — Decisões pendentes da construção
 ├── 08-open-risks.md               — Riscos da construção
 ├── 09-progress.md                 — Acompanhamento (atualizado no Encerramento da Feature)
-├── 11-feature-execution-workflow.md — **SSOT workflow orientado à Feature (v3.2)**
+├── 11-feature-execution-workflow.md — **SSOT workflow por Workstream (v3.2)**
+├── 12-fullstack-orchestrator.md   — **SSOT orquestração Full Stack (v4.1)**
+├── 13-framework-decisions-v4.md   — Decisões arquiteturais v4.0
+├── 14-framework-decisions-v4.1.md — Decisões arquiteturais v4.1
+├── registry.yaml                  — **Registry unificado Features + Workstreams (v4.1)**
+├── golden-template/               — Golden Template Full Stack (FT-SINGULAR)
 ├── templates/
-│   ├── feature-manifest.yaml      — **SSOD** (Single Source of Discovery)
-│   ├── construction-state.yaml    — SSOT estado operacional (v3)
+│   ├── feature-manifest.yaml      — SSOD v3.2 (legado)
+│   ├── feature-manifest-v4.yaml   — SSOD v4.0 Full Stack
+│   ├── workstream-state.yaml      — SSOT Workstream v4.0
 │   ├── execution-plan.md          — Template plano de execução
 │   ├── feature-session.md         — Snapshot congelado (SESSION-01)
 │   ├── pkg-status.md
@@ -112,10 +139,12 @@ construction/
 │   ├── pkg-01/ … pkg-08/
 │   ├── configuration/ … testing/  — Módulos PF
 │   └── …
-├── features/                      — Features de negócio (Feature Identity + SSOD)
+├── features/                      — Workstream backend das Features
 │   ├── README.md                  — Convenção FT-<DOMAIN>
-│   ├── registry.yaml              — Índice de Features
-│   └── FT-AUTH/                   — Authentication (Sprint 1)
+│   ├── registry.yaml              — Alias legado → registry.yaml
+│   └── FT-AUTH/                   — …
+├── frontend/                      — Frontend foundation + Workstream frontend
+│   ├── registry.yaml              — Alias legado → registry.yaml
 │       ├── feature-manifest.yaml  — SSOD
 │       ├── construction-state.yaml
 │       ├── execution-plan.md
@@ -176,14 +205,16 @@ Detalhamento em `01-platform-foundation.md` e em cada subdiretório de `platform
 # Ordem Oficial de Construção
 
 ```text
-Execute Feature platform-foundation    ← State → Manifest → Snapshot → Session
-        ↓
-PKG-01 → PKG-02 → ... → PKG-08         ← State + pkg-XX/status.md
-        ↓
-Encerrar Feature platform-foundation   ← State, Closure → Review → Audit → Readiness
+Execute FT-<FEATURE>           ← v4.1 — Orchestrator resolve internamente
+Continue FT-<FEATURE>          ← v4.1 — retomar execução em andamento
+Review FT-<FEATURE>            ← v4.1 — review do Workstream/Feature
+Close FT-<FEATURE>             ← v4.1 — encerramento consolidado
+Execute Feature <FEATURE_CODE> ← v3.2 legado — Sessão do Workstream ativo
+Execute PKG-XX [FT-<FEATURE>]  ← diagnóstico / usuário avançado
+Encerrar Feature <FEATURE_CODE>← alias de Close FT-<FEATURE>
 ```
 
-Detalhamento em `06-development-order.md` e `11-feature-execution-workflow.md` (v3.2).
+Detalhamento em `12-fullstack-orchestrator.md` (v4.1) e `11-feature-execution-workflow.md` (v3.2 por Workstream).
 
 ## Regras de Governança do Framework (RULE-01 a RULE-04)
 
@@ -215,7 +246,24 @@ Detalhamento em `04-construction-rules.md` e `11-feature-execution-workflow.md`.
 | PARALLEL-01 | PKG altera `construction-state.yaml` + `pkg-XX/status.md` |
 | RULE-CONTEXT-01 | State → Snapshot → Cache → documento |
 
----
+## Regras do Workflow v4.1 (Full Stack)
+
+| ID | Regra |
+|----|-------|
+| REGISTRY-01 | Consultar `construction/registry.yaml` para índice de Features e Workstreams |
+| STATE-AGG-01 | Estado Feature computado a partir dos Workstreams — não duplicar |
+| STATE-WS-01 | `construction-state.yaml` é SSOT por Workstream |
+| WS-ORDER-01 | Workstreams executam por `order`; sucessor aguarda predecessor `closed` |
+| WS-ROUTING-01 | Prefixo PKG roteia Workstream (`pkg-` backend, `pkg-fe-` frontend) |
+| CMD-FT-01 | `Execute FT-<FEATURE>` resolve Workstream/PKG via Orchestrator |
+| CMD-FEATURE-01 | Usuário interage somente via comandos `FT-<FEATURE>` |
+| CAP-01 | `capabilities[]` opcional no manifest — ausência = v4.0 |
+| CAP-02 | Registry expõe `current_capability` computado |
+| EXEC-STRAT-01 | `execution_strategy` padrão `sequential` |
+| HANDOFF-01 | Handoff usa `dependencies` do Manifest + registry |
+| RETRO-01 | Paths e artefatos v3.2/v4.0 preservados |
+
+Detalhamento: `construction/12-fullstack-orchestrator.md`
 
 # Evolução do Framework
 

@@ -1,0 +1,150 @@
+# Feature Manifest — Template v4.0 / v4.1 (Full Stack)
+# Localização: construction/features/<FEATURE_CODE>/feature-manifest.yaml
+# Papel: SSOT da Feature — descoberta de specs, workstreams, capabilities, artefatos e dependências.
+# Features legadas v3.2 permanecem válidas sem workstreams[] nem capabilities[].
+# v4.1: capabilities[] e execution_strategy são OPCIONAIS (RETRO-01).
+
+version: 4
+role: ssod
+
+feature:
+  id: {{FEATURE_SLUG}}
+  code: {{FEATURE_CODE}}
+  name: {{FEATURE_NAME}}
+  description: {{FEATURE_DESCRIPTION}}
+
+# Estratégia de execução (v4.1 — opcional)
+# Padrão: sequential — comportamento idêntico ao v4.0 (WS-ORDER-01).
+# parallel: reservado para decisão futura do Orchestrator; não altera comportamento atual.
+execution_strategy: sequential
+
+status:
+  phase: not_started
+  note: Estado operacional agregado é computado (STATE-AGG-01) — ver Workstream states
+
+specification:
+  path: ../../../specs/features/{{FEATURE_SLUG}}/
+  documents:
+    specification: specification.md
+    api: api.md
+    use_cases: use-cases.md
+    tasks: tasks.md
+    acceptance_tests: acceptance-tests.md
+    traceability: traceability.md
+
+construction:
+  path: .
+  root: construction/features/{{FEATURE_CODE}}/
+
+# Workstreams adicionais referenciados pelo manifest raiz
+workstreams:
+  - id: backend
+    type: backend
+    order: 1
+    path: .
+    manifest: feature-manifest.yaml
+    state: construction-state.yaml
+    pkgs_pattern: "pkg-{NN}"
+
+  - id: frontend
+    type: frontend
+    order: 2
+    path: ../../frontend/features/{{FEATURE_CODE}}/
+    manifest: ../../frontend/features/{{FEATURE_CODE}}/feature-manifest.yaml
+    state: ../../frontend/features/{{FEATURE_CODE}}/construction-state.yaml
+    depends_on_workstreams:
+      - backend
+    pkgs_pattern: "pkg-fe-{NN}"
+
+# Capabilities — agrupadores funcionais opcionais (v4.1)
+# Organizam Features maiores sem alterar o lifecycle por Workstream.
+# Omitir inteiramente quando a Feature não precisa de agrupamento funcional.
+#
+# capabilities:
+#   - id: {{CAPABILITY_ID}}
+#     name: {{CAPABILITY_NAME}}
+#     description: {{CAPABILITY_DESCRIPTION}}
+#     order: 1
+#     optional: false
+#     depends_on_capabilities: []
+#     tasks:
+#       - ../../../specs/features/{{FEATURE_SLUG}}/tasks.md
+#     workstreams:
+#       - backend
+#       - frontend
+#     pkgs:
+#       backend:
+#         - pkg-01
+#         - pkg-02
+#       frontend:
+#         - pkg-fe-01
+#         - pkg-fe-02
+#     acceptance:
+#       - ../../../specs/features/{{FEATURE_SLUG}}/acceptance-tests.md
+
+implementation:
+  backend:
+    - ../../../backend/src/main/java/
+  frontend:
+    - ../../../frontend/src/pages/organization/{{FEATURE_SLUG}}/
+    - ../../../frontend/src/services/organization/
+    - ../../../frontend/src/composables/organization/
+
+artifacts:
+  manifest: feature-manifest.yaml
+  registry_entry: ../../../registry.yaml
+  state: construction-state.yaml
+  execution_plan: execution-plan.md
+  session: session.md
+  closure: closure-report.md
+  review: review/
+  reports: reports/
+
+dependencies:
+  construction:
+    - code: platform-foundation
+      path: ../../platform-foundation/
+      manifest: ../../platform-foundation/feature-manifest.yaml
+    - code: frontend-foundation
+      path: ../../frontend/
+      manifest: ../../frontend/sprint-0-manifest.yaml
+  features: []
+  foundation:
+    - ../../../specs/foundation/
+    - ../../../specs/features/FEATURE_BASELINE.md
+
+engineering:
+  implementation:
+    - ../../../docs/implementation/
+  construction:
+    - ../../../docs/construction/
+  golden_template:
+    - ../../golden-template/FT-SINGULAR.md
+
+owners:
+  architect: platform-architect
+  implementer: feature-implementer
+  orchestrator: construction-orchestrator
+
+metrics:
+  workstreams: 2
+  capabilities: 0
+  pkgs_backend: 0
+  pkgs_frontend: 0
+
+invalidation:
+  triggers:
+    - specification
+    - api
+    - use_cases
+    - workstream_added
+    - workstream_removed
+    - capability_added
+    - capability_removed
+    - manifest
+    - registry
+
+discovery:
+  version: 3
+  rule: SSOD-01 — manifest raiz é SSOT; registry é índice (REGISTRY-01)
+  framework: "4.1"

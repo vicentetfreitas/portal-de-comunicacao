@@ -1,0 +1,32 @@
+# Frontend Feature Registry — Construction Framework v3.2
+# ⚠️ LEGADO — preferir construction/registry.yaml (v4.1 Full Stack)
+# Este arquivo permanece como alias retrocompatível (RETRO-01).
+
+version: 1
+superseded_by: ../registry.yaml
+framework: "3.2"
+
+convention:
+  format: "FT-<DOMAIN>"
+  case: uppercase
+  directory: "construction/frontend/features/<code>/"
+  backend_construction: "construction/features/<code>/"
+  reference: "construction/frontend/README.md"
+
+foundation:
+  specification: docs/construction/frontend/00-frontend-foundation.md
+  operational: construction/frontend/
+  state: construction-state.yaml
+  status: FEATURE_APPROVED
+  pkgs: pkg-fe-s0-01..10
+
+features:
+  - code: FT-SINGULAR
+    slug: singular
+    name: Singular
+    sprint: 2
+    manifest: FT-SINGULAR/feature-manifest.yaml
+    backend_manifest: ../../features/FT-SINGULAR/feature-manifest.yaml
+    backend_status: closed
+    status: closed
+    closure: FEATURE_APPROVED

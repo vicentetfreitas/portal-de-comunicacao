@@ -1,15 +1,18 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
+import { redirectAfterLogout } from "@/auth/session-redirect";
 import type { AuthenticatedUser, AuthSessionStatus } from "@/auth/types";
+import { authService } from "@/services/auth/auth.service";
+import { normalizeApiError } from "@/types/api";
 
 /**
- * Structural auth store — session state without login/logout API calls.
- * FT-AUTH completes hydration via /auth/me and refresh flows.
+ * Auth store — session state derived from HttpOnly cookies via /auth/me.
  */
 export const useAuthStore = defineStore("auth", () => {
   const status = ref<AuthSessionStatus>("idle");
   const user = ref<AuthenticatedUser | null>(null);
+  let hydrationPromise: Promise<void> | null = null;
 
   const isAuthenticated = computed(
     () => status.value === "authenticated" && user.value !== null
@@ -59,13 +62,70 @@ export const useAuthStore = defineStore("auth", () => {
     status.value = "loading";
   }
 
-  /**
-   * FT-AUTH will call GET /auth/me and populate session from HttpOnly cookies.
-   */
   async function hydrateSession(): Promise<void> {
-    setLoading();
-    status.value = "unauthenticated";
-    user.value = null;
+    if (hydrationPromise) {
+      return hydrationPromise;
+    }
+
+    hydrationPromise = (async () => {
+      setLoading();
+      try {
+        const sessionUser = await authService.fetchCurrentUser();
+        setSession(sessionUser);
+      } catch (error) {
+        const apiError = normalizeApiError(error);
+        if (apiError.category === "authentication") {
+          markUnauthenticated();
+          return;
+        }
+        markUnauthenticated();
+        throw error;
+      }
+    })();
+
+    try {
+      await hydrationPromise;
+    } finally {
+      hydrationPromise = null;
+    }
+  }
+
+  function login(options?: { rememberMe?: boolean }): void {
+    authService.login(options);
+  }
+
+  async function logout(): Promise<void> {
+    try {
+      await authService.logout();
+    } catch (error) {
+      const apiError = normalizeApiError(error);
+      if (apiError.category !== "authentication") {
+        throw error;
+      }
+    } finally {
+      clearSession();
+      redirectAfterLogout();
+    }
+  }
+
+  async function refreshSession(): Promise<boolean> {
+    const refreshed = await authService.refresh();
+    if (!refreshed) {
+      markUnauthenticated();
+      return false;
+    }
+
+    try {
+      const sessionUser = await authService.fetchCurrentUser();
+      setSession(sessionUser);
+      return true;
+    } catch (error) {
+      if (normalizeApiError(error).category === "authentication") {
+        markUnauthenticated();
+        return false;
+      }
+      throw error;
+    }
   }
 
   return {
@@ -82,6 +142,9 @@ export const useAuthStore = defineStore("auth", () => {
     clearSession,
     markUnauthenticated,
     setLoading,
-    hydrateSession
+    hydrateSession,
+    login,
+    logout,
+    refreshSession
   };
 });

@@ -1,8 +1,10 @@
 # Feature Registry — Construction Framework v3.2
-# Índice de descoberta: localizar manifestos SSOD sem hardcode de paths.
-# Agentes devem consultar este registry OU o manifesto diretamente.
+# ⚠️ LEGADO — preferir construction/registry.yaml (v4.1 Full Stack)
+# Este arquivo permanece como alias retrocompatível (RETRO-01).
 
 version: 1
+superseded_by: ../registry.yaml
+framework: "3.2"
 
 convention:
   format: "FT-<DOMAIN>"
@@ -31,6 +33,11 @@ features:
     sprint: 3
     manifest: FT-SINGULAR/feature-manifest.yaml
     status: closed
+    frontend:
+      sprint: 2
+      manifest: ../frontend/features/FT-SINGULAR/feature-manifest.yaml
+      status: closed
+      closure: FEATURE_APPROVED
 
   - code: FT-EQUIPE
     slug: equipe

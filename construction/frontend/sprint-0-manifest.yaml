@@ -17,7 +17,8 @@ sprint:
     compartilhados e testes.
 
 status:
-  phase: ready_for_execution
+  phase: closed
+  closure: FEATURE_APPROVED
 
 specification:
   path: ../../docs/construction/frontend/

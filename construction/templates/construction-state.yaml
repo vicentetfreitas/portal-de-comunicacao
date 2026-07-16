@@ -1,7 +1,7 @@
-# Construction State — Template
-# SSOT do estado operacional (Feature-centric v3.2)
-# Descoberta: localizar via feature-manifest.yaml (SSOD) — artifacts.state
-# Atualizar em: Execute Feature, Execute PKG, Encerrar Feature
+# Construction State — Template (Workstream SSOT v3/v4)
+# Equivalente a workstream-state.yaml — SSOT do estado operacional por Workstream.
+# Localização: <workstream-root>/construction-state.yaml
+# Estado agregado da Feature: computado (STATE-AGG-01) — ver 12-fullstack-orchestrator.md
 
 version: 3
 

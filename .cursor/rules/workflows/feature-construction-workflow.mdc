@@ -1,6 +1,6 @@
 ---
 
-description: Feature-Oriented Construction Workflow — padrão permanente de execução (v3.2)
+description: Feature-Oriented Construction Workflow — Full Stack v4.1 + Workstream v3.2
 
 alwaysApply: false
 
@@ -12,13 +12,31 @@ alwaysApply: false
 
 
 
-Definir o workflow permanente de construção orientado à **Feature** (v3.2), com **Feature Identity** (`FT-<DOMAIN>`), **SSOD** via `feature-manifest.yaml`, Construction State por unidade, Session imutável, Snapshot e Cache.
+Definir o workflow permanente de construção orientado à **Feature** (v4.1 Full Stack), com **Workstreams** por camada, **Capabilities** opcionais, **SSOD** via `feature-manifest.yaml`, Construction State por Workstream, Session imutável, Snapshot e Cache.
 
+O PKG permanece como unidade de **implementação**. A Feature é a unidade de **identidade, handoff e encerramento** — e o **único ponto de entrada do usuário** (CMD-FEATURE-01). O Workstream é a unidade de **execução por camada**.
 
+---
 
-O PKG permanece como unidade de **implementação**. A Feature é a unidade de **manifesto, contexto, cache e encerramento**.
+# Full Stack v4.1
 
+| Conceito | SSOT / Path |
+|----------|-------------|
+| Registry unificado | `construction/registry.yaml` — inclui `current_capability` |
+| Orquestração | `construction/12-fullstack-orchestrator.md` |
+| Decisões v4.1 | `construction/14-framework-decisions-v4.1.md` |
+| Golden Template | `construction/golden-template/FT-SINGULAR.md` |
+| Estado agregado | Computado (STATE-AGG-01) — não persistir cópia |
+| Capabilities | Opcional no manifest (CAP-01) |
+| Comandos usuário | `Execute`, `Continue`, `Review`, `Close FT-<FEATURE>` |
 
+## Workstreams
+
+```text
+construction/registry.yaml → features[].workstreams[]
+  ├── backend  → construction/features/<CODE>/
+  └── frontend → construction/frontend/features/<CODE>/
+```
 
 ---
 

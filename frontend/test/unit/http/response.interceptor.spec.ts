@@ -35,14 +35,17 @@ describe("handleResponseError", () => {
           path: "/api/v1/resource"
         }
       },
-      config: { headers: {} }
+      config: { url: "/api/v1/resource", headers: {} }
     } as AxiosError;
 
     requestMock.mockResolvedValue({ data: { success: true } });
 
     await handleResponseError(error, client);
 
-    expect(handler).toHaveBeenCalled();
+    expect(handler).toHaveBeenCalledWith(
+      expect.any(ApiError),
+      expect.objectContaining({ requestUrl: "/api/v1/resource" })
+    );
     expect(requestMock).toHaveBeenCalled();
   });
 
@@ -62,7 +65,7 @@ describe("handleResponseError", () => {
           path: "/api/v1/resource"
         }
       },
-      config: { headers: {} }
+      config: { url: "/api/v1/resource", headers: {} }
     } as AxiosError;
 
     await expect(handleResponseError(error, client)).rejects.toBeInstanceOf(

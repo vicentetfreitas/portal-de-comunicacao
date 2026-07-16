@@ -16,6 +16,19 @@ export {
 export { createAuthContextFromStore } from "./auth-context-bridge";
 export { bindAuthStoreToContext } from "./bind-auth-context";
 export {
+  buildAuthRouteWithError,
+  parseAuthErrorCode,
+  redirectAfterLogout,
+  redirectToLogin,
+  type AuthErrorCode
+} from "./session-redirect";
+export {
+  createUnauthorizedHandler,
+  handleSessionExpired,
+  type UnauthorizedHandler,
+  type UnauthorizedHandlerContext
+} from "./unauthorized-handler";
+export {
   validateCsrfInfrastructure,
   type CsrfInfrastructureReport
 } from "./csrf";

@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { useAuthStore } from "@/stores/auth-store";
 
 /**
- * Composable facade for auth store — UI and guards infrastructure.
+ * Composable facade for auth store — UI, guards and session flows.
  */
 export function useAuth() {
   const store = useAuthStore();
@@ -25,6 +25,9 @@ export function useAuth() {
     clearSession: store.clearSession,
     markUnauthenticated: store.markUnauthenticated,
     hydrateSession: store.hydrateSession,
+    login: store.login,
+    logout: store.logout,
+    refreshSession: store.refreshSession,
     isReady: computed(
       () => status.value !== "idle" && status.value !== "loading"
     )

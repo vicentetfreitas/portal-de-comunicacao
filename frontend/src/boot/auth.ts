@@ -3,11 +3,14 @@ import { defineBoot } from "#q-app";
 import {
   assertNoTokenStorage,
   bindAuthStoreToContext,
+  createUnauthorizedHandler,
+  handleSessionExpired,
   installTokenStorageGuard,
   validateCsrfInfrastructure
 } from "@/auth";
-import { useAuthStore } from "@/stores/auth-store";
+import { routerGuardConfig } from "@/config/router";
 import { setUnauthorizedHandler } from "@/services/http";
+import { useAuthStore } from "@/stores/auth-store";
 
 export default defineBoot(() => {
   installTokenStorageGuard();
@@ -20,10 +23,17 @@ export default defineBoot(() => {
     bindAuthStoreToContext(authStore);
   });
 
-  setUnauthorizedHandler(async () => {
-    authStore.markUnauthenticated();
-    return false;
-  });
+  setUnauthorizedHandler(
+    createUnauthorizedHandler({
+      refreshSession: () => authStore.refreshSession(),
+      onSessionExpired: () => {
+        authStore.markUnauthenticated();
+        if (routerGuardConfig.enforceAuthentication) {
+          handleSessionExpired(window.location.pathname);
+        }
+      }
+    })
+  );
 
   if (import.meta.env.DEV) {
     const csrfReport = validateCsrfInfrastructure();

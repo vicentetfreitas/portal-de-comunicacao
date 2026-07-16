@@ -1,9 +1,9 @@
 import type { AxiosError, AxiosInstance } from "axios";
 
 import { dispatchHttpError } from "@/services/http/error-handler";
-import { ApiError, normalizeApiError } from "@/types/api";
+import { normalizeApiError } from "@/types/api";
 
-export type UnauthorizedHandler = (error: ApiError) => Promise<boolean>;
+import type { UnauthorizedHandler } from "@/auth/unauthorized-handler";
 
 let unauthorizedHandler: UnauthorizedHandler | null = null;
 
@@ -28,7 +28,11 @@ export async function handleResponseError(
     error.config &&
     !(error.config as { _retry?: boolean })._retry
   ) {
-    const shouldRetry = await unauthorizedHandler(apiError);
+    const requestUrl = error.config.url;
+    const shouldRetry = await unauthorizedHandler(
+      apiError,
+      requestUrl !== undefined ? { requestUrl } : {}
+    );
     if (shouldRetry) {
       (error.config as { _retry?: boolean })._retry = true;
       return client.request(error.config);

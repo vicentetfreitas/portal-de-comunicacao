@@ -8,13 +8,33 @@
       :variant="variant"
       :show-menu-toggle="showMenuToggle"
       :show-search="showSearch"
+      :user-initials="profileInitials"
+      :show-user-area="isAuthenticated"
     >
-      <template v-if="$slots.headerActions" #actions>
+      <template #actions>
+        <DsButton
+          v-if="isAuthenticated"
+          variant="ghost"
+          size="sm"
+          :loading="isLoggingOut"
+          @click="handleLogout"
+        >
+          {{ $t("layout.auth.logout") }}
+        </DsButton>
         <slot name="headerActions" />
       </template>
     </AppHeader>
 
-    <AppSidebar v-if="showSidebar" :items="navItems" />
+    <AppSidebar
+      v-if="showSidebar"
+      :items="navItems"
+      :show-profile="isAuthenticated"
+      :profile-name="profileName"
+      :profile-greeting="profileGreeting"
+      :profile-initials="profileInitials"
+      :profile-edit-label="$t('layout.auth.editProfile')"
+      :show-edit="false"
+    />
 
     <q-page-container>
       <q-page class="app-shell__page">
@@ -35,12 +55,16 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
+
 import AppFooter from "./AppFooter.vue";
 import AppHeader from "./AppHeader.vue";
 import AppSidebar from "./AppSidebar.vue";
 
-import { DsBreadcrumbs } from "@/components/ds";
+import { DsBreadcrumbs, DsButton } from "@/components/ds";
 import { provideAppShell } from "@/composables/useAppShell";
+import { useAuth } from "@/composables/useAuth";
 import { useLayoutMeta } from "@/composables/useLayoutMeta";
 
 import type { AppNavItem, AppShellVariant } from "./types";
@@ -65,6 +89,38 @@ withDefaults(
 
 provideAppShell();
 const { breadcrumbs, showBreadcrumbs } = useLayoutMeta();
+const { t } = useI18n();
+const { user, isAuthenticated, logout } = useAuth();
+
+const isLoggingOut = ref(false);
+
+const profileName = computed(
+  () => user.value?.name ?? t("layout.sidebar.profileName")
+);
+const profileGreeting = computed(() => t("layout.sidebar.profileGreeting"));
+const profileInitials = computed(() => {
+  const name = user.value?.name?.trim();
+  if (!name) {
+    return "CO";
+  }
+  const parts = name.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) {
+    return parts[0]!.slice(0, 2).toUpperCase();
+  }
+  return `${parts[0]![0] ?? ""}${parts[parts.length - 1]![0] ?? ""}`.toUpperCase();
+});
+
+async function handleLogout(): Promise<void> {
+  if (isLoggingOut.value) {
+    return;
+  }
+  isLoggingOut.value = true;
+  try {
+    await logout();
+  } finally {
+    isLoggingOut.value = false;
+  }
+}
 </script>
 
 <style scoped lang="scss">

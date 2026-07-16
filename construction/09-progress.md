@@ -188,9 +188,28 @@ Encerramento: `construction/features/FT-AUTH/closure-report.md`
 
 ---
 
+# FT-SINGULAR — Frontend (Sprint 2)
+
+| Métrica | Valor |
+|---------|-------|
+| Feature Code | FT-SINGULAR |
+| Camada | Frontend |
+| Sprint | 2 |
+| Status | **FEATURE_APPROVED** |
+| Session | v2 — State Sync 2026-07-16 |
+| SSOD | `construction/frontend/features/FT-SINGULAR/feature-manifest.yaml` |
+| Backend | ✅ `FEATURE_APPROVED` |
+| DoR | ✅ Satisfeito (Foundation + FT-AUTH FE + Backend + API) |
+| PKGs | 6 / 6 |
+| Closure | `construction/frontend/features/FT-SINGULAR/closure-report.md` |
+
+Escopo: CRUD administrativo MVP (hub, listagem, cadastro, detalhe, edição, status). Construction: `construction/frontend/features/FT-SINGULAR/execution-plan.md`.
+
+---
+
 # Próximo Passo
 
-**Frontend** — executar Sprint 0 (Frontend Foundation). Especificação: `docs/construction/frontend/00-frontend-foundation.md`. Artefatos operacionais: `construction/frontend/`. Backend validado (`sprint-03-org-backend` APPROVED).
+**FT-SINGULAR (Frontend)** — **FEATURE_APPROVED** (6/6 PKGs). CRUD administrativo MVP entregue. Ver `construction/frontend/features/FT-SINGULAR/closure-report.md`.
 
 ---
 

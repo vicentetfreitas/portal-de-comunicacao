@@ -5,3 +5,8 @@ export {
   type AuthenticatedUserResponse,
   type AuthService
 } from "./auth-contracts";
+export {
+  authService,
+  AuthApiService,
+  type AuthLoginOptions
+} from "./auth.service";

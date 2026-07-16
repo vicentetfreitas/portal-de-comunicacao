@@ -1473,4 +1473,98 @@ O comando `Execute PKG-XX` **não** dispara review, audit nem atualização glob
 
 Para diagnóstico: consultar `construction-state.yaml` (STATE-02), `feature-manifest.yaml`, Snapshot em `session.md` e `pkg-XX/status.md`.
 
-Documentação completa: `construction/11-feature-execution-workflow.md` v3.2
+Documentação completa: `construction/12-fullstack-orchestrator.md` v4.1 · `construction/11-feature-execution-workflow.md` v3.2 (por Workstream)
+
+---
+
+# 20. Full Stack Orchestrator (v4.0)
+
+> Complemento v4.0 — não substitui seções anteriores. Aplica-se a Features de negócio com um ou mais Workstreams.
+> Evolução v4.1: ver §21.
+
+## Objetivo
+
+Orquestrar Features Full Stack onde cada camada (backend, frontend, cms, mobile…) é um **Workstream** com state próprio, e o estado da Feature é **computado** (STATE-AGG-01).
+
+## Fontes v4.0
+
+| Artefato | Papel |
+|----------|-------|
+| `construction/registry.yaml` | REGISTRY-01 — índice Features + Workstreams |
+| `construction/features/<CODE>/feature-manifest.yaml` | SSOT Feature |
+| `<workstream>/construction-state.yaml` | STATE-WS-01 — SSOT por camada |
+| `construction/12-fullstack-orchestrator.md` | SSOT algoritmo de agregação e roteamento |
+| `construction/golden-template/FT-SINGULAR.md` | Golden Template Full Stack |
+
+## Comando `Execute FT-<FEATURE>`
+
+```text
+1. Ler construction/registry.yaml
+2. Ler feature-manifest.yaml (SSOD-01)
+3. Agregar construction-state.yaml de cada Workstream (STATE-AGG-01)
+4. Validar HANDOFF-01 (dependencies)
+5. Selecionar Workstream ativo (WS-ORDER-01)
+6. Emitir: Execute Feature (sessão) | Execute PKG-XX | Encerrar Workstream
+```
+
+## Roteamento PKG (WS-ROUTING-01)
+
+| Prefixo | Workstream |
+|---------|------------|
+| `pkg-fe-s0-` | frontend-foundation |
+| `pkg-fe-` | frontend |
+| `pkg-` | backend / platform-foundation |
+
+## Retrocompatibilidade (RETRO-01)
+
+- Comandos v3.2 (`Execute Feature`, `Execute PKG-XX`) permanecem válidos.
+- Registries legados (`features/registry.yaml`, `frontend/registry.yaml`) são aliases.
+- Nenhum artefato de Feature FEATURE_APPROVED precisa ser migrado.
+
+## Golden Template
+
+**FT-SINGULAR** — referência canônica: `construction/golden-template/FT-SINGULAR.md`
+
+---
+
+# 21. Full Stack Orchestrator — Refinamento v4.1
+
+> Complemento incremental sobre §20. **Não altera** comportamento do Orchestrator quando capabilities ausentes.
+
+## Objetivo
+
+Organizar Features maiores com **Capabilities** opcionais, declarar **Execution Strategy** e formalizar **entrada exclusiva Feature** (CMD-FEATURE-01).
+
+## Comandos do usuário (CMD-FEATURE-01)
+
+| Comando | Ação |
+|---------|------|
+| `Execute FT-<FEATURE>` | Iniciar ou próximo passo — algoritmo §8 em `12-fullstack-orchestrator.md` |
+| `Continue FT-<FEATURE>` | Retomar — mesmo algoritmo quando Feature em `session`/`execution` |
+| `Review FT-<FEATURE>` | Review/Audit do Workstream ativo ou pré-encerramento |
+| `Close FT-<FEATURE>` | Encerramento consolidado (alias: `Encerrar Feature`) |
+
+O Orchestrator resolve internamente: Workstream, Capability, PKG, dependências. **Não** expor resolução ao usuário.
+
+## Capabilities (CAP-01, CAP-02)
+
+- Seção opcional `capabilities[]` no manifest — Tasks, PKGs por workstream, Acceptance.
+- Ausência → comportamento idêntico ao §20.
+- `current_capability` computado e refletido em `construction/registry.yaml`.
+
+## Execution Strategy (EXEC-STRAT-01)
+
+- `execution_strategy: sequential` — **padrão** (omitir = sequential).
+- `parallel` — reservado; Orchestrator trata como `sequential` até evolução futura.
+
+## Fontes v4.1
+
+| Artefato | Papel |
+|----------|-------|
+| `construction/14-framework-decisions-v4.1.md` | DL-EF-4.1-001..006 |
+| `construction/templates/feature-manifest-v4.yaml` | Template com capabilities e execution_strategy |
+| `construction/registry.yaml` | `current_capability` por Feature |
+
+## Validação Golden Template
+
+**FT-SINGULAR** — manifest v2 sem capabilities; `current_capability: null`; nenhum artefato alterado.

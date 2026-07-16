@@ -18,6 +18,9 @@ export {
 export { applyRequestInterceptors } from "./interceptors/request.interceptor";
 export {
   handleResponseError,
-  setUnauthorizedHandler,
-  type UnauthorizedHandler
+  setUnauthorizedHandler
 } from "./interceptors/response.interceptor";
+export type {
+  UnauthorizedHandler,
+  UnauthorizedHandlerContext
+} from "@/auth/unauthorized-handler";

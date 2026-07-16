@@ -9,7 +9,12 @@ export const ROUTE_PATHS = {
   LOGIN: "/login",
   APP: "/app",
   ADMIN: "/admin",
-  UNAUTHORIZED: "/unauthorized"
+  UNAUTHORIZED: "/unauthorized",
+  SINGULAR_HUB: "/app/administrador/singulares",
+  SINGULAR_LIST: "/app/administrador/singulares/lista",
+  SINGULAR_CREATE: "/app/administrador/singulares/novo",
+  SINGULAR_DETAIL: "/app/administrador/singulares/:id",
+  SINGULAR_EDIT: "/app/administrador/singulares/:id/editar"
 } as const;
 
 export const ROUTE_NAMES = {
@@ -19,7 +24,12 @@ export const ROUTE_NAMES = {
   APP: "app",
   ADMIN: "admin",
   NOT_FOUND: "not-found",
-  UNAUTHORIZED: "unauthorized"
+  UNAUTHORIZED: "unauthorized",
+  SINGULAR_HUB: "singular-hub",
+  SINGULAR_LIST: "singular-list",
+  SINGULAR_CREATE: "singular-create",
+  SINGULAR_DETAIL: "singular-detail",
+  SINGULAR_EDIT: "singular-edit"
 } as const;
 
 export type RoutePath = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];

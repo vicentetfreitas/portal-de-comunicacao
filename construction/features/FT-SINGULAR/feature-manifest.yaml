@@ -28,11 +28,21 @@ specification:
 construction:
   path: .
   root: construction/features/FT-SINGULAR/
+  frontend:
+    path: ../../frontend/features/FT-SINGULAR/
+    manifest: ../../frontend/features/FT-SINGULAR/feature-manifest.yaml
+    state: ../../frontend/features/FT-SINGULAR/construction-state.yaml
 
 implementation:
   backend:
     - ../../../backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/
-  frontend: []
+  frontend:
+    - ../../../frontend/src/pages/organization/singular/
+    - ../../../frontend/src/components/organization/singular/
+    - ../../../frontend/src/services/organization/
+    - ../../../frontend/src/composables/organization/
+    - ../../../frontend/src/types/organization/
+    - ../../../frontend/src/router/routes/organization/
 
 artifacts:
   manifest: feature-manifest.yaml

@@ -33,7 +33,12 @@ construction:
 implementation:
   backend:
     - ../../../backend/src/main/java/
-  frontend: []
+  frontend:
+    - ../../../frontend/src/services/auth/
+    - ../../../frontend/src/auth/
+    - ../../../frontend/src/stores/auth-store.ts
+    - ../../../frontend/src/pages/auth/
+    - ../../../frontend/src/router/guards/
 
 artifacts:
   manifest: feature-manifest.yaml

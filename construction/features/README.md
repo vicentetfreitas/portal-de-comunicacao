@@ -1,17 +1,21 @@
-# Features — Construction Framework v3.2
+# Features — Construction Framework v4.1
 
 | Item | Valor |
 |------|-------|
 | Camada | Construction |
-| Escopo | Features de negócio |
-| Versão | 2.0 |
-| Última atualização | 2026-07-09 |
+| Escopo | Workstream **backend** das Features de negócio |
+| Versão | 4.1 |
+| Registry | `construction/registry.yaml` (unificado) |
+| Golden Template | FT-SINGULAR — `construction/golden-template/FT-SINGULAR.md` |
+| Última atualização | 2026-07-16 |
 
 ---
 
 # Objetivo
 
-Centralizar o ciclo de construção de **Features de negócio**, cada uma com **identidade única**, estado operacional independente e descoberta de artefatos via **SSOD** (`feature-manifest.yaml`).
+Centralizar o ciclo de construção do **Workstream backend** de Features de negócio. Na v4.1, cada Feature (`FT-<DOMAIN>`) pode ter múltiplos Workstreams e **Capabilities** opcionais — este diretório é o Workstream `backend`. Descoberta via **SSOT** (`feature-manifest.yaml` na raiz da Feature).
+
+> **v4.1:** consultar `construction/12-fullstack-orchestrator.md` e `construction/registry.yaml` antes deste README.
 
 ---
 
