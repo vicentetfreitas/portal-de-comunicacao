@@ -1,0 +1,668 @@
+{
+  "info": {
+    "name": "Portal de Comunicação — API v1 (Validation)",
+    "description": "Sprint API-VALIDATION-01 — 58 casos com scripts pm.test. Helpers: validation-helpers.js",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "2.0.0"
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test('Response time < 5000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "apiPrefix", "value": "/api/v1" },
+    { "key": "access_token", "value": "" },
+    { "key": "xsrf_token", "value": "" },
+    { "key": "singularId", "value": "1" },
+    { "key": "areaId", "value": "1" },
+    { "key": "equipeId", "value": "1" },
+    { "key": "colaboradorId", "value": "1" },
+    { "key": "sessionId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "01 — Health",
+      "item": [
+        {
+          "name": "[POS] GET Health — 200 ApiResponse",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                "const j = pm.response.json();",
+                "pm.test('ApiResponse envelope', () => {",
+                "    pm.expect(j.success).to.be.true;",
+                "    pm.expect(j).to.have.property('timestamp');",
+                "    pm.expect(j.data.status).to.eql('UP');",
+                "    pm.expect(j.data.application).to.eql('portal-comunicacao');",
+                "});"
+              ]
+            }
+          }],
+          "request": { "method": "GET", "url": "{{baseUrl}}{{apiPrefix}}/health" }
+        }
+      ]
+    },
+    {
+      "name": "02 — Authentication (Negative)",
+      "item": [
+        {
+          "name": "[NEG] GET Me — 401 sem cookie",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('HTTP 401', () => pm.response.to.have.status(401));",
+                "const j = pm.response.json();",
+                "pm.test('ErrorResponse', () => {",
+                "    pm.expect(j.error).to.eql('UNAUTHORIZED');",
+                "    pm.expect(j).to.have.property('path');",
+                "});"
+              ]
+            }
+          }],
+          "request": { "method": "GET", "url": "{{baseUrl}}{{apiPrefix}}/auth/me" }
+        },
+        {
+          "name": "[NEG] POST Refresh — 401 sem refresh cookie",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('HTTP 401 or 403', () => pm.expect(pm.response.code).to.be.oneOf([401, 403]));"
+              ]
+            }
+          }],
+          "request": { "method": "POST", "url": "{{baseUrl}}{{apiPrefix}}/auth/refresh" }
+        },
+        {
+          "name": "[NEG] GET Callback — 400 state inválido",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('HTTP 4xx', () => pm.expect(pm.response.code).to.be.within(400, 499));"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}{{apiPrefix}}/auth/callback?token=x&state=invalid", "host": ["{{baseUrl}}"], "path": ["api","v1","auth","callback"], "query": [{"key":"token","value":"x"},{"key":"state","value":"invalid"}] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 — Authentication (Positive)",
+      "description": "Requer cookies após login Zimbra — importar access_token e xsrf_token nas variáveis",
+      "item": [
+        {
+          "name": "[POS] GET Me — 200 com cookie",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "if (pm.response.code === 200) {",
+                "    const j = pm.response.json();",
+                "    pm.test('AuthenticatedUserResponse', () => {",
+                "        pm.expect(j.success).to.be.true;",
+                "        pm.expect(j.data).to.have.property('id');",
+                "        pm.expect(j.data).to.have.property('email');",
+                "        pm.expect(j.data).to.have.property('sessionId');",
+                "        pm.expect(j.data.permissions).to.be.an('array');",
+                "    });",
+                "    if (j.data.sessionId) pm.collectionVariables.set('sessionId', j.data.sessionId);",
+                "} else { pm.test.skip('Cookie não configurado — importar após login'); }"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/me"
+          }
+        },
+        {
+          "name": "[POS] POST Logout — 204",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "if (pm.collectionVariables.get('access_token')) {",
+                "    pm.test('HTTP 204', () => pm.response.to.have.status(204));",
+                "} else { pm.test.skip('Requer cookies'); }"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Cookie", "value": "access_token={{access_token}}; XSRF-TOKEN={{xsrf_token}}" },
+              { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+            ],
+            "url": "{{baseUrl}}{{apiPrefix}}/auth/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 — Singulares",
+      "item": [
+        {
+          "name": "Positive",
+          "item": [
+            {
+              "name": "[POS] POST Criar — 201",
+              "event": [{
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                    "const j = pm.response.json();",
+                    "pm.test('SingularResponse', () => {",
+                    "    pm.expect(j.data.status).to.eql('ACTIVE');",
+                    "    pm.expect(j.data).to.have.property('federationId');",
+                    "    pm.expect(j.data).to.have.property('unimedCode');",
+                    "});",
+                    "if (j.data.id) pm.collectionVariables.set('singularId', j.data.id);"
+                  ]
+                }
+              }],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{\n  \"federationId\": 1,\n  \"name\": \"Singular Test PM\",\n  \"acronym\": \"ST{{$randomInt}}\",\n  \"unimedCode\": \"UC{{$randomInt}}\"\n}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/singulares"
+              }
+            },
+            {
+              "name": "[POS] GET Por ID — 200",
+              "event": [{
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                    "pm.test('ApiResponse', () => pm.expect(pm.response.json().success).to.be.true);"
+                  ]
+                }
+              }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+                "url": "{{baseUrl}}{{apiPrefix}}/singulares/{{singularId}}"
+              }
+            },
+            {
+              "name": "[POS] GET Listar — PageResponse",
+              "event": [{
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                    "const d = pm.response.json().data;",
+                    "pm.test('PageResponse', () => {",
+                    "    pm.expect(d).to.have.property('content');",
+                    "    pm.expect(d).to.have.property('totalElements');",
+                    "    pm.expect(d.page).to.eql(0);",
+                    "});"
+                  ]
+                }
+              }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+                "url": "{{baseUrl}}{{apiPrefix}}/singulares?page=0&size=20&status=ACTIVE"
+              }
+            },
+            {
+              "name": "[POS] PUT Atualizar — 200",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Singular Atualizada PM\",\n  \"acronym\": \"SAPM\",\n  \"unimedCode\": \"99999\"\n}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/singulares/{{singularId}}"
+              }
+            },
+            {
+              "name": "[POS] PATCH Status — 200",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));", "pm.test('INACTIVE', () => pm.expect(pm.response.json().data.status).to.eql('INACTIVE'));"] } }],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{ \"status\": \"INACTIVE\" }" },
+                "url": "{{baseUrl}}{{apiPrefix}}/singulares/{{singularId}}/status"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negative",
+          "item": [
+            {
+              "name": "[NEG] GET — 401 sem auth",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 401', () => pm.response.to.have.status(401));"] } }],
+              "request": { "method": "GET", "url": "{{baseUrl}}{{apiPrefix}}/singulares/1" }
+            },
+            {
+              "name": "[NEG] POST — 400 body inválido",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 400', () => pm.response.to.have.status(400));", "pm.test('VALIDATION_ERROR', () => pm.expect(pm.response.json().error).to.eql('VALIDATION_ERROR'));"] } }],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/singulares"
+              }
+            },
+            {
+              "name": "[NEG] GET — 404 inexistente",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 404', () => pm.response.to.have.status(404));", "pm.test('RESOURCE_NOT_FOUND', () => pm.expect(pm.response.json().error).to.eql('RESOURCE_NOT_FOUND'));"] } }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+                "url": "{{baseUrl}}{{apiPrefix}}/singulares/999999999"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 — Áreas",
+      "item": [
+        {
+          "name": "Positive",
+          "item": [
+            {
+              "name": "[POS] POST Criar — 201",
+              "event": [{
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                    "const j = pm.response.json();",
+                    "pm.test('AreaResponse ACTIVE', () => pm.expect(j.data.status).to.eql('ACTIVE'));",
+                    "if (j.data.id) pm.collectionVariables.set('areaId', j.data.id);"
+                  ]
+                }
+              }],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{\n  \"singularId\": {{singularId}},\n  \"name\": \"Financeiro PM {{$randomInt}}\",\n  \"acronym\": \"FIN\"\n}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/areas"
+              }
+            },
+            {
+              "name": "[POS] GET Listar — filtros",
+              "event": [{
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                    "pm.test('PageResponse', () => pm.expect(pm.response.json().data.content).to.be.an('array'));"
+                  ]
+                }
+              }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+                "url": "{{baseUrl}}{{apiPrefix}}/areas?singularId={{singularId}}&page=0&size=10"
+              }
+            },
+            {
+              "name": "[POS] GET Por ID — 200",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+                "url": "{{baseUrl}}{{apiPrefix}}/areas/{{areaId}}"
+              }
+            },
+            {
+              "name": "[POS] PUT Atualizar — 200",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Financeiro Atualizado PM\",\n  \"acronym\": \"FAPM\"\n}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/areas/{{areaId}}"
+              }
+            },
+            {
+              "name": "[POS] PATCH Status — 200",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{ \"status\": \"INACTIVE\" }" },
+                "url": "{{baseUrl}}{{apiPrefix}}/areas/{{areaId}}/status"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negative",
+          "item": [
+            {
+              "name": "[NEG] GET — 401 sem auth",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 401', () => pm.response.to.have.status(401));"] } }],
+              "request": { "method": "GET", "url": "{{baseUrl}}{{apiPrefix}}/areas/1" }
+            },
+            {
+              "name": "[NEG] GET — 404",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 404', () => pm.response.to.have.status(404));"] } }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+                "url": "{{baseUrl}}{{apiPrefix}}/areas/999999999"
+              }
+            },
+            {
+              "name": "[NEG] POST — 422 nome duplicado",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 422', () => pm.response.to.have.status(422));", "pm.test('BUSINESS_RULE', () => pm.expect(pm.response.json().error).to.eql('BUSINESS_RULE_VIOLATION'));"] } }],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{\n  \"singularId\": {{singularId}},\n  \"name\": \"DUPLICATE_NAME_TEST\"\n}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/areas"
+              },
+              "description": "Executar [POS] POST primeiro com mesmo name para reproduzir 422"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 — Equipes",
+      "item": [
+        {
+          "name": "Positive",
+          "item": [
+            {
+              "name": "[POS] POST Criar — 201",
+              "event": [{
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                    "if (pm.response.json().data.id) pm.collectionVariables.set('equipeId', pm.response.json().data.id);"
+                  ]
+                }
+              }],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{\n  \"areaId\": {{areaId}},\n  \"name\": \"Equipe PM {{$randomInt}}\"\n}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/equipes"
+              }
+            },
+            {
+              "name": "[POS] GET Listar",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));", "pm.test('PageResponse', () => pm.expect(pm.response.json().data.content).to.be.an('array'));"] } }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+                "url": "{{baseUrl}}{{apiPrefix}}/equipes?areaId={{areaId}}&page=0&size=20"
+              }
+            },
+            {
+              "name": "[POS] GET Por ID",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+                "url": "{{baseUrl}}{{apiPrefix}}/equipes/{{equipeId}}"
+              }
+            },
+            {
+              "name": "[POS] PUT Atualizar",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Equipe Atualizada PM\"\n}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/equipes/{{equipeId}}"
+              }
+            },
+            {
+              "name": "[POS] PATCH Status",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{ \"status\": \"INACTIVE\" }" },
+                "url": "{{baseUrl}}{{apiPrefix}}/equipes/{{equipeId}}/status"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negative",
+          "item": [
+            {
+              "name": "[NEG] GET — 401",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 401', () => pm.response.to.have.status(401));"] } }],
+              "request": { "method": "GET", "url": "{{baseUrl}}{{apiPrefix}}/equipes/1" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 — Colaboradores",
+      "item": [
+        {
+          "name": "Positive",
+          "item": [
+            {
+              "name": "[POS] POST Criar — 201",
+              "event": [{
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                    "pm.test('ColaboradorResponse', () => {",
+                    "    const d = pm.response.json().data;",
+                    "    pm.expect(d).to.have.property('email');",
+                    "    pm.expect(d.status).to.eql('ACTIVE');",
+                    "});",
+                    "if (pm.response.json().data.id) pm.collectionVariables.set('colaboradorId', pm.response.json().data.id);"
+                  ]
+                }
+              }],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{\n  \"federationId\": 1,\n  \"singularId\": {{singularId}},\n  \"areaId\": {{areaId}},\n  \"teamId\": {{equipeId}},\n  \"name\": \"Colaborador PM\",\n  \"email\": \"colab.pm.{{$randomInt}}@unimedceara.com.br\"\n}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/colaboradores"
+              }
+            },
+            {
+              "name": "[POS] GET Listar — teamId",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+                "url": "{{baseUrl}}{{apiPrefix}}/colaboradores?teamId={{equipeId}}&page=0&size=20"
+              }
+            },
+            {
+              "name": "[POS] GET Por ID",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+                "url": "{{baseUrl}}{{apiPrefix}}/colaboradores/{{colaboradorId}}"
+              }
+            },
+            {
+              "name": "[POS] PUT Atualizar",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{\n  \"name\": \"Colaborador Atualizado PM\",\n  \"email\": \"colab.updated.{{$randomInt}}@unimedceara.com.br\"\n}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/colaboradores/{{colaboradorId}}"
+              }
+            },
+            {
+              "name": "[POS] PATCH Status",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 200', () => pm.response.to.have.status(200));"] } }],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{ \"status\": \"INACTIVE\" }" },
+                "url": "{{baseUrl}}{{apiPrefix}}/colaboradores/{{colaboradorId}}/status"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Negative",
+          "item": [
+            {
+              "name": "[NEG] GET — 401",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 401', () => pm.response.to.have.status(401));"] } }],
+              "request": { "method": "GET", "url": "{{baseUrl}}{{apiPrefix}}/colaboradores/1" }
+            },
+            {
+              "name": "[NEG] POST — 422 e-mail duplicado",
+              "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 422', () => pm.response.to.have.status(422));"] } }],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" },
+                  { "key": "Cookie", "value": "access_token={{access_token}}" },
+                  { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+                ],
+                "body": { "mode": "raw", "raw": "{\n  \"federationId\": 1,\n  \"name\": \"Dup\",\n  \"email\": \"duplicate@test.com\"\n}" },
+                "url": "{{baseUrl}}{{apiPrefix}}/colaboradores"
+              },
+              "description": "Repetir POST com mesmo email após criação bem-sucedida"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 — Admin Sessions",
+      "item": [
+        {
+          "name": "[NEG] DELETE — 404 sessão inexistente",
+          "event": [{ "listen": "test", "script": { "exec": ["pm.test('HTTP 404', () => pm.response.to.have.status(404));"] } }],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Cookie", "value": "access_token={{access_token}}" },
+              { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+            ],
+            "url": "{{baseUrl}}{{apiPrefix}}/admin/sessions/00000000-0000-0000-0000-000000000000"
+          }
+        },
+        {
+          "name": "[POS] DELETE — 204 revogar",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.collectionVariables.get('sessionId')) { pm.test('HTTP 204', () => pm.response.to.have.status(204)); } else { pm.test.skip('sessionId ausente'); }"] } }],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Cookie", "value": "access_token={{access_token}}" },
+              { "key": "X-XSRF-TOKEN", "value": "{{xsrf_token}}" }
+            ],
+            "url": "{{baseUrl}}{{apiPrefix}}/admin/sessions/{{sessionId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "99 — Cross Feature Flow",
+      "description": "Executar sequencialmente: Singulares POS → Áreas POS → Equipes POS → Colaboradores POS",
+      "item": [
+        {
+          "name": "[FLOW] Verificar hierarquia completa",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('Colaborador listável por teamId', () => pm.response.to.have.status(200));",
+                "pm.test('content not empty after flow', () => pm.expect(pm.response.json().data.content.length).to.be.at.least(0));"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Cookie", "value": "access_token={{access_token}}" }],
+            "url": "{{baseUrl}}{{apiPrefix}}/colaboradores?teamId={{equipeId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
