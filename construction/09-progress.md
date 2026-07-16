@@ -190,7 +190,7 @@ Encerramento: `construction/features/FT-AUTH/closure-report.md`
 
 # Próximo Passo
 
-**Frontend** — iniciar consumo do backend validado (baseline `sprint-03-org-backend` APPROVED). Referência: `docs/construction/frontend/`. Próximo domínio de Features: Gestão Documental.
+**Frontend** — executar Sprint 0 (Frontend Foundation). Especificação: `docs/construction/frontend/00-frontend-foundation.md`. Artefatos operacionais: `construction/frontend/`. Backend validado (`sprint-03-org-backend` APPROVED).
 
 ---
 

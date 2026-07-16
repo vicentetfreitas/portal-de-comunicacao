@@ -1,0 +1,103 @@
+# Sprint Manifest — Frontend Foundation (Sprint 0)
+# SSOD — consultar ANTES de qualquer artefato operacional desta Sprint.
+# Localização: construction/frontend/sprint-0-manifest.yaml
+
+version: 1
+role: ssod
+
+sprint:
+  id: frontend-foundation
+  code: FE-S0
+  name: Frontend Foundation
+  number: 0
+  track: frontend
+  description: >
+    Infraestrutura compartilhada do frontend: bootstrap, tema, design system base,
+    layouts, roteamento, cliente HTTP, fundação de autenticação, componentes
+    compartilhados e testes.
+
+status:
+  phase: ready_for_execution
+
+specification:
+  path: ../../docs/construction/frontend/
+  documents:
+    foundation: 00-frontend-foundation.md
+    bootstrap: 01-project-bootstrap.md
+    design_system: 02-design-system.md
+    routing: 03-routing.md
+    state_management: 04-state-management.md
+    api_consumption: 05-api-consumption.md
+    authentication: 06-authentication.md
+
+discovery:
+  path: ../../docs/discovery/
+  documents:
+    production: frontend-production-discovery.md
+    feature_mapping: frontend-feature-mapping.md
+
+technology:
+  path: ../../docs/technology/
+  documents:
+    stack: 01-technology-stack.md
+    standards: 02-development-standards.md
+    environment: 03-environment-strategy.md
+    decisions: 04-decision-log.md
+
+implementation:
+  path: ../../frontend/
+
+construction:
+  path: .
+  root: construction/frontend/
+  artifacts:
+    manifest: sprint-0-manifest.yaml
+    state: sprint-0-state.yaml
+    package_index: package-index.md
+    dependency_graph: package-dependency-graph.md
+    readme: README.md
+
+packages:
+  - id: PKG-FE-S0-01
+    folder: pkg-fe-s0-01
+    name: Project Bootstrap
+  - id: PKG-FE-S0-02
+    folder: pkg-fe-s0-02
+    name: Theme
+  - id: PKG-FE-S0-03
+    folder: pkg-fe-s0-03
+    name: Design System
+  - id: PKG-FE-S0-04
+    folder: pkg-fe-s0-04
+    name: Layouts
+  - id: PKG-FE-S0-05
+    folder: pkg-fe-s0-05
+    name: Routing
+  - id: PKG-FE-S0-06
+    folder: pkg-fe-s0-06
+    name: HTTP Client
+  - id: PKG-FE-S0-07
+    folder: pkg-fe-s0-07
+    name: Authentication Integration
+  - id: PKG-FE-S0-08
+    folder: pkg-fe-s0-08
+    name: Shared Components
+  - id: PKG-FE-S0-09
+    folder: pkg-fe-s0-09
+    name: Testing Infrastructure
+
+dependencies:
+  backend:
+    - integration_sprint: sprint-03-org-backend
+      status: APPROVED
+  next_sprint:
+    feature: FT-AUTH
+    sprint: 1
+    specification: ../../specs/features/authentication/
+
+invalidation:
+  triggers:
+    - specification
+    - packages
+    - technology_decisions
+    - manifest

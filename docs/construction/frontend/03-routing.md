@@ -1,5 +1,18 @@
 # Routing
 
+| Item | Valor |
+|------|-------|
+| Camada | Construction — Frontend |
+| Sprint | Sprint 0 — Frontend Foundation |
+| Versão | 1.1 |
+| Status | Reconciliado — stack oficial DEC-004 |
+| Especificação prevalecente | `00-frontend-foundation.md` |
+| Artefatos operacionais | `construction/frontend/` |
+
+> Guia complementar de roteamento. Stack: Vue Router 4 (history mode, SPA).
+
+---
+
 ## Objetivo
 
 Definir a arquitetura de navegação, organização de rotas, layouts, proteção de acesso e estratégias de roteamento do Portal de Comunicação.
@@ -37,8 +50,10 @@ Não cobre:
 O frontend deve utilizar:
 
 ```text
-Next.js App Router
+Vue Router 4 (history mode, SPA)
 ```
+
+Conforme `docs/technology/01-technology-stack.md` e PKG-FE-S0-05.
 
 ---
 
@@ -110,18 +125,12 @@ src
 Exemplo:
 
 ```text
-app
-└── comunicados
-    ├── page.tsx
-    ├── loading.tsx
-    ├── error.tsx
-    ├── not-found.tsx
-    ├── create
-    │   └── page.tsx
-    └── [id]
-        ├── page.tsx
-        └── edit
-            └── page.tsx
+src/pages/
+└── comunicados/
+    ├── ComunicadoListPage.vue
+    ├── ComunicadoCreatePage.vue
+    ├── ComunicadoShowPage.vue
+    └── ComunicadoEditPage.vue
 ```
 
 ---
@@ -213,15 +222,15 @@ Configurações
 # Estrutura
 
 ```text
-app
-├── (public)
-│   ├── layout.tsx
-│   └── login
-│
-└── (authenticated)
-    ├── layout.tsx
-    ├── dashboard
-    └── comunicados
+src/layouts/
+├── PublicLayout.vue
+├── AuthLayout.vue
+└── MainLayout.vue
+
+src/pages/
+├── login/
+├── dashboard/
+└── comunicados/
 ```
 
 ---
@@ -383,7 +392,7 @@ Usuário autenticado sem permissão.
 Utilizar:
 
 ```text
-not-found.tsx
+pages/[...path].vue  (ou ErrorNotFound.vue)
 ```
 
 ---
@@ -393,7 +402,7 @@ not-found.tsx
 Utilizar:
 
 ```text
-error.tsx
+ErrorPage.vue (componente de erro global ou por rota)
 ```
 
 ---
@@ -403,14 +412,14 @@ error.tsx
 Cada módulo deve possuir:
 
 ```text
-loading.tsx
+QInnerLoading / skeleton via Quasar (por página ou layout)
 ```
 
 ---
 
 # Navegação
 
-Utilizar componentes do Next.js.
+Utilizar layouts Vue (`layouts/`) e páginas Quasar (`pages/`).
 
 ---
 

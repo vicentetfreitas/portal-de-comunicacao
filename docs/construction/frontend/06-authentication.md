@@ -1,5 +1,18 @@
 # Authentication
 
+| Item | Valor |
+|------|-------|
+| Camada | Construction — Frontend |
+| Sprint | Sprint 0 (fundação) / Sprint 1 (FT-AUTH) |
+| Versão | 1.1 |
+| Status | Reconciliado — contrato FT-AUTH |
+| Especificação prevalecente | `specs/features/authentication/` |
+| Fundação Sprint 0 | `00-frontend-foundation.md` §3.7 |
+
+> Sprint 0 entrega apenas fundação (store estrutural, CSRF, guards scaffolding). Fluxos completos em Sprint 1 (FT-AUTH).
+
+---
+
 ## Objetivo
 
 Definir os padrões de autenticação, gerenciamento de sessão, autorização e proteção de acesso do frontend do Portal de Comunicação.

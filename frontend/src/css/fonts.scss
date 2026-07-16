@@ -1,0 +1,43 @@
+// Corporate typography — Unimed font families
+// Font files are expected at /fonts/ (not versioned — see R-FE-S0-04)
+// Fallback: Inter + system stack (production discovery evidence)
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Serif";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/UnimedSerif-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Slab";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/UnimedSlab-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Brush";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/UnimedBrush-Regular.otf") format("opentype");
+}
+
+body {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+}

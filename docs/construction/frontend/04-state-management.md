@@ -1,5 +1,18 @@
 # State Management
 
+| Item | Valor |
+|------|-------|
+| Camada | Construction — Frontend |
+| Sprint | Sprint 0 — Frontend Foundation |
+| Versão | 1.1 |
+| Status | Reconciliado — stack oficial DEC-004 |
+| Especificação prevalecente | `00-frontend-foundation.md` |
+| Artefatos operacionais | `construction/frontend/` |
+
+> Guia complementar de estado. Server state: Pinia stores + Axios services + composables.
+
+---
+
 ## Objetivo
 
 Definir a estratégia de gerenciamento de estado do Portal de Comunicação.
@@ -121,7 +134,7 @@ Exemplos:
 Utilizar:
 
 ```text id="0vr9bq"
-TanStack Query
+Pinia stores + Axios services + composables
 ```
 
 ---
@@ -250,9 +263,9 @@ Stores não devem:
 
 ---
 
-# TanStack Query
+# Pinia + Axios (Server State)
 
-Responsável pelo gerenciamento do Server State.
+Responsável pelo gerenciamento do Server State: **Pinia stores** para estado derivado e cache em memória; **Axios services** para requisições HTTP; **composables** para orquestração e revalidação.
 
 ---
 
@@ -386,7 +399,7 @@ queryClient.invalidateQueries()
 
 # Paginação
 
-Deve utilizar cache nativo do TanStack Query.
+Deve utilizar cache em Pinia stores ou composables dedicados (ex.: `useCache`).
 
 ---
 
@@ -741,7 +754,7 @@ Antes de implementar uma funcionalidade:
 
 A estratégia de gerenciamento de estado será considerada aderente quando:
 
-* Server State utilizar TanStack Query.
+* Server State utilizar Pinia stores + Axios services + composables.
 * Client State utilizar Zustand.
 * Não existirem estados duplicados.
 * O backend permanecer como fonte oficial da verdade.

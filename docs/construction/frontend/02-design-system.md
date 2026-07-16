@@ -1,5 +1,18 @@
 # Design System
 
+| Item | Valor |
+|------|-------|
+| Camada | Construction — Frontend |
+| Sprint | Sprint 0 — Frontend Foundation |
+| Versão | 1.1 |
+| Status | Reconciliado — stack oficial DEC-004 |
+| Especificação prevalecente | `00-frontend-foundation.md` |
+| Artefatos operacionais | `construction/frontend/` |
+
+> Guia complementar de design system. Ícones: MDI via Quasar (`mdi-v7`).
+
+---
+
 ## Objetivo
 
 Definir os padrões visuais, componentes, comportamentos e diretrizes de experiência do usuário do Portal de Comunicação.
@@ -561,7 +574,7 @@ Utilizar para status.
 Biblioteca padrão:
 
 ```text
-Lucide React
+Material Design Icons v7 (mdi-v7) via @quasar/extras
 ```
 
 ---

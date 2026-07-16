@@ -1,0 +1,59 @@
+# Construction State — frontend-foundation
+# SSOT do estado operacional da Sprint 0 Frontend
+
+version: 1
+
+feature:
+  id: frontend-foundation
+  name: Frontend Foundation
+
+state:
+  phase: in_progress
+
+  current_pkg: null
+
+  completed:
+    - pkg-fe-s0-01
+    - pkg-fe-s0-02
+    - pkg-fe-s0-03
+    - pkg-fe-s0-04
+    - pkg-fe-s0-05
+    - pkg-fe-s0-06
+    - pkg-fe-s0-07
+    - pkg-fe-s0-08
+    - pkg-fe-s0-09
+    - pkg-fe-s0-10
+
+  pending: []
+
+snapshot:
+  version: 1
+  created_at: "2026-07-16T08:00:00-03:00"
+  immutable: false
+
+cache:
+  valid: true
+  reason: null
+
+manifest:
+  version: 1
+
+review:
+  status: pending
+
+audit:
+  status: pending
+
+build:
+  incremental: true
+  full_verify: pending
+
+readiness:
+  status: pending
+
+closure:
+  status: open
+
+metadata:
+  created_at: "2026-07-15T00:00:00-03:00"
+  updated_at: "2026-07-16T08:30:00-03:00"

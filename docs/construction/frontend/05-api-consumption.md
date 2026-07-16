@@ -1,5 +1,18 @@
 # API Consumption
 
+| Item | Valor |
+|------|-------|
+| Camada | Construction — Frontend |
+| Sprint | Sprint 0 — Frontend Foundation |
+| Versão | 1.1 |
+| Status | Reconciliado — stack oficial DEC-004 |
+| Especificação prevalecente | `00-frontend-foundation.md` |
+| Artefatos operacionais | `construction/frontend/` |
+
+> Guia complementar de consumo de API. HTTP: Axios; integração com estado: Pinia + composables.
+
+---
+
 ## Objetivo
 
 Definir os padrões para consumo das APIs do Portal de Comunicação pelo frontend.
@@ -21,7 +34,7 @@ Esta documentação cobre:
 * Tratamento de erros
 * Interceptors
 * Cache
-* Integração com TanStack Query
+* Integração com Pinia stores e composables
 * Observabilidade
 * Versionamento de APIs
 
@@ -304,16 +317,16 @@ export interface ComunicadoResponse {
 
 ---
 
-# Integração com TanStack Query
+# Integração com Pinia e Composables
 
-Toda consulta deve ser encapsulada.
+Toda consulta deve ser encapsulada em **services Axios** e exposta via **composables** ou **Pinia stores**.
 
 ---
 
 ## Exemplo
 
 ```typescript id="j47s67"
-useComunicadosQuery()
+useComunicados()
 ```
 
 ---
@@ -591,7 +604,7 @@ Permitido apenas para erros transitórios.
 
 # Cache
 
-Responsabilidade do TanStack Query.
+Responsabilidade do composable ou Pinia store associado.
 
 ---
 
@@ -764,7 +777,7 @@ A implementação será considerada aderente quando:
 * Todo acesso HTTP ocorrer através do API Client.
 * Não existirem chamadas HTTP em componentes.
 * Todas as APIs estiverem tipadas.
-* Todas as integrações utilizarem TanStack Query.
+* Todas as integrações utilizarem Axios services com composables ou Pinia stores.
 * Erros estiverem normalizados.
 * Logs e rastreabilidade estiverem implementados.
 * Cache estiver configurado.

@@ -1,5 +1,18 @@
 # Frontend Project Bootstrap
 
+| Item | Valor |
+|------|-------|
+| Camada | Construction — Frontend |
+| Sprint | Sprint 0 — Frontend Foundation |
+| Versão | 1.1 |
+| Status | Reconciliado — stack oficial DEC-004 |
+| Especificação prevalecente | `00-frontend-foundation.md` |
+| Artefatos operacionais | `construction/frontend/` |
+
+> Guia complementar de bootstrap. Escopo e Packages: `00-frontend-foundation.md`. Stack: `docs/technology/01-technology-stack.md`.
+
+---
+
 ## Objetivo
 
 Definir os padrões de inicialização, estruturação e configuração do frontend do Portal de Comunicação.
@@ -37,9 +50,17 @@ Esses assuntos possuem documentos específicos.
 
 # Stack Tecnológica
 
+Conforme `docs/technology/01-technology-stack.md` e DEC-004.
+
 ## Framework
 
-Next.js
+Vue 3 (Composition API, `<script setup>`)
+
+---
+
+## UI Framework
+
+Quasar Framework (Quasar App Vite)
 
 ---
 
@@ -51,33 +72,37 @@ TypeScript
 
 ## Runtime
 
-Node.js LTS
+Node.js LTS (build tooling)
 
 ---
 
 ## Gerenciador de Pacotes
 
-pnpm
+Yarn (recomendado) ou pnpm
 
 ---
 
 ## Estilização
 
-Tailwind CSS
+Quasar SCSS + design tokens (`quasar.variables.scss`, `design-tokens.scss`)
 
 ---
 
 ## Componentização
 
-React
+Vue SFC (`.vue`)
+
+---
+
+## Estado e HTTP
+
+Pinia (estado global) · Axios (HTTP client)
 
 ---
 
 ## Qualidade
 
-ESLint
-
-Prettier
+ESLint / oxlint · Prettier / oxfmt
 
 Husky
 
@@ -189,13 +214,13 @@ Módulos MVP adicionais: `notifications` (FEATURE-040), `documents` (FEATURE-030
 PascalCase
 
 ```text
-ComunicadoCard.tsx
+ComunicadoCard.vue
 
-NotificationBell.tsx
+NotificationBell.vue
 
-DocumentExplorer.tsx
+DocumentExplorer.vue
 
-UserMenu.tsx
+UserMenu.vue
 ```
 
 ---
@@ -241,7 +266,7 @@ document.types.ts
 > Não criar — removidos por `docs/audit/10-mvp-consolidation-audit.md`.
 
 ```text
-CampaignForm.tsx
+CampaignForm.vue
 useCampaigns.ts
 campaign.service.ts
 campaign.types.ts
@@ -305,7 +330,7 @@ Nunca expor:
 # Instalação do Projeto
 
 ```bash
-pnpm install
+yarn install
 ```
 
 ---
@@ -313,7 +338,7 @@ pnpm install
 # Execução Local
 
 ```bash
-pnpm dev
+quasar dev
 ```
 
 ---
@@ -321,7 +346,7 @@ pnpm dev
 # Build
 
 ```bash
-pnpm build
+quasar build
 ```
 
 ---
@@ -329,7 +354,7 @@ pnpm build
 # Execução Produção
 
 ```bash
-pnpm start
+quasar serve (preview SPA)
 ```
 
 ---
@@ -439,7 +464,7 @@ Todo código deve passar sem erros.
 ## Execução
 
 ```bash
-pnpm lint
+yarn lint
 ```
 
 ---
@@ -453,7 +478,7 @@ Utilizar Prettier.
 ## Execução
 
 ```bash
-pnpm format
+yarn format
 ```
 
 ---
@@ -653,14 +678,15 @@ Deploy
 Antes de iniciar o desenvolvimento verificar:
 
 * [ ] Node LTS instalado
-* [ ] pnpm configurado
+* [ ] Yarn ou pnpm configurado
+* [ ] Quasar App Vite configurado
 * [ ] Variáveis configuradas
 * [ ] Build funcionando
 * [ ] ESLint configurado
 * [ ] Prettier configurado
 * [ ] Husky configurado
 * [ ] Testes configurados
-* [ ] Tailwind configurado
+* [ ] Quasar SCSS e design tokens configurados
 * [ ] Observabilidade configurada
 
 ---
