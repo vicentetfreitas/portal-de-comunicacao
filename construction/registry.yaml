@@ -137,6 +137,22 @@ features:
         status: closed
         closure: FEATURE_APPROVED
         pkgs_pattern: "pkg-{NN}"
+        pkgs_total: 6
+      - id: frontend
+        type: frontend
+        order: 2
+        sprint: 3
+        manifest: frontend/features/FT-EQUIPE/feature-manifest.yaml
+        state: frontend/features/FT-EQUIPE/construction-state.yaml
+        execution_plan: frontend/features/FT-EQUIPE/execution-plan.md
+        session: frontend/features/FT-EQUIPE/session.md
+        frontend_tasks: frontend/features/FT-EQUIPE/frontend-tasks.md
+        status: closed
+        closure: FEATURE_APPROVED
+        depends_on_workstreams:
+          - backend
+        pkgs_pattern: "pkg-fe-{NN}"
+        pkgs_total: 6
 
   - code: FT-COLABORADOR
     slug: colaborador

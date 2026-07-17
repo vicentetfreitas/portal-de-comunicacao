@@ -6,7 +6,7 @@
 | Framework | **Engineering Framework v3.2** |
 | Status | **Stable** |
 | Camada | Construction |
-| Última atualização | 2026-07-09 |
+| Última atualização | 2026-07-17 |
 | Changelog | `CHANGELOG.md` |
 
 ---
@@ -202,6 +202,45 @@ Na ausência desses eventos, toda execução de PKG deve reutilizar a Session at
 Durante PKG, são permitidos apenas: `mvn test`, `mvn verify -pl backend`, `mvn test -Dtest=...`, `mvn -pl backend -am test`.
 
 `mvn clean verify` é reservado exclusivamente ao Encerramento da Feature.
+
+## R-25 — Frontend PKG Gate (BUILD-02)
+
+Validação obrigatória para **PASS** em PKGs frontend incrementais (ex.: PKG-FE-01..05):
+
+```text
+yarn lint:check
+yarn typecheck
+yarn test:unit
+yarn build
+```
+
+| Regra | Descrição |
+|-------|-----------|
+| BUILD-02-01 | **Proibido** exigir `yarn test:e2e` para `PASS` em PKG-FE-01..05 |
+| BUILD-02-02 | `FULL_VALIDATION=1` no runner frontend = Gate PKG (sem E2E) — ver `16-frontend-validation-gates.md` |
+| BUILD-02-03 | Scripts `frontend/scripts/revalidate-pkg-fe-NN.sh` devem alinhar-se ao Gate PKG |
+
+## R-26 — E2E Stabilization Gate (E2E-01)
+
+| Regra | Descrição |
+|-------|-----------|
+| E2E-01-01 | `yarn test:e2e` é obrigatório **apenas** no PKG de closure frontend (ex.: **PKG-FE-06**) |
+| E2E-01-02 | Evidência: `FULL_VALIDATION=1 E2E_VALIDATION=1` + `pkg-evidence-run-frontend.sh` |
+| E2E-01-03 | Estabilização da suíte Playwright compartilhada é responsabilidade explícita do PKG-FE-06 |
+| E2E-01-04 | Workstream frontend `FEATURE_APPROVED` requer PKG-FE-06 com Gate PKG + Gate E2E em `PASS` |
+
+Referência: `construction/16-frontend-validation-gates.md`
+
+## R-27 — E2E Behavioral Policy (E2E-02)
+
+| Regra | Descrição |
+|-------|-----------|
+| E2E-02-01 | Specs em `frontend/test/e2e/` validam **comportamento funcional** — SSOT `17-frontend-e2e-behavior-policy.md` |
+| E2E-02-02 | **Proibido** acoplar specs a classes `.q-*` / `.ds-*`, estrutura interna Quasar ou paginação numérica inexistente no QTable |
+| E2E-02-03 | PKG-FE-06 inclui revisão E2E-02 antes de `PASS` com `E2E_VALIDATION=1` |
+| E2E-02-04 | Contratos públicos do DS (alert em campo, status em badge, labels i18n) são os únicos detalhes de implementação permitidos como locator |
+
+Referência: `frontend/test/e2e/README.md`
 
 ## R-22 — Validation Summary (VAL-01)
 

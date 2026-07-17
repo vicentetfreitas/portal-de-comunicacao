@@ -50,8 +50,8 @@ A Feature materializa o agregado **Organização Corporativa** para o conceito *
 - Gestão de membros/colaboradores (FT-COLABORADOR)
 - Gestão de contatos institucionais (entidade CONTATO)
 - Matriz completa de permissões por papel (OQ-020)
-- Frontend da Feature
 - Múltiplos líderes por equipe (DEC-DB-015)
+- Telas legadas de membros, permissões e documentos por equipe (ver `specification-frontend.md` — fora do escopo MVP)
 
 ---
 
@@ -229,7 +229,14 @@ Tabela `EQUIPE`, schema `UNMPORTCOM`, sequence `SQ_EQUIPE_COD_EQUIPE`.
 
 - Exclusão física proibida (RN-EQUIPE-005).
 - `areaId` imutável após cadastro (RN-EQUIPE-007).
-- Backend apenas nesta Feature.
+
+---
+
+# Camada Frontend
+
+A especificação da interface administrativa (rotas, RF-FE, RNF-FE, AT-FE) está em **`specification-frontend.md`**.
+
+O backend desta Feature permanece conforme os RF-EQUIPE-001 a 005 acima; a UI consome o contrato em `api.md` sem alteração de endpoints.
 
 ---
 
@@ -252,3 +259,4 @@ Consolidada em `traceability.md`.
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-07-14 | Specification Engineer | Especificação inicial FT-EQUIPE |
+| 1.1 | 2026-07-17 | Specification Reviewer | Gate 1 — aprovação com ressalvas (`review-report.md`) |

@@ -1,0 +1,148 @@
+# Feature Manifest — FT-EQUIPE Frontend (SSOD v3.2)
+# Single Source of Discovery — consultar ANTES de qualquer outro artefato da Feature frontend.
+
+version: 2
+role: ssod
+layer: frontend
+
+feature:
+  id: equipe
+  code: FT-EQUIPE
+  name: Equipe
+  description: >
+    Interface administrativa para cadastro, consulta, listagem, atualização e
+    ativação/inativação de Equipes organizacionais via backend /api/v1/equipes.
+
+status:
+  phase: closed
+  closure: FEATURE_APPROVED
+
+specification:
+  path: ../../../../specs/features/equipe/
+  documents:
+    specification: specification.md
+    specification_frontend: specification-frontend.md
+    api: api.md
+    use_cases: use-cases.md
+    tasks: tasks.md
+    acceptance_tests: acceptance-tests.md
+    traceability: traceability.md
+
+construction:
+  path: .
+  root: construction/frontend/features/FT-EQUIPE/
+  backend:
+    path: ../../../features/FT-EQUIPE/
+    manifest: ../../../features/FT-EQUIPE/feature-manifest.yaml
+    state: ../../../features/FT-EQUIPE/construction-state.yaml
+
+implementation:
+  frontend:
+    - ../../../../frontend/src/config/organization.ts
+    - ../../../../frontend/src/pages/organization/equipe/
+    - ../../../../frontend/src/components/organization/equipe/
+    - ../../../../frontend/src/services/organization/
+    - ../../../../frontend/src/composables/organization/
+    - ../../../../frontend/src/types/organization/
+    - ../../../../frontend/src/router/routes/organization/
+
+artifacts:
+  manifest: feature-manifest.yaml
+  state: construction-state.yaml
+  execution_plan: execution-plan.md
+  frontend_tasks: frontend-tasks.md
+  session: session.md
+  closure: closure-report.md
+  review: review/
+  reports: reports/
+  pkgs:
+    - pkg-fe-01/status.md
+    - pkg-fe-02/status.md
+    - pkg-fe-03/status.md
+    - pkg-fe-04/status.md
+    - pkg-fe-05/status.md
+    - pkg-fe-06/status.md
+
+dependencies:
+  construction:
+    - code: frontend-foundation
+      specification: ../../../../docs/construction/frontend/00-frontend-foundation.md
+      operational: ../../
+      state: ../../construction-state.yaml
+      status: FEATURE_APPROVED
+      pkgs: pkg-fe-s0-01..10
+  features:
+    - code: FT-AUTH
+      path: ../../../features/FT-AUTH/
+      manifest: ../../../features/FT-AUTH/feature-manifest.yaml
+      state: ../../../features/FT-AUTH/construction-state.yaml
+      scope: frontend_and_backend
+      status: FEATURE_APPROVED
+    - code: FT-EQUIPE
+      path: ../../../features/FT-EQUIPE/
+      manifest: ../../../features/FT-EQUIPE/feature-manifest.yaml
+      state: ../../../features/FT-EQUIPE/construction-state.yaml
+      scope: backend
+      status: FEATURE_APPROVED
+    - code: FT-AREA
+      path: ../../../features/FT-AREA/
+      manifest: ../../../features/FT-AREA/feature-manifest.yaml
+      state: ../../../features/FT-AREA/construction-state.yaml
+      scope: backend
+      status: FEATURE_APPROVED
+      note: GET /api/v1/areas para select e filtro
+  foundation:
+    - ../../../../specs/foundation/
+    - ../../../../specs/features/FEATURE_BASELINE.md
+
+engineering:
+  discovery:
+    - ../../../../docs/discovery/frontend-feature-mapping.md
+  implementation:
+    - ../../../../docs/implementation/
+  construction:
+    - ../../../../docs/construction/frontend/
+    - ../../../../construction/golden-template/FT-SINGULAR.md
+  architecture:
+    - ../../../../docs/architecture/
+
+owners:
+  architect: platform-architect
+  implementer: feature-implementer
+  orchestrator: construction-orchestrator
+
+metrics:
+  pkgs: 6
+  frontend_tasks: 5
+  sprint: 3
+
+pkgs:
+  - id: pkg-fe-01
+    name: Equipe Module Scaffold & API Client
+  - id: pkg-fe-02
+    name: Create Equipe Page
+  - id: pkg-fe-03
+    name: List & Detail Pages
+  - id: pkg-fe-04
+    name: Edit Equipe Page
+  - id: pkg-fe-05
+    name: Status Change UI
+  - id: pkg-fe-06
+    name: Admin Hub, Tests & Closure
+
+invalidation:
+  triggers:
+    - specification
+    - specification_frontend
+    - api
+    - use_cases
+    - frontend_tasks
+    - discovery
+    - pkg_added
+    - pkg_removed
+    - manifest
+    - frontend_foundation
+
+discovery:
+  version: 1
+  rule: SSOD-01 — este manifesto é o ponto de entrada obrigatório para localizar artefatos frontend da Feature

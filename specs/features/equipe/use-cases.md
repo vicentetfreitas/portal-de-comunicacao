@@ -3,6 +3,8 @@
 | Feature ID | FT-EQUIPE |
 | Status | APPROVED |
 
+A interface administrativa implementa os mesmos casos de uso abaixo (`specification-frontend.md`).
+
 ---
 
 # UC-EQUIPE-001 — Cadastrar Equipe

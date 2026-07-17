@@ -50,8 +50,15 @@ Relatórios **Feature-level** em `reports/` apenas para incidentes transversais 
 
 ```bash
 export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh"
-PKG_DIR=construction/frontend/features/FT-SINGULAR/pkg-fe-06 \
+
+# Gate PKG (PKG-FE-01..05)
+PKG_DIR=construction/frontend/features/FT-SINGULAR/pkg-fe-01 \
   FULL_VALIDATION=1 \
+  bash construction/templates/pkg-evidence-run-frontend.sh
+
+# Gate PKG + E2E (PKG-FE-06 apenas)
+PKG_DIR=construction/frontend/features/FT-SINGULAR/pkg-fe-06 \
+  FULL_VALIDATION=1 E2E_VALIDATION=1 \
   bash construction/templates/pkg-evidence-run-frontend.sh
 ```
 

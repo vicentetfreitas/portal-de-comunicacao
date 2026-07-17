@@ -120,6 +120,8 @@ construction/
 ├── 12-fullstack-orchestrator.md   — **SSOT orquestração Full Stack (v4.1)**
 ├── 13-framework-decisions-v4.md   — Decisões arquiteturais v4.0
 ├── 14-framework-decisions-v4.1.md — Decisões arquiteturais v4.1
+├── 16-frontend-validation-gates.md — **SSOT gates PKG vs E2E (BUILD-02 / E2E-01)**
+├── 17-frontend-e2e-behavior-policy.md — **SSOT política specs Playwright (E2E-02)**
 ├── registry.yaml                  — **Registry unificado Features + Workstreams (v4.1)**
 ├── golden-template/               — Golden Template Full Stack (FT-SINGULAR)
 ├── templates/
@@ -247,6 +249,9 @@ Detalhamento em `04-construction-rules.md` e `11-feature-execution-workflow.md`.
 | CACHE-01 | Não reler documento presente no Snapshot |
 | CACHE-02 | Reutilizar Session salvo evento de invalidação |
 | BUILD-01 | `mvn clean verify` somente no Encerramento |
+| BUILD-02 | Gate PKG frontend (PKG-FE-01..05) — sem E2E — `16-frontend-validation-gates.md` |
+| E2E-01 | `yarn test:e2e` obrigatório no PKG-FE-06 (closure) |
+| E2E-02 | Política de comportamento dos specs — `17-frontend-e2e-behavior-policy.md` |
 | VAL-01 | **VALIDATION SUMMARY** em `pkg-XX/status.md`; log em `evidence/` |
 | ART-01 | Modelo mínimo por PKG — `status.md` + `evidence/*.log` opcional |
 | PARALLEL-01 | PKG altera `construction-state.yaml` + `pkg-XX/status.md` |

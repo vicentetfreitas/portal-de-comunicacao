@@ -67,7 +67,7 @@ Exploração da árvore da Feature é **proibida** (RULE-CONTEXT-01).
 > Template e regras: `construction/templates/pkg-validation-summary.md`  
 > Log completo: `evidence/build-verify-YYYY-MM-DD.log`  
 > Runner central: `PKG_DIR=<path-do-pkg> bash construction/templates/pkg-evidence-run-frontend.sh`  
-> (FE fechamento: `FULL_VALIDATION=1`) — ver `construction/templates/pkg-artifact-model.md`
+> **PKG-FE-01..05:** Gate PKG — `FULL_VALIDATION=1` (sem E2E). **PKG-FE-06:** `FULL_VALIDATION=1 E2E_VALIDATION=1` — ver `construction/16-frontend-validation-gates.md` e `pkg-artifact-model.md`
 
 **Proibido:** `mvn clean verify` (reservado ao Encerramento da Feature).
 

@@ -1,0 +1,150 @@
+# Construction State — FT-EQUIPE (Frontend)
+# SSOT do estado operacional — camada frontend (Feature-centric v3.2)
+
+version: 3
+
+scope:
+  type: business_feature
+  layer: frontend
+  path: construction/frontend/features/FT-EQUIPE
+
+feature:
+  id: equipe
+  code: FT-EQUIPE
+  name: Equipe
+
+depends_on:
+  - frontend_foundation
+  - FT-AUTH
+  - FT-EQUIPE_backend
+  - FT-AREA_backend
+
+prerequisites:
+  frontend_foundation:
+    status: FEATURE_APPROVED
+    ssot: construction/frontend/construction-state.yaml
+    pkgs: pkg-fe-s0-01..10
+    verified_at: "2026-07-17T08:00:00-03:00"
+  ft_auth_frontend:
+    status: FEATURE_APPROVED
+    ssot: construction/features/FT-AUTH/construction-state.yaml
+    scope: frontend.phase done
+    verified_at: "2026-07-17T08:00:00-03:00"
+  ft_equipe_backend:
+    status: FEATURE_APPROVED
+    ssot: construction/features/FT-EQUIPE/construction-state.yaml
+    verified_at: "2026-07-17T08:00:00-03:00"
+  ft_area_backend:
+    status: FEATURE_APPROVED
+    ssot: construction/features/FT-AREA/construction-state.yaml
+    verified_at: "2026-07-17T08:00:00-03:00"
+  api_contract:
+    version: "1.1"
+    path: specs/features/equipe/api.md
+    status: APPROVED
+
+definition_of_ready:
+  status: satisfied
+  synchronized_at: "2026-07-17T08:00:00-03:00"
+  criteria:
+    frontend_foundation: true
+    ft_auth_frontend: true
+    ft_equipe_backend: true
+    ft_area_backend: true
+    api_contract_v1_1: true
+    specification_approved: true
+  note: "Readiness frontend — construction/frontend/features/FT-EQUIPE/review/readiness-checklist.md"
+
+infrastructure_reuse:
+  confirmed: true
+  parallel_infrastructure_required: false
+  components:
+    - name: BaseApiClient
+      path: frontend/src/services/http/base-api-client.ts
+    - name: HTTP Client
+      path: frontend/src/services/http/axios-instance.ts
+    - name: Auth Store
+      path: frontend/src/stores/auth-store.ts
+    - name: Router + Guards
+      path: frontend/src/router/
+    - name: Layouts
+      path: frontend/src/layouts/
+    - name: Design System
+      path: frontend/src/components/ds/
+    - name: Golden reference
+      path: construction/frontend/features/FT-SINGULAR/
+
+backend:
+  code: FT-EQUIPE
+  path: ../../../features/FT-EQUIPE/
+  phase: closed
+  closure: FEATURE_APPROVED
+
+state:
+  phase: closed
+
+  current_pkg: null
+
+  completed:
+    - pkg-fe-01
+    - pkg-fe-02
+    - pkg-fe-03
+    - pkg-fe-04
+    - pkg-fe-05
+    - pkg-fe-06
+
+  pending: []
+
+snapshot:
+  version: 1
+  created_at: "2026-07-17T08:00:00-03:00"
+  immutable: true
+  session_ref: session.md
+
+manifest:
+  version: 2
+  path: feature-manifest.yaml
+
+specification:
+  version: "1.1"
+  sprint_scope: frontend_crud_mvp
+
+cache:
+  valid: false
+  reason: "Feature encerrada — PKG-FE-06 concluído"
+
+readiness:
+  status: approved
+  scope: sprint_3_frontend_mvp
+  checklist: review/readiness-checklist.md
+  executed_at: "2026-07-17T08:00:00-03:00"
+
+closure:
+  status: approved
+  final_state: FEATURE_APPROVED
+  scope: sprint_3_frontend_mvp
+
+build:
+  incremental: false
+  full_verify: pass
+  pkg_fe_01_verify: pass
+  pkg_fe_02_verify: pass
+  pkg_fe_06_verify: pass
+  last_command: "bash frontend/scripts/revalidate-pkg-fe-06.sh"
+  verified_at: "2026-07-17T10:53:32-03:00"
+  note: "PKG-FE-06 — Gate E2E-01 PASS; suíte Playwright estável (helpers create/edit + E2E-02)"
+
+metrics:
+  pkgs_total: 6
+  pkgs_completed: 6
+  frontend_tasks_total: 5
+  frontend_tasks_completed: 5
+  acceptance_criteria_covered: 5
+  acceptance_criteria_total: 5
+
+metadata:
+  created_at: "2026-07-17T08:00:00-03:00"
+  updated_at: "2026-07-17T10:53:32-03:00"
+  closed_at: "2026-07-17T08:25:00-03:00"
+  last_pkg_completed: pkg-fe-06
+  executed_by: construction-orchestrator

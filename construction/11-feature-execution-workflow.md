@@ -395,6 +395,29 @@ mvn compile
 mvn clean verify    → reservado exclusivamente ao Encerramento
 ```
 
+### Frontend (BUILD-02 / E2E-01)
+
+Durante **PKG-FE-01..05** (e equivalentes incrementais):
+
+```text
+yarn lint:check
+yarn typecheck
+yarn test:unit
+yarn build
+```
+
+**Proibido** como critério de `PASS` do PKG: `yarn test:e2e`.
+
+Durante **PKG-FE-06** (closure — E2E Stabilization):
+
+```text
+(gate PKG acima) + yarn test:e2e
+```
+
+Revisão dos specs conforme **E2E-02** (`construction/17-frontend-e2e-behavior-policy.md`).
+
+Referência: `construction/16-frontend-validation-gates.md`, `frontend/test/e2e/README.md`
+
 ## Proibições (PARALLEL-01)
 
 | Proibido durante PKG | Responsável |

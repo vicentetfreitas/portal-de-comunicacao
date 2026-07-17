@@ -205,6 +205,16 @@ Quando aplicável implementar:
 - testes de integração;
 - cenários definidos em `acceptance-tests.md`.
 
+## E2E (Playwright)
+
+Durante **PKG-FE-06** (construction):
+
+- Gates: `construction/16-frontend-validation-gates.md` (E2E-01).
+- Política de specs: `construction/17-frontend-e2e-behavior-policy.md` (E2E-02).
+- Execução: `frontend/test/e2e/README.md`.
+
+Validar comportamento do usuário; não acoplar a Quasar, classes CSS ou paginação numérica do QTable.
+
 ---
 
 # Qualidade

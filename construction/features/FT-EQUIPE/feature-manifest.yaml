@@ -18,6 +18,7 @@ specification:
   path: ../../../specs/features/equipe/
   documents:
     specification: specification.md
+    specification_frontend: specification-frontend.md
     api: api.md
     use_cases: use-cases.md
     tasks: tasks.md
@@ -27,11 +28,21 @@ specification:
 construction:
   path: .
   root: construction/features/FT-EQUIPE/
+  frontend:
+    path: ../../frontend/features/FT-EQUIPE/
+    manifest: ../../frontend/features/FT-EQUIPE/feature-manifest.yaml
+    state: ../../frontend/features/FT-EQUIPE/construction-state.yaml
 
 implementation:
   backend:
     - ../../../backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/
-  frontend: []
+  frontend:
+    - ../../../frontend/src/pages/organization/equipe/
+    - ../../../frontend/src/components/organization/equipe/
+    - ../../../frontend/src/services/organization/
+    - ../../../frontend/src/composables/organization/
+    - ../../../frontend/src/types/organization/
+    - ../../../frontend/src/router/routes/organization/
 
 artifacts:
   manifest: feature-manifest.yaml

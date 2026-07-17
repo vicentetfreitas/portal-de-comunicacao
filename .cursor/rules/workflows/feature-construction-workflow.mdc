@@ -92,6 +92,11 @@ Consulta obrigatória antes de inferir progresso (STATE-02).
 
 | BUILD-01 | `mvn clean verify` somente no Encerramento |
 
+| BUILD-02 | Gate PKG frontend — sem E2E em PKG-FE-01..05 — `16-frontend-validation-gates.md` |
+
+| E2E-01 | `yarn test:e2e` obrigatório apenas em PKG-FE-06 |
+| E2E-02 | Política de comportamento Playwright — `17-frontend-e2e-behavior-policy.md` |
+
 | VAL-01 | **VALIDATION SUMMARY** em `pkg-XX/status.md` — `templates/pkg-validation-summary.md` |
 
 | VAL-02 | Ciclo de vida: `PENDING_REVALIDATION` — `templates/pkg-validation-summary.md` |

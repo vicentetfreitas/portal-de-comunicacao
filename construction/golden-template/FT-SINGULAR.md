@@ -87,7 +87,11 @@ construction:
 | Workstream | Sequência |
 |------------|-----------|
 | backend | Scaffold → Create → Read/List → Update → Status → Acceptance |
-| frontend | Scaffold → Create → List/Detail → Edit → Status UI → Hub/Tests/Closure |
+| frontend | Scaffold → Create → List/Detail → Edit → Status UI → **E2E Stabilization & Closure** (PKG-FE-06) |
+
+PKG-FE-06 consolida: hub admin, specs Playwright (AT-FE), **estabilização E2E** (E2E-01 + **E2E-02**) e encerramento documental. E2E não é gate dos PKG-FE-01..05 (BUILD-02).
+
+Política de escrita dos specs: `construction/17-frontend-e2e-behavior-policy.md`.
 
 ## 4. Dependências e handoff
 
@@ -102,10 +106,11 @@ Documentado em `construction/frontend/features/FT-SINGULAR/construction-state.ya
 
 ## 5. Testes por camada
 
-| Camada | Validação |
-|--------|-----------|
-| backend | `mvn clean verify` no encerramento |
-| frontend | Vitest + Playwright + build no encerramento |
+| Camada | Validação incremental (PKG) | Encerramento |
+|--------|----------------------------|--------------|
+| backend | `mvn test` / escopo PKG (BUILD-01) | `mvn clean verify` |
+| frontend PKG-FE-01..05 | lint, typecheck, `test:unit`, build (BUILD-02) | — |
+| frontend PKG-FE-06 | Gate PKG + `test:e2e` (E2E-01) + conformidade **E2E-02** | `FEATURE_APPROVED` workstream |
 
 ## 6. Comandos de execução (v4.1)
 

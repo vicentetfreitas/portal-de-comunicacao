@@ -1082,7 +1082,7 @@ O Construction Orchestrator **nunca gera código**. Produz apenas:
 
 Ao encerrar cada PKG na Fase 2:
 
-1. Executar validações locais do workstream (processo inalterado — BUILD-01).
+1. Executar validações locais do workstream (**BUILD-01** backend; **BUILD-02** frontend PKG; **E2E-01** somente PKG-FE-06).
 2. Gravar log completo em `pkg-XX/evidence/build-verify-YYYY-MM-DD.log`.
 3. Preencher seção **VALIDATION SUMMARY** em `pkg-XX/status.md` conforme `construction/templates/pkg-validation-summary.md`.
 4. Determinar **Status** por condições observáveis — **sem** prioridade fixa entre estados (VAL-02):
@@ -1099,6 +1099,8 @@ Ao encerrar cada PKG na Fase 2:
 **ART-01:** não gerar `implementation-report.md` nem copiar `run-bv.sh` por PKG — usar templates com `PKG_DIR=...`.
 
 Scripts de evidência: `construction/templates/pkg-evidence-run-frontend.sh`, `pkg-evidence-run-backend.sh`.
+
+**Frontend:** `FULL_VALIDATION=1` = Gate PKG (sem E2E). `E2E_VALIDATION=1` apenas no PKG-FE-06. Gates: `construction/16-frontend-validation-gates.md`. Specs E2E: **E2E-02** `construction/17-frontend-e2e-behavior-policy.md`.
 
 ## Fase 3 — Encerramento da Feature (uma vez)
 

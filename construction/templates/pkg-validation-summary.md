@@ -55,7 +55,7 @@ evidence/build-verify-YYYY-MM-DD.log
 
 | Valor | Quando usar |
 |-------|-------------|
-| `PASS` | Pipeline completo executado; todos os comandos de validação do workstream passaram |
+| `PASS` | Pipeline **do PKG** executado; todos os comandos documentados em Validation passaram (Gate PKG em FE-01..05; Gate PKG + E2E em FE-06) |
 | `BUILD_FAILURE` | Pipeline completo executado; falha **comprovada** (compilação, testes, build) |
 | `ENVIRONMENT_FAILURE` | Comando **não pôde ser executado** (runtime indisponível, PATH, permissão) |
 | `PENDING_REVALIDATION` | Correções aplicadas documentadas; pipeline completo **ainda não** reexecutado com sucesso após essas correções |
@@ -95,10 +95,13 @@ Avaliar cada condição pelos **fatos** (log em `evidence/`, seção **Correçõ
 
 Listar **somente** os comandos efetivamente executados. Usar `✓` (passou) ou `✗` (falhou).
 
-| Workstream | Comandos padrão |
-|------------|-----------------|
-| **frontend** / **frontend-foundation** | `yarn lint:check`, `yarn typecheck`, `yarn test`, `yarn build` |
-| **backend** / **platform-foundation** | `mvn test` (ou escopo do PKG), `mvn compile -pl backend` quando aplicável |
+| Workstream | PKG | Comandos padrão |
+|------------|-----|-----------------|
+| **frontend** / **frontend-foundation** (incremental) | PKG-FE-01..05 (etc.) | `yarn lint:check`, `yarn typecheck`, `yarn test:unit`, `yarn build` — **sem** `test:e2e` (BUILD-02) |
+| **frontend** (closure) | PKG-FE-06 (Hub/Tests/Closure) | Gate PKG + `yarn test:e2e` (E2E-01); revisão **E2E-02** |
+| **backend** / **platform-foundation** | pkg-01..06 | `mvn test` (ou escopo do PKG), `mvn compile -pl backend` quando aplicável |
+
+Política completa: `construction/16-frontend-validation-gates.md`, `construction/17-frontend-e2e-behavior-policy.md`
 
 Exemplo backend:
 
@@ -207,7 +210,12 @@ Templates centrais (ART-01 — **não** copiar para cada PKG):
 | Backend | `construction/templates/pkg-evidence-run-backend.sh` |
 
 ```bash
-PKG_DIR=construction/.../pkg-fe-06 FULL_VALIDATION=1 \
+# Gate PKG (PKG-FE-01..05)
+PKG_DIR=construction/.../pkg-fe-01 FULL_VALIDATION=1 \
+  bash construction/templates/pkg-evidence-run-frontend.sh
+
+# Gate PKG + E2E (somente PKG-FE-06)
+PKG_DIR=construction/.../pkg-fe-06 FULL_VALIDATION=1 E2E_VALIDATION=1 \
   bash construction/templates/pkg-evidence-run-frontend.sh
 ```
 

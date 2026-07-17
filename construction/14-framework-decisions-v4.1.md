@@ -132,6 +132,33 @@
 
 ---
 
+# DL-EF-4.2-010 — Desacoplamento E2E dos PKGs incrementais (BUILD-02 / E2E-01)
+
+| Campo | Valor |
+|-------|-------|
+| Decisão | Gate **PKG** (lint, typecheck, unit, build) em PKG-FE-01..05; Gate **E2E** obrigatório apenas em **PKG-FE-06** (closure) |
+| Problema | `FULL_VALIDATION=1` legado executava `test:e2e` em todo PKG e bloqueava escopo incremental por falhas da suíte compartilhada |
+| Gate PKG | `FULL_VALIDATION=1` no runner — **sem** E2E |
+| Gate E2E | `E2E_VALIDATION=1` adicional — somente PKG-FE-06 |
+| PKG-FE-06 | Papel oficial: **E2E Stabilization & Feature Closure** (hub, specs AT-FE, encerramento) |
+| DoD Construction | `FEATURE_APPROVED` frontend exige PKG-FE-06 com E2E verde |
+| Regras | R-25 (BUILD-02), R-26 (E2E-01) em `04-construction-rules.md` |
+| SSOT | `construction/16-frontend-validation-gates.md` |
+
+---
+
+# DL-EF-4.2-011 — Política E2E orientada a comportamento (E2E-02)
+
+| Campo | Valor |
+|-------|-------|
+| Decisão | SSOT `construction/17-frontend-e2e-behavior-policy.md` — o que validar / proibir em Playwright |
+| Problema | Specs acoplados a Quasar, CSS e paginação interna; retrabalho no PKG-FE-06 |
+| Complementa | E2E-01 (quando rodar) + BUILD-02 |
+| Regras | R-27 (E2E-02) |
+| Guia | `frontend/test/e2e/README.md` |
+
+---
+
 # Referências
 
 - `construction/CHANGELOG.md` — [4.1.0]

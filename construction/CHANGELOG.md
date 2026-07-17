@@ -3,11 +3,64 @@
 | Item | Valor |
 |------|-------|
 | Nome | **Engineering Framework** |
-| Versão atual | **v4.1.3** |
+| Versão atual | **v4.1.5** |
 | Baseline | **v4.0** |
 | Status | **Stable** |
 | Camada | `construction/` |
 | Última atualização | 2026-07-17 |
+
+---
+
+## [4.1.5] — 2026-07-17 — Política E2E comportamental (E2E-02)
+
+### Marco
+
+- Specs Playwright orientados a comportamento funcional, não a Quasar/CSS/DOM interno.
+
+### Adicionado
+
+- `construction/17-frontend-e2e-behavior-policy.md` — SSOT E2E-02
+- `frontend/test/e2e/README.md` — guia de execução
+- Regra **R-27** (E2E-02), decisão **DL-EF-4.2-011**
+- `construction/history/framework-evolution-e2e-behavior-2026-07-17.md`
+
+### Alterado
+
+- `16-frontend-validation-gates.md`, golden template, orchestrator, DoD, templates VAL-01
+
+### Complementa
+
+- v4.1.4 (E2E-01 / BUILD-02) — *quando* executar E2E; v4.1.5 define *como* escrever specs.
+
+Relatório: `construction/history/framework-evolution-e2e-behavior-2026-07-17.md`
+
+---
+
+## [4.1.4] — 2026-07-17 — Desacoplamento E2E (BUILD-02 / E2E-01)
+
+### Marco
+
+- PKGs frontend incrementais deixam de depender de `yarn test:e2e` da suíte compartilhada.
+
+### Adicionado
+
+- `construction/16-frontend-validation-gates.md` — SSOT gates frontend
+- Regras **R-25** (BUILD-02), **R-26** (E2E-01)
+- Decisão **DL-EF-4.2-010**
+- Variável `E2E_VALIDATION=1` no runner frontend (somente PKG-FE-06)
+
+### Alterado
+
+- `FULL_VALIDATION=1` → Gate PKG (lint, typecheck, unit, build) **sem** E2E
+- PKG-FE-06 — papel explícito **E2E Stabilization & Closure**
+- Templates VAL-01, golden template FT-SINGULAR, orchestrator, workflow 11
+
+### Preservado
+
+- VAL-01, VAL-02, BUILD-01 (backend)
+- Qualidade: E2E obrigatório no encerramento via PKG-FE-06
+
+Relatório: `construction/history/framework-evolution-e2e-gates-2026-07-17.md`
 
 ---
 
@@ -22,7 +75,7 @@
 - Regra **ART-01** / **R-24** — modelo mínimo por PKG
 - Template `pkg-artifact-model.md`
 - Scripts de evidência centralizados (`PKG_DIR=...` — sem cópia por PKG)
-- `FULL_VALIDATION=1` no runner frontend (lint, unit, e2e, build)
+- `FULL_VALIDATION=1` no runner frontend (lint, unit, build; E2E via `E2E_VALIDATION=1` — ver v4.1.4)
 - Decisão **DL-EF-4.1-009**
 
 ### Removido / descontinuado

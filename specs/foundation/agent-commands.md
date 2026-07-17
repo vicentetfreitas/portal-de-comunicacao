@@ -149,7 +149,7 @@ O catálogo possui **8 comandos essenciais**, organizados por intenção do usu�
 | **Quando utilizar** | Com Session ativa; respeitando dependências entre PKGs. |
 | **Artefatos envolvidos** | `construction-state.yaml`; `pkg-<NN>/status.md` (VALIDATION SUMMARY); `pkg-<NN>/evidence/`; código; `session.md` (somente leitura). |
 | **Resultado esperado** | PKG em `DONE` ou `BLOCKED`; seção **VALIDATION SUMMARY** em `status.md` (status: `PASS`, `BUILD_FAILURE`, `ENVIRONMENT_FAILURE` ou `PENDING_REVALIDATION`); resumo operacional curto. |
-| **Referências** | `construction/11-feature-execution-workflow.md`; `construction/templates/pkg-validation-summary.md`. |
+| **Referências** | `construction/11-feature-execution-workflow.md`; `construction/templates/pkg-validation-summary.md`; workstream frontend: `construction/16-frontend-validation-gates.md` (BUILD-02 / E2E-01); `construction/17-frontend-e2e-behavior-policy.md` (E2E-02). |
 
 ---
 

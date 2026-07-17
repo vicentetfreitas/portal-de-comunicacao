@@ -114,6 +114,8 @@ Consultar obrigatoriamente:
 ```text
 1. construction/12-fullstack-orchestrator.md      ← workflow v4.1 Full Stack
 2. construction/11-feature-execution-workflow.md    ← workflow v3.2 por Workstream
+   construction/16-frontend-validation-gates.md     ← gates PKG vs E2E (frontend, BUILD-02 / E2E-01)
+   construction/17-frontend-e2e-behavior-policy.md  ← política specs Playwright (E2E-02)
 
 3. construction/registry.yaml (REGISTRY-01) — descobrir Feature e Workstreams
 

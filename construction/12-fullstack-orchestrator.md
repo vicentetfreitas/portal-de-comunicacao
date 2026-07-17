@@ -9,7 +9,7 @@
 | Status | **Stable** |
 | Versão | **4.1** |
 | Baseline | **4.0** (retrocompatível) |
-| Última atualização | 2026-07-16 |
+| Última atualização | 2026-07-17 |
 | Golden Template | **FT-SINGULAR** |
 | Changelog | `construction/CHANGELOG.md` |
 | Decisões v4.1 | `construction/14-framework-decisions-v4.1.md` |
@@ -82,8 +82,11 @@ Feature (FT-<DOMAIN>)
 | VAL-01 | Validation Summary | Resumo padronizado de validação em todo PKG — `templates/pkg-validation-summary.md` |
 | VAL-02 | Ciclo de vida: `PENDING_REVALIDATION` — `templates/pkg-validation-summary.md` |
 | ART-01 | Modelo mínimo de artefatos por PKG — `templates/pkg-artifact-model.md` |
+| BUILD-02 | Gate PKG frontend (PKG-FE-01..05): lint, typecheck, unit, build — **sem E2E** — `16-frontend-validation-gates.md` |
+| E2E-01 | Gate E2E obrigatório apenas em **PKG-FE-06** (estabilização + closure) — `E2E_VALIDATION=1` |
+| E2E-02 | Política de comportamento dos specs Playwright — `17-frontend-e2e-behavior-policy.md` |
 
-Regras v3.2 (SESSION-01, CACHE-01, BUILD-01, PARALLEL-01, RULE-CONTEXT-01, VAL-01, VAL-02) **permanecem** aplicáveis **por Workstream**.
+Regras v3.2 (SESSION-01, CACHE-01, BUILD-01, PARALLEL-01, RULE-CONTEXT-01, VAL-01, VAL-02) **permanecem** aplicáveis **por Workstream**. Workstream **frontend** adiciona BUILD-02, E2E-01 e E2E-02.
 
 ---
 

@@ -45,6 +45,11 @@ features:
     sprint: 3
     manifest: FT-EQUIPE/feature-manifest.yaml
     status: closed
+    frontend:
+      sprint: 3
+      manifest: ../frontend/features/FT-EQUIPE/feature-manifest.yaml
+      status: closed
+      closure: FEATURE_APPROVED
 
   - code: FT-COLABORADOR
     slug: colaborador

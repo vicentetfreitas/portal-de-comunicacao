@@ -190,6 +190,20 @@ Responsável por validar que a Feature atende às necessidades do negócio e aos
 
 ---
 
+# Construction — Workstream Frontend (referência)
+
+Durante a **construção** (não substitui critérios de aceite em `specs/`), o template CRUD frontend adota:
+
+| Fase | Critério |
+|------|----------|
+| PKG-FE-01..05 | Gate PKG: lint, typecheck, testes unitários, build — **PASS** em cada PKG |
+| PKG-FE-06 | Gate PKG + **Playwright** (`test:e2e`) — estabilização E2E e encerramento |
+| Feature frontend aprovada | PKG-FE-06 com validação E2E verde |
+
+Detalhes: `construction/16-frontend-validation-gates.md`, `construction/17-frontend-e2e-behavior-policy.md` (E2E-02), `construction/golden-template/FT-SINGULAR.md`.
+
+---
+
 # Referências
 
 * `specs/foundation/glossary.md`
