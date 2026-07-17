@@ -1,30 +1,32 @@
 <template>
-  <div class="singular-list-page">
+  <div class="equipe-list-page">
     <DsPageHeader
-      :title="$t('singular.list.title')"
-      :subtitle="$t('singular.list.subtitle')"
+      :title="$t('equipe.list.title')"
+      :subtitle="$t('equipe.list.subtitle')"
     >
       <template #actions>
-        <DsButton variant="primary" :to="ROUTE_PATHS.SINGULAR_CREATE">
-          {{ $t("singular.list.createAction") }}
+        <DsButton variant="primary" :to="ROUTE_PATHS.EQUIPE_CREATE">
+          {{ $t("equipe.list.createAction") }}
         </DsButton>
       </template>
     </DsPageHeader>
 
-    <SingularFilters
+    <EquipeFilters
       :filters="filters"
+      :area-options="areaOptions"
+      :loading-areas="loadingAreas"
       @apply="applyFilters"
       @reset="resetFilters"
     />
 
-    <DsCard :title="$t('singular.list.cardTitle')">
+    <DsCard :title="$t('equipe.list.cardTitle')">
       <AppEmptyState
         v-if="!loading && rows.length === 0"
-        :title="$t('singular.list.emptyTitle')"
-        :description="$t('singular.list.emptyDescription')"
+        :title="$t('equipe.list.emptyTitle')"
+        :description="$t('equipe.list.emptyDescription')"
       >
-        <DsButton variant="primary" :to="ROUTE_PATHS.SINGULAR_CREATE">
-          {{ $t("singular.list.createAction") }}
+        <DsButton variant="primary" :to="ROUTE_PATHS.EQUIPE_CREATE">
+          {{ $t("equipe.list.createAction") }}
         </DsButton>
       </AppEmptyState>
 
@@ -50,7 +52,7 @@
         <template #body-cell-actions="slotProps">
           <q-td :props="slotProps">
             <DsButton variant="link" :to="detailRoute(rowId(slotProps.row))">
-              {{ $t("singular.list.viewAction") }}
+              {{ $t("equipe.list.viewAction") }}
             </DsButton>
           </q-td>
         </template>
@@ -63,7 +65,7 @@
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
-import SingularFilters from "@/components/organization/singular/SingularFilters.vue";
+import EquipeFilters from "@/components/organization/equipe/EquipeFilters.vue";
 import AppEmptyState from "@/components/shared/AppEmptyState.vue";
 import {
   DsBadge,
@@ -73,11 +75,13 @@ import {
   DsPageHeader
 } from "@/components/ds";
 import type { DsTableColumn } from "@/components/ds";
-import { useSingularList } from "@/composables/organization/useSingularList";
-import { ROUTE_PATHS, singularDetailPath } from "@/constants/routes";
-import type { SingularStatus } from "@/types/organization/singular.types";
+import { useEquipeAreaOptions } from "@/composables/organization/useEquipeAreaOptions";
+import { useEquipeList } from "@/composables/organization/useEquipeList";
+import { ROUTE_PATHS, equipeDetailPath } from "@/constants/routes";
+import type { EquipeStatus } from "@/types/organization/equipe.types";
 
 const { t } = useI18n();
+const { areaOptions, loadingAreas } = useEquipeAreaOptions();
 const {
   rows,
   loading,
@@ -86,39 +90,32 @@ const {
   applyFilters,
   resetFilters,
   onTableRequest
-} = useSingularList();
+} = useEquipeList();
 
 const columns = computed<DsTableColumn[]>(() => [
   {
     name: "name",
-    label: t("singular.form.name"),
+    label: t("equipe.form.name"),
     field: "name",
     align: "left",
     sortable: true
   },
   {
-    name: "acronym",
-    label: t("singular.form.acronym"),
-    field: "acronym",
-    align: "left",
-    sortable: true
-  },
-  {
-    name: "unimedCode",
-    label: t("singular.form.unimedCode"),
-    field: "unimedCode",
+    name: "areaId",
+    label: t("equipe.form.areaId"),
+    field: "areaId",
     align: "left",
     sortable: true
   },
   {
     name: "status",
-    label: t("singular.list.columns.status"),
+    label: t("equipe.list.columns.status"),
     field: "status",
     align: "left"
   },
   {
     name: "actions",
-    label: t("singular.list.columns.actions"),
+    label: t("equipe.list.columns.actions"),
     field: "actions",
     align: "right"
   }
@@ -128,24 +125,24 @@ const tableRows = computed(
   () => rows.value as unknown as Record<string, unknown>[]
 );
 
-function rowStatus(row: Record<string, unknown>): SingularStatus {
-  return row.status as SingularStatus;
+function rowStatus(row: Record<string, unknown>): EquipeStatus {
+  return row.status as EquipeStatus;
 }
 
 function rowId(row: Record<string, unknown>): number {
   return Number(row.id);
 }
 
-function statusLabel(status: SingularStatus): string {
-  return t(`singular.status.${status}`);
+function statusLabel(status: EquipeStatus): string {
+  return t(`equipe.status.${status}`);
 }
 
-function statusVariant(status: SingularStatus): "positive" | "negative" {
+function statusVariant(status: EquipeStatus): "positive" | "negative" {
   return status === "ACTIVE" ? "positive" : "negative";
 }
 
 function detailRoute(id: number) {
-  return singularDetailPath(id);
+  return equipeDetailPath(id);
 }
 
 onMounted(() => {
@@ -154,7 +151,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.singular-list-page {
+.equipe-list-page {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg, 24px);

@@ -25,13 +25,13 @@ import type { DsSelectOption } from "../types";
 
 withDefaults(
   defineProps<{
-    label?: string;
-    placeholder?: string;
+    label?: string | undefined;
+    placeholder?: string | undefined;
     options: DsSelectOption[];
     disable?: boolean;
     readonly?: boolean;
-    error?: string;
-    hint?: string;
+    error?: string | undefined;
+    hint?: string | undefined;
     dense?: boolean;
     multiple?: boolean;
   }>(),

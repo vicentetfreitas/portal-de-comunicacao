@@ -32,5 +32,11 @@ export const ADMIN_NAV_ITEMS: AppNavItem[] = [
     to: ROUTE_PATHS.SINGULAR_HUB,
     icon: "mdi-domain",
     section: "admin"
+  },
+  {
+    labelKey: "equipe.hub.title",
+    to: ROUTE_PATHS.EQUIPE_HUB,
+    icon: "mdi-account-group",
+    section: "admin"
   }
 ];

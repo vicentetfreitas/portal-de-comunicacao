@@ -9,7 +9,6 @@
     :disable="disable"
     :readonly="readonly"
     :error="!!error"
-    :error-message="error"
     :hint="hint"
     :dense="dense"
     :outlined="variant === 'outlined'"
@@ -17,6 +16,9 @@
     :standout="variant === 'standard'"
     v-bind="$attrs"
   >
+    <template v-if="error" #error>
+      <div role="alert" :aria-label="error">{{ error }}</div>
+    </template>
     <template v-if="$slots.prepend" #prepend>
       <slot name="prepend" />
     </template>

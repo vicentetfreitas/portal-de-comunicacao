@@ -88,7 +88,7 @@ export function buildSingularListParams(
 
 export function useSingularList() {
   const rows = ref<SingularResponse[]>([]);
-  const loading = ref(false);
+  const loading = ref(true);
   const filters: UnwrapNestedRefs<SingularListFilters> = reactive(
     createDefaultSingularListFilters()
   );

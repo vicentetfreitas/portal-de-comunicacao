@@ -1,10 +1,17 @@
 import type { RouteRecordRaw } from "vue-router";
 
 import { foundationRoutes, lazyPages } from "./foundation.routes";
+import { equipeRoutes } from "./organization/equipe.routes";
 import { singularRoutes } from "./organization/singular.routes";
 import { structuralRoutes } from "./structural.routes";
 
-export { foundationRoutes, lazyPages, singularRoutes, structuralRoutes };
+export {
+  equipeRoutes,
+  foundationRoutes,
+  lazyPages,
+  singularRoutes,
+  structuralRoutes
+};
 
 /**
  * Modular route registry — structural redirects, foundation pages, feature routes, catch-all.
@@ -14,6 +21,7 @@ export function createModularRoutes(): RouteRecordRaw[] {
     ...structuralRoutes,
     ...foundationRoutes,
     ...singularRoutes,
+    ...equipeRoutes,
     {
       path: "/:pathMatch(.*)*",
       name: "not-found",

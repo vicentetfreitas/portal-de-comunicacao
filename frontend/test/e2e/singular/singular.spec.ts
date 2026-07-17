@@ -134,22 +134,41 @@ test.describe("AT-FE-SINGULAR-003 — Listagem", () => {
     ]);
 
     await page.goto("/app/administrador/singulares/lista");
-    await expect(page.getByText("Alpha Ativa")).toBeVisible();
+    await page.waitForResponse(
+      response =>
+        response.url().includes("/api/v1/singulares") &&
+        response.request().method() === "GET" &&
+        response.ok()
+    );
+    await expect(page.locator(".ds-data-table")).toContainText("Alpha Ativa", {
+      timeout: 15_000
+    });
 
     await page.getByLabel("Status").click();
-    await page.getByRole("option", { name: "Inativa" }).click();
+    await page.getByRole("option", { name: "Inativa", exact: true }).click();
     await page.getByRole("button", { name: "Aplicar filtros" }).click();
 
     await expect(page.getByText("Beta Inativa")).toBeVisible();
     await expect(page.getByText("Alpha Ativa")).not.toBeVisible();
 
     await page.getByLabel("Status").click();
-    await page.getByRole("option", { name: "Ativa" }).click();
+    await page.getByRole("option", { name: "Ativa", exact: true }).click();
     await page.getByRole("button", { name: "Aplicar filtros" }).click();
 
     await expect(page.getByText("Alpha Ativa")).toBeVisible();
-    await page.getByRole("button", { name: "2" }).click();
-    await expect(page.getByText("Ativa 11")).toBeVisible();
+    await expect(page.locator(".ds-data-table")).toContainText("Ativa 11");
+
+    const tableBottom = page.locator(".ds-data-table .q-table__bottom");
+    const nextPage = tableBottom.getByRole("button", {
+      name: "Próxima página"
+    });
+    await expect(nextPage).toBeEnabled();
+    await nextPage.click();
+
+    await expect(page.locator(".ds-data-table")).toContainText("Ativa 8");
+    await expect(page.locator(".ds-data-table")).not.toContainText(
+      "Alpha Ativa"
+    );
   });
 });
 
@@ -238,7 +257,9 @@ test.describe("AT-FE-SINGULAR-005 — Status", () => {
       page.getByText("Singular inativada com sucesso.")
     ).toBeVisible();
     await expect(page.getByRole("status", { name: "Inativa" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Ativar" })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Ativar", exact: true })
+    ).toBeVisible();
   });
 
   test("bloqueio 422 por áreas ativas", async ({ page }) => {

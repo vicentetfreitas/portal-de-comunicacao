@@ -6,10 +6,10 @@
     :columns="columns"
     :row-key="rowKey"
     :loading="loading"
-    :pagination="pagination"
+    v-model:pagination="pagination"
     flat
     bordered
-    v-bind="$attrs"
+    v-bind="tableAttrs"
   >
     <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
       <slot :name="slotName" v-bind="slotProps ?? {}" />
@@ -18,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed, useAttrs } from "vue";
+
 import type { DsTableColumn } from "../types";
 
 withDefaults(
@@ -27,12 +29,30 @@ withDefaults(
     columns: DsTableColumn[];
     rowKey?: string;
     loading?: boolean;
-    pagination?: { rowsPerPage: number };
   }>(),
   {
     rowKey: "id",
-    loading: false,
-    pagination: () => ({ rowsPerPage: 10 })
+    loading: false
   }
 );
+
+const pagination = defineModel<{
+  sortBy?: string;
+  descending?: boolean;
+  page: number;
+  rowsPerPage: number;
+  rowsNumber: number;
+}>("pagination", {
+  default: () => ({
+    page: 1,
+    rowsPerPage: 10,
+    rowsNumber: 0
+  })
+});
+
+const attrs = useAttrs();
+const tableAttrs = computed(() => {
+  const { pagination: _pagination, ...rest } = attrs;
+  return rest;
+});
 </script>

@@ -244,5 +244,103 @@ export default {
         confirm: "Inativar singular"
       }
     }
+  },
+  equipe: {
+    hub: {
+      title: "Equipes",
+      subtitle: "Gestão de equipes organizacionais",
+      cardTitle: "Ações rápidas",
+      listAction: "Listar equipes",
+      listDescription: "Consulte equipes cadastradas com filtros e paginação",
+      createAction: "Cadastrar equipe",
+      createDescription: "Inclua uma nova equipe vinculada a uma área"
+    },
+    list: {
+      title: "Listagem de equipes",
+      subtitle: "Consulte e filtre equipes cadastradas",
+      cardTitle: "Resultados",
+      createAction: "Nova equipe",
+      viewAction: "Ver detalhe",
+      emptyTitle: "Nenhuma equipe encontrada",
+      emptyDescription: "Ajuste os filtros ou cadastre uma nova equipe.",
+      columns: {
+        status: "Status",
+        actions: "Ações"
+      },
+      filters: {
+        title: "Filtros",
+        status: "Status",
+        apply: "Aplicar filtros",
+        clear: "Limpar"
+      }
+    },
+    create: {
+      title: "Cadastrar equipe",
+      subtitle: "Nova equipe organizacional",
+      cardTitle: "Dados cadastrais",
+      success: "Equipe cadastrada com sucesso."
+    },
+    detail: {
+      title: "Detalhe da equipe",
+      subtitle: "Identificador: {id}",
+      cardTitle: "Informações",
+      editAction: "Editar",
+      activateAction: "Ativar",
+      deactivateAction: "Inativar",
+      changeStatusAction: "Alterar status",
+      backToList: "Voltar para listagem",
+      notFoundTitle: "Equipe não encontrada",
+      notFoundDescription:
+        "O identificador informado não corresponde a um registro existente.",
+      fields: {
+        id: "Identificador",
+        createdAt: "Cadastro",
+        updatedAt: "Última atualização",
+        notAvailable: "—"
+      }
+    },
+    edit: {
+      title: "Editar equipe",
+      subtitle: "Identificador: {id}",
+      cardTitle: "Formulário de edição",
+      success: "Equipe atualizada com sucesso."
+    },
+    form: {
+      areaId: "Área",
+      areaHint: "Selecione a área ativa à qual a equipe pertence",
+      name: "Nome",
+      description: "Descrição",
+      leaderId: "Líder",
+      leaderHint: "Opcional — identificador do colaborador líder",
+      submitCreate: "Cadastrar equipe",
+      submitEdit: "Salvar alterações",
+      cancel: "Cancelar"
+    },
+    status: {
+      ACTIVE: "Ativa",
+      INACTIVE: "Inativa"
+    },
+    statusDialog: {
+      cancel: "Cancelar",
+      successActivate: "Equipe ativada com sucesso.",
+      successDeactivate: "Equipe inativada com sucesso.",
+      activate: {
+        title: "Ativar equipe",
+        subtitle: "Confirme a reativação de {name}",
+        message:
+          "A equipe voltará ao status ativo e poderá ser utilizada normalmente.",
+        confirm: "Ativar equipe"
+      },
+      deactivate: {
+        title: "Inativar equipe",
+        subtitle: "Confirme a inativação de {name}",
+        message:
+          "A equipe será marcada como inativa. A operação falhará se existirem colaboradores ativos vinculados.",
+        confirm: "Inativar equipe"
+      }
+    },
+    stub: {
+      placeholder: "Placeholder — implementação visual em PKG-FE-02 em diante."
+    }
   }
 };
