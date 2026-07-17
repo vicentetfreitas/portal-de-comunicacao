@@ -6,10 +6,7 @@
           <div class="ds-text-card-title">{{ singular.name }}</div>
           <div class="singular-info-card__subtitle">{{ singular.acronym }}</div>
         </div>
-        <DsBadge
-          :label="statusLabel"
-          :variant="statusVariant"
-        />
+        <DsBadge :label="statusLabel" :variant="statusVariant" />
       </div>
     </template>
 
@@ -55,7 +52,10 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { DsBadge, DsCard } from "@/components/ds";
-import type { SingularResponse, SingularStatus } from "@/types/organization/singular.types";
+import type {
+  SingularResponse,
+  SingularStatus
+} from "@/types/organization/singular.types";
 
 const props = defineProps<{
   singular: SingularResponse;

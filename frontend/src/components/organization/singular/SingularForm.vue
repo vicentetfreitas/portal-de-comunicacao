@@ -1,11 +1,7 @@
 <template>
   <q-form class="singular-form" @submit.prevent="emit('submit')">
     <DsFormCard :title="title">
-      <SingularBasicInfoSection
-        :model="model"
-        :errors="errors"
-        :mode="mode"
-      />
+      <SingularBasicInfoSection :model="model" :errors="errors" :mode="mode" />
 
       <template #actions>
         <DsButton variant="ghost" :disable="loading" @click="emit('cancel')">

@@ -127,10 +127,10 @@ audit:
 
 build:
   incremental: false
-  full_verify: pending_local
-  last_command: "yarn lint:check && yarn test:unit && yarn test:e2e && yarn build"
-  last_run_at: null
-  note: "Validação documentada em reports/validation-2026-07-16.md"
+  full_verify: pending_revalidation
+  last_command: "yarn lint:check && yarn typecheck && yarn test:unit && yarn test:e2e && yarn build"
+  last_run_at: "2026-07-16"
+  note: "Correções lint/e2e aplicadas — revalidar com FULL_VALIDATION=1 e pkg-evidence-run-frontend.sh"
 
 readiness:
   status: approved

@@ -95,9 +95,40 @@
 | Relatório principal | `pkg-XX/status.md` — seção VALIDATION SUMMARY |
 | Evidência | `pkg-XX/evidence/build-verify-YYYY-MM-DD.log` — log completo |
 | Processo | Comandos de validação inalterados (BUILD-01) — apenas apresentação |
-| Status | `PASS` \| `BUILD_FAILURE` \| `ENVIRONMENT_FAILURE` |
+| Status | `PASS` \| `BUILD_FAILURE` \| `ENVIRONMENT_FAILURE` — estendido por VAL-02 com `PENDING_REVALIDATION` |
 | Template | `construction/templates/pkg-validation-summary.md` |
 | Regra | VAL-01 / R-22 em `construction/04-construction-rules.md` |
+
+---
+
+# DL-EF-4.1-008 — Ciclo de vida de validação (VAL-02)
+
+| Campo | Valor |
+|-------|-------|
+| Decisão | Introduzir estado **PENDING_REVALIDATION** no ciclo de vida da validação dos PKGs |
+| Contexto | PKGs com correções aplicadas mas sem reexecução completa do pipeline eram classificados incorretamente como `BUILD_FAILURE` |
+| Estados | `PASS` \| `BUILD_FAILURE` \| `ENVIRONMENT_FAILURE` \| `PENDING_REVALIDATION` |
+| Semântica | `BUILD_FAILURE` = falha comprovada em pipeline completo; `PENDING_REVALIDATION` = correções concluídas aguardando revalidação |
+| Determinação | Por condições observáveis (evidência, correções, revalidação) — **sem** prioridade fixa entre estados |
+| Processo | BUILD-01 inalterado; critérios de aceite dos PKGs inalterados |
+| Compatibilidade | VAL-01 preservado — extensão do conjunto de status |
+| Template | `construction/templates/pkg-validation-summary.md` (VAL-01 + VAL-02) |
+| Regra | VAL-02 / R-23 em `construction/04-construction-rules.md` |
+
+---
+
+# DL-EF-4.1-009 — Modelo mínimo de artefatos por PKG (ART-01)
+
+| Campo | Valor |
+|-------|-------|
+| Decisão | Reduzir artefatos por PKG a `status.md` + `evidence/*.log` opcional |
+| Contexto | `implementation-report.md`, cópias de `run-bv.sh` e índices markdown duplicavam `status.md` e templates |
+| Proibido em novos PKGs | `implementation-report.md`, `evidence/run-bv.sh` (cópia), `verification-log-*.md`, `review-request.md` |
+| Evidência | Scripts centralizados com `PKG_DIR=...` em `construction/templates/` |
+| `reports/` Feature | Apenas incidentes transversais — não validação por PKG |
+| SSOT Sprint 0 | `construction/frontend/construction-state.yaml` (remove `sprint-0-state.yaml`) |
+| Regra | ART-01 / R-24 em `construction/04-construction-rules.md` |
+| Template | `construction/templates/pkg-artifact-model.md` |
 
 ---
 

@@ -63,9 +63,11 @@ Exploração da árvore da Feature é **proibida** (RULE-CONTEXT-01).
 
 ## Validações locais executadas (BUILD-01)
 
-> **VAL-01:** ao concluir o PKG, preencher a seção **VALIDATION SUMMARY** abaixo.  
+> **VAL-01 / VAL-02:** ao concluir o PKG, preencher a seção **VALIDATION SUMMARY** abaixo.  
 > Template e regras: `construction/templates/pkg-validation-summary.md`  
-> Log completo: `evidence/build-verify-YYYY-MM-DD.log` (scripts em `construction/templates/pkg-evidence-run-*.sh`)
+> Log completo: `evidence/build-verify-YYYY-MM-DD.log`  
+> Runner central: `PKG_DIR=<path-do-pkg> bash construction/templates/pkg-evidence-run-frontend.sh`  
+> (FE fechamento: `FULL_VALIDATION=1`) — ver `construction/templates/pkg-artifact-model.md`
 
 **Proibido:** `mvn clean verify` (reservado ao Encerramento da Feature).
 

@@ -1065,7 +1065,7 @@ O Construction Orchestrator **nunca gera código**. Produz apenas:
 8.  [Violação] → BLOCKED em pkg-XX/status.md → PARAR
 9.  Delegar construction-engineer
 10. Aguardar: código + **VALIDATION SUMMARY** em `pkg-XX/status.md` + `construction-state.yaml` = DONE
-11. Emitir **VALIDATION SUMMARY** (VAL-01) — não relatório extenso de validação
+11. Emitir **VALIDATION SUMMARY** (VAL-01 + VAL-02) — não relatório extenso de validação
 12. Liberar próximo PKG disponível
 ```
 
@@ -1078,16 +1078,25 @@ O Construction Orchestrator **nunca gera código**. Produz apenas:
 - `mvn clean verify` (BUILD-01)
 - explorar árvore da Feature
 
-### VALIDATION SUMMARY (VAL-01)
+### VALIDATION SUMMARY (VAL-01 + VAL-02)
 
 Ao encerrar cada PKG na Fase 2:
 
 1. Executar validações locais do workstream (processo inalterado — BUILD-01).
 2. Gravar log completo em `pkg-XX/evidence/build-verify-YYYY-MM-DD.log`.
 3. Preencher seção **VALIDATION SUMMARY** em `pkg-XX/status.md` conforme `construction/templates/pkg-validation-summary.md`.
-4. Status: `PASS` | `BUILD_FAILURE` | `ENVIRONMENT_FAILURE` (somente se comando não executou).
+4. Determinar **Status** por condições observáveis — **sem** prioridade fixa entre estados (VAL-02):
+
+| Status | Condição |
+|--------|----------|
+| `PASS` | Pipeline completo executado; todos os comandos passaram |
+| `BUILD_FAILURE` | Pipeline completo executado; falha comprovada (compilação, testes, build) |
+| `ENVIRONMENT_FAILURE` | Comando não pôde executar (runtime, PATH, permissão) |
+| `PENDING_REVALIDATION` | Correções aplicadas documentadas; pipeline completo ainda não reexecutado com sucesso após essas correções |
+
 5. Agrupar correções por **causa raiz** — sem stack traces no resumo.
-6. `implementation-report.md` (opcional) **não** duplica validação.
+
+**ART-01:** não gerar `implementation-report.md` nem copiar `run-bv.sh` por PKG — usar templates com `PKG_DIR=...`.
 
 Scripts de evidência: `construction/templates/pkg-evidence-run-frontend.sh`, `pkg-evidence-run-backend.sh`.
 

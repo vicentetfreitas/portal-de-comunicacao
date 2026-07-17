@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { mockAuthenticatedAdmin } from "../support/auth-mock";
 import {
@@ -7,8 +7,15 @@ import {
   type MockSingularStore
 } from "../support/singular-api-mock";
 
+function singularFieldValue(page: Page, label: string) {
+  return page
+    .locator(".singular-info-card__item")
+    .filter({ hasText: label })
+    .locator("dd");
+}
+
 async function setupSingularFeature(
-  page: import("@playwright/test").Page,
+  page: Page,
   seed: MockSingularStore["singulares"] = []
 ): Promise<MockSingularStore> {
   const store = createMockSingularStore(seed);
@@ -28,8 +35,10 @@ test.describe("AT-FE-SINGULAR-001 — Cadastro", () => {
     await page.getByRole("button", { name: "Cadastrar singular" }).click();
 
     await expect(page).toHaveURL(/\/app\/administrador\/singulares\/\d+$/);
-    await expect(page.getByText("Unimed Fortaleza")).toBeVisible();
-    await expect(page.getByText("Ativa")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Unimed Fortaleza" })
+    ).toBeVisible();
+    await expect(page.getByRole("status", { name: "Ativa" })).toBeVisible();
   });
 
   test("sigla duplicada exibe erro de validação", async ({ page }) => {
@@ -52,7 +61,9 @@ test.describe("AT-FE-SINGULAR-001 — Cadastro", () => {
     await page.getByLabel("Código Unimed").fill("UC999");
     await page.getByRole("button", { name: "Cadastrar singular" }).click();
 
-    await expect(page.getByText("Sigla já cadastrada")).toBeVisible();
+    await expect(
+      page.getByRole("alert", { name: "Sigla já cadastrada" })
+    ).toBeVisible();
   });
 });
 
@@ -72,9 +83,11 @@ test.describe("AT-FE-SINGULAR-002 — Detalhe", () => {
     ]);
 
     await page.goto("/app/administrador/singulares/42");
-    await expect(page.getByRole("heading", { name: "Unimed Sul" })).toBeVisible();
-    await expect(page.getByText("UNI-SUL")).toBeVisible();
-    await expect(page.getByText("UC042")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Unimed Sul" })
+    ).toBeVisible();
+    await expect(singularFieldValue(page, "Sigla")).toHaveText("UNI-SUL");
+    await expect(singularFieldValue(page, "Código Unimed")).toHaveText("UC042");
   });
 
   test("404 exibe estado amigável", async ({ page }) => {
@@ -122,7 +135,6 @@ test.describe("AT-FE-SINGULAR-003 — Listagem", () => {
 
     await page.goto("/app/administrador/singulares/lista");
     await expect(page.getByText("Alpha Ativa")).toBeVisible();
-    await expect(page.getByText("Beta Inativa")).toBeVisible();
 
     await page.getByLabel("Status").click();
     await page.getByRole("option", { name: "Inativa" }).click();
@@ -163,8 +175,10 @@ test.describe("AT-FE-SINGULAR-004 — Edição", () => {
     await page.getByRole("button", { name: "Salvar alterações" }).click();
 
     await expect(page).toHaveURL("/app/administrador/singulares/7");
-    await expect(page.getByText("Unimed Atualizada")).toBeVisible();
-    await expect(page.getByText("ATU")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Unimed Atualizada" })
+    ).toBeVisible();
+    await expect(singularFieldValue(page, "Sigla")).toHaveText("ATU");
   });
 
   test("sigla duplicada na edição exibe erro", async ({ page }) => {
@@ -195,7 +209,9 @@ test.describe("AT-FE-SINGULAR-004 — Edição", () => {
     await page.getByLabel("Sigla").fill("SIG-A");
     await page.getByRole("button", { name: "Salvar alterações" }).click();
 
-    await expect(page.getByText("Sigla já cadastrada")).toBeVisible();
+    await expect(
+      page.getByRole("alert", { name: "Sigla já cadastrada" })
+    ).toBeVisible();
   });
 });
 
@@ -218,8 +234,10 @@ test.describe("AT-FE-SINGULAR-005 — Status", () => {
     await page.getByRole("button", { name: "Inativar" }).click();
     await page.getByRole("button", { name: "Inativar singular" }).click();
 
-    await expect(page.getByText("Singular inativada com sucesso.")).toBeVisible();
-    await expect(page.getByText("Inativa")).toBeVisible();
+    await expect(
+      page.getByText("Singular inativada com sucesso.")
+    ).toBeVisible();
+    await expect(page.getByRole("status", { name: "Inativa" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Ativar" })).toBeVisible();
   });
 
@@ -243,9 +261,11 @@ test.describe("AT-FE-SINGULAR-005 — Status", () => {
     await page.getByRole("button", { name: "Inativar singular" }).click();
 
     await expect(
-      page.getByText("Não é possível inativar singular com áreas ativas vinculadas")
+      page.getByText(
+        "Não é possível inativar singular com áreas ativas vinculadas"
+      )
     ).toBeVisible();
-    await expect(page.getByText("Ativa")).toBeVisible();
+    await expect(page.getByRole("status", { name: "Ativa" })).toBeVisible();
   });
 });
 

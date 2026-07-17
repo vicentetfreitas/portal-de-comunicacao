@@ -1,6 +1,11 @@
 # Reports — FT-SINGULAR (Frontend)
 
-| Relatório | Descrição |
-|-----------|-----------|
-| `state-sync-2026-07-16.md` | Sincronização DoR e pré-requisitos — Foundation + FT-AUTH FE aprovados |
-| `validation-2026-07-16.md` | Validação PKG-FE-06 — lint, vitest, playwright, build |
+Relatórios **transversais** da Feature (incidentes, bloqueadores, auditorias pontuais).
+
+| Tipo | Onde consultar |
+|------|----------------|
+| Validação por PKG | `pkg-fe-XX/status.md` → **VALIDATION SUMMARY** + `evidence/build-verify-*.log` |
+| Encerramento | `review/`, `closure-report.md` |
+| Histórico operacional | `construction/history/ft-singular-frontend-state-sync-2026-07-16.md` |
+
+Não criar relatórios duplicando validação de PKG (ART-01).

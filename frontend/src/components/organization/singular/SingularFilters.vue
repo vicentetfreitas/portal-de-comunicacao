@@ -14,15 +14,9 @@
         :label="$t('singular.form.federationId')"
       />
 
-      <DsInput
-        v-model="filters.name"
-        :label="$t('singular.form.name')"
-      />
+      <DsInput v-model="filters.name" :label="$t('singular.form.name')" />
 
-      <DsInput
-        v-model="filters.acronym"
-        :label="$t('singular.form.acronym')"
-      />
+      <DsInput v-model="filters.acronym" :label="$t('singular.form.acronym')" />
 
       <DsInput
         v-model="filters.unimedCode"

@@ -66,13 +66,6 @@ evidence/build-verify-2026-07-16.log
 | Estilos usam exclusivamente design tokens | ✅ |
 | Sem regras de negócio / telas de features | ✅ |
 
-## Artefatos
-
-| Documento | Caminho |
-|-----------|---------|
-| Implementation Report | `implementation-report.md` |
-| Evidence runner | `evidence/run-bv.sh` |
-
 ## Notas
 
 - Brandbook não consultado — tokens PKG-FE-S0-02 suficientes

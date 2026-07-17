@@ -148,7 +148,7 @@ O catálogo possui **8 comandos essenciais**, organizados por intenção do usu�
 | **Sintaxe** | `PKG-01 FT-AREA`, `PKG-02 FT-AREA`, etc. |
 | **Quando utilizar** | Com Session ativa; respeitando dependências entre PKGs. |
 | **Artefatos envolvidos** | `construction-state.yaml`; `pkg-<NN>/status.md` (VALIDATION SUMMARY); `pkg-<NN>/evidence/`; código; `session.md` (somente leitura). |
-| **Resultado esperado** | PKG em `DONE` ou `BLOCKED`; seção **VALIDATION SUMMARY** em `status.md`; resumo operacional curto. |
+| **Resultado esperado** | PKG em `DONE` ou `BLOCKED`; seção **VALIDATION SUMMARY** em `status.md` (status: `PASS`, `BUILD_FAILURE`, `ENVIRONMENT_FAILURE` ou `PENDING_REVALIDATION`); resumo operacional curto. |
 | **Referências** | `construction/11-feature-execution-workflow.md`; `construction/templates/pkg-validation-summary.md`. |
 
 ---
@@ -228,7 +228,9 @@ Exemplo com escopo explícito: `Report closure FT-AUTH` — não constitui coman
 |----|-------|
 | CMD-12 | `Status` e `Report` não alteram artefatos. |
 | CMD-13 | Durante `PKG-<NN>`, é proibido `Close`, build global (`mvn clean verify`) ou atualização de documentação global. |
-| CMD-14 | Ao concluir `PKG-<NN>`, preencher **VALIDATION SUMMARY** em `pkg-<NN>/status.md` (VAL-01); log completo em `evidence/`. |
+| CMD-14 | Ao concluir `PKG-<NN>`, preencher **VALIDATION SUMMARY** em `pkg-<NN>/status.md` (VAL-01 + VAL-02); log completo em `evidence/`. |
+| CMD-15 | Status de validação: `PASS` \| `BUILD_FAILURE` \| `ENVIRONMENT_FAILURE` \| `PENDING_REVALIDATION` — determinação por condições observáveis (VAL-02), sem prioridade fixa. |
+| CMD-16 | Artefatos por PKG: somente `status.md` + `evidence/*.log` opcional (ART-01) — ver `pkg-artifact-model.md`. |
 
 ---
 

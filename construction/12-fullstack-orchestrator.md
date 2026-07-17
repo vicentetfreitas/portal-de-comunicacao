@@ -80,8 +80,10 @@ Feature (FT-<DOMAIN>)
 | HANDOFF-01 | Handoff por dependências | Transição entre Features usa `dependencies` do Manifest + registry |
 | RETRO-01 | Retrocompatibilidade | Paths v3.2/v4.0, registries legados e comandos internos permanecem válidos |
 | VAL-01 | Validation Summary | Resumo padronizado de validação em todo PKG — `templates/pkg-validation-summary.md` |
+| VAL-02 | Ciclo de vida: `PENDING_REVALIDATION` — `templates/pkg-validation-summary.md` |
+| ART-01 | Modelo mínimo de artefatos por PKG — `templates/pkg-artifact-model.md` |
 
-Regras v3.2 (SESSION-01, CACHE-01, BUILD-01, PARALLEL-01, RULE-CONTEXT-01, VAL-01) **permanecem** aplicáveis **por Workstream**.
+Regras v3.2 (SESSION-01, CACHE-01, BUILD-01, PARALLEL-01, RULE-CONTEXT-01, VAL-01, VAL-02) **permanecem** aplicáveis **por Workstream**.
 
 ---
 
@@ -107,7 +109,8 @@ Regras v3.2 (SESSION-01, CACHE-01, BUILD-01, PARALLEL-01, RULE-CONTEXT-01, VAL-0
 ├── execution-plan.md
 ├── session.md                 ← Snapshot imutável (SESSION-01)
 ├── pkg-XX/ ou pkg-fe-XX/
-│   └── status.md
+│   ├── status.md
+│   └── evidence/              ← opcional (build-verify-*.log)
 ├── review/
 ├── reports/
 └── closure-report.md

@@ -211,9 +211,35 @@ Ao concluir um PKG, o relatório principal (`pkg-XX/status.md`) deve conter a se
 |-------|-----------|
 | Resumo único | Status, comandos, correções por causa raiz, revalidação e path da evidência |
 | Logs completos | Somente em `pkg-XX/evidence/*.log` |
-| Status | `PASS`, `BUILD_FAILURE` ou `ENVIRONMENT_FAILURE` (apenas quando o comando não pôde executar) |
+| Status | `PASS`, `BUILD_FAILURE`, `ENVIRONMENT_FAILURE` ou `PENDING_REVALIDATION` (VAL-02) |
 | Proibido | Stack traces, logs extensos ou tabelas de exit code no relatório principal |
 | Processo | Comandos de validação inalterados (BUILD-01) — apenas apresentação |
+
+## R-23 — Validation Lifecycle (VAL-02)
+
+Estende VAL-01 com o ciclo de vida do status de validação. **Não altera** BUILD-01 nem critérios de aceite dos PKGs.
+
+| Regra | Descrição |
+|-------|-----------|
+| VAL-02-01 | `PENDING_REVALIDATION` — correções concluídas documentadas; aguarda apenas reexecução completa do pipeline |
+| VAL-02-02 | `BUILD_FAILURE` — **exclusivamente** falhas comprovadas durante execução completa do pipeline |
+| VAL-02-03 | `ENVIRONMENT_FAILURE` — impossibilidade de executar comandos por ambiente (nunca falha de compilação/teste) |
+| VAL-02-04 | Determinação de status por **condições observáveis** (evidência, correções, revalidação) — **sem** prioridade fixa entre estados |
+| VAL-02-05 | Proibido `BUILD_FAILURE` quando correções já foram aplicadas e a revalidação completa ainda não ocorreu — usar `PENDING_REVALIDATION` |
+| Template | `construction/templates/pkg-validation-summary.md` (VAL-01 + VAL-02) |
+
+## R-24 — PKG Artifact Model (ART-01)
+
+Conjunto mínimo de artefatos por PKG. **Não altera** BUILD-01, VAL-01 nem critérios de aceite.
+
+| Regra | Descrição |
+|-------|-----------|
+| ART-01-01 | Obrigatório: `pkg-XX/status.md` (inclui VALIDATION SUMMARY) |
+| ART-01-02 | Opcional: `pkg-XX/evidence/build-verify-YYYY-MM-DD.log` quando validação executada |
+| ART-01-03 | **Proibido** gerar `implementation-report.md`, cópias de `run-bv.sh`, `verification-log-*.md` |
+| ART-01-04 | Scripts de evidência: somente `construction/templates/pkg-evidence-run-*.sh` com `PKG_DIR=...` |
+| ART-01-05 | `reports/` na Feature: apenas incidentes transversais — não duplicar validação por PKG |
+| Referência | `construction/templates/pkg-artifact-model.md` |
 
 ## R-21 — Independência de PKGs (PARALLEL-01)
 

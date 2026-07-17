@@ -20,22 +20,13 @@
 
     <SingularInfoCard v-else-if="singular" :singular="singular">
       <template #actions>
-        <DsButton
-          variant="ghost"
-          :to="ROUTE_PATHS.SINGULAR_LIST"
-        >
+        <DsButton variant="ghost" :to="ROUTE_PATHS.SINGULAR_LIST">
           {{ $t("singular.detail.backToList") }}
         </DsButton>
-        <DsButton
-          :variant="statusActionVariant"
-          @click="openStatusDialog"
-        >
+        <DsButton :variant="statusActionVariant" @click="openStatusDialog">
           {{ statusActionLabel }}
         </DsButton>
-        <DsButton
-          variant="primary"
-          :to="editRoute"
-        >
+        <DsButton variant="primary" :to="editRoute">
           {{ $t("singular.detail.editAction") }}
         </DsButton>
       </template>
@@ -60,13 +51,14 @@ import SingularStatusDialog from "@/components/organization/singular/SingularSta
 import AppEmptyState from "@/components/shared/AppEmptyState.vue";
 import AppLoadingSkeleton from "@/components/shared/AppLoadingSkeleton.vue";
 import { DsButton, DsPageHeader, dsNotifySuccess } from "@/components/ds";
-import {
-  isSingularDeactivation
-} from "@/composables/organization/singular-status";
+import { isSingularDeactivation } from "@/composables/organization/singular-status";
 import { useStandardErrorHandling } from "@/composables/useStandardErrorHandling";
 import { ROUTE_PATHS, singularEditPath } from "@/constants/routes";
 import { singularService } from "@/services/organization";
-import type { SingularResponse, SingularStatus } from "@/types/organization/singular.types";
+import type {
+  SingularResponse,
+  SingularStatus
+} from "@/types/organization/singular.types";
 
 const props = defineProps<{
   id: string;
@@ -81,8 +73,8 @@ const notFound = ref(false);
 const statusDialogOpen = ref(false);
 const statusSubmitting = ref(false);
 
-const pageTitle = computed(() =>
-  singular.value?.name ?? t("singular.detail.title")
+const pageTitle = computed(
+  () => singular.value?.name ?? t("singular.detail.title")
 );
 
 const editRoute = computed(() => singularEditPath(props.id));
@@ -134,7 +126,9 @@ function openStatusDialog(): void {
   statusDialogOpen.value = true;
 }
 
-async function onConfirmStatusChange(targetStatus: SingularStatus): Promise<void> {
+async function onConfirmStatusChange(
+  targetStatus: SingularStatus
+): Promise<void> {
   if (!singular.value) {
     return;
   }
@@ -142,10 +136,9 @@ async function onConfirmStatusChange(targetStatus: SingularStatus): Promise<void
   statusSubmitting.value = true;
 
   try {
-    const updated = await singularService.updateStatus(
-      singular.value.id,
-      { status: targetStatus }
-    );
+    const updated = await singularService.updateStatus(singular.value.id, {
+      status: targetStatus
+    });
     singular.value = updated;
     statusDialogOpen.value = false;
 

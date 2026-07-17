@@ -155,7 +155,8 @@ export default {
       subtitle: "Gestão de singulares organizacionais",
       cardTitle: "Ações rápidas",
       listAction: "Listar singulares",
-      listDescription: "Consulte singulares cadastradas com filtros e paginação",
+      listDescription:
+        "Consulte singulares cadastradas com filtros e paginação",
       createAction: "Cadastrar singular",
       createDescription: "Inclua uma nova singular organizacional"
     },
@@ -195,7 +196,8 @@ export default {
       changeStatusAction: "Alterar status",
       backToList: "Voltar para listagem",
       notFoundTitle: "Singular não encontrada",
-      notFoundDescription: "O identificador informado não corresponde a um registro existente.",
+      notFoundDescription:
+        "O identificador informado não corresponde a um registro existente.",
       fields: {
         id: "Identificador",
         createdAt: "Cadastro",
@@ -230,7 +232,8 @@ export default {
       activate: {
         title: "Ativar singular",
         subtitle: "Confirme a reativação de {name}",
-        message: "A singular voltará ao status ativo e poderá ser utilizada normalmente.",
+        message:
+          "A singular voltará ao status ativo e poderá ser utilizada normalmente.",
         confirm: "Ativar singular"
       },
       deactivate: {

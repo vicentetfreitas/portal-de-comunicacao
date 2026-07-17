@@ -82,7 +82,7 @@ construction/features/<FEATURE_CODE>/
 ├── session.md                 ← Snapshot (Execute Feature)
 ├── pkg-01/ … pkg-N/
 │   ├── status.md              ← VALIDATION SUMMARY (VAL-01) + entregas
-│   └── evidence/              ← logs completos (opcional por PKG)
+│   └── evidence/              ← build-verify-*.log (opcional, ART-01)
 ├── review/
 ├── reports/
 └── closure-report.md

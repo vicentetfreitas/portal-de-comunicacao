@@ -3,15 +3,16 @@
 | Campo | Valor |
 |--------|--------|
 | Feature | FT-SINGULAR (Frontend) |
-| PKG | FE-05 |
+| PKG | PKG-FE-05 |
 | Status | **DONE** |
 | Data início | 2026-07-16 |
 | Data conclusão | 2026-07-16 |
+| Dependência | PKG-FE-03 |
 | Executor | feature-implementer |
 
 ---
 
-# Escopo
+## Escopo
 
 Interface para ativação e inativação lógica de singulares.
 
@@ -22,8 +23,8 @@ Interface para ativação e inativação lógica de singulares.
 | Dialog status | `components/organization/singular/SingularStatusDialog.vue` | ✅ |
 | Helpers status | `composables/organization/singular-status.ts` | ✅ |
 | Integração detalhe | `pages/organization/singular/SingularDetailPage.vue` | ✅ |
-| Testes | `test/unit/composables/singular-status.spec.ts` | ✅ |
-| Testes | `test/unit/components/SingularStatusDialog.spec.ts` | ✅ |
+| Testes helpers | `test/unit/composables/singular-status.spec.ts` | ✅ |
+| Testes dialog | `test/unit/components/SingularStatusDialog.spec.ts` | ✅ |
 
 ## Comportamento
 
@@ -33,25 +34,39 @@ Interface para ativação e inativação lógica de singulares.
 - Erro 422 — mensagem de negócio do backend via `handleError`
 - Badge atualizado após sucesso (atualização reativa de `singular`)
 
----
+## VALIDATION SUMMARY
 
-# Rastreabilidade
+Status
+PASS
+
+Validation
+
+✓ yarn typecheck
+✓ yarn test
+✓ yarn build
+
+Correções aplicadas
+
+• (nenhuma)
+
+Revalidation
+
+✓ typecheck
+✓ test
+✓ build
+
+Evidence
+
+evidence/build-verify-2026-07-16.log
+
+## Rastreabilidade
 
 | Task | AT |
 |------|-----|
 | TASK-SINGULAR-FE-005 | AT-FE-SINGULAR-005 |
 
----
+E2E Playwright (inativação e bloqueio): escopo PKG-FE-06.
 
-# Validação
-
-| Verificação | Resultado |
-|-------------|-----------|
-| Vitest — helpers + dialog | ✅ |
-| Playwright — inativação e bloqueio | ⬜ PKG-FE-06 |
-
----
-
-# Próximo PKG
+## Próximo PKG
 
 **PKG-FE-06** — Admin Hub, Tests & Closure

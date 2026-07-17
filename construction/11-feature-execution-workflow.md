@@ -8,7 +8,7 @@
 | Tipo | **SSOT — Workflow de Execução** |
 | Status | **Stable** |
 | Versão | **3.2** (+ **v4.0 / v4.1 Full Stack** — ver `12-fullstack-orchestrator.md`) |
-| Última atualização | 2026-07-16 |
+| Última atualização | 2026-07-17 |
 | Changelog | `construction/CHANGELOG.md` |
 
 ---
@@ -159,6 +159,7 @@ O Construction State responde imediatamente:
 | CACHE-02 | Reutilização obrigatória | Sem evento de invalidação, reutilizar Session ativa |
 | BUILD-01 | Build incremental | `mvn clean verify` somente no Encerramento |
 | VAL-01 | Validation Summary | Resumo único em `pkg-XX/status.md`; logs em `evidence/` — ver `templates/pkg-validation-summary.md` |
+| VAL-02 | Validation Lifecycle | `PENDING_REVALIDATION` quando correções concluídas aguardam revalidação — ver `templates/pkg-validation-summary.md` |
 | PARALLEL-01 | Independência de PKGs | Cada PKG altera `construction-state.yaml` e `pkg-XX/status.md` |
 | RULE-CONTEXT-01 | Hierarquia de consulta | SSOD → State → Snapshot → Cache → documento |
 
@@ -423,9 +424,11 @@ Estado global em `construction-state.yaml`. Detalhamento em `pkg-XX/status.md`:
 
 ## Saída do PKG
 
-**VALIDATION SUMMARY** em `pkg-XX/status.md` (VAL-01) + resumo operacional curto (3–8 linhas).
+**VALIDATION SUMMARY** em `pkg-XX/status.md` (VAL-01 + VAL-02) + resumo operacional curto (3–8 linhas).
 
 Não relatório extenso de validação no arquivo principal. Logs completos em `pkg-XX/evidence/`.
+
+Status de validação: `PASS` | `BUILD_FAILURE` | `ENVIRONMENT_FAILURE` | `PENDING_REVALIDATION` (VAL-02).
 
 Template: `construction/templates/pkg-validation-summary.md`
 
@@ -532,9 +535,10 @@ construction/features/<FEATURE_CODE>/
 ├── execution-plan.md            ← ponto de entrada da execução
 ├── session.md                   ← Snapshot congelado (READ ONLY)
 ├── pkg-01/
-│   └── status.md
-├── review/                      ← auditoria e prontidão da Feature
-├── reports/                     ← relatórios da Feature
+│   ├── status.md              ← obrigatório (VALIDATION SUMMARY + entregas)
+│   └── evidence/              ← opcional: build-verify-YYYY-MM-DD.log
+├── review/
+├── reports/                   ← incidentes transversais (ART-01)
 └── closure-report.md
 ```
 
@@ -639,6 +643,6 @@ construction/features/<FEATURE_CODE>/
 - `construction/templates/feature-session.md`
 - `construction/templates/pkg-status.md`
 - `construction/templates/pkg-validation-summary.md`
-- `construction/templates/pkg-implementation-report.md`
+- `construction/templates/pkg-artifact-model.md`
 - `construction/templates/feature-closure-report.md`
 - `construction/04-construction-rules.md` — regras R-12 a R-27, STATE-01 a STATE-06

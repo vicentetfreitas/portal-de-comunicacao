@@ -3,11 +3,78 @@
 | Item | Valor |
 |------|-------|
 | Nome | **Engineering Framework** |
-| Versão atual | **v4.1.1** |
+| Versão atual | **v4.1.3** |
 | Baseline | **v4.0** |
 | Status | **Stable** |
 | Camada | `construction/` |
-| Última atualização | 2026-07-16 |
+| Última atualização | 2026-07-17 |
+
+---
+
+## [4.1.3] — 2026-07-17 — PKG Artifact Model (ART-01)
+
+### Marco
+
+- Racionalização de artefatos de construção — menos arquivos por PKG, sem perda de auditoria.
+
+### Adicionado
+
+- Regra **ART-01** / **R-24** — modelo mínimo por PKG
+- Template `pkg-artifact-model.md`
+- Scripts de evidência centralizados (`PKG_DIR=...` — sem cópia por PKG)
+- `FULL_VALIDATION=1` no runner frontend (lint, unit, e2e, build)
+- Decisão **DL-EF-4.1-009**
+
+### Removido / descontinuado
+
+- Template `pkg-implementation-report.md`
+- Cópias per-PKG de `evidence/run-bv.sh`
+- `evidence/verification-log-*.md`, `verification-commands.md`, `review-request.md` (nível PKG)
+- `construction/frontend/sprint-0-state.yaml` (SSOT: `construction-state.yaml`)
+- Relatórios Feature duplicando validação de PKG (`validation-2026-07-16.md`)
+
+### Consolidado
+
+- State sync FT-SINGULAR FE → `construction/history/ft-singular-frontend-state-sync-2026-07-16.md`
+- `reports/README.md` — índice transversal (ART-01)
+
+### Preservado
+
+- `pkg-XX/status.md` + `evidence/build-verify-*.log`
+- VAL-01, VAL-02, BUILD-01
+- `review/`, `closure-report.md`, relatórios de bloqueio em `reports/` (ex.: FT-AUTH)
+
+---
+
+## [4.1.2] — 2026-07-17 — Validation Lifecycle (VAL-02)
+
+### Marco
+
+- Evolução do ciclo de vida de validação dos PKGs com estado **PENDING_REVALIDATION** — compatível com VAL-01; BUILD-01 inalterado.
+
+### Adicionado
+
+- Regra **VAL-02** / **R-23** — ciclo de vida do status de validação
+- Estado `PENDING_REVALIDATION` — correções concluídas aguardando reexecução completa do pipeline
+- Determinação de status por condições observáveis — **sem** prioridade fixa entre estados
+- Decisão **DL-EF-4.1-008** em `14-framework-decisions-v4.1.md`
+- Template `pkg-validation-summary.md` consolidado (VAL-01 + VAL-02)
+- Orchestrator e agentes — lógica de transição e distinção `BUILD_FAILURE` vs `PENDING_REVALIDATION`
+
+### Preservado
+
+- VAL-01 — formato **VALIDATION SUMMARY**, evidência em `pkg-XX/evidence/`
+- BUILD-01 — comandos permitidos / proibidos
+- Critérios de aceite e fluxo de execução dos PKGs
+
+### Semântica dos estados
+
+| Status | Significado |
+|--------|-------------|
+| `PASS` | Validação concluída com sucesso |
+| `BUILD_FAILURE` | Falha comprovada em execução completa do pipeline |
+| `ENVIRONMENT_FAILURE` | Impossibilidade de execução por ambiente |
+| `PENDING_REVALIDATION` | Correções concluídas; aguarda apenas revalidação |
 
 ---
 

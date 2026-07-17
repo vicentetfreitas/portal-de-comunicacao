@@ -53,7 +53,7 @@ construction:
   root: construction/frontend/
   artifacts:
     manifest: sprint-0-manifest.yaml
-    state: sprint-0-state.yaml
+    state: construction-state.yaml
     package_index: package-index.md
     dependency_graph: package-dependency-graph.md
     readme: README.md

@@ -1,4 +1,1 @@
-export {
-  SingularApiService,
-  singularService
-} from "./singular.service";
+export { SingularApiService, singularService } from "./singular.service";

@@ -3,15 +3,16 @@
 | Campo | Valor |
 |--------|--------|
 | Feature | FT-SINGULAR (Frontend) |
-| PKG | FE-02 |
+| PKG | PKG-FE-02 |
 | Status | **DONE** |
 | Data início | 2026-07-16 |
 | Data conclusão | 2026-07-16 |
+| Dependência | PKG-FE-01 |
 | Executor | feature-implementer |
 
 ---
 
-# Escopo
+## Escopo
 
 Página e formulário de cadastro de singular com integração `POST /api/v1/singulares`.
 
@@ -31,29 +32,41 @@ Página e formulário de cadastro de singular com integração `POST /api/v1/sin
 - Rota `/app/administrador/singulares/novo`
 - Campos: `federationId` (readonly), `name`, `acronym`, `unimedCode`
 - Validação client-side via `useSingularForm.validateCreate()`
-- Sucesso → notify + redirect detalhe (`singular-detail`)
+- Sucesso → notify + redirect detalhe (`singularDetailPath`)
 - Cancelar → listagem
 - Erros 400/403/422 → toast (`useStandardErrorHandling`) + erros de campo quando disponíveis
 
----
+## VALIDATION SUMMARY
 
-# Rastreabilidade
+Status
+PASS
+
+Validation
+
+✓ yarn typecheck
+✓ yarn test
+✓ yarn build
+
+Correções aplicadas
+
+• (nenhuma)
+
+Revalidation
+
+✓ typecheck
+✓ test
+✓ build
+
+Evidence
+
+evidence/build-verify-2026-07-16.log
+
+## Rastreabilidade
 
 | Task | AT |
 |------|-----|
 | TASK-SINGULAR-FE-001 | AT-FE-SINGULAR-001 (base UI — E2E em PKG-FE-06) |
 
----
-
-# Validação
-
-| Verificação | Resultado |
-|-------------|-----------|
-| Vitest — `useSingularForm` | ✅ |
-| Integração `singularService.create` | ✅ (página) |
-
----
-
-# Próximo PKG
+## Próximo PKG
 
 **PKG-FE-03** — List & Detail Pages

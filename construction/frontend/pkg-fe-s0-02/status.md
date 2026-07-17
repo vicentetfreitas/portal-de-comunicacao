@@ -37,13 +37,6 @@
 | Suporte light/dark (infraestrutura) | ✅ |
 | MDI v7 via Quasar | ✅ |
 
-## Artefatos
-
-| Documento | Caminho |
-|-----------|---------|
-| Implementation Report | `implementation-report.md` |
-| Evidence | `evidence/verification-log-2026-07-16.md` |
-
 ## Notas
 
 - Arquivos de fonte Unimed não versionados — fallback tipográfico conforme R-FE-S0-04

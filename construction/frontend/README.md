@@ -45,7 +45,7 @@ construction/frontend/features/<FEATURE_CODE>/
 ├── session.md                 ← Snapshot (Execute Feature — frontend)
 ├── pkg-fe-01/ … pkg-fe-N/
 │   ├── status.md              ← VALIDATION SUMMARY (VAL-01) + entregas
-│   └── evidence/              ← logs completos (build-verify-*.log)
+│   └── evidence/              ← build-verify-*.log (opcional, ART-01)
 ├── review/
 └── reports/
 ```

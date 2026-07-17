@@ -5,10 +5,7 @@
       :subtitle="$t('singular.list.subtitle')"
     >
       <template #actions>
-        <DsButton
-          variant="primary"
-          :to="ROUTE_PATHS.SINGULAR_CREATE"
-        >
+        <DsButton variant="primary" :to="ROUTE_PATHS.SINGULAR_CREATE">
           {{ $t("singular.list.createAction") }}
         </DsButton>
       </template>
@@ -26,10 +23,7 @@
         :title="$t('singular.list.emptyTitle')"
         :description="$t('singular.list.emptyDescription')"
       >
-        <DsButton
-          variant="primary"
-          :to="ROUTE_PATHS.SINGULAR_CREATE"
-        >
+        <DsButton variant="primary" :to="ROUTE_PATHS.SINGULAR_CREATE">
           {{ $t("singular.list.createAction") }}
         </DsButton>
       </AppEmptyState>
@@ -56,10 +50,7 @@
 
         <template #body-cell-actions="slotProps">
           <q-td :props="slotProps">
-            <DsButton
-              variant="link"
-              :to="detailRoute(rowId(slotProps.row))"
-            >
+            <DsButton variant="link" :to="detailRoute(rowId(slotProps.row))">
               {{ $t("singular.list.viewAction") }}
             </DsButton>
           </q-td>
@@ -75,7 +66,13 @@ import { useI18n } from "vue-i18n";
 
 import SingularFilters from "@/components/organization/singular/SingularFilters.vue";
 import AppEmptyState from "@/components/shared/AppEmptyState.vue";
-import { DsBadge, DsButton, DsCard, DsDataTable, DsPageHeader } from "@/components/ds";
+import {
+  DsBadge,
+  DsButton,
+  DsCard,
+  DsDataTable,
+  DsPageHeader
+} from "@/components/ds";
 import type { DsTableColumn } from "@/components/ds";
 import { useSingularList } from "@/composables/organization/useSingularList";
 import { ROUTE_PATHS, singularDetailPath } from "@/constants/routes";
@@ -129,7 +126,9 @@ const columns = computed<DsTableColumn[]>(() => [
   }
 ]);
 
-const tableRows = computed(() => rows.value as unknown as Record<string, unknown>[]);
+const tableRows = computed(
+  () => rows.value as unknown as Record<string, unknown>[]
+);
 
 function rowStatus(row: Record<string, unknown>): SingularStatus {
   return row.status as SingularStatus;

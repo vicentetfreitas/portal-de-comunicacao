@@ -47,20 +47,9 @@ Inicializar o projeto Quasar/Vue 3/TypeScript com estrutura, ambientes, Pinia, i
 | Estrutura de diretórios | ✅ |
 | Config externa sem hardcode | ✅ |
 | Sem Features de negócio (escopo S0-01) | ✅ |
-| `yarn build` | ⚠️ Pendente revisor — bloqueio ambiente agente (ver `evidence/verification-commands.md`) |
-| `yarn lint:check` | ⚠️ Pendente revisor |
-| `yarn typecheck` | ⚠️ Pendente revisor |
-
----
-
-## Artefatos
-
-| Documento | Caminho |
-|-----------|---------|
-| Implementation Report | `implementation-report.md` |
-| Review Request | `review-request.md` |
-| Verification Commands | `evidence/verification-commands.md` |
-| Verification Log | `frontend/reports/pkg-fe-s0-01-verify.log` |
+| `yarn build` | ⚠️ Validado posteriormente em WSL (histórico: bloqueio ambiente agente) |
+| `yarn lint:check` | ⚠️ Validado posteriormente em WSL |
+| `yarn typecheck` | ⚠️ Validado posteriormente em WSL |
 
 ---
 

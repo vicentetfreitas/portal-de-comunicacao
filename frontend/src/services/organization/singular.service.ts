@@ -68,8 +68,14 @@ export class SingularApiService extends BaseApiClient {
     });
   }
 
-  update(id: number, request: UpdateSingularRequest): Promise<SingularResponse> {
-    return this.put<SingularResponse>(`${SINGULAR_API_PATHS.base}/${id}`, request);
+  update(
+    id: number,
+    request: UpdateSingularRequest
+  ): Promise<SingularResponse> {
+    return this.put<SingularResponse>(
+      `${SINGULAR_API_PATHS.base}/${id}`,
+      request
+    );
   }
 
   updateStatus(

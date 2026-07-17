@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { SINGULAR_API_PATHS } from "@/config/organization";
-import { SingularApiService, singularService } from "@/services/organization/singular.service";
+import {
+  SingularApiService,
+  singularService
+} from "@/services/organization/singular.service";
 import type { ApiResponse, PageResponse } from "@/types/api";
 import type { SingularResponse } from "@/types/organization/singular.types";
 
@@ -85,7 +88,10 @@ describe("SingularApiService", () => {
 
     const result = await service.getById(1);
 
-    expect(getMock).toHaveBeenCalledWith(`${SINGULAR_API_PATHS.base}/1`, undefined);
+    expect(getMock).toHaveBeenCalledWith(
+      `${SINGULAR_API_PATHS.base}/1`,
+      undefined
+    );
     expect(result.id).toBe(1);
   });
 

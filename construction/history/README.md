@@ -194,6 +194,20 @@ Evento: Criação e preenchimento integral da camada `construction/`.
 
 ---
 
+## 2026-07-17 — Engineering Framework v4.1.3 — PKG Artifact Model (ART-01)
+
+**Evento:** Racionalização de artefatos por PKG — `status.md` + log opcional.
+
+**Marco:**
+
+- Descontinuado `implementation-report.md` e cópias de `run-bv.sh` por PKG
+- SSOT Sprint 0: `construction/frontend/construction-state.yaml`
+- Histórico: `ft-singular-frontend-state-sync-2026-07-16.md`
+
+**Evidências:** `construction/CHANGELOG.md` [4.1.3], `templates/pkg-artifact-model.md`
+
+---
+
 # Eventos Futuros (A Preencher)
 
 | Data | Evento | Referência |

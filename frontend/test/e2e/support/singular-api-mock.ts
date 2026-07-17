@@ -38,7 +38,12 @@ function validationError(path: string, message: string, field: string) {
   };
 }
 
-function errorResponse(status: number, error: string, message: string, path: string) {
+function errorResponse(
+  status: number,
+  error: string,
+  message: string,
+  path: string
+) {
   return {
     timestamp: new Date().toISOString(),
     status,
@@ -174,19 +179,18 @@ export async function installSingularApiMock(
       return;
     }
 
-    if (method === "GET" && singularId !== null && !pathname.endsWith("/status")) {
+    if (
+      method === "GET" &&
+      singularId !== null &&
+      !pathname.endsWith("/status")
+    ) {
       const singular = store.singulares.find(item => item.id === singularId);
       if (!singular) {
         await route.fulfill({
           status: 404,
           contentType: "application/json",
           body: JSON.stringify(
-            errorResponse(
-              404,
-              "NOT_FOUND",
-              "Singular não encontrada",
-              pathname
-            )
+            errorResponse(404, "NOT_FOUND", "Singular não encontrada", pathname)
           )
         });
         return;
@@ -257,12 +261,7 @@ export async function installSingularApiMock(
           status: 404,
           contentType: "application/json",
           body: JSON.stringify(
-            errorResponse(
-              404,
-              "NOT_FOUND",
-              "Singular não encontrada",
-              pathname
-            )
+            errorResponse(404, "NOT_FOUND", "Singular não encontrada", pathname)
           )
         });
         return;
@@ -292,7 +291,11 @@ export async function installSingularApiMock(
       return;
     }
 
-    if (method === "PATCH" && pathname.endsWith("/status") && singularId !== null) {
+    if (
+      method === "PATCH" &&
+      pathname.endsWith("/status") &&
+      singularId !== null
+    ) {
       const singular = store.singulares.find(item => item.id === singularId);
       const body = await readJsonBody<{ status: MockSingularStatus }>(route);
 
@@ -301,21 +304,13 @@ export async function installSingularApiMock(
           status: 404,
           contentType: "application/json",
           body: JSON.stringify(
-            errorResponse(
-              404,
-              "NOT_FOUND",
-              "Singular não encontrada",
-              pathname
-            )
+            errorResponse(404, "NOT_FOUND", "Singular não encontrada", pathname)
           )
         });
         return;
       }
 
-      if (
-        body.status === "INACTIVE" &&
-        singular.blockInactivation === true
-      ) {
+      if (body.status === "INACTIVE" && singular.blockInactivation === true) {
         await route.fulfill({
           status: 422,
           contentType: "application/json",

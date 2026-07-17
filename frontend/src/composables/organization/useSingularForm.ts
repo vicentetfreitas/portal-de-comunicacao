@@ -25,7 +25,9 @@ export function createEmptySingularForm(): SingularFormModel {
   };
 }
 
-export function mapSingularToForm(singular: SingularResponse): SingularFormModel {
+export function mapSingularToForm(
+  singular: SingularResponse
+): SingularFormModel {
   return {
     federationId: singular.federationId,
     name: singular.name,
@@ -54,7 +56,10 @@ export function useSingularForm(initial?: Partial<SingularFormModel>) {
     ...initial
   });
 
-  function validateCreate(): { valid: boolean; errors: Record<string, string> } {
+  function validateCreate(): {
+    valid: boolean;
+    errors: Record<string, string>;
+  } {
     return validateForm({
       federationId: {
         value: form.federationId,
@@ -75,7 +80,10 @@ export function useSingularForm(initial?: Partial<SingularFormModel>) {
     });
   }
 
-  function validateUpdate(): { valid: boolean; errors: Record<string, string> } {
+  function validateUpdate(): {
+    valid: boolean;
+    errors: Record<string, string>;
+  } {
     return validateForm({
       name: {
         value: form.name,

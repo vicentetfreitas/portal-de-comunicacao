@@ -94,6 +94,10 @@ Consulta obrigatória antes de inferir progresso (STATE-02).
 
 | VAL-01 | **VALIDATION SUMMARY** em `pkg-XX/status.md` — `templates/pkg-validation-summary.md` |
 
+| VAL-02 | Ciclo de vida: `PENDING_REVALIDATION` — `templates/pkg-validation-summary.md` |
+
+| ART-01 | Modelo mínimo por PKG — `templates/pkg-artifact-model.md` |
+
 | PARALLEL-01 | PKG altera `construction-state.yaml` + `pkg-XX/status.md` |
 
 | RULE-CONTEXT-01 | State → Snapshot → Cache → documento |
@@ -214,7 +218,7 @@ Cada PKG é **totalmente independente** (PARALLEL-01).
 
 - validações locais incrementais (BUILD-01)
 
-- **VALIDATION SUMMARY** em `pkg-XX/status.md` (VAL-01); log em `pkg-XX/evidence/`
+- **VALIDATION SUMMARY** em `pkg-XX/status.md` (VAL-01 + VAL-02); log em `pkg-XX/evidence/`
 
 - atualizar `construction-state.yaml` e `pkg-XX/status.md`
 

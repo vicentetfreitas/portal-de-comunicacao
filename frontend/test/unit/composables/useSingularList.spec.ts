@@ -5,7 +5,6 @@ import {
   createDefaultSingularListFilters,
   createDefaultSingularTablePagination
 } from "@/composables/organization/useSingularList";
-import { singularService } from "@/services/organization";
 
 const listMock = vi.fn();
 
@@ -81,7 +80,8 @@ describe("useSingularList integration", () => {
   });
 
   it("loads page data from singularService.list", async () => {
-    const { useSingularList } = await import("@/composables/organization/useSingularList");
+    const { useSingularList } =
+      await import("@/composables/organization/useSingularList");
     const { fetchPage, rows, pagination } = useSingularList();
 
     await fetchPage();
@@ -93,6 +93,6 @@ describe("useSingularList integration", () => {
     });
     expect(rows.value).toEqual([]);
     expect(pagination.value.rowsNumber).toBe(0);
-    expect(singularService.list).toBeDefined();
+    expect(listMock).toHaveBeenCalledOnce();
   });
 });

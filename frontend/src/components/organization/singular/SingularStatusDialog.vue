@@ -14,11 +14,7 @@
       <DsButton variant="ghost" :disable="loading" @click="close">
         {{ $t("singular.statusDialog.cancel") }}
       </DsButton>
-      <DsButton
-        :variant="confirmVariant"
-        :loading="loading"
-        @click="onConfirm"
-      >
+      <DsButton :variant="confirmVariant" :loading="loading" @click="onConfirm">
         {{ dialogCopy.confirm }}
       </DsButton>
     </template>

@@ -3,17 +3,18 @@
 | Campo | Valor |
 |--------|--------|
 | Feature | FT-SINGULAR (Frontend) |
-| PKG | FE-04 |
+| PKG | PKG-FE-04 |
 | Status | **DONE** |
 | Data início | 2026-07-16 |
 | Data conclusão | 2026-07-16 |
+| Dependência | PKG-FE-02, PKG-FE-03 |
 | Executor | feature-implementer |
 
 ---
 
-# Escopo
+## Escopo
 
-Página de edição reutilizando formulário de cadastro em modo edit.
+Página de edição reutilizando formulário de cadastro em modo `edit`.
 
 ## Entregas
 
@@ -21,35 +22,50 @@ Página de edição reutilizando formulário de cadastro em modo edit.
 |------------|---------|--------|
 | Página edição | `pages/organization/singular/SingularEditPage.vue` | ✅ |
 | Form mode edit | `SingularForm.vue` (prop `mode: 'edit'`) | ✅ |
-| Testes | `test/unit/composables/useSingularForm.spec.ts` (update) | ✅ |
+| Seção básica edit | `SingularBasicInfoSection.vue` (`federationId` readonly) | ✅ |
+| Testes | `test/unit/composables/useSingularForm.spec.ts` (`validateUpdate`, `toUpdateRequest`) | ✅ |
 
 ## Comportamento
 
 - Rota: `/app/administrador/singulares/:id/editar`
 - Carrega dados via `getById` antes de renderizar formulário
-- `federationId` somente leitura (modo edit em `SingularBasicInfoSection`)
+- `federationId` somente leitura no modo edit
 - Submit via PUT; sucesso → redirect detalhe
 - Cancel → retorno ao detalhe
 
----
+## VALIDATION SUMMARY
 
-# Rastreabilidade
+Status
+PASS
+
+Validation
+
+✓ yarn typecheck
+✓ yarn test
+✓ yarn build
+
+Correções aplicadas
+
+• (nenhuma)
+
+Revalidation
+
+✓ typecheck
+✓ test
+✓ build
+
+Evidence
+
+evidence/build-verify-2026-07-16.log
+
+## Rastreabilidade
 
 | Task | AT |
 |------|-----|
 | TASK-SINGULAR-FE-004 | AT-FE-SINGULAR-004 |
 
----
+E2E Playwright (edição happy path): escopo PKG-FE-06.
 
-# Validação
-
-| Verificação | Resultado |
-|-------------|-----------|
-| Vitest — `validateUpdate` / `toUpdateRequest` | ✅ |
-| Playwright — edição happy path | ⬜ PKG-FE-06 |
-
----
-
-# Próximo PKG
+## Próximo PKG
 
 **PKG-FE-05** — Status Change UI

@@ -129,8 +129,8 @@ construction/
 │   ├── execution-plan.md          — Template plano de execução
 │   ├── feature-session.md         — Snapshot congelado (SESSION-01)
 │   ├── pkg-status.md
-│   ├── pkg-validation-summary.md   ← VAL-01 formato de validação
-│   ├── pkg-implementation-report.md
+│   ├── pkg-validation-summary.md   ← VAL-01 + VAL-02
+│   ├── pkg-artifact-model.md       ← ART-01 modelo mínimo por PKG
 │   ├── pkg-evidence-run-frontend.sh
 │   ├── pkg-evidence-run-backend.sh
 │   └── feature-closure-report.md
@@ -248,6 +248,7 @@ Detalhamento em `04-construction-rules.md` e `11-feature-execution-workflow.md`.
 | CACHE-02 | Reutilizar Session salvo evento de invalidação |
 | BUILD-01 | `mvn clean verify` somente no Encerramento |
 | VAL-01 | **VALIDATION SUMMARY** em `pkg-XX/status.md`; log em `evidence/` |
+| ART-01 | Modelo mínimo por PKG — `status.md` + `evidence/*.log` opcional |
 | PARALLEL-01 | PKG altera `construction-state.yaml` + `pkg-XX/status.md` |
 | RULE-CONTEXT-01 | State → Snapshot → Cache → documento |
 
