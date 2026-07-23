@@ -1,0 +1,5 @@
+--------------------------------------------------------------------------------
+-- Portal de Comunicação | dml/005-colaboradores.sql
+-- Pré-requisito: dml/001-federacao.sql
+-- Sem DML versionado (FT-AUTH) — ver README.md
+--------------------------------------------------------------------------------

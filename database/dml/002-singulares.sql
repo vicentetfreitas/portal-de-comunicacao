@@ -1,0 +1,47 @@
+--------------------------------------------------------------------------------
+-- Portal de Comunicação | dml/002-singulares.sql
+-- Pré-requisito: dml/001-federacao.sql
+--------------------------------------------------------------------------------
+
+SET DEFINE OFF
+
+INSERT INTO SINGULAR (COD_SINGULAR, COD_FEDERACAO, NOM_SINGULAR, SIG_SINGULAR, COD_UNIMED, NUM_REGISTRO_ANS, FLG_ATIVO, DAT_CADASTRO)
+SELECT SQ_SINGULAR_COD_SINGULAR.NEXTVAL,
+       f.COD_FEDERACAO,
+       'Unimed Ceará',
+       'UNMCEA',
+       '32195-8',
+       'S',
+       SYSTIMESTAMP
+  FROM FEDERACAO F
+ WHERE F.COD_FEDERACAO = 1
+   AND F.FLG_ATIVO     = 'S'
+   AND F.COD_UNIMED    = 979 ;
+
+INSERT INTO SINGULAR (COD_SINGULAR, COD_FEDERACAO, NOM_SINGULAR, SIG_SINGULAR, COD_UNIMED, NUM_REGISTRO_ANS, FLG_ATIVO, DAT_CADASTRO)
+SELECT SQ_SINGULAR_COD_SINGULAR.NEXTVAL,
+       f.COD_FEDERACAO,
+       'Unimed Cariri',
+       'UNMCAR',
+       107,
+       '35612-3',
+       'S',
+       SYSTIMESTAMP
+  FROM FEDERACAO f
+ WHERE F.COD_FEDERACAO = 1
+   AND F.FLG_ATIVO     = 'S'
+   AND F.COD_UNIMED    = 979 ;
+
+INSERT INTO SINGULAR (COD_SINGULAR, COD_FEDERACAO, NOM_SINGULAR, SIG_SINGULAR, COD_UNIMED, NUM_REGISTRO_ANS, FLG_ATIVO, DAT_CADASTRO)
+SELECT SQ_SINGULAR_COD_SINGULAR.NEXTVAL,
+       f.COD_FEDERACAO,
+       'Unimed Sobral',
+       'UNMSOB',
+       112,
+       '303178',
+       'S',
+       SYSTIMESTAMP
+  FROM FEDERACAO f
+ WHERE F.COD_FEDERACAO = 1
+   AND F.FLG_ATIVO     = 'S'
+   AND F.COD_UNIMED    = 979 ;
