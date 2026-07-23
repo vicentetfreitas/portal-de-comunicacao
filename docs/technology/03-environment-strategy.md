@@ -415,7 +415,7 @@ Oracle XE
 Ferramenta:
 
 ```text
-Baseline DDL — docs/database/ddl/
+Baseline DDL — database/ddl/
 ```
 
 ---

@@ -67,9 +67,7 @@ Legenda: ✅ homologado · ⚠️ parcial (depende Zimbra) · — não aplicáve
 | `GET /areas` | 200 filtros | Positivo | AreaAcceptanceIntegrationTest AT-AREA-003 | ✅ |
 | `GET /areas` | 200 lista vazia | Positivo | AreaAcceptanceIntegrationTest | ✅ |
 | `PUT /areas/{id}` | 200 update | Positivo | AreaAcceptanceIntegrationTest AT-AREA-004 | ✅ |
-| `PUT /areas/{id}` | 422 ciclo hierárquico | Negativo | AreaAcceptanceIntegrationTest | ✅ |
 | `PATCH /areas/{id}/status` | 200 inativar | Positivo | AreaAcceptanceIntegrationTest AT-AREA-005 | ✅ |
-| `PATCH /areas/{id}/status` | 422 filhas ativas | Negativo | AreaAcceptanceIntegrationTest | ✅ |
 | `PATCH /areas/{id}/status` | 200 reativar | Positivo | AreaAcceptanceIntegrationTest | ✅ |
 
 ---

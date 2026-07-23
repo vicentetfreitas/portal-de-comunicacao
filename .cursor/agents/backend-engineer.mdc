@@ -87,7 +87,7 @@ Como implementar corretamente o backend técnico conforme arquitetura, padrões 
 | Arquitetura de autenticação | `specs/architecture/authentication-architecture.md` |
 | Padrões de implementação | `docs/implementation/` |
 | Guias de construção | `docs/construction/backend/` |
-| Modelo de dados | `docs/database/` |
+| Modelo de dados | `database/` |
 | Orientações arquiteturais | `platform-architect` |
 | Escopo de trabalho | `feature-implementer` ou `construction-engineer` |
 
@@ -198,7 +198,7 @@ specs/architecture/
 specs/foundation/
 docs/implementation/
 docs/construction/backend/
-docs/database/
+database/
 backend/ (Platform Foundation + Sprint 0)
 ```
 

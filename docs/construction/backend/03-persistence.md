@@ -41,13 +41,13 @@ infrastructure
 
 # Evolução do schema (DBA)
 
-O schema Oracle é administrado pelo DBA através do baseline DDL oficial (`docs/database/ddl/`). A aplicação pressupõe schema previamente criado (DEC-DB-019). Flyway não é utilizado.
+O schema Oracle é administrado pelo DBA através do baseline DDL oficial (`database/ddl/`). A aplicação pressupõe schema previamente criado (DEC-DB-019). Flyway não é utilizado.
 
 Estrutura de referência:
 
 ```text
-docs/database/ddl/          — baseline oficial
-docs/database/migrations/   — evoluções pós-baseline (DBA)
+database/ddl/          — baseline oficial
+database/migrations/   — evoluções pós-baseline (DBA)
 ```
 
 ---

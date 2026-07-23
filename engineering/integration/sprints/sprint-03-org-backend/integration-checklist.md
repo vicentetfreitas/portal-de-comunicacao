@@ -18,7 +18,7 @@
 |----|-----------|----------------------|-----------|--------|----------|------|
 | INT-ENV-001 | Build completo do backend | `mvn clean verify` exit code 0 | `integration-verify.log` BUILD SUCCESS | APPROVED | validator | 2026-07-14 |
 | INT-ENV-002 | Startup da aplicação (test) | Contexto Spring sobe sem erro fatal | 230 testes `@IntegrationTest` PASS | APPROVED | validator | 2026-07-14 |
-| INT-ENV-003 | Datasource H2/Oracle mode | Conexão estabelecida | `DatabaseHealthIndicatorTest`, `OraclePersistenceIntegrationTest` | APPROVED | validator | 2026-07-14 |
+| INT-ENV-003 | Datasource Oracle (perfil test) | Conexão estabelecida; `ddl-auto=validate` (DEC-DB-023) | `OraclePersistenceIntegrationTest`, testes `@IntegrationTest` | APPROVED | validator | 2026-07-14 |
 | INT-ENV-004 | Actuator health | `GET /actuator/health` → 200 UP | `ObservabilityIntegrationTest`, `HealthEndpointE2ETest` | APPROVED | validator | 2026-07-14 |
 | INT-ENV-005 | Profile test | `application-test.yaml` carregado | Testes integração com profile test | APPROVED | validator | 2026-07-14 |
 | INT-ENV-006 | Variáveis obrigatórias | Properties resolvidas | `SecurityPropertiesTest`, `PersistencePropertiesTest`, `IntegrationPropertiesTest` | APPROVED | validator | 2026-07-14 |

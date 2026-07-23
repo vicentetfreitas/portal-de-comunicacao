@@ -199,7 +199,7 @@ Cada categoria de informação possui exatamente uma fonte oficial.
 | Arquitetura | docs/architecture |
 | Modelo de Domínio | docs/domain |
 | Tecnologia | docs/technology |
-| Banco de Dados | docs/database |
+| Banco de Dados | database/ (raiz do repositório) |
 | Implementação | docs/implementation |
 | Especificação Funcional | specs/features |
 | Processo SDD | specs/foundation |

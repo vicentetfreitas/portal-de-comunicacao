@@ -203,9 +203,9 @@ Infraestrutura em `infrastructure/logging/`:
 spring:
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     hikari:
       maximum-pool-size: ${application.persistence.pool-max-size}
       minimum-idle: ${application.persistence.pool-min-idle}
@@ -216,13 +216,13 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.OracleDialect
-        default_schema: UNMPORTCOM
+        dialect: org.hibernate.community.dialect.OracleLegacyDialect
+        default_schema: ${SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA:UNMPORTCOM}
 ```
 
-Variáveis de ambiente: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA` (ver `.env.example`). No perfil `local`, `spring.config.import` carrega `../.env` automaticamente.
+Variáveis de ambiente: `SPRING_DATASOURCE_*` e `SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA` (ver `.env.example`). Usuário JDBC: **`UNMPORTCOM_APP`** — nunca o schema owner. No perfil `local`, `spring.config.import` carrega `../.env` automaticamente.
 
-Schema provisionado pelo DBA via `docs/database/ddl/` (DEC-DB-019). Sem migração automática na inicialização. DataSource, EntityManagerFactory e TransactionManager são fornecidos pela AutoConfiguration do Spring Boot.
+Schema provisionado pelo DBA via `database/ddl/` (DEC-DB-019). Sem migração automática na inicialização. DataSource, EntityManagerFactory e TransactionManager são fornecidos pela AutoConfiguration do Spring Boot.
 
 ---
 

@@ -93,6 +93,13 @@ engineering/
 │       ├── integration-state.yaml  ← SSOT
 │       └── integration-checklist.md
 
+database/                             ← SSOT banco Oracle (schema UNMPORTCOM)
+
+├── README.md · GOVERNANCE.md
+├── baseline/ · validation/
+├── ddl/ · dml/ · migrations/
+├── model/ · reports/
+
 docs/
 
 ├── discovery/
@@ -136,6 +143,8 @@ Consultar obrigatoriamente:
 7. docs/implementation/
 
 8. docs/construction/
+
+9. database/ (schema Oracle — baseline, ddl, GOVERNANCE.md) quando persistência ou contrato físico
 ```
 
 Durante PKGs: consultar `construction-state.yaml` para estado; Snapshot em `session.md` para contexto — não reler documentos já carregados (CACHE-01, RULE-CONTEXT-01).

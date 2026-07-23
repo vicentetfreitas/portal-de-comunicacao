@@ -106,7 +106,7 @@ Toda tarefa PF-* deve possuir teste correspondente. Build deve falhar se testes 
 
 ## R-06 — Evolução do Schema (DBA)
 
-O schema Oracle é administrado pelo DBA através do baseline DDL oficial (`docs/database/ddl/`). Evoluções pós-baseline em `docs/database/migrations/`. Flyway não é utilizado (DEC-DB-019).
+O schema Oracle é administrado pelo DBA através do baseline DDL oficial (`database/ddl/`). Evoluções pós-baseline em `database/migrations/`. Flyway não é utilizado (DEC-DB-019).
 
 ## R-07 — APIs de Infraestrutura
 

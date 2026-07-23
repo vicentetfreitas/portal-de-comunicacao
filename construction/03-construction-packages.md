@@ -299,7 +299,7 @@ Estabelecer a camada de persistência reutilizável sobre Oracle Database, forne
 | Tipo | Referência |
 |------|------------|
 | Módulos existentes | PKG-01 Approved — `PersistenceProperties` |
-| Sprint 0 | Baseline DDL (`docs/database/ddl/`), Oracle JDBC, `shared/exception/` |
+| Sprint 0 | Baseline DDL (`database/ddl/`), Oracle JDBC, `shared/exception/` |
 | Documentos | `platform-foundation/persistence/README.md` |
 | Padrões | `docs/implementation/06-database-standards.md`, `docs/construction/backend/03-persistence.md` |
 | Componentes | `GlobalExceptionHandler`, `ErrorResponse` |

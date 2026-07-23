@@ -5,7 +5,7 @@
 | Sprint | **API-VALIDATION-01** |
 | Data | 2026-07-16 |
 | Escopo | 27 endpoints `/api/v1` documentados em `docs/api/` |
-| Método primário | Testes de aceite Java (MockMvc + H2) |
+| Método primário | Testes de aceite Java (MockMvc + Oracle, perfil `test`, DEC-DB-023) |
 | Método complementar | Coleção Postman com scripts `pm.test` |
 | Evidência integração | Sprint 03 org-backend — **APPROVED** (2026-07-14) |
 

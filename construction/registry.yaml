@@ -162,8 +162,8 @@ features:
     manifest: features/FT-COLABORADOR/feature-manifest.yaml
     aggregate_state: computed
     current_capability: null
-    status: closed
-    closure: FEATURE_APPROVED
+    status: execution
+    closure: null
     workstreams:
       - id: backend
         type: backend
@@ -173,6 +173,55 @@ features:
         status: closed
         closure: FEATURE_APPROVED
         pkgs_pattern: "pkg-{NN}"
+        pkgs_total: 6
+      - id: frontend
+        type: frontend
+        order: 2
+        sprint: 3
+        manifest: frontend/features/FT-COLABORADOR/feature-manifest.yaml
+        state: frontend/features/FT-COLABORADOR/construction-state.yaml
+        execution_plan: frontend/features/FT-COLABORADOR/execution-plan.md
+        session: frontend/features/FT-COLABORADOR/session.md
+        frontend_tasks: frontend/features/FT-COLABORADOR/frontend-tasks.md
+        status: execution
+        closure: null
+        depends_on_workstreams:
+          - backend
+        pkgs_pattern: "pkg-fe-{NN}"
+        pkgs_total: 6
+
+  - code: FT-SESSION
+    slug: session
+    name: Sessão e contexto organizacional
+    sprint: 3
+    golden: false
+    manifest: features/FT-SESSION/feature-manifest.yaml
+    aggregate_state: computed
+    current_capability: null
+    status: execution
+    closure: null
+    workstreams:
+      - id: backend
+        type: backend
+        order: 1
+        manifest: features/FT-SESSION/feature-manifest.yaml
+        state: features/FT-SESSION/construction-state.yaml
+        status: execution
+        closure: null
+        pkgs_pattern: "pkg-{NN}"
+        pkgs_total: 4
+      - id: frontend
+        type: frontend
+        order: 2
+        sprint: 3
+        manifest: frontend/features/FT-SESSION/feature-manifest.yaml
+        state: frontend/features/FT-SESSION/construction-state.yaml
+        status: execution
+        closure: null
+        depends_on_workstreams:
+          - backend
+        pkgs_pattern: "pkg-fe-{NN}"
+        pkgs_total: 2
 
 # Tipos de Workstream suportados pelo framework (extensível)
 workstream_types:

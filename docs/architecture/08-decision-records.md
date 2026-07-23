@@ -725,3 +725,13 @@ flowchart TB
 | Baixo | Decisões pendentes — requerem validação com stakeholders |
 
 Este documento consolida decisões arquiteturais para `09-risk-assessment.md`, sem necessidade de redescoberta.
+
+---
+
+## Decisões de banco (DEC-DB)
+
+Decisões físicas e operacionais do Oracle estão em `database/model/05-decisions-and-risks.md` e, quando aplicável, em ADRs dedicados:
+
+| ID | Título | Documento |
+|----|--------|-----------|
+| DEC-DB-024 | Application user (`UNMPORTCOM_APP`) × schema owner | [decisions/DEC-DB-024-application-user-strategy.md](decisions/DEC-DB-024-application-user-strategy.md) |

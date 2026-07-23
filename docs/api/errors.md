@@ -78,10 +78,8 @@ Violações de domínio retornam HTTP **422** com `error: "BUSINESS_RULE_VIOLATI
 
 - `Singular inexistente` / `Singular inativa`
 - `Já existe área ativa com este nome na singular`
-- `Área pai inexistente` / `Área pai inativa` / `Área pai pertence a outra singular`
-- `Área não pode ser pai de si mesma` / `Hierarquia de área formaria ciclo`
 - `Gestor inexistente` / `Gestor inativo`
-- `Área possui equipes ativas vinculadas` / `Área possui áreas filhas ativas vinculadas`
+- `Área possui equipes ativas vinculadas`
 
 ### Equipes
 

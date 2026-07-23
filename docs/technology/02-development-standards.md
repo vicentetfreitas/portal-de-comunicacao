@@ -336,7 +336,7 @@ Oracle Database
 Obrigatório (DEC-DB-019):
 
 ```text
-Baseline DDL — docs/database/ddl/
+Baseline DDL — database/ddl/
 ```
 
 Toda alteração estrutural deve ser refletida em script DDL versionado, executado pelo DBA.

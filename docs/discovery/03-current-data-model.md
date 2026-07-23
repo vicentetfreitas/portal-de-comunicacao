@@ -786,7 +786,7 @@ Não confirmados.
 | Entidade | Tipo | Evidência |
 |---|---|---|
 | Pasta | `parent` em termo `portal_pasta` | `FoldersManager.php` (`hierarchical => true`) |
-| Área | `parent` / `parent_id` em `portal_area` | `AreasService::getHierarchy`, `formatArea` |
+| Área | Cadastro em `portal_area` | `AreasService`, `formatArea` |
 | Equipe | taxonomia `team` hierárquica | `Bootstrap.php` (`hierarchical => true`) |
 
 ---

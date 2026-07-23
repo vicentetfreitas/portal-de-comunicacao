@@ -30,8 +30,8 @@ Conceitos centrais que sustentam o funcionamento do domínio, conforme `01-visio
 | Conceito | Descrição | Importância para o Domínio |
 | -------- | --------- | -------------------------- |
 | Singular | Unidade organizacional da federação que agrupa áreas, colaboradores e documentos | Núcleo da estrutura multi-unidade; delimita escopo organizacional |
-| Área | Setor ou departamento vinculado a uma singular; pode ser hierárquica e delimita escopo de documentos, pastas e colaboradores | Unidade departamental recorrente em permissões, documentos e contexto do colaborador |
-| Equipe | Agrupamento operacional de colaboradores dentro de uma área | Agrupamento operacional que complementa a hierarquia departamental |
+| Área | Setor ou departamento de nível único vinculado a uma singular (ou à federação); delimita escopo de documentos, pastas e colaboradores | Unidade departamental; o detalhamento operacional é feito por Equipes |
+| Equipe | Agrupamento operacional de colaboradores dentro de uma área | Detalhamento operacional da área (DEC-DB-022) |
 | Colaborador | Pessoa com vínculo operacional a singular e área, identificada no portal para consulta e publicação de conteúdo conforme permissões | Ator central do fluxo de valor do portal |
 | Documento | Artefato de comunicação ou arquivo gerenciado no portal, com visibilidade e escopo organizacional definidos | Objeto principal de comunicação e gestão documental |
 | Pasta | Estrutura hierárquica que organiza documentos por contexto organizacional ou pessoal | Organização hierárquica essencial para localização e controle de acesso |
@@ -168,7 +168,7 @@ Conceitos auxiliares que habilitam processos e governança sem constituir o núc
 | Conceito | Papel de Suporte |
 | -------- | ---------------- |
 | Federação | Delimita escopo institucional de compartilhamento entre singulares |
-| Equipe | Complementa a hierarquia departamental com agrupamento operacional |
+| Equipe | Detalhamento operacional da área (nível único de área; DEC-DB-022) |
 | Onboarding | Integra novos colaboradores ao contexto organizacional adequado |
 | Solicitação de permissão | Formaliza concessão de acesso a recursos privados quando não há permissão direta |
 | Responsável pelo recurso | Exerce decisão de aprovação ou negação em solicitações de permissão |

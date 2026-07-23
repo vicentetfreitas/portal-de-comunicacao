@@ -252,7 +252,7 @@ backend/
 
 Conexão validada via `application.yaml` com driver `oracle.jdbc.OracleDriver`.
 
-Schema provisionado pelo DBA via baseline DDL em `docs/database/ddl/` (DEC-DB-019).
+Schema provisionado pelo DBA via baseline DDL em `database/ddl/` (DEC-DB-019).
 
 ---
 

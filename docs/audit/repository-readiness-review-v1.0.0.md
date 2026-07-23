@@ -85,9 +85,9 @@ O repositório pode receber o primeiro commit após **limpeza local obrigatória
 | `docs/solution-design/*` | A | Decomposição da solução |
 | `docs/implementation/*` | A | Padrões de implementação |
 | `docs/construction/*` | A | Guias de construção por camada |
-| `docs/database/ddl/*` | A | Scripts DDL oficiais |
-| `docs/database/model/*` | A | Modelo lógico/físico |
-| `docs/database/migrations/*` | A | Migrações documentadas |
+| `database/ddl/*` | A | Scripts DDL oficiais |
+| `database/model/*` | A | Modelo lógico/físico |
+| `database/migrations/*` | A | Migrações documentadas |
 | `docs/governance/*` | A | Governança e decisões abertas |
 | `docs/backlog/*` | A | Backlog histórico MVP |
 | `docs/audit/*` | B | Evidências de validação (incl. Security Readiness) |

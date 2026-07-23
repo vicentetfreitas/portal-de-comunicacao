@@ -29,15 +29,15 @@ portal-de-comunicacao/
 
 ## Ambiente local
 
-Variáveis de conexão Oracle (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`) são obrigatórias. O schema padrão (`UNMPORTCOM`) é definido via `SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA` no `.env`. O perfil `local` importa automaticamente o arquivo `.env` na raiz do repositório.
+Variáveis de conexão Oracle são obrigatórias via `SPRING_DATASOURCE_*` (ver `.env.example`). O usuário JDBC deve ser **`UNMPORTCOM_APP`** (DEC-DB-024); o schema Hibernate (`UNMPORTCOM`) é configurado por `SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA`. O perfil `local` importa automaticamente o arquivo `.env` na raiz do repositório.
 
 ```bash
 cp .env.example .env
-# Ajuste DB_URL, DB_USERNAME e DB_PASSWORD conforme seu Oracle local (schema UNMPORTCOM)
+# Ajuste SPRING_DATASOURCE_URL, SPRING_DATASOURCE_USERNAME (UNMPORTCOM_APP) e SPRING_DATASOURCE_PASSWORD
 cd backend && mvn spring-boot:run
 ```
 
-Formato esperado de `DB_URL`:
+Formato esperado de `SPRING_DATASOURCE_URL`:
 
 ```text
 jdbc:oracle:thin:@<host>:<porta>/<service>

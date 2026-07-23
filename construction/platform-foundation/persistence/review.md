@@ -80,7 +80,7 @@
 
 | Entidade de domínio criada prematuramente | Apenas `TestAuditableEntity` em `src/test` |
 
-| Conflito com baseline DDL | `docs/database/ddl/` como fonte oficial |
+| Conflito com baseline DDL | `database/ddl/` como fonte oficial |
 
 
 

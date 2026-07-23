@@ -155,7 +155,7 @@ Hibernate ORM
 ## Evolução do schema (DBA)
 
 ```text
-Baseline DDL — docs/database/ddl/
+Baseline DDL — database/ddl/
 ```
 
 ### Política (DEC-DB-019)
@@ -396,4 +396,4 @@ A adoção futura de qualquer uma dessas tecnologias deverá passar pelo process
 * Vue.js Documentation
 * Quasar Framework Documentation
 * OpenAPI Specification
-* Oracle DDL baseline (`docs/database/ddl/`)
+* Oracle DDL baseline (`database/ddl/`)

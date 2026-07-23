@@ -28,7 +28,7 @@ Estabelecer a camada de persistência reutilizável sobre Oracle Database, forne
 - `BaseRepository<T, ID>` — interface Spring Data JPA
 - `PersistenceException` — exceção de infraestrutura
 - Mapeamento de exceções JPA no `GlobalExceptionHandler`
-- Convenções de evolução estrutural via scripts DDL em `docs/database/` (DBA)
+- Convenções de evolução estrutural via scripts DDL em `database/` (DBA)
 
 ## Não inclui
 
@@ -65,7 +65,7 @@ Estabelecer a camada de persistência reutilizável sobre Oracle Database, forne
 | Dependência | Origem | Status |
 |-------------|--------|--------|
 | PF-CONF (PersistenceProperties) | Configuration | Pendente |
-| Sprint 0 baseline DDL | `docs/database/ddl/` | Concluído |
+| Sprint 0 baseline DDL | `database/ddl/` | Concluído |
 | Oracle JDBC | `ojdbc11` | Concluído |
 | `docs/implementation/06-database-standards.md` | Padrões Oracle | Consultivo |
 
@@ -107,7 +107,7 @@ PF-PERS-001 (JpaConfiguration)
 2. BaseEntity e AuditableEntity disponíveis para extensão
 3. BaseRepository funcional com entidade de teste
 4. PersistenceException mapeada no GlobalExceptionHandler
-5. Convenções de evolução DDL documentadas (`docs/database/ddl/` e `migrations/`)
+5. Convenções de evolução DDL documentadas (`database/ddl/` e `migrations/`)
 6. Teste de transação de leitura aprovado
 
 ---
@@ -128,7 +128,7 @@ PF-PERS-001 (JpaConfiguration)
 |-----------------------|-------------|
 | BaseEntity / AuditableEntity | Entidade AUTH_SESSAO estende AuditableEntity |
 | BaseRepository | AuthSessaoRepository estende BaseRepository |
-| DDL conventions (DBA) | `AUTH_SESSAO` no baseline `docs/database/ddl/` |
+| DDL conventions (DBA) | `AUTH_SESSAO` no baseline `database/ddl/` |
 | JpaConfiguration | Contexto para TASK-AUTH-DB-001, DB-002 |
 
 ---

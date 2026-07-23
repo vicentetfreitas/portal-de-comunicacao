@@ -179,7 +179,7 @@ Manager
 
 # Persistência
 
-Toda persistência deve seguir os padrões definidos em `docs/database/`.
+Toda persistência deve seguir os padrões definidos em `database/`.
 
 Utilizar:
 

@@ -1,0 +1,616 @@
+﻿=== 1. git status --short ===
+ M .cursor/agents/backend-engineer.mdc
+ M .cursor/rules/core/project-index.mdc
+ M .cursor/rules/process/construction-dependencies.mdc
+ M .cursor/rules/reference/backend-implementation.mdc
+ M .env.example
+ M .gitignore
+ M README.md
+ M backend/pom.xml
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/service/AuthenticationService.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/service/ColaboradorApplicationService.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/service/ColaboradorDomainService.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/service/JwtTokenService.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/domain/model/JwtAuthenticatedPrincipal.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/domain/model/JwtClaims.java
+ D backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/ZimbraIdentityProviderClient.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/persistence/entity/AuthSessaoEntity.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/persistence/entity/ColaboradorEntity.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/persistence/repository/ColaboradorRepository.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/AuthController.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/dto/AuthenticatedUserResponse.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/dto/ColaboradorResponse.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/dto/CreateColaboradorRequest.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/dto/UpdateColaboradorRequest.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/mapper/ColaboradorMapper.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/configuration/properties/ZimbraProperties.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/infrastructure/security/filter/JwtAuthenticationFilter.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/AreaApplicationService.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/AreaDomainService.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/SingularApplicationService.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/SingularDomainService.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/entity/AreaEntity.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/entity/EquipeEntity.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/entity/FederacaoEntity.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/entity/SingularEntity.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/repository/AreaRepository.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/repository/FederacaoRepository.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/repository/SingularRepository.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/SingularController.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/AreaResponse.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/CreateAreaRequest.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/CreateSingularRequest.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/SingularResponse.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/UpdateAreaRequest.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/UpdateSingularRequest.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/mapper/AreaMapper.java
+ M backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/mapper/SingularMapper.java
+ M backend/src/main/resources/application-dev.yaml
+ M backend/src/main/resources/application-hml.yaml
+ M backend/src/main/resources/application-prod.yaml
+ M backend/src/main/resources/application.yaml
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/acceptance/AuthAcceptanceIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/acceptance/ColaboradorAcceptanceIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/acceptance/TestIdentityProviderClient.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/acceptance/TestIdentityProviderConfiguration.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/service/JwtTokenServiceTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/AuthFlowIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/async/AsyncConfigurationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/locale/LocaleConfigurationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/ApplicationPropertiesTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/ConfigurationPropertiesProfileTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/IntegrationPropertiesTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/PersistencePropertiesTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/SecurityPropertiesTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/ZimbraPropertiesTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/integration/config/RestClientConfigurationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/logging/LoggingConfigurationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/observability/config/ObservabilityIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/persistence/config/OraclePersistenceIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/persistence/support/AuditableEntityJpaTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/security/config/SecurityFilterChainIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/security/entrypoint/RestAuthenticationEntryPointIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/security/filter/JwtStructureValidatorTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/interfaces/rest/controller/HealthControllerIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/acceptance/AreaAcceptanceIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/acceptance/EquipeAcceptanceIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/acceptance/OrgCrossFeatureIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/acceptance/SingularAcceptanceIntegrationTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/application/service/AreaDomainServiceTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/application/service/SingularDomainServiceTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/mapper/SingularMapperTest.java
+ M backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/annotation/IntegrationTest.java
+ M backend/src/test/resources/application-test.yaml
+ M backend/src/test/resources/pf-conf-test.properties
+ M backend/src/test/resources/pf-int-test.properties
+ M backend/src/test/resources/pf-obs-test.properties
+ M backend/src/test/resources/pf-pers-test.properties
+ M backend/src/test/resources/pf-sec-test.properties
+ M backend/src/test/resources/pf-web-test.properties
+ M construction/03-construction-packages.md
+ M construction/04-construction-rules.md
+ M construction/features/FT-AREA/execution-plan.md
+ M construction/features/FT-AREA/feature-manifest.yaml
+ M construction/features/FT-AREA/session.md
+ M construction/features/FT-AUTH/reports/database-layer-audit-report.md
+ M construction/features/FT-AUTH/review/readiness-checklist.md
+ M construction/features/FT-AUTH/session.md
+ M construction/features/FT-COLABORADOR/feature-manifest.yaml
+ M construction/features/FT-SINGULAR/execution-plan.md
+ M construction/features/FT-SINGULAR/session.md
+ M construction/platform-foundation/persistence/README.md
+ M construction/platform-foundation/persistence/review.md
+ M construction/registry.yaml
+ M docker-compose.yml
+ M docs/api/areas.md
+ M docs/api/authentication.md
+ M docs/api/colaboradores.md
+ M docs/api/errors.md
+ M docs/api/validation/homologation-report.md
+ M docs/api/validation/test-matrix.md
+ M docs/architecture/08-decision-records.md
+ M docs/audit/repository-readiness-review-v1.0.0.md
+ M docs/construction/backend/01-project-bootstrap.md
+ M docs/construction/backend/03-persistence.md
+D  docs/database/README.md
+D  docs/database/data-model-documentation-consolidation-report.md
+D  docs/database/database-layer-consolidation-report.md
+D  docs/database/ddl/000-install.sql
+D  docs/database/ddl/001-create-users.sql
+D  docs/database/ddl/002-create-sequences.sql
+D  docs/database/ddl/003-create-tables.sql
+D  docs/database/ddl/004-create-constraints.sql
+D  docs/database/ddl/005-create-indexes.sql
+D  docs/database/ddl/006-create-comments.sql
+D  docs/database/ddl/007-create-grants.sql
+D  docs/database/ddl/008-initial-data.sql
+D  docs/database/ddl/900-drop-all.sql
+D  docs/database/ddl/901-validation.sql
+D  docs/database/ddl/902-compile-invalid-objects.sql
+D  docs/database/dml/.gitkeep
+D  docs/database/dml/README.md
+D  docs/database/migrations/.gitkeep
+D  docs/database/migrations/README.md
+D  docs/database/migrations/V003__auth_sessao_and_colaborador_zimbra.sql
+D  docs/database/model/01-schema.md
+D  docs/database/model/02-conceptual-model.md
+D  docs/database/model/02-logical-model.md
+D  docs/database/model/03-physical-model.md
+D  docs/database/model/04-entity-catalog.md
+D  docs/database/model/05-decisions-and-risks.md
+D  docs/database/oracle-naming-compliance-report.md
+D  docs/database/rollback/.gitkeep
+ M docs/discovery/03-current-data-model.md
+ M docs/domain/04-domain-concepts.md
+ M docs/governance/07-documentation-architecture.md
+ M docs/governance/history/phase2-backend-construction-report.md
+ M docs/implementation/06-database-standards.md
+ M docs/implementation/11-bootstrap-roadmap.md
+ M docs/technology/01-technology-stack.md
+ M docs/technology/02-development-standards.md
+ M docs/technology/03-environment-strategy.md
+ M docs/technology/04-decision-log.md
+ M engineering/integration/sprints/sprint-03-org-backend/integration-checklist.md
+ M frontend/.env.example
+ M frontend/README.md
+ M frontend/env.d.ts
+ M frontend/quasar.config.ts
+ M frontend/src/auth/types.ts
+ M frontend/src/config/env.ts
+ M frontend/src/config/organization.ts
+ M frontend/src/constants/navigation.ts
+ M frontend/src/constants/routes.ts
+ M frontend/src/i18n/pt-BR.ts
+ M frontend/src/layouts/AuthLayout.vue
+ M frontend/src/pages/auth/index.vue
+ M frontend/src/router/routes/foundation.routes.ts
+ M frontend/src/router/routes/index.ts
+ M frontend/src/services/auth/auth.service.ts
+ M frontend/src/services/organization/index.ts
+ M frontend/src/stores/auth-store.ts
+ M frontend/src/types/organization/area.types.ts
+ M frontend/src/types/router-meta.ts
+ M frontend/test/e2e/support/equipe-api-mock.ts
+ M frontend/test/unit/auth/auth.service.spec.ts
+ M frontend/test/unit/guards/auth.guard.spec.ts
+ M specs/architecture/authentication-architecture.md
+ M specs/features/area/acceptance-tests.md
+ M specs/features/area/api.md
+ M specs/features/area/specification.md
+ M specs/features/area/traceability.md
+ M specs/features/area/use-cases.md
+ M specs/features/authentication/specification.md
+ M specs/features/colaborador/api.md
+ M specs/features/colaborador/specification.md
+ M specs/features/equipe/specification.md
+ M specs/features/singular/specification.md
+?? .cursor/settings.json
+?? .git-inventory.txt
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/port/
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/ZimbraIdentityProviderAdapter.java
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/zimbra/
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/dto/ColaboradorOrganizationalLinksResponse.java
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/configuration/persistence/
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/FederacaoApplicationService.java
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/FederacaoDomainService.java
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/domain/model/FederacaoStatus.java
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/FederacaoController.java
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/CreateFederacaoRequest.java
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/FederacaoResponse.java
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/UpdateFederacaoRequest.java
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/UpdateFederacaoStatusRequest.java
+?? backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/mapper/FederacaoMapper.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/SchemaOracleAuditTest.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/persistence/OracleHibernateCompatibilityIntegrationTest.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/persistence/config/ApplicationUserConnectionIntegrationTest.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/acceptance/FederacaoAcceptanceIntegrationTest.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/application/service/FederacaoDomainServiceTest.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/mapper/FederacaoMapperTest.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/annotation/EnableIntegrationTestDatabaseCleanup.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/annotation/PlatformFoundationSliceTest.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/base/AbstractMockMvcIntegrationTest.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/base/AbstractTransactionalMockMvcIntegrationTest.java
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/config/
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/data/
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/database/
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/fixture/
+?? backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/web/
+?? backend/src/test/resources/META-INF/
+?? backend/src/test/resources/application-test-slice.yaml
+?? construction/features/FT-SESSION/
+?? construction/frontend/features/FT-COLABORADOR/
+?? construction/frontend/features/FT-SESSION/
+?? database/
+?? docs/api/federacoes.md
+?? docs/architecture/decisions/
+?? docs/discovery/ft-auth-zimbra-homologacao.md
+?? docs/figma/
+?? docs/implementation/13-integration-test-database-strategy.md
+?? frontend/config/
+?? frontend/public/images/
+?? frontend/scripts/revalidate-pkg-fe-01-colaborador.sh
+?? frontend/src/composables/organization/useColaboradorForm.ts
+?? frontend/src/composables/useLoginPage.ts
+?? frontend/src/pages/auth/login-page.scss
+?? frontend/src/pages/organization/colaborador/
+?? frontend/src/router/routes/organization/colaborador.routes.ts
+?? frontend/src/services/organization/colaborador.service.ts
+?? frontend/src/services/organization/federacao.service.ts
+?? frontend/src/types/organization/colaborador.types.ts
+?? frontend/src/types/organization/federacao.types.ts
+?? frontend/test/unit/composables/useLoginPage.spec.ts
+?? frontend/test/unit/config/
+?? frontend/test/unit/organization/colaborador.service.spec.ts
+?? frontend/test/unit/organization/federacao.service.spec.ts
+?? frontend/test/unit/router/colaborador.routes.spec.ts
+?? reports/
+?? specs/features/colaborador/specification-frontend.md
+?? specs/features/federacao/
+?? specs/features/session/
+
+=== 2. git diff --cached --name-only ===
+docs/database/README.md
+docs/database/data-model-documentation-consolidation-report.md
+docs/database/database-layer-consolidation-report.md
+docs/database/ddl/000-install.sql
+docs/database/ddl/001-create-users.sql
+docs/database/ddl/002-create-sequences.sql
+docs/database/ddl/003-create-tables.sql
+docs/database/ddl/004-create-constraints.sql
+docs/database/ddl/005-create-indexes.sql
+docs/database/ddl/006-create-comments.sql
+docs/database/ddl/007-create-grants.sql
+docs/database/ddl/008-initial-data.sql
+docs/database/ddl/900-drop-all.sql
+docs/database/ddl/901-validation.sql
+docs/database/ddl/902-compile-invalid-objects.sql
+docs/database/dml/.gitkeep
+docs/database/dml/README.md
+docs/database/migrations/.gitkeep
+docs/database/migrations/README.md
+docs/database/migrations/V003__auth_sessao_and_colaborador_zimbra.sql
+docs/database/model/01-schema.md
+docs/database/model/02-conceptual-model.md
+docs/database/model/02-logical-model.md
+docs/database/model/03-physical-model.md
+docs/database/model/04-entity-catalog.md
+docs/database/model/05-decisions-and-risks.md
+docs/database/oracle-naming-compliance-report.md
+docs/database/rollback/.gitkeep
+
+=== 3. git diff --name-only ===
+warning: in the working copy of 'docs/api/areas.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/api/authentication.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/api/colaboradores.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'docs/api/errors.md', CRLF will be replaced by LF the next time Git touches it
+.cursor/agents/backend-engineer.mdc
+.cursor/rules/core/project-index.mdc
+.cursor/rules/process/construction-dependencies.mdc
+.cursor/rules/reference/backend-implementation.mdc
+.env.example
+.gitignore
+README.md
+backend/pom.xml
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/service/AuthenticationService.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/service/ColaboradorApplicationService.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/service/ColaboradorDomainService.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/service/JwtTokenService.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/domain/model/JwtAuthenticatedPrincipal.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/domain/model/JwtClaims.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/ZimbraIdentityProviderClient.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/persistence/entity/AuthSessaoEntity.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/persistence/entity/ColaboradorEntity.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/persistence/repository/ColaboradorRepository.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/AuthController.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/dto/AuthenticatedUserResponse.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/dto/ColaboradorResponse.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/dto/CreateColaboradorRequest.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/dto/UpdateColaboradorRequest.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/mapper/ColaboradorMapper.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/configuration/properties/ZimbraProperties.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/infrastructure/security/filter/JwtAuthenticationFilter.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/AreaApplicationService.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/AreaDomainService.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/SingularApplicationService.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/SingularDomainService.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/entity/AreaEntity.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/entity/EquipeEntity.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/entity/FederacaoEntity.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/entity/SingularEntity.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/repository/AreaRepository.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/repository/FederacaoRepository.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/infrastructure/persistence/repository/SingularRepository.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/SingularController.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/AreaResponse.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/CreateAreaRequest.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/CreateSingularRequest.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/SingularResponse.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/UpdateAreaRequest.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/UpdateSingularRequest.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/mapper/AreaMapper.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/mapper/SingularMapper.java
+backend/src/main/resources/application-dev.yaml
+backend/src/main/resources/application-hml.yaml
+backend/src/main/resources/application-prod.yaml
+backend/src/main/resources/application.yaml
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/acceptance/AuthAcceptanceIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/acceptance/ColaboradorAcceptanceIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/acceptance/TestIdentityProviderClient.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/acceptance/TestIdentityProviderConfiguration.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/service/JwtTokenServiceTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/AuthFlowIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/async/AsyncConfigurationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/locale/LocaleConfigurationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/ApplicationPropertiesTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/ConfigurationPropertiesProfileTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/IntegrationPropertiesTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/PersistencePropertiesTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/SecurityPropertiesTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/configuration/properties/ZimbraPropertiesTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/integration/config/RestClientConfigurationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/logging/LoggingConfigurationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/observability/config/ObservabilityIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/persistence/config/OraclePersistenceIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/persistence/support/AuditableEntityJpaTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/security/config/SecurityFilterChainIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/security/entrypoint/RestAuthenticationEntryPointIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/security/filter/JwtStructureValidatorTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/interfaces/rest/controller/HealthControllerIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/acceptance/AreaAcceptanceIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/acceptance/EquipeAcceptanceIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/acceptance/OrgCrossFeatureIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/acceptance/SingularAcceptanceIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/application/service/AreaDomainServiceTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/application/service/SingularDomainServiceTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/mapper/SingularMapperTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/annotation/IntegrationTest.java
+backend/src/test/resources/application-test.yaml
+backend/src/test/resources/pf-conf-test.properties
+backend/src/test/resources/pf-int-test.properties
+backend/src/test/resources/pf-obs-test.properties
+backend/src/test/resources/pf-pers-test.properties
+backend/src/test/resources/pf-sec-test.properties
+backend/src/test/resources/pf-web-test.properties
+construction/03-construction-packages.md
+construction/04-construction-rules.md
+construction/features/FT-AREA/execution-plan.md
+construction/features/FT-AREA/feature-manifest.yaml
+construction/features/FT-AREA/session.md
+construction/features/FT-AUTH/reports/database-layer-audit-report.md
+construction/features/FT-AUTH/review/readiness-checklist.md
+construction/features/FT-AUTH/session.md
+construction/features/FT-COLABORADOR/feature-manifest.yaml
+construction/features/FT-SINGULAR/execution-plan.md
+construction/features/FT-SINGULAR/session.md
+construction/platform-foundation/persistence/README.md
+construction/platform-foundation/persistence/review.md
+construction/registry.yaml
+docker-compose.yml
+docs/api/areas.md
+docs/api/authentication.md
+docs/api/colaboradores.md
+docs/api/errors.md
+docs/api/validation/homologation-report.md
+docs/api/validation/test-matrix.md
+docs/architecture/08-decision-records.md
+docs/audit/repository-readiness-review-v1.0.0.md
+docs/construction/backend/01-project-bootstrap.md
+docs/construction/backend/03-persistence.md
+docs/discovery/03-current-data-model.md
+docs/domain/04-domain-concepts.md
+docs/governance/07-documentation-architecture.md
+docs/governance/history/phase2-backend-construction-report.md
+docs/implementation/06-database-standards.md
+docs/implementation/11-bootstrap-roadmap.md
+docs/technology/01-technology-stack.md
+docs/technology/02-development-standards.md
+docs/technology/03-environment-strategy.md
+docs/technology/04-decision-log.md
+engineering/integration/sprints/sprint-03-org-backend/integration-checklist.md
+frontend/.env.example
+frontend/README.md
+frontend/env.d.ts
+frontend/quasar.config.ts
+frontend/src/auth/types.ts
+frontend/src/config/env.ts
+frontend/src/config/organization.ts
+frontend/src/constants/navigation.ts
+frontend/src/constants/routes.ts
+frontend/src/i18n/pt-BR.ts
+frontend/src/layouts/AuthLayout.vue
+frontend/src/pages/auth/index.vue
+frontend/src/router/routes/foundation.routes.ts
+frontend/src/router/routes/index.ts
+frontend/src/services/auth/auth.service.ts
+frontend/src/services/organization/index.ts
+frontend/src/stores/auth-store.ts
+frontend/src/types/organization/area.types.ts
+frontend/src/types/router-meta.ts
+frontend/test/e2e/support/equipe-api-mock.ts
+frontend/test/unit/auth/auth.service.spec.ts
+frontend/test/unit/guards/auth.guard.spec.ts
+specs/architecture/authentication-architecture.md
+specs/features/area/acceptance-tests.md
+specs/features/area/api.md
+specs/features/area/specification.md
+specs/features/area/traceability.md
+specs/features/area/use-cases.md
+specs/features/authentication/specification.md
+specs/features/colaborador/api.md
+specs/features/colaborador/specification.md
+specs/features/equipe/specification.md
+specs/features/singular/specification.md
+
+=== 4. git ls-files --others --exclude-standard ===
+.cursor/settings.json
+.git-inventory.txt
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/application/port/IdentityCredentialValidator.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/ZimbraIdentityProviderAdapter.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/zimbra/ZimbraCredentialValidator.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/zimbra/ZimbraImapAuthenticationStrategy.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/zimbra/ZimbraIntegrationDiagnostic.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/zimbra/ZimbraIntegrationException.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/zimbra/ZimbraMailAuthenticationStrategy.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/zimbra/ZimbraSmtpAuthenticationStrategy.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/infrastructure/integration/zimbra/ZimbraSoapIdentityResolver.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/interfaces/rest/dto/ColaboradorOrganizationalLinksResponse.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/configuration/persistence/JpaPersistenceConfiguration.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/FederacaoApplicationService.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/application/service/FederacaoDomainService.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/domain/model/FederacaoStatus.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/FederacaoController.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/CreateFederacaoRequest.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/FederacaoResponse.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/UpdateFederacaoRequest.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/dto/UpdateFederacaoStatusRequest.java
+backend/src/main/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/mapper/FederacaoMapper.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/SchemaOracleAuditTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/persistence/OracleHibernateCompatibilityIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/infrastructure/persistence/config/ApplicationUserConnectionIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/acceptance/FederacaoAcceptanceIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/application/service/FederacaoDomainServiceTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/organization/interfaces/rest/mapper/FederacaoMapperTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/annotation/EnableIntegrationTestDatabaseCleanup.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/annotation/PlatformFoundationSliceTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/base/AbstractMockMvcIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/base/AbstractTransactionalMockMvcIntegrationTest.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/config/OracleIntegrationTestPersistenceConfiguration.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/config/TestIdentityProviderAutoConfiguration.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/data/IntegrationTestUniqueData.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/database/IntegrationTestDatabaseCleaner.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/database/IntegrationTestDatabaseCleanupConfiguration.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/database/IntegrationTestDatabaseCleanupListener.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/fixture/OrganizationalTestFixtures.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/fixture/builder/AreaTestBuilder.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/fixture/builder/ColaboradorTestBuilder.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/fixture/builder/EquipeTestBuilder.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/fixture/builder/SingularTestBuilder.java
+backend/src/test/java/br/com/unimedceara/portalcomunicacao/support/web/MockMvcTestSupport.java
+backend/src/test/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+backend/src/test/resources/application-test-slice.yaml
+construction/features/FT-SESSION/construction-state.yaml
+construction/features/FT-SESSION/feature-manifest.yaml
+construction/features/FT-SESSION/session.md
+construction/frontend/features/FT-COLABORADOR/construction-state.yaml
+construction/frontend/features/FT-COLABORADOR/execution-plan.md
+construction/frontend/features/FT-COLABORADOR/feature-manifest.yaml
+construction/frontend/features/FT-COLABORADOR/frontend-tasks.md
+construction/frontend/features/FT-COLABORADOR/pkg-fe-01/status.md
+construction/frontend/features/FT-COLABORADOR/session.md
+construction/frontend/features/FT-SESSION/construction-state.yaml
+construction/frontend/features/FT-SESSION/feature-manifest.yaml
+database/GOVERNANCE.md
+database/README.md
+database/baseline/README.md
+database/baseline/oracle-baseline-2026-07-22.md
+database/ddl/000-install.sql
+database/ddl/001-create-users.sql
+database/ddl/002-create-sequences.sql
+database/ddl/003-create-tables.sql
+database/ddl/004-create-constraints.sql
+database/ddl/005-create-indexes.sql
+database/ddl/006-create-comments.sql
+database/ddl/007-create-grants.sql
+database/ddl/008-initial-data.sql
+database/ddl/009-configuracao-portal.sql
+database/ddl/900-drop-all.sql
+database/ddl/901-validation.sql
+database/ddl/902-compile-invalid-objects.sql
+database/ddl/README.md
+database/dml/.gitkeep
+database/dml/001-federacao.sql
+database/dml/002-singulares.sql
+database/dml/003-areas.sql
+database/dml/004-equipes.sql
+database/dml/005-colaboradores.sql
+database/dml/006-homologacao-opcional.sql
+database/dml/README.md
+database/migrations/.gitkeep
+database/migrations/README.md
+database/migrations/V003__auth_sessao_and_colaborador_zimbra.sql
+database/migrations/V004__colaborador_corporate_columns.sql
+database/migrations/V006__drop_auth_sessao_organizational_context.sql
+database/migrations/V007__colaborador_ssot_alignment.sql
+database/migrations/VAL-DB-02-verify-colaborador-columns.sql
+database/model/01-schema.md
+database/model/02-conceptual-model.md
+database/model/02-logical-model.md
+database/model/03-physical-model.md
+database/model/04-entity-catalog.md
+database/model/05-decisions-and-risks.md
+database/model/README.md
+database/reports/README.md
+database/reports/database-organization-report.md
+database/reports/db-bl-02-report.md
+database/reports/infra-be-03-jpa-schema-alignment.md
+database/reports/infra-db-01-application-user-migration.md
+database/reports/infra-db-02-test-context-audit.md
+database/reports/report-data-model-documentation-consolidation.md
+database/reports/report-database-layer-consolidation.md
+database/reports/report-oracle-naming-compliance.md
+database/reports/sync-report-2026-07-22.md
+database/rollback/.gitkeep
+database/rollback/README.md
+database/security/CHECKLIST-DBA.md
+database/security/CHECKLIST.md
+database/security/OPERATIONS.md
+database/security/README.md
+database/security/V900__application_user_grants.sql
+database/security/V901__application_user_synonyms.sql
+database/security/V902__application_user_sequences.sql
+database/security/V903__application_user_views.sql
+database/security/VAL-SEC-01-verify-application-privileges.sql
+database/security/grants/001-baseline-tables.sql
+database/security/grants/002-baseline-sequences.sql
+database/security/grants/003-role-to-application-user.sql
+database/security/validate/validate-application-user.sql
+database/validation/README.md
+database/validation/oracle-schema-validation-2026-07-22.md
+docs/api/federacoes.md
+docs/architecture/decisions/DEC-DB-024-application-user-strategy.md
+docs/discovery/ft-auth-zimbra-homologacao.md
+docs/figma/home/home-hero.png
+docs/figma/home/home-hero.svg
+docs/figma/home/home.png
+docs/figma/home/home.svg
+docs/figma/home/home.txt
+docs/figma/login/Login.png
+docs/figma/login/Login.svg
+docs/figma/login/imagem-01.png
+docs/figma/login/login.txt
+docs/implementation/13-integration-test-database-strategy.md
+frontend/config/quasar-env.ts
+frontend/public/images/login-hero.svg
+frontend/scripts/revalidate-pkg-fe-01-colaborador.sh
+frontend/src/composables/organization/useColaboradorForm.ts
+frontend/src/composables/useLoginPage.ts
+frontend/src/pages/auth/login-page.scss
+frontend/src/pages/organization/colaborador/ColaboradorCreatePage.vue
+frontend/src/pages/organization/colaborador/ColaboradorDetailPage.vue
+frontend/src/pages/organization/colaborador/ColaboradorEditPage.vue
+frontend/src/pages/organization/colaborador/ColaboradorHubPage.vue
+frontend/src/pages/organization/colaborador/ColaboradorListPage.vue
+frontend/src/router/routes/organization/colaborador.routes.ts
+frontend/src/services/organization/colaborador.service.ts
+frontend/src/services/organization/federacao.service.ts
+frontend/src/types/organization/colaborador.types.ts
+frontend/src/types/organization/federacao.types.ts
+frontend/test/unit/composables/useLoginPage.spec.ts
+frontend/test/unit/config/quasar-env.spec.ts
+frontend/test/unit/organization/colaborador.service.spec.ts
+frontend/test/unit/organization/federacao.service.spec.ts
+frontend/test/unit/router/colaborador.routes.spec.ts
+reports/project/stabilization-report.md
+specs/features/colaborador/specification-frontend.md
+specs/features/federacao/api.md
+specs/features/federacao/specification.md
+specs/features/session/README.md
+specs/features/session/feature.yaml
+specs/features/session/specification.md
+
+=== 5. git log --oneline -5 ===
+8f57cbe feat(frontend): conclude FT-EQUIPE and stabilize E2E validation
+5cad2ab feat(frontend): conclude FT-EQUIPE and stabilize E2E validation
+85bbb14 refactor(construction): rationalize PKG artifacts (ART-01)
+5d6586f chore(construction): finalize frontend foundation and validation workflow
+9eab480 docs(frontend): finalize frontend foundation planning

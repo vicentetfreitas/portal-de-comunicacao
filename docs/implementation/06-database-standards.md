@@ -119,6 +119,18 @@ Charset: `AL32UTF8`
 
 ---
 
+## Schema owner × application user (DEC-DB-024)
+
+| Conceito | Valor | Uso |
+|----------|-------|-----|
+| Schema owner | `UNMPORTCOM` | Objetos físicos; DDL/migrations (DBA); `hibernate.default_schema` e `@Table(schema = "UNMPORTCOM")` |
+| Application user | `UNMPORTCOM_APP` | **Único** `spring.datasource.username` (runtime, testes, jobs) |
+| Role | `UNMPORTCOM_APP_ROLE` | Privilégios DML + `SELECT` em sequences |
+
+SSOT de grants: `database/security/`. Atividade de consolidação: `database/reports/infra-db-01-application-user-migration.md`.
+
+---
+
 ## Organização Lógica
 
 A separação entre bounded contexts ocorre através de:
@@ -137,7 +149,7 @@ e não por schemas distintos.
 O schema físico é provisionado pelo DBA a partir da DDL oficial:
 
 ```text
-docs/database/ddl/
+database/ddl/
 ```
 
 Baseline oficial:
@@ -158,7 +170,7 @@ Baseline oficial:
 Evoluções estruturais pós-baseline em:
 
 ```text
-docs/database/migrations/
+database/migrations/
 ```
 
 Executadas exclusivamente pelo DBA — não pela aplicação.
@@ -616,15 +628,15 @@ DELETE físico permitido apenas em tabelas temporárias, cache e logs técnicos 
 
 ## Obrigatório
 
-Toda alteração estrutural deve ser refletida em script DDL versionado em `docs/database/ddl/` ou `docs/database/migrations/`, para execução pelo DBA.
+Toda alteração estrutural deve ser refletida em script DDL versionado em `database/ddl/` ou `database/migrations/`, para execução pelo DBA.
 
 ---
 
 ## Estrutura
 
 ```text
-docs/database/ddl/          — baseline oficial
-docs/database/migrations/   — evoluções pós-baseline
+database/ddl/          — baseline oficial
+database/migrations/   — evoluções pós-baseline
 ```
 
 ---
@@ -648,6 +660,19 @@ spring:
 ```
 
 A aplicação não executa DDL nem migrações na inicialização (DEC-DB-019).
+
+## Testes de integração (DEC-DB-023)
+
+No perfil `test`, utilizar `ddl-auto: validate` contra o Oracle provisionado pelo DBA (`SPRING_DATASOURCE_*`). Detalhes: `docs/implementation/13-integration-test-database-strategy.md`.
+
+```yaml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+```
+
+Proibido em testes de integração: `create`, `update`, `create-drop`, H2 como substituto do Oracle oficial.
 
 # Proibições
 

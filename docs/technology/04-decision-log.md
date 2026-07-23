@@ -285,9 +285,9 @@ Hexagonal Architecture
 
 ## Decisão
 
-Toda alteração estrutural será realizada exclusivamente através de scripts DDL versionados, executados pelo DBA (`docs/database/ddl/` e `docs/database/migrations/`).
+Toda alteração estrutural será realizada exclusivamente através de scripts DDL versionados, executados pelo DBA (`database/ddl/` e `database/migrations/`).
 
-> **Atualização DEC-DB-019 (2026-07-10):** Flyway não é utilizado. Ver `docs/database/model/05-decisions-and-risks.md`.
+> **Atualização DEC-DB-019 (2026-07-10):** Flyway não é utilizado. Ver `database/model/05-decisions-and-risks.md`.
 
 ## Proibido
 

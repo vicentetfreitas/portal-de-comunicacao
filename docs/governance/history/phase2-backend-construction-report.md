@@ -83,7 +83,7 @@ backend/
 ### Integração Oracle
 
 * Driver: `ojdbc11` (`oracle.jdbc.OracleDriver`)
-* Baseline DDL — schema administrado pelo DBA (`docs/database/ddl/` — DEC-DB-019)
+* Baseline DDL — schema administrado pelo DBA (`database/ddl/` — DEC-DB-019)
 * Conexão validada em ambiente de testes (Oracle 11.2)
 
 ---

@@ -87,7 +87,7 @@ Consultar apenas:
 ```text
 specs/features/<feature>/
 
-docs/database/
+database/
 
 docs/implementation/
 ```
