@@ -17,3 +17,9 @@ interface ImportMetaEnv {
   readonly VITE_API_BASE_URL?: string;
   readonly VITE_API_TIMEOUT_MS?: string;
 }
+
+declare namespace NodeJS {
+  interface ProcessEnv {
+    readonly BACKEND_URL?: string;
+  }
+}

@@ -1,6 +1,9 @@
 /**
  * Runtime configuration from external Vite environment variables.
  * Validation runs at application boot (see src/boot/env.ts).
+ *
+ * Dev-server proxy target (BACKEND_URL) is resolved in config/quasar-env.ts
+ * via quasar.config.ts — not exposed to the client bundle.
  */
 export const env = {
   appEnv: import.meta.env.VITE_APP_ENV ?? "",

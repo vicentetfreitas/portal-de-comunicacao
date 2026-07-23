@@ -40,6 +40,9 @@ export interface AppRouteMeta {
 
   /** Capability flags required (any match) — enforced when authorization guard enabled */
   capabilities?: string[];
+
+  /** Full-bleed login canvas (Figma login — no auth chrome) */
+  authFullBleed?: boolean;
 }
 
 declare module "vue-router" {

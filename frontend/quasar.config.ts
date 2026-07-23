@@ -1,11 +1,10 @@
-// Configuration for your app
-// https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
-
 import { defineConfig } from "#q-app";
 
-const backendUrl = process.env.BACKEND_URL ?? "http://localhost:8080";
+import { DEV_SERVER_DEFAULTS, loadDevServerEnv } from "./config/quasar-env.js";
 
-export default defineConfig(() => {
+export default defineConfig(ctx => {
+  const { backendUrl } = loadDevServerEnv(ctx.appPaths.appDir, ctx.dev);
+
   return {
     boot: ["env", "i18n", "theme", "http", "auth", "feedback"],
 
@@ -14,7 +13,6 @@ export default defineConfig(() => {
     extras: ["mdi-v7"],
 
     build: {
-      // envPrefix: "VITE_",
       env: {
         clientPrefix: "VITE_"
       },
@@ -28,7 +26,7 @@ export default defineConfig(() => {
     },
 
     devServer: {
-      port: 9000,
+      port: DEV_SERVER_DEFAULTS.port,
       open: false,
       proxy: {
         "/api": {

@@ -1,0 +1,25 @@
+# Feature Manifest — FT-SESSION frontend
+
+version: 2
+role: ssod
+
+feature:
+  code: FT-SESSION
+  name: Sessão e contexto organizacional
+
+status:
+  phase: closed
+
+specification:
+  path: ../../../../specs/features/session/
+
+construction:
+  path: .
+  root: construction/frontend/features/FT-SESSION/
+
+artifacts:
+  manifest: feature-manifest.yaml
+  state: construction-state.yaml
+
+notes:
+  - REF-DB-CTX-01 — removidos guard de seleção de contexto, página /auth/context e endpoints /auth/context(s)

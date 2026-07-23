@@ -1,0 +1,289 @@
+.login-page {
+  --login-font: var(--font-family-sans);
+
+  position: relative;
+  box-sizing: border-box;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  background-color: var(--color-gray-100);
+  color: var(--color-primary-800);
+  font-family: var(--login-font);
+
+  &__backdrop {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  &__blob {
+    position: absolute;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary-200);
+
+    &--left {
+      width: clamp(6rem, 12vw, 13.5rem);
+      height: clamp(6rem, 12vw, 13.5rem);
+      left: -3rem;
+      top: 8%;
+    }
+
+    &--top {
+      width: clamp(10rem, 22vw, 28rem);
+      height: clamp(10rem, 22vw, 28rem);
+      right: 5%;
+      top: -18%;
+    }
+
+    &--right {
+      width: clamp(8rem, 18vw, 24rem);
+      height: clamp(8rem, 18vw, 24rem);
+      right: -4rem;
+      bottom: 5%;
+    }
+  }
+
+  &__panel-bg {
+    position: absolute;
+    width: min(75vw, 70rem);
+    height: min(38vh, 32rem);
+    right: -6%;
+    bottom: 5%;
+    border-radius: var(--radius-full);
+    background-color: var(--color-gray-100);
+  }
+
+  &__grid {
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+    display: grid;
+    height: 100%;
+    width: min(100%, 72rem);
+    margin: 0 auto;
+    padding: clamp(var(--spacing-md), 3vh, var(--spacing-xl))
+      clamp(var(--spacing-md), 4vw, var(--spacing-2xl));
+    gap: clamp(var(--spacing-sm), 2vh, var(--spacing-lg));
+    align-content: center;
+    justify-items: center;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "content"
+      "hero";
+
+    @media (min-width: 1024px) {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-areas: "content hero";
+      align-items: center;
+      column-gap: clamp(var(--spacing-lg), 4vw, var(--spacing-3xl));
+      width: min(100%, 80rem);
+    }
+  }
+
+  &__content {
+    grid-area: content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 35.25rem;
+    gap: clamp(var(--spacing-sm), 2.5vh, var(--spacing-lg));
+  }
+
+  &__brand {
+    width: 100%;
+    text-align: center;
+
+    @media (min-width: 1024px) {
+      text-align: right;
+      padding-right: clamp(0px, 3vw, var(--spacing-lg));
+    }
+  }
+
+  &__title {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(var(--spacing-xs), 1vh, var(--spacing-sm));
+    font-family: var(--login-font);
+    font-weight: var(--font-weight-black);
+    font-size: clamp(2rem, 4.5vw + 0.5rem, 5.75rem);
+    line-height: 1.12;
+    color: var(--color-primary-800);
+
+    @media (min-width: 1024px) {
+      align-items: flex-end;
+    }
+  }
+
+  &__title-line {
+    display: block;
+  }
+
+  &__title-highlight {
+    display: inline-block;
+    position: relative;
+    padding: 0 clamp(var(--spacing-sm), 2vw, var(--spacing-lg));
+    z-index: 0;
+
+    &::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 0.82em;
+      border-radius: var(--radius-full);
+      background-color: var(--color-primary-200);
+    }
+  }
+
+  &__form-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__form-card {
+    width: 100%;
+    padding: clamp(var(--spacing-md), 2.5vh, var(--spacing-xl))
+      clamp(var(--spacing-sm), 3vw, var(--spacing-lg));
+    border-radius: clamp(1.5rem, 4vw, 3.125rem);
+    background-color: var(--color-gray-100);
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(var(--spacing-sm), 2vh, var(--spacing-md));
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  &__label {
+    font-family: var(--login-font);
+    font-style: italic;
+    font-weight: var(--font-weight-regular);
+    font-size: clamp(1rem, 1.5vw + 0.5rem, 1.875rem);
+    line-height: 1.25;
+    color: var(--color-gray-700);
+  }
+
+  &__input {
+    :deep(.q-field__control) {
+      min-height: clamp(3rem, 9vh, 4.9rem);
+      border-radius: 1.875rem;
+      background: var(--color-surface) !important;
+    }
+
+    :deep(.q-field__native) {
+      font-family: var(--login-font);
+      font-size: clamp(var(--font-size-base), 1.2vw, var(--font-size-lg));
+      padding-left: var(--spacing-md);
+    }
+
+    :deep(.q-field__bottom) {
+      padding-left: var(--spacing-md);
+      font-family: var(--login-font);
+    }
+  }
+
+  &__remember {
+    color: var(--color-text-secondary);
+    font-family: var(--login-font);
+    font-size: var(--text-body-small-size);
+    margin-top: calc(-1 * var(--spacing-xs));
+  }
+
+  &__submit {
+    min-height: clamp(3rem, 9vh, 4.9rem);
+    border-radius: 1.875rem;
+    box-shadow: var(--shadow-sm);
+    font-family: var(--login-font);
+    font-style: italic;
+    font-size: clamp(1.25rem, 2vw + 0.5rem, 2.25rem);
+    font-weight: var(--font-weight-regular);
+    background-color: var(--color-primary) !important;
+    color: var(--color-gray-100) !important;
+
+    &:hover:not(.disabled) {
+      background-color: var(--color-primary-dark) !important;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary-dark);
+      outline-offset: 2px;
+    }
+  }
+
+  &__hint {
+    margin: 0;
+    text-align: center;
+    font-family: var(--login-font);
+    font-style: italic;
+    font-size: 0.9375rem;
+    line-height: 1.25;
+    color: var(--color-warning);
+  }
+
+  &__banner {
+    font-family: var(--login-font);
+    font-size: var(--text-body-small-size);
+    background-color: rgb(198 40 40 / 0.08);
+    color: var(--color-error);
+  }
+
+  &__hero {
+    grid-area: hero;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-height: min(28vh, 16rem);
+    overflow: hidden;
+
+    @media (min-width: 1024px) {
+      max-height: min(72vh, 32.5rem);
+    }
+  }
+
+  &__hero-image {
+    width: min(100%, 20rem);
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+
+    @media (min-width: 1024px) {
+      width: min(100%, 32.5rem);
+    }
+  }
+
+  @media (max-height: 720px) {
+    &__hero {
+      display: none;
+    }
+
+    &__grid {
+      grid-template-areas: "content";
+    }
+
+    &__title {
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
+    }
+  }
+
+  @media (max-width: 1023px) and (min-height: 721px) {
+    &__hero {
+      max-height: min(22vh, 14rem);
+    }
+  }
+}

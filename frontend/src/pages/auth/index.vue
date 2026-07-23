@@ -1,119 +1,152 @@
 <template>
-  <DsCard
-    :title="$t('layout.auth.title')"
-    :subtitle="$t('layout.auth.subtitle')"
-    class="auth-page"
-  >
-    <p class="auth-page__description">{{ $t("layout.auth.description") }}</p>
+  <main class="login-page" aria-labelledby="login-page-title">
+    <div class="login-page__backdrop" aria-hidden="true">
+      <span class="login-page__blob login-page__blob--left" />
+      <span class="login-page__blob login-page__blob--top" />
+      <span class="login-page__blob login-page__blob--right" />
+      <span class="login-page__panel-bg" />
+    </div>
 
-    <q-banner
-      v-if="errorMessage"
-      class="auth-page__banner q-mb-md"
-      dense
-      rounded
-      :class="errorBannerClass"
-    >
-      {{ errorMessage }}
-    </q-banner>
+    <div class="login-page__grid">
+      <div class="login-page__content">
+        <header class="login-page__brand">
+          <h1 id="login-page-title" class="login-page__title">
+            <span class="login-page__title-line">{{
+              $t("layout.auth.figma.titlePortal")
+            }}</span>
+            <span class="login-page__title-highlight">{{
+              $t("layout.auth.figma.titleComunicacao")
+            }}</span>
+          </h1>
+        </header>
 
-    <q-checkbox
-      v-model="rememberMe"
-      class="auth-page__remember q-mb-lg"
-      :label="$t('layout.auth.rememberMe')"
-      dense
-    />
+        <section
+          class="login-page__form-section"
+          aria-label="Formulário de login"
+        >
+          <div class="login-page__form-card">
+          <form
+            class="login-page__form"
+            novalidate
+            @submit.prevent="handleSubmit"
+          >
+            <q-banner
+              v-if="bannerMessage"
+              class="login-page__banner"
+              dense
+              rounded
+              role="alert"
+            >
+              {{ bannerMessage }}
+            </q-banner>
 
-    <DsButton
-      variant="primary"
-      class="full-width"
-      size="lg"
-      :loading="isSubmitting"
-      @click="handleLogin"
-    >
-      {{ $t("layout.auth.loginAction") }}
-    </DsButton>
+            <div class="login-page__field">
+              <label class="login-page__label" for="login-usuario">
+                {{ $t("layout.auth.figma.userLabel") }}
+              </label>
+              <DsInput
+                id="login-usuario"
+                v-model="usuario"
+                class="login-page__input"
+                variant="filled"
+                type="email"
+                autocomplete="username"
+                :disable="isSubmitting"
+                :error="fieldErrors.usuario"
+                :aria-invalid="fieldErrors.usuario ? 'true' : undefined"
+                @update:model-value="clearFieldError('usuario')"
+              />
+            </div>
 
-    <template #actions>
-      <DsButton variant="ghost" :to="ROUTE_PATHS.HOME">
-        {{ $t("layout.notFound.goHome") }}
-      </DsButton>
-    </template>
-  </DsCard>
+            <div class="login-page__field">
+              <label class="login-page__label" for="login-senha">
+                {{ $t("layout.auth.figma.passwordLabel") }}
+              </label>
+              <DsInput
+                id="login-senha"
+                v-model="senha"
+                class="login-page__input"
+                variant="filled"
+                type="password"
+                autocomplete="current-password"
+                :disable="isSubmitting"
+                :error="fieldErrors.senha"
+                :aria-invalid="fieldErrors.senha ? 'true' : undefined"
+                @update:model-value="clearFieldError('senha')"
+              />
+            </div>
+
+            <q-checkbox
+              v-model="rememberMe"
+              class="login-page__remember"
+              dense
+              :disable="isSubmitting"
+              :label="$t('layout.auth.rememberMe')"
+            />
+
+            <DsButton
+              type="submit"
+              variant="primary"
+              class="login-page__submit full-width"
+              size="lg"
+              :loading="isSubmitting"
+              :disable="isSubmitDisabled"
+            >
+              {{ $t("layout.auth.figma.submit") }}
+            </DsButton>
+
+            <p
+              v-if="fieldErrors.senha && !bannerMessage"
+              class="login-page__hint"
+              role="alert"
+            >
+              {{ fieldErrors.senha }}
+            </p>
+          </form>
+        </div>
+      </section>
+      </div>
+
+      <aside class="login-page__hero" aria-hidden="true">
+        <img
+          class="login-page__hero-image"
+          src="/images/login-hero.svg"
+          alt=""
+          width="522"
+          height="520"
+          loading="eager"
+          decoding="async"
+        />
+      </aside>
+    </div>
+  </main>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { DsButton, DsInput } from "@/components/ds";
+import {
+  useLoginPage,
+  type LoginFieldErrors
+} from "@/composables/useLoginPage";
 
-import { parseAuthErrorCode } from "@/auth";
-import { DsButton, DsCard } from "@/components/ds";
-import { useAuth } from "@/composables/useAuth";
-import { ROUTE_PATHS } from "@/constants/routes";
+const {
+  usuario,
+  senha,
+  rememberMe,
+  isSubmitting,
+  fieldErrors,
+  bannerMessage,
+  isSubmitDisabled,
+  handleSubmit
+} = useLoginPage();
 
-const { t } = useI18n();
-const route = useRoute();
-const { login } = useAuth();
-
-const rememberMe = ref(false);
-const isSubmitting = ref(false);
-
-const authErrorCode = computed(() => parseAuthErrorCode(route.query.error));
-
-const errorMessage = computed(() => {
-  switch (authErrorCode.value) {
-    case "unauthorized":
-      return t("layout.auth.errors.unauthorized");
-    case "forbidden":
-      return t("layout.auth.errors.forbidden");
-    case "unavailable":
-      return t("layout.auth.errors.unavailable");
-    case "unknown":
-      return t("layout.auth.errors.unknown");
-    default:
-      return "";
+function clearFieldError(field: keyof LoginFieldErrors): void {
+  if (fieldErrors.value[field]) {
+    const next = { ...fieldErrors.value };
+    delete next[field];
+    fieldErrors.value = next;
   }
-});
-
-const errorBannerClass = computed(() => {
-  if (authErrorCode.value === "forbidden") {
-    return "auth-page__banner--warning";
-  }
-  return "auth-page__banner--error";
-});
-
-function handleLogin(): void {
-  isSubmitting.value = true;
-  login({ rememberMe: rememberMe.value });
 }
 </script>
 
-<style scoped lang="scss">
-.auth-page {
-  &__description {
-    margin: 0 0 var(--spacing-md);
-    color: var(--color-text-secondary);
-    font-size: var(--text-body-size);
-    line-height: var(--text-body-line-height);
-  }
-
-  &__remember {
-    color: var(--color-text-primary);
-    font-size: var(--text-body-small-size);
-  }
-
-  &__banner {
-    font-size: var(--text-body-small-size);
-
-    &--error {
-      background-color: rgb(198 40 40 / 0.08);
-      color: var(--color-error);
-    }
-
-    &--warning {
-      background-color: rgb(239 108 0 / 0.08);
-      color: var(--color-warning);
-    }
-  }
-}
-</style>
+<style scoped lang="scss" src="./login-page.scss"></style>

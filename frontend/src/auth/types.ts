@@ -8,12 +8,20 @@ export type AuthSessionStatus =
   | "authenticated"
   | "unauthenticated";
 
+export interface ColaboradorOrganizationalLinks {
+  federationId: number | null;
+  singularId: number | null;
+  areaId: number | null;
+  teamId: number | null;
+}
+
 export interface AuthenticatedUser {
   id: number;
   email: string;
   name: string;
   permissions: string[];
   sessionId: string;
+  organizationalLinks: ColaboradorOrganizationalLinks;
   roles?: string[];
 }
 

@@ -19,7 +19,12 @@ export const ROUTE_PATHS = {
   EQUIPE_LIST: "/app/administrador/equipes/lista",
   EQUIPE_CREATE: "/app/administrador/equipes/novo",
   EQUIPE_DETAIL: "/app/administrador/equipes/:id",
-  EQUIPE_EDIT: "/app/administrador/equipes/:id/editar"
+  EQUIPE_EDIT: "/app/administrador/equipes/:id/editar",
+  COLABORADOR_HUB: "/app/administrador/colaboradores",
+  COLABORADOR_LIST: "/app/administrador/colaboradores/lista",
+  COLABORADOR_CREATE: "/app/administrador/colaboradores/novo",
+  COLABORADOR_DETAIL: "/app/administrador/colaboradores/:id",
+  COLABORADOR_EDIT: "/app/administrador/colaboradores/:id/editar"
 } as const;
 
 export const ROUTE_NAMES = {
@@ -39,7 +44,12 @@ export const ROUTE_NAMES = {
   EQUIPE_LIST: "equipe-list",
   EQUIPE_CREATE: "equipe-create",
   EQUIPE_DETAIL: "equipe-detail",
-  EQUIPE_EDIT: "equipe-edit"
+  EQUIPE_EDIT: "equipe-edit",
+  COLABORADOR_HUB: "colaborador-hub",
+  COLABORADOR_LIST: "colaborador-list",
+  COLABORADOR_CREATE: "colaborador-create",
+  COLABORADOR_DETAIL: "colaborador-detail",
+  COLABORADOR_EDIT: "colaborador-edit"
 } as const;
 
 export type RoutePath = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
@@ -60,4 +70,12 @@ export function equipeDetailPath(id: string | number): string {
 
 export function equipeEditPath(id: string | number): string {
   return `/app/administrador/equipes/${id}/editar`;
+}
+
+export function colaboradorDetailPath(id: string | number): string {
+  return `/app/administrador/colaboradores/${id}`;
+}
+
+export function colaboradorEditPath(id: string | number): string {
+  return `/app/administrador/colaboradores/${id}/editar`;
 }

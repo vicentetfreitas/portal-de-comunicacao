@@ -1,0 +1,14 @@
+# Construction State — FT-SESSION frontend
+
+version: 3
+
+feature:
+  code: FT-SESSION
+
+state:
+  phase: execution
+  current_pkg: pkg-fe-01
+  completed: []
+  pending:
+    - pkg-fe-01
+    - pkg-fe-02

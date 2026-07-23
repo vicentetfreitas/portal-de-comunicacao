@@ -51,6 +51,7 @@ export const foundationRoutes: RouteRecordRaw[] = [
       layout: "auth",
       public: true,
       guestOnly: true,
+      authFullBleed: true,
       pageTitleKey: "layout.auth.title"
     }
   },

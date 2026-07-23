@@ -5,7 +5,6 @@ export type MockEquipeStatus = "ACTIVE" | "INACTIVE";
 export interface MockArea {
   id: number;
   singularId: number;
-  parentAreaId: number | null;
   name: string;
   acronym: string;
   description: string | null;
@@ -139,7 +138,6 @@ const DEFAULT_AREAS: MockArea[] = [
   {
     id: 10,
     singularId: 1,
-    parentAreaId: null,
     name: "Área Comunicação",
     acronym: "COM",
     description: null,

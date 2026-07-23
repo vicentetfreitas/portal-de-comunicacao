@@ -76,13 +76,49 @@ describe("createAuthGuard", () => {
     });
   });
 
+  it("allows protected routes when authenticated", async () => {
+    fetchCurrentUser.mockResolvedValue({
+      id: 1,
+      email: "a@b.com",
+      name: "User",
+      permissions: [],
+      sessionId: "s",
+      organizationalLinks: {
+        federationId: 1,
+        singularId: 2,
+        areaId: 3,
+        teamId: 4
+      }
+    });
+
+    const store = useAuthStore();
+    await store.hydrateSession();
+
+    const next = createNextMock();
+    const guard = createAuthGuard();
+
+    await guard(
+      createRoute({ requiresAuth: true }, "/app"),
+      {} as RouteLocationNormalized,
+      next
+    );
+
+    expect(next).toHaveBeenCalledWith();
+  });
+
   it("redirects authenticated users away from guest-only routes", async () => {
     fetchCurrentUser.mockResolvedValue({
       id: 1,
       email: "a@b.com",
       name: "User",
       permissions: [],
-      sessionId: "s"
+      sessionId: "s",
+      organizationalLinks: {
+        federationId: 1,
+        singularId: null,
+        areaId: null,
+        teamId: null
+      }
     });
 
     const store = useAuthStore();
@@ -99,7 +135,7 @@ describe("createAuthGuard", () => {
     const guard = createAuthGuard();
 
     await guard(
-      createRoute({ guestOnly: true }),
+      createRoute({ guestOnly: true }, ROUTE_PATHS.AUTH),
       {} as RouteLocationNormalized,
       next
     );

@@ -5,7 +5,6 @@ export type AreaStatus = "ACTIVE" | "INACTIVE";
 export interface AreaResponse {
   id: number;
   singularId: number;
-  parentAreaId: number | null;
   name: string;
   acronym: string;
   description: string | null;

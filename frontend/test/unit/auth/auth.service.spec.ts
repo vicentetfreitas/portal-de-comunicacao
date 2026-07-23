@@ -22,10 +22,17 @@ vi.mock("@/config/env", () => ({
   }
 }));
 
+vi.mock("@/services/http/csrf", () => ({
+  readCsrfToken: () => "csrf-token"
+}));
+
+const fetchMock = vi.fn();
+
 describe("AuthApiService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubGlobal("location", { assign: assignMock });
+    vi.stubGlobal("fetch", fetchMock);
   });
 
   it("builds login url with remember_me when enabled", () => {
@@ -36,6 +43,30 @@ describe("AuthApiService", () => {
   it("redirects browser to login endpoint", () => {
     authService.login({ rememberMe: false });
     expect(assignMock).toHaveBeenCalledWith("/api/v1/auth/login");
+  });
+
+  it("posts credentials to login when email and password are provided", async () => {
+    fetchMock.mockResolvedValue({
+      status: 302,
+      headers: {
+        get: (name: string) => (name === "Location" ? "/app" : null)
+      }
+    });
+
+    await authService.login({
+      email: "user@unimedceara.com.br",
+      password: "secret",
+      rememberMe: true
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/v1/auth/login",
+      expect.objectContaining({
+        method: "POST",
+        credentials: "include"
+      })
+    );
+    expect(assignMock).toHaveBeenCalledWith("/app");
   });
 
   it("fetches current user from /auth/me", async () => {

@@ -51,12 +51,30 @@ export default {
       logout: "Sair",
       editProfile: "Editar perfil",
       footer: "Autenticação corporativa — Unimed Ceará",
+      figma: {
+        titlePortal: "Portal de",
+        titleComunicacao: "Comunicação",
+        userLabel: "Usuário:",
+        passwordLabel: "Senha:",
+        submit: "entrar",
+        errors: {
+          userRequired: "Informe o usuário.",
+          passwordHint: "Verifique sua senha do e-mail"
+        }
+      },
       errors: {
         unauthorized: "Não foi possível autenticar. Tente novamente.",
         forbidden: "Você não possui autorização para acessar o Portal.",
         unavailable:
           "O serviço de autenticação está indisponível. Tente mais tarde.",
         unknown: "Ocorreu um erro durante a autenticação."
+      },
+      context: {
+        title: "Contexto organizacional",
+        subtitle:
+          "Selecione o contexto em que você atuará nesta sessão.",
+        optionLabel:
+          "Federação {federation} · Singular {singular} · Área {area} · Equipe {team}"
       }
     },
     admin: {
@@ -338,6 +356,36 @@ export default {
           "A equipe será marcada como inativa. A operação falhará se existirem colaboradores ativos vinculados.",
         confirm: "Inativar equipe"
       }
+    },
+    stub: {
+      placeholder: "Placeholder — implementação visual em PKG-FE-02 em diante."
+    }
+  },
+  colaborador: {
+    hub: {
+      title: "Colaboradores",
+      subtitle: "Gestão de colaboradores organizacionais",
+      cardTitle: "Ações rápidas",
+      listAction: "Listar colaboradores",
+      listDescription: "Consulte colaboradores com filtros e paginação",
+      createAction: "Cadastrar colaborador",
+      createDescription: "Inclua um novo colaborador com vínculo organizacional"
+    },
+    list: {
+      title: "Listagem de colaboradores",
+      subtitle: "Consulte e filtre colaboradores cadastrados"
+    },
+    create: {
+      title: "Cadastrar colaborador",
+      subtitle: "Novo colaborador organizacional"
+    },
+    detail: {
+      title: "Detalhe do colaborador",
+      subtitle: "Identificador: {id}"
+    },
+    edit: {
+      title: "Editar colaborador",
+      subtitle: "Identificador: {id}"
     },
     stub: {
       placeholder: "Placeholder — implementação visual em PKG-FE-02 em diante."

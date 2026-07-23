@@ -29,11 +29,11 @@ yarn install
 
 External configuration via `VITE_*` variables (see `.env.example`):
 
-| Variable            | Description                                     |
-| ------------------- | ----------------------------------------------- |
-| `VITE_APP_ENV`      | Environment name (`local`, `dev`, `hml`, `prd`) |
-| `VITE_API_BASE_URL` | API prefix (default `/api/v1`)                  |
-| `BACKEND_URL`       | Dev proxy target (quasar.config only)           |
+| Variable            | Description                                                                |
+| ------------------- | -------------------------------------------------------------------------- |
+| `VITE_APP_ENV`      | Environment name (`local`, `dev`, `hml`, `prd`)                            |
+| `VITE_API_BASE_URL` | API prefix (default `/api/v1`)                                             |
+| `BACKEND_URL`       | Dev proxy target — `config/quasar-env.ts` / `quasar.config.ts` (Node only) |
 
 ## Directory Structure
 

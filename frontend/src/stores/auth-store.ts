@@ -90,8 +90,13 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
-  function login(options?: { rememberMe?: boolean }): void {
-    authService.login(options);
+  function login(options?: {
+    rememberMe?: boolean;
+    email?: string;
+    password?: string;
+    state?: string;
+  }): void | Promise<void> {
+    return authService.login(options);
   }
 
   async function logout(): Promise<void> {

@@ -1,13 +1,18 @@
 import { AUTH_API_PATHS } from "@/config/auth";
 import { env } from "@/config/env";
+import { httpConfig } from "@/config/http";
 import type { AuthenticatedUser } from "@/auth/types";
 import { getHttpClient } from "@/services/http";
+import { readCsrfToken } from "@/services/http/csrf";
 import { ApiError, normalizeApiError } from "@/types/api";
 
 import type { AuthMeApiResponse } from "./auth-contracts";
 
 export interface AuthLoginOptions {
   rememberMe?: boolean;
+  email?: string;
+  password?: string;
+  state?: string;
 }
 
 function unwrapMeResponse(payload: AuthMeApiResponse): AuthenticatedUser {
@@ -44,8 +49,60 @@ export class AuthApiService {
     return `${env.apiBaseUrl}${path}`;
   }
 
-  login(options?: AuthLoginOptions): void {
+  login(options?: AuthLoginOptions): void | Promise<void> {
+    if (options?.email && options?.password) {
+      return this.submitCredentials(options);
+    }
+
     window.location.assign(this.buildLoginUrl(options));
+  }
+
+  private async submitCredentials(options: AuthLoginOptions): Promise<void> {
+    const params = new URLSearchParams();
+    params.set("email", options.email ?? "");
+    params.set("password", options.password ?? "");
+    if (options.rememberMe === true) {
+      params.set("remember_me", "true");
+    }
+    if (options.state) {
+      params.set("state", options.state);
+    }
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/x-www-form-urlencoded"
+    };
+    const csrfToken = readCsrfToken();
+    if (csrfToken) {
+      headers[httpConfig.csrfHeaderName] = csrfToken;
+    }
+
+    const response = await fetch(`${env.apiBaseUrl}${AUTH_API_PATHS.login}`, {
+      method: "POST",
+      credentials: "include",
+      headers,
+      body: params.toString(),
+      redirect: "manual"
+    });
+
+    if (response.status === 302) {
+      const location = response.headers.get("Location");
+      if (location) {
+        window.location.assign(location);
+        return;
+      }
+    }
+
+    if (response.ok) {
+      window.location.assign("/app");
+      return;
+    }
+
+    throw new ApiError({
+      status: response.status,
+      code: "AUTH_LOGIN_FAILED",
+      message: "Não foi possível concluir o login",
+      category: response.status === 401 ? "authentication" : "unknown"
+    });
   }
 
   async fetchCurrentUser(): Promise<AuthenticatedUser> {

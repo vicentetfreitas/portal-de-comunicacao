@@ -1,11 +1,13 @@
 import type { RouteRecordRaw } from "vue-router";
 
 import { foundationRoutes, lazyPages } from "./foundation.routes";
+import { colaboradorRoutes } from "./organization/colaborador.routes";
 import { equipeRoutes } from "./organization/equipe.routes";
 import { singularRoutes } from "./organization/singular.routes";
 import { structuralRoutes } from "./structural.routes";
 
 export {
+  colaboradorRoutes,
   equipeRoutes,
   foundationRoutes,
   lazyPages,
@@ -22,6 +24,7 @@ export function createModularRoutes(): RouteRecordRaw[] {
     ...foundationRoutes,
     ...singularRoutes,
     ...equipeRoutes,
+    ...colaboradorRoutes,
     {
       path: "/:pathMatch(.*)*",
       name: "not-found",
