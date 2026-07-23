@@ -1,16 +1,14 @@
 package br.com.unimedceara.portalcomunicacao.infrastructure.integration.config;
 
+import br.com.unimedceara.portalcomunicacao.support.annotation.PlatformFoundationSliceTest;
 import br.com.unimedceara.portalcomunicacao.configuration.properties.ZimbraProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@TestPropertySource(locations = "classpath:pf-int-test.properties")
+@PlatformFoundationSliceTest
 class RestClientConfigurationTest {
 
     @Autowired

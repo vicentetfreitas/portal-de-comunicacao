@@ -10,7 +10,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles({"test-slice", "local"})
 @TestPropertySource(locations = "classpath:pf-conf-profile-test.properties")
 class ConfigurationPropertiesLocalProfileTest {
 
@@ -29,7 +29,7 @@ class ConfigurationPropertiesLocalProfileTest {
 }
 
 @SpringBootTest
-@ActiveProfiles("dev")
+@ActiveProfiles({"test-slice", "dev"})
 @TestPropertySource(locations = "classpath:pf-conf-profile-test.properties")
 class ConfigurationPropertiesDevProfileTest {
 
@@ -44,7 +44,7 @@ class ConfigurationPropertiesDevProfileTest {
 }
 
 @SpringBootTest
-@ActiveProfiles("hml")
+@ActiveProfiles({"test-slice", "hml"})
 @TestPropertySource(locations = "classpath:pf-conf-profile-test.properties")
 class ConfigurationPropertiesHmlProfileTest {
 

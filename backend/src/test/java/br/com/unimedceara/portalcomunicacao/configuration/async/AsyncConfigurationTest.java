@@ -1,18 +1,16 @@
 package br.com.unimedceara.portalcomunicacao.configuration.async;
 
+import br.com.unimedceara.portalcomunicacao.support.annotation.PlatformFoundationSliceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.concurrent.Executor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@PlatformFoundationSliceTest
 class AsyncConfigurationTest {
 
     @Autowired

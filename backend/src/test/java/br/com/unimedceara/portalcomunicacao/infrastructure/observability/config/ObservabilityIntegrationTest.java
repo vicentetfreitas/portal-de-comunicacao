@@ -1,10 +1,9 @@
 package br.com.unimedceara.portalcomunicacao.infrastructure.observability.config;
 
+import br.com.unimedceara.portalcomunicacao.support.annotation.PlatformFoundationSliceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -14,8 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-@SpringBootTest
-@TestPropertySource(locations = "classpath:pf-obs-test.properties")
+@PlatformFoundationSliceTest
 class ObservabilityIntegrationTest {
 
     @Autowired
