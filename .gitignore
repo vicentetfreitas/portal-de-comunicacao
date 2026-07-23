@@ -55,20 +55,23 @@ ehthumbs.db
 
 logs/
 *.log
+*.log.*
+*.log.gz
+application.log*
+mvn-*.log
 !**/.gitkeep
 
 # ============================================================================
 # Backend runtime artifacts
 # ============================================================================
 
-backend/runtime/logs/**
+backend/runtime/**
 !backend/runtime/logs/.gitkeep
-backend/runtime/reports/**
 !backend/runtime/reports/.gitkeep
-backend/runtime/dumps/**
 !backend/runtime/dumps/.gitkeep
-backend/runtime/coverage/**
 !backend/runtime/coverage/.gitkeep
+backend/mvn-test-*.txt
+backend/runtime/schema-audit-results.txt
 
 # ============================================================================
 # Java / Maven / Gradle
@@ -109,6 +112,8 @@ backend/runtime/coverage/**
 **/.coverage
 **/jacoco/
 **/jacoco.exec
+frontend/reports/
+**/evidence/build-verify-*.log
 
 # ============================================================================
 # Docker
