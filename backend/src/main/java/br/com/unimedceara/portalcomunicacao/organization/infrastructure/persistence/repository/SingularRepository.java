@@ -18,11 +18,13 @@ public interface SingularRepository extends JpaRepository<SingularEntity, Long> 
 
     boolean existsBySiglaIgnoreCase(String sigla);
 
-    boolean existsByCodigoUnimedIgnoreCase(String codigoUnimed);
+    boolean existsByCodigoUnimed(Integer codigoUnimed);
 
     boolean existsBySiglaIgnoreCaseAndIdNot(String sigla, Long id);
 
-    boolean existsByCodigoUnimedIgnoreCaseAndIdNot(String codigoUnimed, Long id);
+    boolean existsByCodigoUnimedAndIdNot(Integer codigoUnimed, Long id);
+
+    boolean existsByFederacaoIdAndAtivo(Long federacaoId, String ativo);
 
     @Query("""
             SELECT s FROM SingularEntity s
@@ -30,13 +32,13 @@ public interface SingularRepository extends JpaRepository<SingularEntity, Long> 
               AND (:ativo IS NULL OR s.ativo = :ativo)
               AND (:name IS NULL OR LOWER(s.nome) LIKE LOWER(CONCAT('%', :name, '%')))
               AND (:acronym IS NULL OR LOWER(s.sigla) LIKE LOWER(CONCAT('%', :acronym, '%')))
-              AND (:codigoUnimed IS NULL OR LOWER(s.codigoUnimed) LIKE LOWER(CONCAT('%', :codigoUnimed, '%')))
+              AND (:codigoUnimed IS NULL OR s.codigoUnimed = :codigoUnimed)
             """)
     Page<SingularEntity> findByFilters(
             @Param("federacaoId") Long federacaoId,
             @Param("ativo") String ativo,
             @Param("name") String name,
             @Param("acronym") String acronym,
-            @Param("codigoUnimed") String codigoUnimed,
+            @Param("codigoUnimed") Integer codigoUnimed,
             Pageable pageable);
 }

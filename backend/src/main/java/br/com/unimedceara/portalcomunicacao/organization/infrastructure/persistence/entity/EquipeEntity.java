@@ -10,6 +10,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -42,6 +44,7 @@ public class EquipeEntity {
     @Column(name = "COD_LIDER")
     private Long liderId;
 
+    @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "FLG_ATIVO", nullable = false, length = 1)
     private String ativo;
 

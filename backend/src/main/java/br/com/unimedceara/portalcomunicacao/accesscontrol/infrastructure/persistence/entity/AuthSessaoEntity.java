@@ -12,12 +12,17 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.Objects;
 
 /**
- * Entidade JPA de sessão de autenticação (AUTH_SESSAO).
+ * Entidade JPA de sessão de autenticação ({@code AUTH_SESSAO}).
+ * <p>
+ * Persiste apenas continuidade da sessão (refresh token, revogação, dispositivo).
+ * Contexto organizacional não é armazenado nesta tabela (REF-DB-CTX-01).
  */
 @Getter
 @Setter
@@ -27,7 +32,7 @@ public class AuthSessaoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_auth_sessao")
-    @SequenceGenerator(name = "sq_auth_sessao", sequenceName = "SQ_AUTH_SESSAO_COD_SESSAO", allocationSize = 1)
+    @SequenceGenerator(name = "sq_auth_sessao", sequenceName = "SQ_AUTH_SESSAO", allocationSize = 1)
     @Column(name = "COD_SESSAO", nullable = false)
     private Long id;
 
@@ -44,6 +49,7 @@ public class AuthSessaoEntity {
     @Column(name = "DES_DISPOSITIVO", length = 255)
     private String dispositivo;
 
+    @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "FLG_REMEMBER_ME", nullable = false, length = 1)
     private String rememberMe;
 
@@ -53,6 +59,7 @@ public class AuthSessaoEntity {
     @Column(name = "DAT_EXPIRACAO", nullable = false)
     private Instant dataExpiracao;
 
+    @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "FLG_REVOGADA", nullable = false, length = 1)
     private String revogada;
 

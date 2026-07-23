@@ -24,9 +24,9 @@ public interface ColaboradorRepository extends JpaRepository<ColaboradorEntity, 
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 
-    boolean existsByCpf(String cpf);
+    boolean existsByZimbraId(String zimbraId);
 
-    boolean existsByCpfAndIdNot(String cpf, Long id);
+    boolean existsByZimbraIdAndIdNot(String zimbraId, Long id);
 
     boolean existsByGestorIdAndAtivo(Long gestorId, String ativo);
 

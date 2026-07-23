@@ -27,9 +27,16 @@ application:
     max-retry-attempts: 3
     circuit-breaker-threshold: 50
   zimbra:
-    auth-url: ${ZIMBRA_AUTH_URL:http://localhost/zimbra/auth}
-    validate-url: ${ZIMBRA_VALIDATE_URL:http://localhost/zimbra/validate}
-    timeout-ms: 10000
+    login-page-url: ${AUTH_LOGIN_PAGE_URL}
+    imap-host: ${ZIMBRA_IMAP_HOST}
+    imap-port: ${ZIMBRA_IMAP_PORT:993}
+    imap-ssl: ${ZIMBRA_IMAP_SSL:true}
+    smtp-host: ${ZIMBRA_SMTP_HOST}
+    smtp-port: ${ZIMBRA_SMTP_PORT:587}
+    smtp-ssl: ${ZIMBRA_SMTP_SSL:false}
+    smtp-starttls: ${ZIMBRA_SMTP_STARTTLS:true}
+    soap-url: ${ZIMBRA_SOAP_URL}
+    timeout-ms: ${ZIMBRA_TIMEOUT_MS:10000}
 
 springdoc:
   api-docs:
@@ -53,15 +60,23 @@ spring:
       maximum-pool-size: ${application.persistence.pool-max-size}
       minimum-idle: ${application.persistence.pool-min-idle}
       pool-name: portal-comunicacao-pool
+      # DEC-DB-024: UNMPORTCOM_APP resolve objetos do owner UNMPORTCOM na sessão JDBC
+      connection-init-sql: ${ORACLE_SESSION_CURRENT_SCHEMA_SQL:ALTER SESSION SET CURRENT_SCHEMA = UNMPORTCOM}
 
   jpa:
     open-in-view: false
     show-sql: false
     hibernate:
       ddl-auto: none
+      naming:
+        # Oracle: sequences/tabelas já em UPPER_SNAKE no DDL; evita validação em sq_* minúsculo.
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.OracleDialect
+        # Oracle 11g+ (CR-S1A-004): evita FETCH FIRST (12c+) → ORA-00933 em exists/limit.
+        dialect: org.hibernate.community.dialect.OracleLegacyDialect
+        # Schema owner dos objetos físicos (DEC-DB-024). Conexão JDBC: UNMPORTCOM_APP apenas.
+        default_schema: ${SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA:UNMPORTCOM}
 
 logging:
   level:

@@ -5,11 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -25,7 +26,7 @@ public class ColaboradorEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sq_colaborador")
-    @SequenceGenerator(name = "sq_colaborador", sequenceName = "SQ_COLABORADOR_COD_COLABORADOR", allocationSize = 1)
+    @SequenceGenerator(name = "sq_colaborador", sequenceName = "SQ_COLABORADOR", allocationSize = 1)
     @Column(name = "COD_COLABORADOR", nullable = false)
     private Long id;
 
@@ -44,25 +45,19 @@ public class ColaboradorEntity {
     @Column(name = "COD_GESTOR")
     private Long gestorId;
 
-    @Column(name = "NOM_COLABORADOR", nullable = false, length = 200)
+    @Column(name = "NOM_COLABORADOR", nullable = false, length = 255)
     private String nome;
 
     @Column(name = "DES_EMAIL", nullable = false, length = 255)
     private String email;
 
-    @Column(name = "DES_CARGO", length = 100)
-    private String cargo;
-
-    @Column(name = "ID_ZIMBRA", length = 255)
+    @Column(name = "ID_ZIMBRA", nullable = false, length = 255)
     private String zimbraId;
 
-    @Column(name = "NUM_CPF", length = 11)
-    private String cpf;
-
-    @Lob
-    @Column(name = "DES_BIOGRAFIA")
+    @Column(name = "DES_BIOGRAFIA", length = 4000)
     private String biografia;
 
+    @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "FLG_ATIVO", nullable = false, length = 1)
     private String ativo;
 

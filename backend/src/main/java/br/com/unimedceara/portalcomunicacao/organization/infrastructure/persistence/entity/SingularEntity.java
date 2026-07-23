@@ -9,6 +9,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -37,9 +39,13 @@ public class SingularEntity {
     @Column(name = "SIG_SINGULAR", nullable = false, length = 30)
     private String sigla;
 
-    @Column(name = "COD_UNIMED", nullable = false, length = 20)
-    private String codigoUnimed;
+    @Column(name = "COD_UNIMED", nullable = false, precision = 3, scale = 0)
+    private Integer codigoUnimed;
 
+    @Column(name = "NUM_REGISTRO_ANS", nullable = false, length = 20)
+    private String registroAns;
+
+    @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "FLG_ATIVO", nullable = false, length = 1)
     private String ativo;
 

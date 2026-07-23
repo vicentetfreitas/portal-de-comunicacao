@@ -19,8 +19,6 @@ public interface AreaRepository extends JpaRepository<AreaEntity, Long> {
     boolean existsBySingularIdAndNomeIgnoreCaseAndAtivoAndIdNot(
             Long singularId, String nome, String ativo, Long id);
 
-    boolean existsByParentAreaIdAndAtivo(Long parentAreaId, String ativo);
-
     boolean existsBySingularIdAndAtivo(Long singularId, String ativo);
 
     @Query("""

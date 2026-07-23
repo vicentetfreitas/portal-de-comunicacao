@@ -10,6 +10,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -32,9 +34,6 @@ public class AreaEntity {
     @Column(name = "COD_SINGULAR")
     private Long singularId;
 
-    @Column(name = "COD_AREA_PAI")
-    private Long parentAreaId;
-
     @Column(name = "NOM_AREA", nullable = false, length = 200)
     private String nome;
 
@@ -48,6 +47,7 @@ public class AreaEntity {
     @Column(name = "COD_GESTOR")
     private Long gestorId;
 
+    @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "FLG_ATIVO", nullable = false, length = 1)
     private String ativo;
 

@@ -10,12 +10,14 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.Objects;
 
 /**
- * Entidade JPA mínima de federação para validações referenciais (FT-SINGULAR).
+ * Entidade JPA da federação organizacional (FT-FEDERACAO).
  */
 @Getter
 @Setter
@@ -35,11 +37,11 @@ public class FederacaoEntity {
     @Column(name = "SIG_FEDERACAO", nullable = false, length = 30)
     private String sigla;
 
-    @Column(name = "COD_UNIMED", nullable = false, length = 20)
-    private String codigoUnimed;
+    @Column(name = "COD_UNIMED", nullable = false, precision = 3, scale = 0)
+    private Integer codigoUnimed;
 
     @Column(name = "NUM_REGISTRO_ANS", nullable = false, length = 20)
-    private String numeroRegistroAns;
+    private String registroAns;
 
     @Column(name = "URL_SITE", length = 300)
     private String urlSite;
@@ -48,6 +50,7 @@ public class FederacaoEntity {
     @Column(name = "DSC_FEDERACAO")
     private String descricao;
 
+    @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "FLG_ATIVO", nullable = false, length = 1)
     private String ativo;
 
