@@ -61,7 +61,7 @@ Happy Path / Negative / Business Rule / Authorization
 
 ### Regras de Negócio Relacionadas
 
-- RN-AREA-001, RN-AREA-002, RN-AREA-003, RN-AREA-004, RN-AREA-005, RN-AREA-006
+- RN-AREA-001, RN-AREA-002, RN-AREA-003, RN-AREA-006
 
 ### Pré-condições
 
@@ -99,22 +99,7 @@ Singular `singularId=1` ativa e sem área com nome "Financeiro".
 - HTTP 422
 - Nenhum novo registro criado
 
-### Cenário — Área pai inválida (FE-002)
-
-#### Given
-
-`parentAreaId` inexistente, inativo ou pertencente a outra singular.
-
-#### When
-
-`POST /api/v1/areas` com `parentAreaId` inválido e demais campos válidos.
-
-#### Then
-
-- HTTP 422
-- Nenhum novo registro criado
-
-### Cenário — Gestor inválido (FE-003)
+### Cenário — Gestor inválido (FE-002)
 
 #### Given
 
@@ -263,7 +248,7 @@ Múltiplas áreas cadastradas, sendo 2 ativas na singular 1.
 
 ### Objetivo
 
-Validar atualização cadastral, imutabilidade de singular e regras hierárquicas.
+Validar atualização cadastral, imutabilidade de singular e regras de negócio.
 
 ### Prioridade
 
@@ -283,7 +268,7 @@ Happy Path / Negative / Business Rule
 
 ### Regras de Negócio Relacionadas
 
-- RN-AREA-001, RN-AREA-002, RN-AREA-003, RN-AREA-004, RN-AREA-005, RN-AREA-006, RN-AREA-009
+- RN-AREA-001, RN-AREA-002, RN-AREA-003, RN-AREA-006, RN-AREA-009
 
 ### Cenário — Happy Path
 
@@ -300,20 +285,6 @@ Happy Path / Negative / Business Rule
 - HTTP 200
 - Nome atualizado
 - `updatedAt` preenchido
-
-### Cenário — Ciclo hierárquico
-
-#### Given
-
-Área A pai de área B.
-
-#### When
-
-Atualizar área A com `parentAreaId` de B.
-
-#### Then
-
-- HTTP 422
 
 ### Cenário — Singular imutável
 
@@ -372,7 +343,7 @@ Happy Path / Negative / Business Rule
 
 #### Given
 
-Área ativa sem equipes ativas nem áreas filhas ativas.
+Área ativa sem equipes ativas.
 
 #### When
 
@@ -393,21 +364,6 @@ Happy Path / Negative / Business Rule
 #### When
 
 Tentativa de inativação.
-
-#### Then
-
-- HTTP 422
-- Status permanece ACTIVE
-
-### Cenário — Inativação bloqueada por área filha ativa
-
-#### Given
-
-Área pai com área filha ativa vinculada.
-
-#### When
-
-`PATCH /api/v1/areas/{id}/status` com `{ "status": "INACTIVE" }`.
 
 #### Then
 
@@ -471,4 +427,4 @@ Este documento será considerado conforme quando:
 |--------|------|--------|-----------|
 | 1.0 | 2026-07-13 | Specification Engineer | Critérios de aceitação iniciais FT-AREA |
 | 1.1 | 2026-07-13 | Specification Engineer | Sincronização Specification Framework v1.1 |
-| 1.1.1 | 2026-07-13 | Specification Engineer | Refinamento final — NC-01, NC-02 e NC-03 |
+| 1.2.0 | 2026-07-21 | Engineering Framework | Remoção hierarquia entre áreas (DEC-DB-022) |

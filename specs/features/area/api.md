@@ -237,7 +237,6 @@ Padrões de DTO: `docs/implementation/07-api-standards.md`.
 | Campo | Tipo | Obrigatório | Validação |
 |--------|------|-------------|-----------|
 | singularId | Long | Sim | Singular existente e ativa |
-| parentAreaId | Long | Não | Área pai na mesma singular |
 | name | String | Sim | Máx. 200 caracteres; não vazio |
 | acronym | String | Não | Máx. 30 caracteres |
 | description | String | Não | Texto livre |
@@ -247,7 +246,6 @@ Padrões de DTO: `docs/implementation/07-api-standards.md`.
 
 | Campo | Tipo | Obrigatório | Validação |
 |--------|------|-------------|-----------|
-| parentAreaId | Long | Não | Área pai na mesma singular; sem ciclo |
 | name | String | Sim | Máx. 200 caracteres |
 | acronym | String | Não | Máx. 30 caracteres |
 | description | String | Não | Texto livre |
@@ -267,7 +265,6 @@ Padrões de DTO: `docs/implementation/07-api-standards.md`.
 |--------|------|-----------|
 | id | Long | Identificador (`COD_AREA`) |
 | singularId | Long | Singular proprietária |
-| parentAreaId | Long | Área pai (nullable) |
 | name | String | Nome da área |
 | acronym | String | Sigla (nullable) |
 | description | String | Descrição (nullable) |
@@ -318,4 +315,4 @@ Este contrato será considerado conforme quando:
 |--------|------|--------|-----------|
 | 1.0 | 2026-07-13 | Specification Engineer | Contrato API inicial FT-AREA |
 | 1.1 | 2026-07-13 | Specification Engineer | Sincronização Specification Framework v1.1 |
-| 1.1.1 | 2026-07-13 | Specification Engineer | Congelamento da Specification — status APPROVED |
+| 1.2.0 | 2026-07-21 | Engineering Framework | Remoção hierarquia entre áreas (DEC-DB-022) |

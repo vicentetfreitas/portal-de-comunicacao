@@ -1,58 +1,28 @@
 package br.com.unimedceara.portalcomunicacao.organization.acceptance;
 
-import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.JwtTokenService;
-import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.ColaboradorEntity;
-import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.repository.ColaboradorRepository;
-import br.com.unimedceara.portalcomunicacao.configuration.properties.AuthProperties;
 import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
 import br.com.unimedceara.portalcomunicacao.support.annotation.IntegrationTest;
-import br.com.unimedceara.portalcomunicacao.support.security.TestSecurityContextFactory;
+import br.com.unimedceara.portalcomunicacao.support.base.AbstractMockMvcIntegrationTest;
+import br.com.unimedceara.portalcomunicacao.support.data.IntegrationTestUniqueData;
 import jakarta.servlet.http.Cookie;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
-import java.time.Instant;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * Fluxo cross-feature: Singular → Área → Equipe → Colaborador (xft-org-01).
  */
 @IntegrationTest
-class OrgCrossFeatureIntegrationTest {
+class OrgCrossFeatureIntegrationTest extends AbstractMockMvcIntegrationTest {
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    @Autowired
-    private JwtTokenService jwtTokenService;
-
-    @Autowired
-    private ColaboradorRepository colaboradorRepository;
-
-    @Autowired
-    private AuthProperties authProperties;
-
-    private MockMvc mockMvc;
-    private JsonMapper jsonMapper = JsonMapper.builder().build();
-
-    @BeforeEach
-    void setUp() {
-        mockMvc = webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
-        ensureAdmin();
-    }
+    private final JsonMapper jsonMapper = JsonMapper.builder().build();
 
     @Test
     @AcceptanceCriterion(value = "XFT-ORG-01", type = AcceptanceCriterion.TestType.API)
@@ -63,7 +33,10 @@ class OrgCrossFeatureIntegrationTest {
         long singularId = createSingular(accessCookie, csrfCookie);
         long areaId = createArea(accessCookie, csrfCookie, singularId);
         long equipeId = createEquipe(accessCookie, csrfCookie, areaId);
-        long colaboradorId = createColaborador(accessCookie, csrfCookie, singularId, areaId, equipeId);
+        String colaboradorEmail = IntegrationTestUniqueData.colaboradorEmail("integracao");
+        String zimbraId = "zimbra-" + colaboradorEmail.replace("@", "-");
+        long colaboradorId =
+                createColaborador(accessCookie, csrfCookie, singularId, areaId, equipeId, colaboradorEmail, zimbraId);
 
         mockMvc.perform(get("/api/v1/colaboradores/" + colaboradorId)
                         .param("teamId", String.valueOf(equipeId))
@@ -77,6 +50,9 @@ class OrgCrossFeatureIntegrationTest {
     }
 
     private long createSingular(Cookie accessCookie, Cookie csrfCookie) throws Exception {
+        String acronym = IntegrationTestUniqueData.singularSigla("SI");
+        int unimedCode = IntegrationTestUniqueData.singularUnimedCode();
+        String registroAns = IntegrationTestUniqueData.registroAnsForUnimedCode(unimedCode);
         MvcResult result = mockMvc.perform(post("/api/v1/singulares")
                         .contentType(MediaType.APPLICATION_JSON)
                         .cookie(accessCookie, csrfCookie)
@@ -85,10 +61,12 @@ class OrgCrossFeatureIntegrationTest {
                                 {
                                   "federationId": %d,
                                   "name": "Singular Integração",
-                                  "acronym": "SI",
-                                  "unimedCode": "777"
+                                  "acronym": "%s",
+                                  "unimedCode": %d,
+                                  "registroAns": "%s"
                                 }
-                                """.formatted(authProperties.defaultFederationId())))
+                                """
+                                .formatted(authProperties.defaultFederationId(), acronym, unimedCode, registroAns)))
                 .andExpect(status().isCreated())
                 .andReturn();
         return readId(result);
@@ -127,7 +105,13 @@ class OrgCrossFeatureIntegrationTest {
     }
 
     private long createColaborador(
-            Cookie accessCookie, Cookie csrfCookie, long singularId, long areaId, long equipeId) throws Exception {
+            Cookie accessCookie,
+            Cookie csrfCookie,
+            long singularId,
+            long areaId,
+            long equipeId,
+            String email,
+            String zimbraId) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/colaboradores")
                         .contentType(MediaType.APPLICATION_JSON)
                         .cookie(accessCookie, csrfCookie)
@@ -139,11 +123,17 @@ class OrgCrossFeatureIntegrationTest {
                                   "areaId": %d,
                                   "teamId": %d,
                                   "name": "Colaborador Integração",
-                                  "email": "integracao@unimedceara.com.br"
+                                  "email": "%s",
+                                  "zimbraId": "%s"
                                 }
                                 """
                                 .formatted(
-                                        authProperties.defaultFederationId(), singularId, areaId, equipeId)))
+                                        authProperties.defaultFederationId(),
+                                        singularId,
+                                        areaId,
+                                        equipeId,
+                                        email,
+                                        zimbraId)))
                 .andExpect(status().isCreated())
                 .andReturn();
         long id = readId(result);
@@ -154,34 +144,5 @@ class OrgCrossFeatureIntegrationTest {
     private long readId(MvcResult result) throws Exception {
         JsonNode root = jsonMapper.readTree(result.getResponse().getContentAsString());
         return root.path("data").path("id").asLong();
-    }
-
-    private void ensureAdmin() {
-        colaboradorRepository
-                .findByEmailIgnoreCase("colaborador@unimedceara.com.br")
-                .orElseGet(() -> {
-                    ColaboradorEntity admin = new ColaboradorEntity();
-                    admin.setEmail("colaborador@unimedceara.com.br");
-                    admin.setNome("Admin");
-                    admin.setZimbraId("zimbra-admin");
-                    admin.setAtivo("S");
-                    admin.setFederacaoId(authProperties.defaultFederationId());
-                    admin.setDataCadastro(Instant.now());
-                    return colaboradorRepository.save(admin);
-                });
-    }
-
-    private Cookie adminCookie() {
-        ColaboradorEntity admin = colaboradorRepository
-                .findByEmailIgnoreCase("colaborador@unimedceara.com.br")
-                .orElseThrow();
-        return TestSecurityContextFactory.jwtCookie(jwtTokenService, admin.getId());
-    }
-
-    private Cookie obtainCsrfCookie() throws Exception {
-        return mockMvc.perform(get("/actuator/health"))
-                .andReturn()
-                .getResponse()
-                .getCookie(SecurityConstants.CSRF_COOKIE);
     }
 }

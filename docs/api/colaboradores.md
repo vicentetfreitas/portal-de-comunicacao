@@ -31,8 +31,7 @@
   "managerId": 3,
   "name": "Maria Silva",
   "email": "maria.silva@unimedceara.com.br",
-  "jobTitle": "Analista",
-  "cpf": "12345678901",
+  "zimbraId": "zimbra-maria",
   "biography": "Biografia opcional"
 }
 ```
@@ -44,11 +43,12 @@
 | `areaId` | long | Não | Área ativa na singular |
 | `teamId` | long | Não | Equipe ativa na área |
 | `managerId` | long | Não | Gestor ativo, ≠ self |
-| `name` | string | Sim | `@NotBlank`, máx. 200 |
+| `name` | string | Sim | `@NotBlank`, máx. 255 |
 | `email` | string | Sim | `@Email`, máx. 255, único |
-| `jobTitle` | string | Não | máx. 100 |
-| `cpf` | string | Não | 11 caracteres, único |
-| `biography` | string | Não | — |
+| `zimbraId` | string | Sim | `@NotBlank`, máx. 255, único |
+| `biography` | string | Não | máx. 4000 |
+| `birthDate` | instant | Não | ISO-8601 |
+| `hireDate` | instant | Não | ISO-8601 |
 
 ### Response 201 — `ColaboradorResponse`
 
@@ -65,10 +65,12 @@
     "managerId": 3,
     "name": "Maria Silva",
     "email": "maria.silva@unimedceara.com.br",
-    "jobTitle": "Analista",
-    "cpf": "12345678901",
+    "zimbraId": "zimbra-maria",
     "biography": "Biografia opcional",
     "status": "ACTIVE",
+    "birthDate": null,
+    "hireDate": null,
+    "lastAccessAt": null,
     "createdAt": "2026-07-16T17:00:00Z",
     "updatedAt": null
   }
@@ -78,7 +80,7 @@
 | Código | Condição |
 |--------|----------|
 | 201 | Criado |
-| 422 | E-mail/CPF duplicado, vínculos inconsistentes |
+| 422 | E-mail/Zimbra duplicado, vínculos inconsistentes |
 
 ---
 
@@ -112,7 +114,7 @@
 
 ### Request — `UpdateColaboradorRequest`
 
-Mesmos campos de criação **exceto** `federationId` (imutável).
+Campos editáveis: `name`, vínculos organizacionais, `zimbraId`, `biography`, `birthDate`, `hireDate`. **Sem** `federationId` nem `email` (imutáveis após cadastro).
 
 ---
 

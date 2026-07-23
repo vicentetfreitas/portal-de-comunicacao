@@ -49,7 +49,7 @@ public class ColaboradorApplicationService {
     public ColaboradorResponse create(CreateColaboradorRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
         colaboradorDomainService.validateUniqueEmail(request.email(), null);
-        colaboradorDomainService.validateUniqueCpf(request.cpf(), null);
+        colaboradorDomainService.validateUniqueZimbraId(request.zimbraId(), null);
         colaboradorDomainService.validateManager(request.managerId(), null);
 
         ColaboradorDomainService.OrganizationalContext context = colaboradorDomainService.resolveOrganizationalLinks(
@@ -63,9 +63,10 @@ public class ColaboradorApplicationService {
         colaborador.setGestorId(request.managerId());
         colaborador.setNome(request.name().trim());
         colaborador.setEmail(request.email().trim().toLowerCase());
-        colaborador.setCargo(request.jobTitle());
-        colaborador.setCpf(request.cpf());
+        colaborador.setZimbraId(request.zimbraId().trim());
         colaborador.setBiografia(request.biography());
+        colaborador.setDataNascimento(request.birthDate());
+        colaborador.setDataContratacao(request.hireDate());
         colaborador.setAtivo(ColaboradorStatus.ACTIVE.toFlag());
         colaborador.setDataCadastro(Instant.now());
 
@@ -106,8 +107,7 @@ public class ColaboradorApplicationService {
     public ColaboradorResponse update(Long id, UpdateColaboradorRequest request, long colaboradorId) {
         organizationAuthorizationService.ensureOrganizationAdministrator(colaboradorId);
         ColaboradorEntity colaborador = colaboradorDomainService.loadColaboradorOrThrow(id);
-        colaboradorDomainService.validateUniqueEmail(request.email(), id);
-        colaboradorDomainService.validateUniqueCpf(request.cpf(), id);
+        colaboradorDomainService.validateUniqueZimbraId(request.zimbraId(), id);
         colaboradorDomainService.validateManager(request.managerId(), id);
 
         ColaboradorDomainService.OrganizationalContext context = colaboradorDomainService.resolveOrganizationalLinks(
@@ -118,10 +118,10 @@ public class ColaboradorApplicationService {
         colaborador.setEquipeId(context.teamId());
         colaborador.setGestorId(request.managerId());
         colaborador.setNome(request.name().trim());
-        colaborador.setEmail(request.email().trim().toLowerCase());
-        colaborador.setCargo(request.jobTitle());
-        colaborador.setCpf(request.cpf());
+        colaborador.setZimbraId(request.zimbraId().trim());
         colaborador.setBiografia(request.biography());
+        colaborador.setDataNascimento(request.birthDate());
+        colaborador.setDataContratacao(request.hireDate());
         colaborador.setDataAtualizacao(Instant.now());
 
         return colaboradorMapper.toResponse(colaboradorRepository.save(colaborador));

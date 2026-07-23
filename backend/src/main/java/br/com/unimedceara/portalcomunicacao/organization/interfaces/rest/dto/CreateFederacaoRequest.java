@@ -7,11 +7,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * Payload de atualização de singular.
+ * Payload de criação de federação.
  */
-public record UpdateSingularRequest(
+public record CreateFederacaoRequest(
         @NotBlank @Size(max = 200) String name,
         @NotBlank @Size(max = 30) String acronym,
         @NotNull @Min(1) @Max(999) Integer unimedCode,
-        @NotBlank @Size(max = 20) String registroAns) {
+        @NotBlank @Size(max = 20) String ansRegistration,
+        @Size(max = 300) String websiteUrl,
+        String description) {
 }

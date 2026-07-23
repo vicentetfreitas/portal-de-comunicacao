@@ -39,14 +39,14 @@ Progresso operacional: `construction/features/FT-AREA/construction-state.yaml` (
 - Listar áreas com paginação, filtros e ordenação
 - Atualizar dados cadastrais respeitando imutabilidade de singular
 - Ativar/inativar logicamente (sem exclusão física)
-- Validar hierarquia área pai/filha na mesma singular
+- Validação de integridade com singular e gestor (colaborador)
 - Validar gestor colaborador ativo
 
 ## Premissas
 
 - Platform Foundation encerrada (`phase: closed`)
 - FT-AUTH encerrada — autenticação JWT via cookie disponível
-- Tabela `AREA` provisionada pelo DBA (DDL em `docs/database/ddl/`)
+- Tabela `AREA` provisionada pelo DBA (DDL em `database/ddl/`)
 - Entidade `Singular` mínima para validação referencial (FT-SINGULAR fora de escopo)
 - Autorização administrativa incremental via lista de e-mails (OQ-020 pendente)
 

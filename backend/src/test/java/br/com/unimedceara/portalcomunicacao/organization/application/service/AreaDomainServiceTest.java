@@ -1,7 +1,6 @@
 package br.com.unimedceara.portalcomunicacao.organization.application.service;
 
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.repository.ColaboradorRepository;
-import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.entity.AreaEntity;
 import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.entity.SingularEntity;
 import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.repository.AreaRepository;
 import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.repository.EquipeRepository;
@@ -46,21 +45,5 @@ class AreaDomainServiceTest {
         assertThatThrownBy(() -> areaDomainService.validateActiveSingular(1L))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining("Singular inativa");
-    }
-
-    @Test
-    void shouldRejectHierarchyCycle() {
-        AreaEntity area = new AreaEntity();
-        area.setId(1L);
-
-        AreaEntity parent = new AreaEntity();
-        parent.setId(2L);
-        parent.setParentAreaId(1L);
-
-        when(areaRepository.findById(2L)).thenReturn(Optional.of(parent));
-
-        assertThatThrownBy(() -> areaDomainService.validateHierarchyCycle(1L, 2L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessageContaining("ciclo");
     }
 }

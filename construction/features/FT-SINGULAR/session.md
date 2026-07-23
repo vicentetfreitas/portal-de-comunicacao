@@ -47,7 +47,7 @@ Progresso operacional: `construction/features/FT-SINGULAR/construction-state.yam
 - Platform Foundation encerrada (`phase: closed`)
 - FT-AUTH encerrada — autenticação JWT via cookie disponível
 - FT-AREA encerrada — `AreaRepository` disponível para RN-SINGULAR-006
-- Tabela `SINGULAR` provisionada pelo DBA (DDL em `docs/database/ddl/`)
+- Tabela `SINGULAR` provisionada pelo DBA (DDL em `database/ddl/`)
 - Federação validada via seed DDL (`008-initial-data.sql`) e/ou `FederacaoRepository` mínimo
 - `SingularEntity` e `SingularRepository` mínimos existentes (scaffold FT-AREA)
 - Autorização administrativa incremental via lista de e-mails (OQ-020 pendente)

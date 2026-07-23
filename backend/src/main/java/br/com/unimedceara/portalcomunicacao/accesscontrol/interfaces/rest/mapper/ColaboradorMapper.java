@@ -21,10 +21,12 @@ public class ColaboradorMapper {
                 entity.getGestorId(),
                 entity.getNome(),
                 entity.getEmail(),
-                entity.getCargo(),
-                entity.getCpf(),
+                entity.getZimbraId(),
                 entity.getBiografia(),
                 ColaboradorStatus.fromFlag(entity.getAtivo()),
+                entity.getDataNascimento(),
+                entity.getDataContratacao(),
+                entity.getDataUltimoAcesso(),
                 entity.getDataCadastro(),
                 entity.getDataAtualizacao());
     }

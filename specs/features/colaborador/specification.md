@@ -46,9 +46,9 @@ API: `/api/v1/colaboradores`
 # Regras de Negócio
 
 - **RN-001** — Federação obrigatória
-- **RN-002** — Nome obrigatório (200 chars)
+- **RN-002** — Nome obrigatório (255 chars)
 - **RN-003** — E-mail obrigatório e único
-- **RN-004** — CPF único quando informado
+- **RN-004** — Identificador Zimbra obrigatório e único
 - **RN-005** — Contexto organizacional coerente (singular → área obrigatória; equipe na área)
 - **RN-006** — Gestor ativo; não pode ser o próprio colaborador
 - **RN-007** — Inativação lógica

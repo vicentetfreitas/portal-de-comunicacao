@@ -50,12 +50,10 @@ public class AreaApplicationService {
 
         areaDomainService.validateActiveSingular(request.singularId());
         areaDomainService.validateUniqueName(request.singularId(), request.name(), null);
-        areaDomainService.validateParentArea(request.singularId(), request.parentAreaId());
         areaDomainService.validateManager(request.managerId());
 
         AreaEntity area = new AreaEntity();
         area.setSingularId(request.singularId());
-        area.setParentAreaId(request.parentAreaId());
         area.setNome(request.name().trim());
         area.setSigla(request.acronym());
         area.setDescricao(request.description());
@@ -96,11 +94,8 @@ public class AreaApplicationService {
         AreaEntity area = areaDomainService.loadAreaOrThrow(id);
         areaDomainService.validateSingularActiveForUpdate(area);
         areaDomainService.validateUniqueName(area.getSingularId(), request.name(), id);
-        areaDomainService.validateParentArea(area.getSingularId(), request.parentAreaId());
-        areaDomainService.validateHierarchyCycle(id, request.parentAreaId());
         areaDomainService.validateManager(request.managerId());
 
-        area.setParentAreaId(request.parentAreaId());
         area.setNome(request.name().trim());
         area.setSigla(request.acronym());
         area.setDescricao(request.description());

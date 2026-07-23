@@ -56,40 +56,6 @@ public class AreaDomainService {
         }
     }
 
-    public void validateParentArea(Long singularId, Long parentAreaId) {
-        if (parentAreaId == null) {
-            return;
-        }
-
-        AreaEntity parent = areaRepository.findById(parentAreaId)
-                .orElseThrow(() -> new BusinessException(BUSINESS_RULE_CODE, "Área pai inexistente"));
-        if (!parent.isAtivo()) {
-            throw new BusinessException(BUSINESS_RULE_CODE, "Área pai inativa");
-        }
-        if (!singularId.equals(parent.getSingularId())) {
-            throw new BusinessException(BUSINESS_RULE_CODE, "Área pai pertence a outra singular");
-        }
-    }
-
-    public void validateHierarchyCycle(Long areaId, Long parentAreaId) {
-        if (parentAreaId == null) {
-            return;
-        }
-        if (areaId != null && areaId.equals(parentAreaId)) {
-            throw new BusinessException(BUSINESS_RULE_CODE, "Área não pode ser pai de si mesma");
-        }
-
-        Long currentParentId = parentAreaId;
-        while (currentParentId != null) {
-            if (areaId != null && areaId.equals(currentParentId)) {
-                throw new BusinessException(BUSINESS_RULE_CODE, "Hierarquia de área formaria ciclo");
-            }
-            currentParentId = areaRepository.findById(currentParentId)
-                    .map(AreaEntity::getParentAreaId)
-                    .orElse(null);
-        }
-    }
-
     public void validateManager(Long managerId) {
         if (managerId == null) {
             return;
@@ -105,9 +71,6 @@ public class AreaDomainService {
     public void validateDeactivation(AreaEntity area) {
         if (equipeRepository.existsByAreaIdAndAtivo(area.getId(), AreaStatus.ACTIVE.toFlag())) {
             throw new BusinessException(BUSINESS_RULE_CODE, "Área possui equipes ativas vinculadas");
-        }
-        if (areaRepository.existsByParentAreaIdAndAtivo(area.getId(), AreaStatus.ACTIVE.toFlag())) {
-            throw new BusinessException(BUSINESS_RULE_CODE, "Área possui áreas filhas ativas vinculadas");
         }
     }
 

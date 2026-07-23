@@ -10,7 +10,7 @@ feature:
   name: Área
   description: >
     Cadastro, consulta, listagem, atualização e ativação/inativação de Áreas
-    organizacionais vinculadas a Singulares, com hierarquia interna e gestor opcional.
+    organizacionais vinculadas a Singulares, em nível único, com gestor opcional. Equipes detalham a área operacionalmente.
 
 status:
   phase: closed

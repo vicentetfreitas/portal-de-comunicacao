@@ -10,13 +10,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
- * Validações de domínio da singular organizacional.
+ * Regras de domínio da singular (unicidade, inativação).
  */
 @Service
 @ConditionalOnProperty(prefix = "application.persistence", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class SingularDomainService {
 
-    private static final String BUSINESS_RULE_CODE = "BUSINESS_RULE_VIOLATION";
+    private static final String BUSINESS_RULE_CODE = "SINGULAR_BUSINESS_RULE";
 
     private final SingularRepository singularRepository;
     private final AreaRepository areaRepository;
@@ -31,16 +31,16 @@ public class SingularDomainService {
                 ? singularRepository.existsBySiglaIgnoreCase(acronym)
                 : singularRepository.existsBySiglaIgnoreCaseAndIdNot(acronym, excludeId);
         if (exists) {
-            throw new BusinessException(BUSINESS_RULE_CODE, "Já existe singular com esta sigla");
+            throw new BusinessException(BUSINESS_RULE_CODE, "Sigla já cadastrada");
         }
     }
 
-    public void validateUniqueUnimedCode(String unimedCode, Long excludeId) {
+    public void validateUniqueUnimedCode(Integer unimedCode, Long excludeId) {
         boolean exists = excludeId == null
-                ? singularRepository.existsByCodigoUnimedIgnoreCase(unimedCode)
-                : singularRepository.existsByCodigoUnimedIgnoreCaseAndIdNot(unimedCode, excludeId);
+                ? singularRepository.existsByCodigoUnimed(unimedCode)
+                : singularRepository.existsByCodigoUnimedAndIdNot(unimedCode, excludeId);
         if (exists) {
-            throw new BusinessException(BUSINESS_RULE_CODE, "Já existe singular com este código Unimed");
+            throw new BusinessException(BUSINESS_RULE_CODE, "Código Unimed já cadastrado");
         }
     }
 

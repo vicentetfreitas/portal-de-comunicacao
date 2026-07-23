@@ -27,7 +27,7 @@ Permitir o cadastro, consulta, listagem, atualização e ativação/inativação
 
 A Feature materializa o agregado **Organização Corporativa** para o conceito **Equipe**, evoluindo o scaffold mínimo criado em FT-AREA.
 
-**Fonte consultiva:** `docs/domain/04-domain-concepts.md`, `docs/domain/09-business-rules.md` (BR-007, BR-012, BR-034), `docs/database/model/03-physical-model.md` (EQUIPE).
+**Fonte consultiva:** `docs/domain/04-domain-concepts.md`, `docs/domain/09-business-rules.md` (BR-007, BR-012, BR-034), `database/model/03-physical-model.md` (EQUIPE).
 
 ---
 

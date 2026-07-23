@@ -18,6 +18,7 @@ public class SingularMapper {
                 entity.getNome(),
                 entity.getSigla(),
                 entity.getCodigoUnimed(),
+                entity.getRegistroAns(),
                 SingularStatus.fromFlag(entity.getAtivo()),
                 entity.getDataCadastro(),
                 entity.getDataAtualizacao());

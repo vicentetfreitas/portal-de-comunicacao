@@ -27,7 +27,7 @@ Permitir o cadastro, consulta, listagem, atualização e ativação/inativação
 
 A Feature materializa o agregado **Organização Corporativa** para o conceito **Singular**, evoluindo a entidade mínima introduzida em FT-AREA para CRUD completo e administrável.
 
-**Fonte consultiva:** `docs/domain/09-business-rules.md` (BR-013), `docs/database/model/02-logical-model.md` (SINGULAR), `docs/database/model/03-physical-model.md`.
+**Fonte consultiva:** `docs/domain/09-business-rules.md` (BR-013), `database/model/02-logical-model.md` (SINGULAR), `database/model/03-physical-model.md`.
 
 ---
 
@@ -246,7 +246,7 @@ A Feature materializa o agregado **Organização Corporativa** para o conceito *
 | FT-AUTH | Feature | Autenticação e identidade do usuário |
 | FT-AREA | Feature | Consulta a áreas ativas para RN-SINGULAR-006 |
 | Platform Foundation | Infraestrutura | Persistência, API, validação, exceções, observabilidade |
-| Tabela SINGULAR (DDL DBA) | Banco de dados | Modelo físico aprovado em `docs/database/ddl/` |
+| Tabela SINGULAR (DDL DBA) | Banco de dados | Modelo físico aprovado em `database/ddl/` |
 | Federação (referência) | Domínio | Validação de `COD_FEDERACAO` — seed ou entidade mínima |
 
 ---

@@ -48,15 +48,15 @@ public class ColaboradorDomainService {
         }
     }
 
-    public void validateUniqueCpf(String cpf, Long excludeId) {
-        if (cpf == null || cpf.isBlank()) {
-            return;
+    public void validateUniqueZimbraId(String zimbraId, Long excludeId) {
+        if (zimbraId == null || zimbraId.isBlank()) {
+            throw new BusinessException(BUSINESS_RULE_CODE, "Identificador Zimbra é obrigatório");
         }
         boolean exists = excludeId == null
-                ? colaboradorRepository.existsByCpf(cpf)
-                : colaboradorRepository.existsByCpfAndIdNot(cpf, excludeId);
+                ? colaboradorRepository.existsByZimbraId(zimbraId)
+                : colaboradorRepository.existsByZimbraIdAndIdNot(zimbraId, excludeId);
         if (exists) {
-            throw new BusinessException(BUSINESS_RULE_CODE, "Já existe colaborador com este CPF");
+            throw new BusinessException(BUSINESS_RULE_CODE, "Já existe colaborador com este identificador Zimbra");
         }
     }
 

@@ -10,7 +10,6 @@ import java.time.Instant;
 public record AreaResponse(
         Long id,
         Long singularId,
-        Long parentAreaId,
         String name,
         String acronym,
         String description,

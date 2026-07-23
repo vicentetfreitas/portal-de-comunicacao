@@ -49,7 +49,7 @@ Consultar `feature-manifest.yaml` (SSOD) antes de qualquer outro artefato.
 | Platform Foundation | `construction/platform-foundation/construction-state.yaml` | ✅ `phase: closed` |
 | FT-AUTH | `construction/features/FT-AUTH/construction-state.yaml` | ✅ `phase: closed` |
 | Especificação FT-AREA | `specs/features/area/` | ✅ Approved |
-| DDL AREA (DBA) | `docs/database/ddl/` | ✅ Disponível |
+| DDL AREA (DBA) | `database/ddl/` | ✅ Disponível |
 
 ---
 
@@ -60,7 +60,7 @@ Consultar `feature-manifest.yaml` (SSOD) antes de qualquer outro artefato.
 | PKG-01 | Organization Scaffold & Persistence | BC `organization`, entities, repositories, DTOs, mapper | TK-AREA-001 (base) |
 | PKG-02 | Create Area | Domain service, POST endpoint, validações RN-001..006 | TK-AREA-001, AT-AREA-001 |
 | PKG-03 | Read & List | GET/{id}, GET listagem paginada com filtros | TK-AREA-002, TK-AREA-003 |
-| PKG-04 | Update Area | PUT/{id}, hierarquia, imutabilidade singular | TK-AREA-004, AT-AREA-004 |
+| PKG-04 | Update Area | PUT/{id}, imutabilidade singular | TK-AREA-004, AT-AREA-004 |
 | PKG-05 | Status Change | PATCH/{id}/status, bloqueio inativação | TK-AREA-005, AT-AREA-005 |
 | PKG-06 | Acceptance & Closure | Suíte AT-AREA-*, validação incremental | Todos ATs |
 

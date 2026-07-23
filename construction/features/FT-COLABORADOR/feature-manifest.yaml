@@ -27,11 +27,16 @@ specification:
 construction:
   path: .
   root: construction/features/FT-COLABORADOR/
+  frontend:
+    path: ../../frontend/features/FT-COLABORADOR/
+    manifest: ../../frontend/features/FT-COLABORADOR/feature-manifest.yaml
+    state: ../../frontend/features/FT-COLABORADOR/construction-state.yaml
 
 implementation:
   backend:
     - ../../../backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/
-  frontend: []
+  frontend:
+    - ../../../frontend/src/pages/organization/colaborador/
 
 artifacts:
   manifest: feature-manifest.yaml

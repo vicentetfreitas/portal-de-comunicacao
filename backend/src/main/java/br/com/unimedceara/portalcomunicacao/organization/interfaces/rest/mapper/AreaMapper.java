@@ -15,7 +15,6 @@ public class AreaMapper {
         return new AreaResponse(
                 entity.getId(),
                 entity.getSingularId(),
-                entity.getParentAreaId(),
                 entity.getNome(),
                 entity.getSigla(),
                 entity.getDescricao(),

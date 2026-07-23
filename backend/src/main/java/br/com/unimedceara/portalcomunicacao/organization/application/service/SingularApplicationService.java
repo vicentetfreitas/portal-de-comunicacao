@@ -54,7 +54,8 @@ public class SingularApplicationService {
         singular.setFederacaoId(request.federationId());
         singular.setNome(request.name().trim());
         singular.setSigla(request.acronym().trim());
-        singular.setCodigoUnimed(request.unimedCode().trim());
+        singular.setCodigoUnimed(request.unimedCode());
+        singular.setRegistroAns(request.registroAns().trim());
         singular.setAtivo(SingularStatus.ACTIVE.toFlag());
         singular.setDataCadastro(Instant.now());
 
@@ -72,7 +73,7 @@ public class SingularApplicationService {
             Long federationId,
             String name,
             String acronym,
-            String unimedCode,
+            Integer unimedCode,
             Pageable pageable) {
         String ativoFlag = status == null ? null : status.toFlag();
         Pageable normalizedPageable = remapSort(pageable);
@@ -98,7 +99,8 @@ public class SingularApplicationService {
 
         singular.setNome(request.name().trim());
         singular.setSigla(request.acronym().trim());
-        singular.setCodigoUnimed(request.unimedCode().trim());
+        singular.setCodigoUnimed(request.unimedCode());
+        singular.setRegistroAns(request.registroAns().trim());
         singular.setDataAtualizacao(Instant.now());
 
         return singularMapper.toResponse(singularRepository.save(singular));

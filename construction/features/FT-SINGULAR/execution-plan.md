@@ -57,8 +57,8 @@ Consultar `feature-manifest.yaml` (SSOD) antes de qualquer outro artefato.
 | FT-AUTH | `construction/features/FT-AUTH/construction-state.yaml` | ✅ `phase: closed` |
 | FT-AREA | `construction/features/FT-AREA/construction-state.yaml` | ✅ `phase: closed` |
 | Especificação FT-SINGULAR | `specs/features/singular/` | ✅ Approved v1.1.1 |
-| DDL SINGULAR (DBA) | `docs/database/ddl/` | ✅ Disponível |
-| Seed FEDERACAO | `docs/database/ddl/008-initial-data.sql` | ✅ Disponível |
+| DDL SINGULAR (DBA) | `database/ddl/` | ✅ Disponível |
+| Seed FEDERACAO | `database/ddl/008-initial-data.sql` | ✅ Disponível |
 
 ---
 

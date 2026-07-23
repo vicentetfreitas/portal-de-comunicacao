@@ -12,12 +12,12 @@ Base Path: `/api/v1/colaboradores`
 
 ## CreateColaboradorRequest
 
-`federationId`, `singularId?`, `areaId?`, `teamId?`, `managerId?`, `name`, `email`, `jobTitle?`, `cpf?`, `zimbraId?`, `biography?`
+`federationId`, `singularId?`, `areaId?`, `teamId?`, `managerId?`, `name`, `email`, `zimbraId`, `biography?`, `birthDate?`, `hireDate?`
 
 ## UpdateColaboradorRequest
 
-`name`, `singularId?`, `areaId?`, `teamId?`, `managerId?`, `jobTitle?`, `cpf?`, `biography?` (sem email)
+`name`, `singularId?`, `areaId?`, `teamId?`, `managerId?`, `zimbraId`, `biography?`, `birthDate?`, `hireDate?` (sem email)
 
 ## ColaboradorResponse
 
-`id`, `federationId`, `singularId`, `areaId`, `teamId`, `managerId`, `name`, `email`, `jobTitle`, `cpf`, `zimbraId`, `biography`, `status`, `createdAt`, `updatedAt`
+`id`, `federationId`, `singularId`, `areaId`, `teamId`, `managerId`, `name`, `email`, `zimbraId`, `biography`, `status`, `birthDate`, `hireDate`, `lastAccessAt`, `createdAt`, `updatedAt`

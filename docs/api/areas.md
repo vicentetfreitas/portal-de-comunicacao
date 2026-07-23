@@ -25,7 +25,6 @@
 ```json
 {
   "singularId": 1,
-  "parentAreaId": null,
   "name": "Financeiro",
   "acronym": "FIN",
   "description": "Área financeira",
@@ -36,7 +35,6 @@
 | Campo | Tipo | Obrigatório | Validação |
 |-------|------|-------------|-----------|
 | `singularId` | long | Sim | `@NotNull` |
-| `parentAreaId` | long | Não | Mesma singular, sem ciclo |
 | `name` | string | Sim | `@NotBlank`, máx. 200 |
 | `acronym` | string | Não | máx. 30 |
 | `description` | string | Não | — |
@@ -51,7 +49,6 @@
   "data": {
     "id": 10,
     "singularId": 1,
-    "parentAreaId": null,
     "name": "Financeiro",
     "acronym": "FIN",
     "description": "Área financeira",
@@ -115,7 +112,6 @@
 
 ```json
 {
-  "parentAreaId": null,
   "name": "Financeiro Corporativo",
   "acronym": "FCORP",
   "description": "Atualizado",
@@ -129,7 +125,7 @@
 |--------|----------|
 | 200 | Atualizada |
 | 404 | Inexistente |
-| 422 | Ciclo hierárquico, gestor inativo, etc. |
+| 422 | Gestor inativo, nome duplicado, etc. |
 
 ---
 
@@ -144,10 +140,10 @@
 | Código | Condição |
 |--------|----------|
 | 200 | Status alterado |
-| 422 | Equipes ou áreas filhas ativas |
+| 422 | Equipes ativas vinculadas |
 
 ---
 
-## Hierarquia
+## Modelo organizacional
 
-Áreas suportam `parentAreaId` para subáreas na mesma singular. Ciclos são rejeitados com **422**.
+Área representa um **único nível** organizacional dentro da Singular (ou da Federação quando `COD_SINGULAR` é nulo). **Equipes** representam o detalhamento operacional da área (DEC-DB-022).

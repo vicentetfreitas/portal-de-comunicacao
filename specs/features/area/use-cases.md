@@ -82,19 +82,14 @@ Média
 
 ### Fluxo Principal
 
-1. O ator informa `singularId`, `name` e atributos opcionais (`acronym`, `description`, `parentAreaId`, `managerId`).
-2. O sistema valida obrigatoriedade, formatos e regras de negócio (RN-AREA-001 a RN-AREA-006).
+1. O ator informa `singularId`, `name` e atributos opcionais (`acronym`, `description`, `managerId`).
+2. O sistema valida obrigatoriedade, formatos e regras de negócio (RN-AREA-001 a RN-AREA-003, RN-AREA-006).
 3. O sistema persiste a área com status ativo e auditoria de criação.
 4. O sistema retorna os dados da área criada.
 
 ### Fluxos Alternativos
 
-**FA-001 — Cadastro sem área pai**
-
-1. O ator não informa `parentAreaId`.
-2. O sistema cadastra a área como raiz na singular.
-
-**FA-002 — Cadastro sem gestor**
+**FA-001 — Cadastro sem gestor**
 
 1. O ator não informa `managerId`.
 2. O sistema cadastra a área sem gestor associado.
@@ -106,17 +101,12 @@ Média
 1. Já existe área ativa com o mesmo nome na singular.
 2. O sistema rejeita a operação (HTTP 422).
 
-**FE-002 — Área pai inválida**
-
-1. `parentAreaId` não existe, está inativa ou pertence a outra singular.
-2. O sistema rejeita a operação (HTTP 422).
-
-**FE-003 — Gestor inválido**
+**FE-002 — Gestor inválido**
 
 1. `managerId` não referencia colaborador ativo.
 2. O sistema rejeita a operação (HTTP 422).
 
-**FE-004 — Não autorizado**
+**FE-003 — Não autorizado**
 
 1. Usuário sem permissão administrativa no escopo.
 2. O sistema retorna HTTP 403.
@@ -132,7 +122,7 @@ Média
 
 ### Regras de Negócio Relacionadas
 
-- RN-AREA-001, RN-AREA-002, RN-AREA-003, RN-AREA-004, RN-AREA-005, RN-AREA-006
+- RN-AREA-001, RN-AREA-002, RN-AREA-003, RN-AREA-006
 
 ### Requisitos Não Funcionais Relacionados
 
@@ -297,29 +287,24 @@ Média
 
 ### Fluxo Principal
 
-1. O ator informa o identificador e os dados a atualizar (`name`, `acronym`, `description`, `parentAreaId`, `managerId`).
+1. O ator informa o identificador e os dados a atualizar (`name`, `acronym`, `description`, `managerId`).
 2. O sistema valida regras de negócio, incluindo imutabilidade de `singularId` (RN-AREA-009).
 3. O sistema persiste as alterações e atualiza auditoria.
 4. O sistema retorna os dados atualizados.
 
 ### Fluxos de Exceção
 
-**FE-001 — Ciclo hierárquico**
-
-1. Nova área pai geraria ciclo na hierarquia.
-2. O sistema retorna HTTP 422.
-
-**FE-002 — Nome duplicado**
+**FE-001 — Nome duplicado**
 
 1. Nome já utilizado por outra área ativa na mesma singular.
 2. O sistema retorna HTTP 422.
 
-**FE-003 — Área inexistente**
+**FE-002 — Área inexistente**
 
 1. Identificador não encontrado.
 2. O sistema retorna HTTP 404.
 
-**FE-004 — Singular vinculada inativa**
+**FE-003 — Singular vinculada inativa**
 
 1. A singular vinculada à área está inativa.
 2. O sistema rejeita a operação (HTTP 422).
@@ -334,7 +319,7 @@ Média
 
 ### Regras de Negócio Relacionadas
 
-- RN-AREA-001, RN-AREA-002, RN-AREA-003, RN-AREA-004, RN-AREA-005, RN-AREA-006, RN-AREA-009
+- RN-AREA-001, RN-AREA-002, RN-AREA-003, RN-AREA-006, RN-AREA-009
 
 ### Requisitos Não Funcionais Relacionados
 
@@ -388,7 +373,7 @@ Média
 
 **FE-001 — Inativação bloqueada**
 
-1. Área possui equipes ativas ou áreas filhas ativas.
+1. Área possui equipes ativas.
 2. O sistema retorna HTTP 422.
 
 **FE-002 — Status inválido**
@@ -448,4 +433,4 @@ Este documento será considerado conforme quando:
 |--------|------|--------|-----------|
 | 1.0 | 2026-07-13 | Specification Engineer | Casos de uso iniciais FT-AREA |
 | 1.1 | 2026-07-13 | Specification Engineer | Sincronização Specification Framework v1.1 |
-| 1.1.1 | 2026-07-13 | Specification Engineer | Refinamento final — NC-03 (FE-004 singular inativa em UC-AREA-004) |
+| 1.2.0 | 2026-07-21 | Engineering Framework | Remoção hierarquia entre áreas (DEC-DB-022) |

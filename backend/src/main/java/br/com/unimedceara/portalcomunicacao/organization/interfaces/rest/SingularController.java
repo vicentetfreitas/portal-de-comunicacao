@@ -65,7 +65,7 @@ public class SingularController {
             @RequestParam(required = false) Long federationId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String acronym,
-            @RequestParam(required = false) String unimedCode,
+            @RequestParam(required = false) Integer unimedCode,
             @PageableDefault(size = 20, sort = "nome") Pageable pageable) {
         return ApiResponse.success(
                 singularApplicationService.list(status, federationId, name, acronym, unimedCode, pageable));

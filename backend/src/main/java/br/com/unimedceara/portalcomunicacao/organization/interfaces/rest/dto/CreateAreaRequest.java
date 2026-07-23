@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Size;
  */
 public record CreateAreaRequest(
         @NotNull Long singularId,
-        Long parentAreaId,
         @NotBlank @Size(max = 200) String name,
         @Size(max = 30) String acronym,
         String description,

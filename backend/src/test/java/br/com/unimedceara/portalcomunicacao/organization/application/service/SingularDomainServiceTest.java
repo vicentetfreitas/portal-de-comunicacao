@@ -32,16 +32,16 @@ class SingularDomainServiceTest {
 
         assertThatThrownBy(() -> singularDomainService.validateUniqueAcronym("UNI-CE", null))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageContaining("sigla");
+                .hasMessage("Sigla já cadastrada");
     }
 
     @Test
     void shouldRejectDuplicateUnimedCode() {
-        when(singularRepository.existsByCodigoUnimedIgnoreCase("UC001")).thenReturn(true);
+        when(singularRepository.existsByCodigoUnimed(1)).thenReturn(true);
 
-        assertThatThrownBy(() -> singularDomainService.validateUniqueUnimedCode("UC001", null))
+        assertThatThrownBy(() -> singularDomainService.validateUniqueUnimedCode(1, null))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageContaining("código Unimed");
+                .hasMessage("Código Unimed já cadastrado");
     }
 
     @Test

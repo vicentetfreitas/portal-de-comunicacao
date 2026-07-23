@@ -23,11 +23,11 @@
 
 # Objetivo
 
-Permitir o cadastro, consulta, listagem, atualização e ativação/inativação de **Áreas** organizacionais no Portal de Comunicação, como unidade departamental vinculada a uma **Singular**, suportando hierarquia interna (área pai/filha) e referência opcional a gestor.
+Permitir o cadastro, consulta, listagem, atualização e ativação/inativação de **Áreas** organizacionais no Portal de Comunicação, como unidade departamental de **nível único** vinculada a uma **Singular** (ou à Federação), com referência opcional a gestor. Equipes representam o detalhamento operacional da área.
 
 A Feature materializa o agregado **Organização Corporativa** para o conceito **Área**, habilitando a estrutura organizacional necessária para vínculos de colaboradores, equipes e escopos documentais.
 
-**Fonte consultiva:** `docs/domain/04-domain-concepts.md`, `docs/domain/09-business-rules.md` (BR-007, BR-013, BR-034), `docs/database/model/02-logical-model.md` (AREA).
+**Fonte consultiva:** `docs/domain/04-domain-concepts.md`, `docs/domain/09-business-rules.md` (BR-007, BR-013, BR-034), `database/model/02-logical-model.md` (AREA).
 
 ---
 
@@ -40,7 +40,6 @@ A Feature materializa o agregado **Organização Corporativa** para o conceito *
 - Listagem paginada com filtros e ordenação corporativos
 - Atualização de dados cadastrais da área
 - Ativação e inativação lógica (sem exclusão física)
-- Validação de hierarquia área pai/filha na mesma singular
 - Validação de integridade referencial com singular e colaborador gestor
 - Auditoria de criação e atualização (campos de auditoria)
 - Exposição via API REST versionada (`/api/v1/areas`)
@@ -78,7 +77,7 @@ A Feature materializa o agregado **Organização Corporativa** para o conceito *
 | Campo | Valor |
 |--------|--------|
 | Identificador | RF-AREA-001 |
-| Descrição | O sistema deve permitir cadastrar uma nova área informando singular, nome e demais atributos opcionais (sigla, descrição, área pai, gestor). |
+| Descrição | O sistema deve permitir cadastrar uma nova área informando singular, nome e demais atributos opcionais (sigla, descrição, gestor). |
 | Prioridade | Must |
 | Casos de Uso | UC-AREA-001 |
 
@@ -152,26 +151,6 @@ A Feature materializa o agregado **Organização Corporativa** para o conceito *
 | Impacto | Conflito retorna erro de negócio (HTTP 422). |
 | Requisitos | RF-AREA-001, RF-AREA-004 |
 
-## RN-AREA-004 — Hierarquia na mesma singular
-
-| Campo | Valor |
-|--------|--------|
-| Identificador | RN-AREA-004 |
-| Descrição | Quando informada, a área pai deve pertencer à mesma singular da área filha. |
-| Motivação | Hierarquia departamental coerente (BR-012). |
-| Impacto | Cadastro e atualização rejeitam área pai de singular distinta. |
-| Requisitos | RF-AREA-001, RF-AREA-004 |
-
-## RN-AREA-005 — Prevenção de ciclo hierárquico
-
-| Campo | Valor |
-|--------|--------|
-| Identificador | RN-AREA-005 |
-| Descrição | A hierarquia área pai/filha não pode formar ciclos. |
-| Motivação | Integridade estrutural da árvore organizacional. |
-| Impacto | Atualização de área pai inválida retorna erro de negócio. |
-| Requisitos | RF-AREA-001, RF-AREA-004 |
-
 ## RN-AREA-006 — Gestor colaborador válido
 
 | Campo | Valor |
@@ -197,7 +176,7 @@ A Feature materializa o agregado **Organização Corporativa** para o conceito *
 | Campo | Valor |
 |--------|--------|
 | Identificador | RN-AREA-008 |
-| Descrição | Não é permitido inativar área que possua equipes ativas ou áreas filhas ativas vinculadas. |
+| Descrição | Não é permitido inativar área que possua equipes ativas vinculadas. |
 | Motivação | Preservar integridade do agregado Organização Corporativa. |
 | Impacto | Inativação bloqueada com erro de negócio (HTTP 422). |
 | Requisitos | RF-AREA-005 |
@@ -266,7 +245,7 @@ A Feature materializa o agregado **Organização Corporativa** para o conceito *
 | FT-AUTH | Feature | Autenticação e identidade do usuário |
 | FT-SINGULAR | Feature | Singular deve existir para vínculo da área |
 | Platform Foundation | Infraestrutura | Persistência, API, validação, exceções, observabilidade |
-| Tabela AREA (DDL DBA) | Banco de dados | Modelo físico aprovado em `docs/database/ddl/` |
+| Tabela AREA (DDL DBA) | Banco de dados | Modelo físico aprovado em `database/ddl/` |
 | Colaborador (referência) | Domínio | Validação de gestor (`COD_GESTOR`) |
 
 ---
@@ -331,4 +310,4 @@ Este documento será considerado conforme quando:
 |--------|------|--------|-----------|
 | 1.0 | 2026-07-13 | Specification Engineer | Especificação inicial FT-AREA |
 | 1.1 | 2026-07-13 | Specification Engineer | Sincronização Specification Framework v1.1 |
-| 1.1.1 | 2026-07-13 | Specification Engineer | Refinamento final — NC-03 (clareza RN-AREA-001 × RF-AREA-004) |
+| 1.2.0 | 2026-07-21 | Engineering Framework | Remoção de hierarquia entre áreas (DEC-DB-022); área em nível único |

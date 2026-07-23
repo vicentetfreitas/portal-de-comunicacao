@@ -16,10 +16,12 @@ public record ColaboradorResponse(
         Long managerId,
         String name,
         String email,
-        String jobTitle,
-        String cpf,
+        String zimbraId,
         String biography,
         ColaboradorStatus status,
+        Instant birthDate,
+        Instant hireDate,
+        Instant lastAccessAt,
         Instant createdAt,
         Instant updatedAt) {
 }

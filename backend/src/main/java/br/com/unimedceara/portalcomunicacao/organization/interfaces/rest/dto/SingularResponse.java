@@ -12,7 +12,8 @@ public record SingularResponse(
         Long federationId,
         String name,
         String acronym,
-        String unimedCode,
+        Integer unimedCode,
+        String registroAns,
         SingularStatus status,
         Instant createdAt,
         Instant updatedAt) {
