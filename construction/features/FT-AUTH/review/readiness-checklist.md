@@ -24,7 +24,7 @@
 | RR-AUTH-06 | Integração Zimbra abstrata | `ZimbraIdentityProviderClient` | ✅ |
 | RR-AUTH-07 | Limite 3 sessões simultâneas | `SessionService.enforceSessionLimit` | ✅ |
 | RR-AUTH-08 | Auditoria sem dados sensíveis | `AuthAuditService` | ✅ |
-| RR-AUTH-09 | Baseline DDL + `AUTH_SESSAO` no schema | DBA / `docs/database/ddl/` | ✅ |
+| RR-AUTH-09 | Baseline DDL + `AUTH_SESSAO` no schema | DBA / `database/ddl/` | ✅ |
 | RR-AUTH-10 | 14 cenários AC-AUTH aprovados | `AuthAcceptanceIntegrationTest` | ✅ |
 | RR-AUTH-11 | Revogação administrativa (RF-AUTH-010 + RN-AUTH-013) | `AdminSessionController`, `SessionAdministratorAuthorizationService` | ✅ |
 | RR-AUTH-12 | Frontend auth (FE-001..011) | — | ➖ N/A — fora do escopo Sprint 1 |

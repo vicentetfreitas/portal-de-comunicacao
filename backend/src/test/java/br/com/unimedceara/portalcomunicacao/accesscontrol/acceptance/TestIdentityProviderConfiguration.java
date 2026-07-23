@@ -1,21 +1,15 @@
 package br.com.unimedceara.portalcomunicacao.accesscontrol.acceptance;
 
-import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityProviderClient;
+import org.springframework.context.annotation.Import;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 
+import br.com.unimedceara.portalcomunicacao.support.config.TestIdentityProviderAutoConfiguration;
+
+/**
+ * Import explícito opcional — o perfil {@code test} já registra os beans via
+ * {@link TestIdentityProviderAutoConfiguration}. Mantido para compatibilidade com suítes FT-AUTH.
+ */
 @TestConfiguration
+@Import(TestIdentityProviderAutoConfiguration.class)
 public class TestIdentityProviderConfiguration {
-
-    @Bean
-    TestIdentityProviderClient testIdentityProviderClient() {
-        return new TestIdentityProviderClient();
-    }
-
-    @Bean
-    @Primary
-    IdentityProviderClient identityProviderClient(TestIdentityProviderClient testIdentityProviderClient) {
-        return testIdentityProviderClient;
-    }
 }

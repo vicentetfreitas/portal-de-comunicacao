@@ -9,16 +9,18 @@ import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persist
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.repository.ColaboradorRepository;
 import br.com.unimedceara.portalcomunicacao.configuration.properties.AuthProperties;
 import br.com.unimedceara.portalcomunicacao.configuration.properties.SecurityProperties;
+import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityProviderClient;
 import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
 import br.com.unimedceara.portalcomunicacao.support.annotation.IntegrationTest;
+import br.com.unimedceara.portalcomunicacao.support.base.AbstractTransactionalMockMvcIntegrationTest;
+import br.com.unimedceara.portalcomunicacao.support.fixture.builder.ColaboradorTestBuilder;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.context.WebApplicationContext;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -27,14 +29,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * Suíte de testes automatizados dos critérios de aceite FT-AUTH.
@@ -42,16 +43,17 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  */
 @IntegrationTest
 @Import(TestIdentityProviderConfiguration.class)
-class AuthAcceptanceIntegrationTest {
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrationTest {
 
     @Autowired
     private OAuthStateService oAuthStateService;
 
     @Autowired
-    private TestIdentityProviderClient testIdentityProviderClient;
+    private IdentityProviderClient identityProviderClient;
+
+    private TestIdentityProviderClient testIdentityProviderClient() {
+        return (TestIdentityProviderClient) identityProviderClient;
+    }
 
     @Autowired
     private AuthSessaoRepository authSessaoRepository;
@@ -74,19 +76,15 @@ class AuthAcceptanceIntegrationTest {
     @Autowired
     private JsonMapper jsonMapper;
 
-    private MockMvc mockMvc;
-
     @BeforeEach
-    void setUp() {
-        mockMvc = webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
-        testIdentityProviderClient.reset();
-        authSessaoRepository.deleteAll();
+    void resetIdentityProvider() {
+        testIdentityProviderClient().reset();
     }
 
     @Test
     @AcceptanceCriterion(value = "AC-AUTH-001", type = AcceptanceCriterion.TestType.API)
     void acAuth001_shouldAuthenticateSuccessfullyWithHttpOnlyCookies() throws Exception {
-        int validationsBefore = testIdentityProviderClient.getValidationCallCount();
+        int validationsBefore = testIdentityProviderClient().getValidationCallCount();
 
         MvcResult callbackResult = performSuccessfulCallback(false);
         Cookie accessCookie = findCookie(callbackResult, SecurityConstants.ACCESS_TOKEN_COOKIE);
@@ -94,7 +92,7 @@ class AuthAcceptanceIntegrationTest {
 
         assertThat(accessCookie).isNotNull();
         assertThat(refreshCookie).isNotNull();
-        assertThat(testIdentityProviderClient.getValidationCallCount()).isEqualTo(validationsBefore + 1);
+        assertThat(testIdentityProviderClient().getValidationCallCount()).isEqualTo(validationsBefore + 1);
 
         mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
                 .andExpect(status().isOk())
@@ -104,11 +102,31 @@ class AuthAcceptanceIntegrationTest {
                 .andExpect(jsonPath("$.data.permissions").isArray())
                 .andExpect(jsonPath("$.data.sessionId").isNotEmpty());
 
-        int validationsAfterMe = testIdentityProviderClient.getValidationCallCount();
+        int validationsAfterMe = testIdentityProviderClient().getValidationCallCount();
         mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie)).andExpect(status().isOk());
-        assertThat(testIdentityProviderClient.getValidationCallCount())
+        assertThat(testIdentityProviderClient().getValidationCallCount())
                 .as("Zimbra não deve ser consultado após o callback")
                 .isEqualTo(validationsAfterMe);
+    }
+
+    @Test
+    void shouldAuthenticateWithCredentialsViaPostLogin() throws Exception {
+        MvcResult result = mockMvc.perform(
+                        post("/api/v1/auth/login")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                .param("email", "colaborador@unimedceara.com.br")
+                                .param("password", "secret")
+                                .param("remember_me", "false"))
+                .andExpect(status().isFound())
+                .andReturn();
+
+        Cookie accessCookie = findCookie(result, SecurityConstants.ACCESS_TOKEN_COOKIE);
+        assertThat(accessCookie).isNotNull();
+
+        mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.email").value("colaborador@unimedceara.com.br"));
     }
 
     @Test
@@ -148,11 +166,9 @@ class AuthAcceptanceIntegrationTest {
         MvcResult callbackResult = performSuccessfulCallback(false);
         Cookie accessCookie = findCookie(callbackResult, SecurityConstants.ACCESS_TOKEN_COOKIE);
         Cookie refreshCookie = findCookie(callbackResult, SecurityConstants.REFRESH_TOKEN_COOKIE);
-        Cookie csrfCookie = obtainCsrfCookie();
-
         mockMvc.perform(post("/api/v1/auth/logout")
-                        .cookie(accessCookie, refreshCookie, csrfCookie)
-                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue()))
+                        .with(csrf())
+                        .cookie(accessCookie, refreshCookie))
                 .andExpect(status().isNoContent());
 
         String refreshHash = hashRefreshToken(refreshCookie.getValue());
@@ -168,7 +184,6 @@ class AuthAcceptanceIntegrationTest {
     void acAuth005_shouldRenewAccessTokenWhenExpired() throws Exception {
         MvcResult callbackResult = performSuccessfulCallback(false);
         Cookie refreshCookie = findCookie(callbackResult, SecurityConstants.REFRESH_TOKEN_COOKIE);
-        Cookie csrfCookie = obtainCsrfCookie();
 
         MvcResult meResult = mockMvc.perform(get("/api/v1/auth/me")
                         .cookie(findCookie(callbackResult, SecurityConstants.ACCESS_TOKEN_COOKIE)))
@@ -191,8 +206,8 @@ class AuthAcceptanceIntegrationTest {
                 .andExpect(status().isUnauthorized());
 
         MvcResult refreshResult = mockMvc.perform(post("/api/v1/auth/refresh")
-                        .cookie(refreshCookie, csrfCookie)
-                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue()))
+                        .with(csrf())
+                        .cookie(refreshCookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Access token renovado"))
                 .andReturn();
@@ -208,7 +223,7 @@ class AuthAcceptanceIntegrationTest {
     @Test
     @AcceptanceCriterion(value = "AC-AUTH-006", type = AcceptanceCriterion.TestType.API)
     void acAuth006_shouldReturnServiceUnavailableWhenZimbraUnavailableOnLogin() throws Exception {
-        testIdentityProviderClient.setAuthorizationUnavailable(true);
+        testIdentityProviderClient().setAuthorizationUnavailable(true);
 
         mockMvc.perform(get("/api/v1/auth/login"))
                 .andExpect(status().isServiceUnavailable())
@@ -237,13 +252,12 @@ class AuthAcceptanceIntegrationTest {
     void acAuth008_shouldRefreshAccessTokenWithValidRefreshToken() throws Exception {
         MvcResult callbackResult = performSuccessfulCallback(false);
         Cookie refreshCookie = findCookie(callbackResult, SecurityConstants.REFRESH_TOKEN_COOKIE);
-        Cookie csrfCookie = obtainCsrfCookie();
 
         String originalRefreshValue = refreshCookie.getValue();
 
         MvcResult refreshResult = mockMvc.perform(post("/api/v1/auth/refresh")
-                        .cookie(refreshCookie, csrfCookie)
-                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue()))
+                        .with(csrf())
+                        .cookie(refreshCookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andReturn();
@@ -266,7 +280,6 @@ class AuthAcceptanceIntegrationTest {
     void acAuth009_shouldRejectExpiredRefreshToken() throws Exception {
         MvcResult callbackResult = performSuccessfulCallback(false);
         Cookie refreshCookie = findCookie(callbackResult, SecurityConstants.REFRESH_TOKEN_COOKIE);
-        Cookie csrfCookie = obtainCsrfCookie();
 
         AuthSessaoEntity sessao = authSessaoRepository
                 .findByRefreshTokenHash(hashRefreshToken(refreshCookie.getValue()))
@@ -275,8 +288,8 @@ class AuthAcceptanceIntegrationTest {
         authSessaoRepository.save(sessao);
 
         mockMvc.perform(post("/api/v1/auth/refresh")
-                        .cookie(refreshCookie, csrfCookie)
-                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue()))
+                        .with(csrf())
+                        .cookie(refreshCookie))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error").value("UNAUTHORIZED"));
     }
@@ -287,7 +300,6 @@ class AuthAcceptanceIntegrationTest {
         MvcResult callbackResult = performSuccessfulCallback(false);
         Cookie accessCookie = findCookie(callbackResult, SecurityConstants.ACCESS_TOKEN_COOKIE);
         Cookie refreshCookie = findCookie(callbackResult, SecurityConstants.REFRESH_TOKEN_COOKIE);
-        Cookie csrfCookie = obtainCsrfCookie();
 
         MvcResult meResult = mockMvc.perform(get("/api/v1/auth/me")
                         .cookie(accessCookie))
@@ -297,16 +309,16 @@ class AuthAcceptanceIntegrationTest {
         String sessionId = readJsonPath(meResult, "/data/sessionId");
 
         mockMvc.perform(delete("/api/v1/admin/sessions/{sessionId}", sessionId)
-                        .cookie(accessCookie, csrfCookie)
-                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue()))
+                        .with(csrf())
+                        .cookie(accessCookie))
                 .andExpect(status().isNoContent());
 
         AuthSessaoEntity sessao = authSessaoRepository.findBySessionId(sessionId).orElseThrow();
         assertThat(sessao.isRevogada()).isTrue();
 
         mockMvc.perform(post("/api/v1/auth/refresh")
-                        .cookie(refreshCookie, csrfCookie)
-                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue()))
+                        .with(csrf())
+                        .cookie(refreshCookie))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -397,39 +409,21 @@ class AuthAcceptanceIntegrationTest {
                 .andReturn();
     }
 
-    private Cookie obtainCsrfCookie() throws Exception {
-        MvcResult csrfResult = mockMvc.perform(get("/actuator/health")).andReturn();
-        Cookie csrfCookie = findCookie(csrfResult, SecurityConstants.CSRF_COOKIE);
-        assertThat(csrfCookie).isNotNull();
-        return csrfCookie;
-    }
-
     private void seedInactiveColaborador() {
-        if (colaboradorRepository.findByEmailIgnoreCase("inactive@unimedceara.com.br").isPresent()) {
-            return;
-        }
-        ColaboradorEntity colaborador = new ColaboradorEntity();
-        colaborador.setEmail("inactive@unimedceara.com.br");
-        colaborador.setNome("Colaborador Inativo");
-        colaborador.setZimbraId("zimbra-id-inactive");
-        colaborador.setAtivo("N");
-        colaborador.setFederacaoId(authProperties.defaultFederationId());
-        colaborador.setDataCadastro(Instant.now());
-        colaboradorRepository.save(colaborador);
+        ColaboradorTestBuilder.forFederation(authProperties.defaultFederationId())
+                .email("inactive@unimedceara.com.br")
+                .nome("Colaborador Inativo")
+                .zimbraId("zimbra-id-inactive")
+                .ativo("N")
+                .persist(colaboradorRepository);
     }
 
     private ColaboradorEntity ensureColaboradorExists() {
-        return colaboradorRepository.findByEmailIgnoreCase("colaborador@unimedceara.com.br")
-                .orElseGet(() -> {
-                    ColaboradorEntity colaborador = new ColaboradorEntity();
-                    colaborador.setEmail("colaborador@unimedceara.com.br");
-                    colaborador.setNome("Colaborador Teste");
-                    colaborador.setZimbraId("zimbra-id-test");
-                    colaborador.setAtivo("S");
-                    colaborador.setFederacaoId(authProperties.defaultFederationId());
-                    colaborador.setDataCadastro(Instant.now());
-                    return colaboradorRepository.save(colaborador);
-                });
+        return ColaboradorTestBuilder.forFederation(authProperties.defaultFederationId())
+                .email("colaborador@unimedceara.com.br")
+                .nome("Colaborador Teste")
+                .zimbraId("zimbra-id-test")
+                .persist(colaboradorRepository);
     }
 
     private void createSessionForColaborador(ColaboradorEntity colaborador, String dispositivo, boolean rememberMe) {

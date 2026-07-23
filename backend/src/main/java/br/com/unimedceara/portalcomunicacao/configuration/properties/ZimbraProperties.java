@@ -6,12 +6,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Propriedades de configuração Zimbra (estrutura apenas — sem cliente HTTP).
+ * Propriedades de integração Zimbra (IMAP / SMTP / SOAP) — FT-AUTH.
  */
 @Validated
 @ConfigurationProperties(prefix = "application.zimbra")
 public record ZimbraProperties(
-        @NotBlank String authUrl,
-        @NotBlank String validateUrl,
+        @NotBlank String loginPageUrl,
+        @NotBlank String imapHost,
+        @Min(1) int imapPort,
+        boolean imapSsl,
+        @NotBlank String smtpHost,
+        @Min(1) int smtpPort,
+        boolean smtpSsl,
+        boolean smtpStartTls,
+        @NotBlank String soapUrl,
         @Min(1) int timeoutMs) {
 }

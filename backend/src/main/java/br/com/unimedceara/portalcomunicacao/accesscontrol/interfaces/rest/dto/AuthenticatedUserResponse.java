@@ -10,5 +10,6 @@ public record AuthenticatedUserResponse(
         String email,
         String name,
         List<String> permissions,
-        String sessionId) {
+        String sessionId,
+        ColaboradorOrganizationalLinksResponse organizationalLinks) {
 }

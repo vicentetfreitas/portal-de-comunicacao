@@ -46,7 +46,6 @@ As **permissões da aplicação** são carregadas exclusivamente do **banco de d
 - Emitir tokens de sessão do Portal
 - Fornecer permissões da aplicação
 - Manter sessão operacional do Portal
-- Seleção de contexto organizacional (Singular, Área, Equipe)
 
 ## Portal (Backend)
 
@@ -200,7 +199,7 @@ O Portal **não utiliza HTTP Session** (Servlet Session). A sessão é represent
 | `iat` | number | Timestamp de emissão |
 | `exp` | number | Timestamp de expiração (15 min) |
 
-Claims de contexto organizacional (`singularId`, `areaId`, `teamId`) são adicionados após seleção pelo usuário em Features futuras de organização.
+Claims opcionais de vínculos organizacionais do colaborador (`fid`, `singularId`, `areaId`, `teamId`) refletem `COLABORADOR` na emissão do token — não são persistidos em `AUTH_SESSAO`.
 
 **O Access Token não contém permissões.** Permissões são carregadas do banco a cada requisição que exige autorização.
 

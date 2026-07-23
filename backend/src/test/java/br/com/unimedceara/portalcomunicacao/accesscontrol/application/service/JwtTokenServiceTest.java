@@ -44,6 +44,20 @@ class JwtTokenServiceTest {
     }
 
     @Test
+    void shouldIssueAndValidateTokenWithColaboradorOrganizationalClaims() {
+        String token = jwtTokenService.issueToken(
+                42L, "session-uuid", "user@unimedceara.com.br", "João Silva", 1L, 2L, 3L, 4L);
+
+        Optional<JwtClaims> claims = jwtTokenService.validateAndParse(token);
+
+        assertThat(claims).isPresent();
+        assertThat(claims.get().federationId()).isEqualTo(1L);
+        assertThat(claims.get().singularId()).isEqualTo(2L);
+        assertThat(claims.get().areaId()).isEqualTo(3L);
+        assertThat(claims.get().teamId()).isEqualTo(4L);
+    }
+
+    @Test
     void shouldRejectTamperedToken() {
         String token = jwtTokenService.issueToken(1L, "sid", "a@b.com", "A");
         String tampered = token.substring(0, token.length() - 2) + "xx";

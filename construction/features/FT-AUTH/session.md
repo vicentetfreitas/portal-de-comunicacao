@@ -129,7 +129,7 @@ Ordem obrigatória: PKG-01 → PKG-02 → … → PKG-06.
 | Acceptance | `acceptance-tests.md` | AC-AUTH-001..014 |
 | Arquitetura | `authentication-architecture.md` | AUTH_SESSAO, fluxos, segurança |
 | Backend | `accesscontrol/` bounded context | domain → application → infrastructure → interfaces |
-| Migration | `V2__access_control.sql` | AUTH_SESSAO, COLABORADOR (mínimo) |
+| Migration | `V2__access_control.sql` | **Obsoleto (DEC-DB-019)** — não usar como schema; ver `database/ddl/` |
 
 ## Riscos
 

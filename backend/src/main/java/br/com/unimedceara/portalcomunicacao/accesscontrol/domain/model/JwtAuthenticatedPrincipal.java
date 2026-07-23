@@ -9,7 +9,11 @@ public record JwtAuthenticatedPrincipal(
         long colaboradorId,
         String sessionId,
         String email,
-        String name) implements Principal {
+        String name,
+        Long federationId,
+        Long singularId,
+        Long areaId,
+        Long teamId) implements Principal {
 
     @Override
     public String getName() {

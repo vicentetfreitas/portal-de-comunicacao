@@ -1,0 +1,11 @@
+# Feature — FT-SESSION
+
+id: session
+code: FT-SESSION
+name: Sessão e contexto organizacional
+status: APPROVED
+template: crud-feature@1.1
+
+dependencies:
+  - FT-AUTH
+  - FT-COLABORADOR

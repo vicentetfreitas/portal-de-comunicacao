@@ -1,5 +1,6 @@
 package br.com.unimedceara.portalcomunicacao.accesscontrol.acceptance;
 
+import br.com.unimedceara.portalcomunicacao.accesscontrol.application.port.IdentityCredentialValidator;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityProviderClient;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationRequest;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationResult;
@@ -13,7 +14,7 @@ import java.util.function.Function;
 /**
  * Provedor de identidade configurável para testes de aceite FT-AUTH.
  */
-public class TestIdentityProviderClient implements IdentityProviderClient {
+public class TestIdentityProviderClient implements IdentityProviderClient, IdentityCredentialValidator {
 
     public static final String VALID_TOKEN = "valid-callback-token";
     public static final String INVALID_CREDENTIALS_TOKEN = "invalid-credentials-token";
@@ -28,8 +29,37 @@ public class TestIdentityProviderClient implements IdentityProviderClient {
 
     @Override
     public IdentityValidationResult validateIdentity(IdentityValidationRequest request) {
+        return validateOpaqueToken(request.validationToken());
+    }
+
+    @Override
+    public IdentityValidationResult validateOpaqueToken(String opaqueToken) {
         validationCallCount.incrementAndGet();
-        return validationBehavior.apply(request.validationToken());
+        return validationBehavior.apply(opaqueToken);
+    }
+
+    @Override
+    public IdentityValidationResult validateCredentials(String email, String password) {
+        validationCallCount.incrementAndGet();
+        if (email == null || email.isBlank() || password == null || password.isBlank()) {
+            throw new UnauthorizedException("Autenticação não realizada");
+        }
+        if ("invalid@unimedceara.com.br".equalsIgnoreCase(email)) {
+            throw new UnauthorizedException("Credenciais inválidas");
+        }
+        if ("inactive@unimedceara.com.br".equalsIgnoreCase(email)) {
+            return new IdentityValidationResult(
+                    "inactive@unimedceara.com.br",
+                    "Colaborador Inativo",
+                    "zimbra-id-inactive");
+        }
+        if ("unavailable@unimedceara.com.br".equalsIgnoreCase(email)) {
+            throw new IntegrationUnavailableException("Zimbra identity provider unavailable");
+        }
+        return new IdentityValidationResult(
+                email,
+                "Colaborador Teste",
+                "zimbra-id-test");
     }
 
     @Override
@@ -37,7 +67,7 @@ public class TestIdentityProviderClient implements IdentityProviderClient {
         if (authorizationUnavailable) {
             throw new IntegrationUnavailableException("Zimbra identity provider unavailable");
         }
-        return URI.create("http://localhost/zimbra/auth?state=" + state + "&redirect_uri=" + callbackUrl);
+        return URI.create("http://localhost:9000/auth?state=" + state + "&callback=" + callbackUrl);
     }
 
     public void reset() {

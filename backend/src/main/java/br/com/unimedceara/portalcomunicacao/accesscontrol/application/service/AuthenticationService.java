@@ -1,12 +1,13 @@
 package br.com.unimedceara.portalcomunicacao.accesscontrol.application.service;
 
+import br.com.unimedceara.portalcomunicacao.accesscontrol.application.port.IdentityCredentialValidator;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.domain.model.JwtAuthenticatedPrincipal;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.AuthSessaoEntity;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.ColaboradorEntity;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest.dto.AuthenticatedUserResponse;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest.dto.ColaboradorOrganizationalLinksResponse;
 import br.com.unimedceara.portalcomunicacao.configuration.properties.AuthProperties;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityProviderClient;
-import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationRequest;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationResult;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.exception.IntegrationUnavailableException;
 import br.com.unimedceara.portalcomunicacao.shared.exception.ForbiddenException;
@@ -37,6 +38,7 @@ public class AuthenticationService {
 
     private final OAuthStateService oAuthStateService;
     private final IdentityProviderClient identityProviderClient;
+    private final IdentityCredentialValidator identityCredentialValidator;
     private final ColaboradorService colaboradorService;
     private final SessionService sessionService;
     private final JwtTokenService jwtTokenService;
@@ -47,6 +49,7 @@ public class AuthenticationService {
     public AuthenticationService(
             OAuthStateService oAuthStateService,
             IdentityProviderClient identityProviderClient,
+            IdentityCredentialValidator identityCredentialValidator,
             ColaboradorService colaboradorService,
             SessionService sessionService,
             JwtTokenService jwtTokenService,
@@ -55,6 +58,7 @@ public class AuthenticationService {
             AuthProperties authProperties) {
         this.oAuthStateService = oAuthStateService;
         this.identityProviderClient = identityProviderClient;
+        this.identityCredentialValidator = identityCredentialValidator;
         this.colaboradorService = colaboradorService;
         this.sessionService = sessionService;
         this.jwtTokenService = jwtTokenService;
@@ -64,7 +68,7 @@ public class AuthenticationService {
     }
 
     /**
-     * Inicia fluxo de login redirecionando ao Zimbra com state anti-CSRF.
+     * Inicia fluxo de login redirecionando à página de credenciais do Portal (state anti-CSRF).
      */
     public URI initiateLogin(boolean rememberMe, HttpServletRequest request) {
         try {
@@ -78,7 +82,43 @@ public class AuthenticationService {
     }
 
     /**
-     * Processa callback do Zimbra, emite tokens e redireciona ao frontend.
+     * Valida credenciais no Zimbra e conclui login (emissão de cookies e redirect).
+     */
+    @Transactional
+    public URI authenticateWithCredentials(
+            String email,
+            String password,
+            boolean rememberMe,
+            String state,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        boolean resolvedRememberMe = rememberMe;
+        if (state != null && !state.isBlank()) {
+            try {
+                resolvedRememberMe = oAuthStateService.consumeState(state);
+            } catch (ValidationException ex) {
+                authAuditService.logLoginFailure("invalid_state");
+                throw ex;
+            }
+        }
+
+        IdentityValidationResult identity;
+        try {
+            identity = identityCredentialValidator.validateCredentials(email, password);
+        } catch (IntegrationUnavailableException ex) {
+            authAuditService.logIdentityProviderUnavailable();
+            authAuditService.logLoginFailure("zimbra_unavailable");
+            throw ex;
+        } catch (RuntimeException ex) {
+            authAuditService.logLoginFailure("invalid_identity");
+            throw new UnauthorizedException(UNAUTHORIZED_MESSAGE);
+        }
+
+        return finalizeLogin(identity, resolvedRememberMe, request, response);
+    }
+
+    /**
+     * Processa callback (token opaco), emite tokens e redireciona ao frontend.
      */
     @Transactional
     public URI handleCallback(String token, String state, HttpServletRequest request,
@@ -98,7 +138,7 @@ public class AuthenticationService {
 
         IdentityValidationResult identity;
         try {
-            identity = identityProviderClient.validateIdentity(new IdentityValidationRequest(token));
+            identity = identityCredentialValidator.validateOpaqueToken(token);
         } catch (IntegrationUnavailableException ex) {
             authAuditService.logIdentityProviderUnavailable();
             authAuditService.logLoginFailure("zimbra_unavailable");
@@ -108,6 +148,14 @@ public class AuthenticationService {
             throw new UnauthorizedException(UNAUTHORIZED_MESSAGE);
         }
 
+        return finalizeLogin(identity, rememberMe, request, response);
+    }
+
+    private URI finalizeLogin(
+            IdentityValidationResult identity,
+            boolean rememberMe,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         ColaboradorEntity colaborador = colaboradorService.locateOrCreate(identity);
         if (!colaborador.isAtivo()) {
             authAuditService.logLoginFailure("colaborador_inativo");
@@ -117,11 +165,7 @@ public class AuthenticationService {
         String dispositivo = request.getHeader("User-Agent");
         SessionService.SessionCreationResult session = sessionService.createSession(colaborador, rememberMe, dispositivo);
 
-        String accessToken = jwtTokenService.issueToken(
-                colaborador.getId(),
-                session.sessionId(),
-                colaborador.getEmail(),
-                colaborador.getNome());
+        String accessToken = issueAccessToken(colaborador, session.sessionId());
 
         authCookieService.setAccessTokenCookie(response, accessToken);
         authCookieService.setRefreshTokenCookie(response, session.rawRefreshToken(), session.rememberMe());
@@ -154,11 +198,7 @@ public class AuthenticationService {
             throw new ForbiddenException(FORBIDDEN_MESSAGE);
         }
 
-        String accessToken = jwtTokenService.issueToken(
-                colaborador.getId(),
-                sessao.getSessionId(),
-                colaborador.getEmail(),
-                colaborador.getNome());
+        String accessToken = issueAccessToken(colaborador, sessao.getSessionId());
 
         authCookieService.setAccessTokenCookie(response, accessToken);
         authAuditService.logRefresh(colaborador.getId(), sessao.getSessionId());
@@ -195,7 +235,28 @@ public class AuthenticationService {
                 colaborador.getEmail(),
                 colaborador.getNome(),
                 permissions,
-                principal.sessionId());
+                principal.sessionId(),
+                organizationalLinksFrom(colaborador));
+    }
+
+    private String issueAccessToken(ColaboradorEntity colaborador, String sessionId) {
+        return jwtTokenService.issueToken(
+                colaborador.getId(),
+                sessionId,
+                colaborador.getEmail(),
+                colaborador.getNome(),
+                colaborador.getFederacaoId(),
+                colaborador.getSingularId(),
+                colaborador.getAreaId(),
+                colaborador.getEquipeId());
+    }
+
+    static ColaboradorOrganizationalLinksResponse organizationalLinksFrom(ColaboradorEntity colaborador) {
+        return new ColaboradorOrganizationalLinksResponse(
+                colaborador.getFederacaoId(),
+                colaborador.getSingularId(),
+                colaborador.getAreaId(),
+                colaborador.getEquipeId());
     }
 
     private List<String> loadPermissions(long colaboradorId) {

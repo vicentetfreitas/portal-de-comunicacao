@@ -39,6 +39,21 @@ public class JwtTokenService {
      * Emite um Access Token JWT com os claims obrigatórios da Feature FT-AUTH.
      */
     public String issueToken(long colaboradorId, String sessionId, String email, String name) {
+        return issueToken(colaboradorId, sessionId, email, name, null, null, null, null);
+    }
+
+    /**
+     * Emite Access Token com vínculos organizacionais do colaborador (claims opcionais).
+     */
+    public String issueToken(
+            long colaboradorId,
+            String sessionId,
+            String email,
+            String name,
+            Long federationId,
+            Long singularId,
+            Long areaId,
+            Long teamId) {
         Instant now = Instant.now();
         Instant expiration = now.plusSeconds(securityProperties.jwtAccessTtlMinutes() * 60L);
 
@@ -47,6 +62,18 @@ public class JwtTokenService {
         payload.put("sid", sessionId);
         payload.put("email", email);
         payload.put("name", name);
+        if (federationId != null) {
+            payload.put("fid", federationId);
+        }
+        if (singularId != null) {
+            payload.put("singularId", singularId);
+        }
+        if (areaId != null) {
+            payload.put("areaId", areaId);
+        }
+        if (teamId != null) {
+            payload.put("teamId", teamId);
+        }
         payload.put("iat", now.getEpochSecond());
         payload.put("exp", expiration.getEpochSecond());
         payload.put("iss", securityProperties.jwtIssuer());
@@ -96,7 +123,20 @@ public class JwtTokenService {
                 return Optional.empty();
             }
 
-            return Optional.of(new JwtClaims(Long.parseLong(subject), sessionId, email, name));
+            Long federationId = readLong(payload, "fid");
+            Long singularId = readLong(payload, "singularId");
+            Long areaId = readLong(payload, "areaId");
+            Long teamId = readLong(payload, "teamId");
+
+            return Optional.of(new JwtClaims(
+                    Long.parseLong(subject),
+                    sessionId,
+                    email,
+                    name,
+                    federationId,
+                    singularId,
+                    areaId,
+                    teamId));
         } catch (Exception ex) {
             return Optional.empty();
         }
@@ -137,5 +177,13 @@ public class JwtTokenService {
         }
         String text = node.asText();
         return text.isBlank() ? null : text;
+    }
+
+    private Long readLong(JsonNode payload, String field) {
+        JsonNode node = payload.get(field);
+        if (node == null || node.isNull()) {
+            return null;
+        }
+        return node.asLong();
     }
 }

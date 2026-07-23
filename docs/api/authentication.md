@@ -13,8 +13,9 @@
 ## Visão geral do fluxo
 
 ```text
-GET  /auth/login     → 302 Zimbra
-GET  /auth/callback  → 302 Frontend + cookies
+GET  /auth/login     → 302 página de login do Portal (credenciais)
+POST /auth/login     → valida Zimbra + 302 Frontend + cookies
+GET  /auth/callback  → 302 Frontend + cookies (token opaco)
 GET  /auth/me        → identidade (autenticado)
 POST /auth/refresh   → renova JWT
 POST /auth/logout    → 204 revoga sessão
@@ -25,7 +26,7 @@ DELETE /admin/sessions/{sessionId} → 204 revogação admin
 
 ## GET /api/v1/auth/login
 
-Inicia autenticação redirecionando ao Zimbra.
+Inicia autenticação redirecionando à página de login do Portal (coleta de credenciais; validação no Zimbra via `POST /auth/login`).
 
 | Aspecto | Valor |
 |---------|-------|
@@ -42,7 +43,37 @@ Inicia autenticação redirecionando ao Zimbra.
 
 | Código | Descrição |
 |--------|-----------|
-| 302 | Redirect para `application.zimbra.auth-url` |
+| 302 | Redirect para `application.zimbra.login-page-url` |
+| 503 | Zimbra indisponível |
+
+---
+
+## POST /api/v1/auth/login
+
+Valida e-mail e senha no Zimbra (IMAP/SMTP/SOAP) e conclui login.
+
+| Aspecto | Valor |
+|---------|-------|
+| Autenticação | Não |
+| CSRF | Sim (quando habilitado) |
+| Content-Type | `application/x-www-form-urlencoded` |
+
+### Form parameters
+
+| Parâmetro | Obrigatório | Descrição |
+|-----------|-------------|-----------|
+| `email` | Sim | E-mail corporativo |
+| `password` | Sim | Senha Zimbra |
+| `remember_me` | Não | TTL estendido do refresh |
+| `state` | Não | State anti-CSRF do `GET /login` |
+
+### Respostas
+
+| Código | Descrição |
+|--------|-----------|
+| 302 | Sucesso — redirect `frontend-redirect-url` + Set-Cookie |
+| 401 | Credenciais inválidas |
+| 403 | Colaborador inativo |
 | 503 | Zimbra indisponível |
 
 ---
@@ -94,7 +125,13 @@ Retorna identidade do colaborador autenticado.
     "email": "colaborador@unimedceara.com.br",
     "name": "Colaborador Teste",
     "permissions": [],
-    "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "organizationalLinks": {
+      "federationId": 1,
+      "singularId": null,
+      "areaId": null,
+      "teamId": null
+    }
   }
 }
 ```
@@ -108,6 +145,7 @@ Retorna identidade do colaborador autenticado.
 | `name` | string | Nome |
 | `permissions` | string[] | **Atualmente sempre `[]`** (placeholder) |
 | `sessionId` | string | Identificador da sessão |
+| `organizationalLinks` | object | Vínculos de `COLABORADOR` (`federationId`, `singularId`, `areaId`, `teamId`) |
 
 ### Respostas
 

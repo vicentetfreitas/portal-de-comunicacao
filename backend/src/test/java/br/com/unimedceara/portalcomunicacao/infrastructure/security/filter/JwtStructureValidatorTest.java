@@ -1,17 +1,15 @@
 package br.com.unimedceara.portalcomunicacao.infrastructure.security.filter;
 
+import br.com.unimedceara.portalcomunicacao.support.annotation.PlatformFoundationSliceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@TestPropertySource(locations = "classpath:pf-sec-test.properties")
+@PlatformFoundationSliceTest
 class JwtStructureValidatorTest {
 
     @Autowired

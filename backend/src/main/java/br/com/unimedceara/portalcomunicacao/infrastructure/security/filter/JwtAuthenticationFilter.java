@@ -54,7 +54,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 jwtClaims.colaboradorId(),
                 jwtClaims.sessionId(),
                 jwtClaims.email(),
-                jwtClaims.name());
+                jwtClaims.name(),
+                jwtClaims.federationId(),
+                jwtClaims.singularId(),
+                jwtClaims.areaId(),
+                jwtClaims.teamId());
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 principal,

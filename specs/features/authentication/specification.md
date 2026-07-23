@@ -33,7 +33,7 @@ Após autenticação, o Portal deve controlar integralmente a sessão sem consul
 - Emitir Access Token (JWT, 15 min) e Refresh Token (8h / 30d com "Lembrar-me").
 - Armazenar tokens em Cookies HttpOnly + Secure.
 - Renovar Access Token automaticamente via Refresh Token.
-- Disponibilizar identidade e contexto ao frontend via `/api/v1/auth/me`.
+- Disponibilizar identidade e vínculos organizacionais do colaborador via `/api/v1/auth/me`.
 - Encerrar sessões de forma segura (logout, expiração, revogação administrativa).
 - Limitar sessões simultâneas a 3 dispositivos por colaborador.
 - Proteger recursos contra acesso não autenticado.
@@ -51,7 +51,6 @@ Esta Feature **não** tem como objetivo:
 - Administração de perfis e permissões (Features futuras).
 - Recuperação de senha (responsabilidade do Zimbra).
 - Administração do Zimbra.
-- Seleção de contexto organizacional completa (Singular, Área, Equipe — Features futuras de organização).
 
 ---
 

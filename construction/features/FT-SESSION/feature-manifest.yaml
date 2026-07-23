@@ -1,0 +1,46 @@
+# Feature Manifest — FT-SESSION (SSOD v3.2)
+
+version: 2
+role: ssod
+
+feature:
+  id: session
+  code: FT-SESSION
+  name: Sessão e contexto organizacional
+  description: >
+    Escopo de persistência de contexto organizacional em AUTH_SESSAO encerrado (REF-DB-CTX-01).
+    Vínculos organizacionais são obtidos exclusivamente de COLABORADOR e expostos em /auth/me.
+
+status:
+  phase: closed
+
+specification:
+  path: ../../../specs/features/session/
+  documents: {}
+
+construction:
+  path: .
+  root: construction/features/FT-SESSION/
+
+implementation:
+  backend:
+    - ../../../backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/
+  frontend:
+    - ../../../frontend/src/stores/auth-store.ts
+    - ../../../frontend/src/services/auth/
+    - ../../../frontend/src/router/guards/auth.guard.ts
+
+artifacts:
+  manifest: feature-manifest.yaml
+  state: construction-state.yaml
+  session: session.md
+
+dependencies:
+  features:
+    - code: FT-AUTH
+      path: ../FT-AUTH/feature-manifest.yaml
+    - code: FT-COLABORADOR
+      path: ../FT-COLABORADOR/feature-manifest.yaml
+
+notes:
+  - REF-DB-CTX-01 — remoção de COD_*_CTX e endpoints /auth/context(s)

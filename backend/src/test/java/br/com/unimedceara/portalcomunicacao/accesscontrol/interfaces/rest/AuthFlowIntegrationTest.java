@@ -5,9 +5,11 @@ import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.OA
 import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.RefreshTokenService;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationRequest;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationResult;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.application.port.IdentityCredentialValidator;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityProviderClient;
 import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
 import br.com.unimedceara.portalcomunicacao.support.annotation.IntegrationTest;
+import br.com.unimedceara.portalcomunicacao.support.base.AbstractTransactionalMockMvcIntegrationTest;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,27 +18,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @IntegrationTest
 @Import(AuthFlowIntegrationTest.MockIdentityProviderConfiguration.class)
-class AuthFlowIntegrationTest {
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+class AuthFlowIntegrationTest extends AbstractTransactionalMockMvcIntegrationTest {
 
     @Autowired
     private JwtTokenService jwtTokenService;
@@ -46,13 +41,6 @@ class AuthFlowIntegrationTest {
 
     @Autowired
     private RefreshTokenService refreshTokenService;
-
-    private MockMvc mockMvc;
-
-    @org.junit.jupiter.api.BeforeEach
-    void setUp() {
-        mockMvc = webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
-    }
 
     @Test
     void shouldCompleteLoginCallbackMeRefreshAndLogoutFlow() throws Exception {
@@ -121,11 +109,16 @@ class AuthFlowIntegrationTest {
 
         @Bean
         @Primary
-        IdentityProviderClient mockIdentityProviderClient() {
-            return new IdentityProviderClient() {
+        IdentityCredentialValidator mockIdentityCredentialValidator() {
+            return new IdentityCredentialValidator() {
                 @Override
-                public IdentityValidationResult validateIdentity(IdentityValidationRequest request) {
-                    if ("valid-callback-token".equals(request.validationToken())) {
+                public IdentityValidationResult validateCredentials(String email, String password) {
+                    throw new IllegalStateException("Not used in callback flow test");
+                }
+
+                @Override
+                public IdentityValidationResult validateOpaqueToken(String opaqueToken) {
+                    if ("valid-callback-token".equals(opaqueToken)) {
                         return new IdentityValidationResult(
                                 "colaborador@unimedceara.com.br",
                                 "Colaborador Teste",
@@ -133,10 +126,21 @@ class AuthFlowIntegrationTest {
                     }
                     throw new IllegalStateException("Invalid token");
                 }
+            };
+        }
+
+        @Bean
+        @Primary
+        IdentityProviderClient mockIdentityProviderClient(IdentityCredentialValidator validator) {
+            return new IdentityProviderClient() {
+                @Override
+                public IdentityValidationResult validateIdentity(IdentityValidationRequest request) {
+                    return validator.validateOpaqueToken(request.validationToken());
+                }
 
                 @Override
                 public URI buildAuthorizationUrl(String state, String callbackUrl) {
-                    return URI.create("http://localhost/zimbra/auth?state=" + state);
+                    return URI.create("http://localhost:9000/auth?state=" + state);
                 }
             };
         }

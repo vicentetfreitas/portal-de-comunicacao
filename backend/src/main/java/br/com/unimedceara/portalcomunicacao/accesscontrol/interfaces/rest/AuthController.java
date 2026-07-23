@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,10 +37,10 @@ public class AuthController {
     }
 
     /**
-     * Inicia login redirecionando ao Zimbra.
+     * Inicia login redirecionando à página de credenciais do Portal.
      */
     @GetMapping("/login")
-    @Operation(summary = "Iniciar login", description = "Redireciona ao Zimbra com state anti-CSRF")
+    @Operation(summary = "Iniciar login", description = "Redireciona à página de login com state anti-CSRF")
     public ResponseEntity<Void> login(
             @RequestParam(name = "remember_me", defaultValue = "false") boolean rememberMe,
             HttpServletRequest request) {
@@ -48,7 +49,24 @@ public class AuthController {
     }
 
     /**
-     * Processa callback do Zimbra após autenticação.
+     * Valida credenciais no Zimbra e conclui login (cookies + redirect).
+     */
+    @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @Operation(summary = "Login com credenciais", description = "Valida e-mail e senha no Zimbra e emite cookies de sessão")
+    public ResponseEntity<Void> loginWithCredentials(
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam(name = "remember_me", defaultValue = "false") boolean rememberMe,
+            @RequestParam(name = "state", required = false) String state,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        URI redirectUrl = authenticationService.authenticateWithCredentials(
+                email, password, rememberMe, state, request, response);
+        return ResponseEntity.status(HttpStatus.FOUND).location(redirectUrl).build();
+    }
+
+    /**
+     * Processa callback (token opaco), emite cookies e redireciona ao frontend.
      */
     @GetMapping("/callback")
     @Operation(summary = "Callback Zimbra", description = "Valida identidade, emite cookies e redireciona ao frontend")
