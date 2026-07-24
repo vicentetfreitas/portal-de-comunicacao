@@ -6,6 +6,9 @@
 | Data | 2026-07-20 |
 | Ambiente | Corporativo (`mail-app.unimedceara.com.br`) |
 | Referência legado | `docs/discovery/05-current-integrations.md` (Zimbra IMAP/SMTP/SOAP) |
+| Papel documental | **SSOT operacional** do protocolo de integração Zimbra (DA-AUTH-012) |
+
+> A arquitetura normativa (`specs/architecture/authentication-architecture.md`) referencia este documento para hosts, ordem de tentativa e variáveis de ambiente. Não duplicar o protocolo em outros artefatos.
 
 ---
 
@@ -102,3 +105,21 @@ mvn test -Dtest=AuthAcceptanceIntegrationTest,AuthFlowIntegrationTest
 ```
 
 Cenários cobertos: AC-AUTH-001 a AC-AUTH-014 (mocks em perfil `test`), POST `/auth/login` com credenciais, fluxo callback/me/refresh/logout.
+
+---
+
+## Diagnóstico — HTTP 403 no login
+
+| Causa raiz | Resposta API | Mensagem ao usuário | Ação |
+|------------|--------------|---------------------|------|
+| CSRF ausente no `POST /auth/login` | 403 (sem `ErrorResponse` JSON) | Genérica de permissão (evitar) | Recarregar `/auth`; frontend primará token via `GET /auth/me` antes do POST |
+| Colaborador inativo no Portal (`FLG_ATIVO = N`) após Zimbra OK | 403 `error: FORBIDDEN` | Cadastro não autorizado — contatar administrador | Ativar colaborador no Oracle ou cadastrar via FT-COLABORADOR |
+| `AUTH_FRONTEND_REDIRECT_URL` / CORS desalinhados com porta do dev server (9000) | Login aparente com falha pós-redirect | Sessão não estabelecida | Alinhar `.env`: `AUTH_FRONTEND_REDIRECT_URL=http://localhost:9000/app`; CORS inclui `http://localhost:9000` |
+| `ZIMBRA_IMAP_HOST` incorreto | 401 ou 503 (não 403) | Credenciais inválidas ou serviço indisponível | Usar `mail-app.unimedceara.com.br` (mesmo host SMTP/SOAP) |
+
+**Validação manual com usuário Zimbra válido**
+
+1. Backend em `8080`, frontend Quasar em `9000`, Oracle provisionado (`dml/001-federacao.sql` executado).
+2. `POST /api/v1/auth/login` com `email`, `password`, `remember_me` e header `X-XSRF-TOKEN` (cookie `XSRF-TOKEN` obtido em `GET /auth/me`).
+3. Esperado: HTTP 302 → `Location: http://localhost:9000/app` e cookies `access_token` / `refresh_token`.
+4. `GET /api/v1/auth/me` com cookies → HTTP 200 e `ApiResponse` com e-mail do colaborador.

@@ -4,9 +4,20 @@
 **Sprint:** Frontend Foundation  
 **Objetivo:** Definir o fluxo principal da aplicação antes da implementação das funcionalidades de negócio.
 
-**Documentos relacionados:** `frontend-architecture.md` § Gerenciamento de Estado · `frontend-structure.md` § `stores/`
+**Documentos relacionados:** `frontend-architecture.md` § Gerenciamento de Estado · `frontend-structure.md` § `stores/` · `specs/features/session/specification.md` · `specs/architecture/authentication-architecture.md`
 
 ---
+
+# Estado de implementação (2026-07-24)
+
+| Etapa do fluxo | Estado | SSOT |
+|----------------|--------|------|
+| Auth store / login / refresh / CSRF | Parcialmente implementado | FT-AUTH + `frontend/src/stores/auth-store.ts` |
+| Session store / perfil / contexto / permissões / menu | **Não implementado** | Este documento (alvo) + FT-SESSION fase 1 (`organizationalLinks` apenas) |
+| Seleção de contexto (N vínculos) | **Não implementado** — backlog | RN-SESSION-003; OQ-027 |
+| Dashboard pós-contexto | Placeholder `/app` | OQ-028 |
+
+Este documento permanece a **fonte oficial do fluxo alvo** do frontend. Não duplicar regras de autenticação Zimbra aqui — ver arquitetura AUTH.
 
 # Visão Geral
 

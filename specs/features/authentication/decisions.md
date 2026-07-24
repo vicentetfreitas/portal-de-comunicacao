@@ -6,8 +6,8 @@
 | Projeto | Portal de Comunicação |
 | Camada | Features |
 | Status | **Approved** |
-| Versão | 2.0 |
-| Última atualização | 2026-07-08 |
+| Versão | 2.1 |
+| Última atualização | 2026-07-24 |
 
 ---
 
@@ -212,11 +212,39 @@ Máximo **3 sessões simultâneas** por colaborador. Ao exceder, a sessão mais 
 
 A criação e localização de colaborador no login **não exige número de matrícula corporativa**. A identidade persistida é composta por identificador interno (`COD_COLABORADOR`), e-mail institucional e identificador Zimbra (`ID_ZIMBRA`), conforme DEC-DB-011.
 
-O primeiro login permanece baseado em: autenticação Zimbra, e-mail institucional, seleção de Área, seleção opcional de Equipe, criação/atualização do colaborador e criação da sessão.
+O primeiro login, no escopo de FT-AUTH, consiste em: autenticação Zimbra → localização/criação do colaborador → verificação de ativo → criação da sessão. **Seleção de Área/Equipe e onboarding não fazem parte de FT-AUTH** (REF-DB-CTX-01; ver FT-SESSION e OQ-001).
 
 ## Status
 
-**Approved** (2026-07-10)
+**Approved** (2026-07-10); texto alinhado em 2026-07-24 (remoção de seleção de contexto no primeiro login).
+
+---
+
+# DA-AUTH-012 — Protocolo de Integração Zimbra (Proxy de Credenciais)
+
+## Contexto
+
+O contrato abstrato inicial previa URLs OAuth/JSON (`ZIMBRA_AUTH_URL` / `ZIMBRA_VALIDATE_URL`) inexistentes no Zimbra corporativo.
+
+## Problema
+
+Narrativa OAuth induzia implementação incompatível com a infraestrutura real e com o legado `ZimbraAuth.php`.
+
+## Decisão Adotada
+
+O Portal adota **proxy de credenciais**:
+
+1. Página de login do Portal coleta e-mail/senha.
+2. Backend valida no Zimbra na ordem **IMAP → SMTP AUTH → SOAP**.
+3. Identidade mínima (`email`, `displayName`, `zimbraId`) retorna ao Portal.
+4. Callback com token opaco permanece suportado via SOAP `authToken`.
+
+SSOT operacional: `docs/discovery/ft-auth-zimbra-homologacao.md`.  
+Arquitetura normativa: `specs/architecture/authentication-architecture.md` v1.1+.
+
+## Status
+
+**Approved** (2026-07-24) — formaliza homologação de 2026-07-20.
 
 ---
 
@@ -235,6 +263,7 @@ O primeiro login permanece baseado em: autenticação Zimbra, e-mail institucion
 | DA-AUTH-009 | RF-AUTH-005 | RN-AUTH-006 |
 | DA-AUTH-010 | RF-AUTH-009 | RN-AUTH-009 |
 | DA-AUTH-011 | RF-AUTH-008 | RN-AUTH-004 |
+| DA-AUTH-012 | RF-AUTH-001, 011 | RN-AUTH-002, RNF-AUTH-006 |
 
 ---
 

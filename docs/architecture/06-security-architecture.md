@@ -1,8 +1,16 @@
 # Security Architecture — Portal de Comunicação
 
+| Item | Valor |
+|------|-------|
+| Camada | Architecture |
+| Categoria documental | **SSOT** (arquitetura de segurança) |
+| Documentos complementares | `docs/solution-design/08-security-architecture.md` (Evidence de solução), `docs/implementation/10-security-implementation.md` (padrões de implementação) |
+
 ## 1. Objetivo
 
 Este documento define a **arquitetura de segurança** do Portal de Comunicação — como identidades são reconhecidas, como recebem e perdem permissões, como o acesso é governado, auditado e protegido. Consolida autenticação, autorização, governança de acesso, auditoria, proteção de dados e segregação de responsabilidades em nível arquitetural.
+
+É a **fonte oficial** de arquitetura de segurança. Demais camadas referenciam ou materializam este documento — não o substituem.
 
 Permanece **independente de tecnologia**: sem protocolos, frameworks, mecanismos de implementação ou infraestrutura. O foco é governança e fronteiras de segurança de negócio.
 

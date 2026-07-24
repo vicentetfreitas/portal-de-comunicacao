@@ -1,12 +1,21 @@
 # Security Architecture — Portal de Comunicação
 
+| Item | Valor |
+|------|-------|
+| Camada | Solution Design |
+| Categoria documental | **Evidence** (materialização de solução) |
+| SSOT de arquitetura de segurança | `docs/architecture/06-security-architecture.md` |
+| Status | Complementa o SSOT — **não** compete como segunda fonte normativa |
+
 ## Objetivo
 
-Este documento consolida a **arquitetura de segurança** da solução do Portal de Comunicação da Unimed Ceará. Define identidade, autenticação, autorização, proteção de dados, auditoria, rastreabilidade e observabilidade de segurança — em nível **arquitetural e conceitual**, sem implementação técnica detalhada, código, configuração de framework, regras de firewall ou infraestrutura executável.
+Este documento consolida a **arquitetura de segurança** da solução do Portal de Comunicação da Unimed Ceará **no nível Solution Design**. Define identidade, autenticação, autorização, proteção de dados, auditoria, rastreabilidade e observabilidade de segurança — em nível **arquitetural e conceitual**, sem implementação técnica detalhada, código, configuração de framework, regras de firewall ou infraestrutura executável.
+
+Em caso de conflito com `docs/architecture/06-security-architecture.md`, **prevalece o SSOT de Architecture**.
 
 Materializa ADR-003, ADR-005, ADR-006, ADR-008 e ADR-011; consolida classificação de `07-data-ownership.md`, contratos de `06-integration-contracts.md` e zonas de confiança de `04-deployment-architecture.md`.
 
-**Rastreabilidade:** `docs/solution-design/01-solution-overview.md` a `07-data-ownership.md`, `docs/architecture/08-decision-records.md`, `docs/architecture/09-risk-assessment.md`, `docs/architecture/10-target-architecture.md`.
+**Rastreabilidade:** `docs/solution-design/01-solution-overview.md` a `07-data-ownership.md`, `docs/architecture/06-security-architecture.md`, `docs/architecture/08-decision-records.md`, `docs/architecture/09-risk-assessment.md`, `docs/architecture/10-target-architecture.md`.
 
 ---
 

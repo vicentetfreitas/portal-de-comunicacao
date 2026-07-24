@@ -7,9 +7,12 @@
 | Versão | 1.1 |
 | Status | Reconciliado — contrato FT-AUTH |
 | Especificação prevalecente | `specs/features/authentication/` |
+| Arquitetura prevalecente | `specs/architecture/authentication-architecture.md` (v1.1+ — proxy IMAP/SMTP/SOAP) |
 | Fundação Sprint 0 | `00-frontend-foundation.md` §3.7 |
 
 > Sprint 0 entrega apenas fundação (store estrutural, CSRF, guards scaffolding). Fluxos completos em Sprint 1 (FT-AUTH).
+>
+> **Obsoleto neste documento:** seções genéricas de OAuth2/OIDC/Keycloak/Auth0 como Identity Provider. O IdP oficial é o **Zimbra** via proxy de credenciais (DA-AUTH-012). Em conflito, prevalecem as specs FT-AUTH.
 
 ---
 

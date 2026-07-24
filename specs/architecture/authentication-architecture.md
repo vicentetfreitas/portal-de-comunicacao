@@ -5,11 +5,13 @@
 | Projeto | Portal de Comunicação |
 | Camada | Architecture (Specs) |
 | Feature | FT-AUTH |
-| Versão | 1.0 |
+| Versão | 1.1 |
 | Status | Approved |
-| Última atualização | 2026-07-08 |
+| Última atualização | 2026-07-24 |
 
 **Fonte normativa da Feature:** `specs/features/authentication/`
+
+**Protocolo operacional Zimbra (SSOT de homologação):** `docs/discovery/ft-auth-zimbra-homologacao.md`
 
 ---
 
@@ -18,6 +20,8 @@
 O Portal de Comunicação adota arquitetura **Stateless** para gerenciamento de sessão.
 
 O **Zimbra** atua exclusivamente como **Provedor de Identidade (Identity Provider)**. O Portal consulta o Zimbra **apenas durante o login** para validar credenciais e confirmar identidade.
+
+O protocolo de integração homologado **não** é OAuth/OIDC redirect para o Zimbra. É **proxy de credenciais** no Portal: o frontend coleta e-mail/senha na página de login do Portal; o backend valida no Zimbra via **IMAP → SMTP AUTH → SOAP** (nessa ordem), alinhado ao legado corporativo (DA-AUTH-012).
 
 Após autenticação bem-sucedida, o Portal:
 
@@ -51,8 +55,8 @@ As **permissões da aplicação** são carregadas exclusivamente do **banco de d
 
 | Responsabilidade | Detalhe |
 |------------------|---------|
-| Orquestrar login | Redirecionar ao Zimbra e processar callback |
-| Consultar Zimbra | Apenas na etapa de login |
+| Orquestrar login | Expor `GET/POST /auth/login` e `GET /auth/callback`; coletar credenciais via página do Portal |
+| Consultar Zimbra | Apenas na etapa de login (IMAP/SMTP/SOAP) |
 | Gerenciar colaborador | Localizar ou criar registro no banco |
 | Emitir tokens | Access Token (JWT) e Refresh Token |
 | Armazenar tokens | Cookies HttpOnly + Secure |
@@ -68,7 +72,7 @@ As **permissões da aplicação** são carregadas exclusivamente do **banco de d
 
 | Responsabilidade | Detalhe |
 |------------------|---------|
-| Iniciar login | Redirecionar para `/api/v1/auth/login` |
+| Iniciar login | Página `/auth` com e-mail/senha; `POST /api/v1/auth/login` (ou iniciar via `GET /api/v1/auth/login`) |
 | Consumir identidade | Via `/api/v1/auth/me` |
 | Renovação transparente | Interceptador HTTP aciona refresh quando Access Token expira |
 | Proteger rotas | Guards baseados em estado autenticado |
@@ -89,29 +93,23 @@ As **permissões da aplicação** são carregadas exclusivamente do **banco de d
 │ Frontend │         │ Portal (Backend) │         │ Zimbra  │
 └────┬─────┘         └────────┬────────┘         └────┬────┘
      │                          │                       │
-     │  GET /api/v1/auth/login  │                       │
+     │  POST /api/v1/auth/login │                       │
+     │  (email, password, …)    │                       │
      │─────────────────────────►│                       │
-     │                          │  Redirect (login)     │
-     │◄─────────────────────────│──────────────────────►│
-     │                          │                       │
-     │         [Usuário autentica no Zimbra]            │
-     │                          │                       │
-     │                          │◄── Callback ──────────│
-     │                          │   (identidade)        │
-     │                          │                       │
-     │                          │── Consulta Zimbra ───►│  (única vez)
+     │                          │  IMAP / SMTP / SOAP   │
+     │                          │──────────────────────►│  (única vez)
      │                          │◄── Identidade ────────│
      │                          │                       │
      │                          │ [Localiza/cria Colaborador]
      │                          │ [Emite JWT + Refresh]
      │                          │ [Registra sessão no BD]
      │                          │                       │
-     │◄── Cookies HttpOnly ─────│                       │
+     │◄── 302 + Cookies HttpOnly│                       │
      │    (access + refresh)    │                       │
      │                          │                       │
      │  GET /api/v1/auth/me     │                       │
      │─────────────────────────►│  (valida JWT local)   │
-     │◄── ApiResponse ──────────│  (permisões do BD)    │
+     │◄── ApiResponse ──────────│  (permissões do BD)   │
      │                          │                       │
      │  POST /api/v1/auth/refresh│                      │
      │─────────────────────────►│  (valida refresh BD)  │
@@ -122,27 +120,30 @@ As **permissões da aplicação** são carregadas exclusivamente do **banco de d
      │◄── Cookies removidos ────│                       │
 ```
 
+Variantes de entrada (mesmo `finalizeLogin`):
+
+- `GET /api/v1/auth/login` → 302 para página de login do Portal (`AUTH_LOGIN_PAGE_URL`) com `state`
+- `GET /api/v1/auth/callback?token&state` → valida token opaco via SOAP `authToken`
+
 ---
 
 # Sequência de Autenticação (Login)
 
 ```text
-1. Usuário acessa o Portal
-2. Frontend redireciona para GET /api/v1/auth/login
-3. Backend gera state/nonce anti-CSRF e redireciona ao Zimbra
-4. Usuário informa credenciais no Zimbra
-5. Zimbra valida credenciais
-6. Zimbra redireciona para GET /api/v1/auth/callback com resultado
-7. Backend valida state/nonce
-8. Backend consulta Zimbra para confirmar identidade (única consulta)
-9. Backend localiza ou cria Colaborador no banco
-10. Backend verifica autorização para utilizar o Portal
-11. Backend verifica limite de sessões simultâneas (máx. 3)
-12. Backend emite Access Token (JWT, 15 min) e Refresh Token (8h ou 30d)
-13. Backend registra sessão no banco (session_id, device, refresh_token_hash)
-14. Backend define Cookies HttpOnly + Secure
-15. Backend redireciona Frontend para área autenticada
-16. Frontend consulta GET /api/v1/auth/me
+1. Usuário acessa a página de login do Portal (/auth)
+2. Usuário informa e-mail corporativo e senha (opcional "Lembrar-me")
+3. Frontend envia POST /api/v1/auth/login (form-urlencoded + CSRF; state opcional)
+4. Backend valida state anti-CSRF quando presente
+5. Backend autentica no Zimbra: IMAP → SMTP AUTH → SOAP (única consulta ao IdP)
+6. Backend obtém identidade mínima (email, displayName, zimbraId)
+7. Backend localiza ou cria Colaborador no banco
+8. Backend verifica autorização para utilizar o Portal (ex.: colaborador ativo)
+9. Backend verifica limite de sessões simultâneas (máx. 3)
+10. Backend emite Access Token (JWT, 15 min) e Refresh Token (8h ou 30d)
+11. Backend registra sessão no banco (session_id, device, refresh_token_hash)
+12. Backend define Cookies HttpOnly + Secure
+13. Backend redireciona Frontend para área autenticada (AUTH_FRONTEND_REDIRECT_URL)
+14. Frontend consulta GET /api/v1/auth/me
 ```
 
 ---
@@ -249,7 +250,7 @@ Quando o usuário habilita "Lembrar-me" no login:
 
 # Contrato de Integração com Zimbra
 
-> **Nota:** Endpoints específicos do Zimbra dependem da infraestrutura corporativa. Os contratos abaixo são abstratos.
+> **SSOT operacional:** detalhes de hosts, portas, ordem de tentativa e divergências D-01–D-07 em `docs/discovery/ft-auth-zimbra-homologacao.md`.
 
 ## Responsabilidade do Zimbra
 
@@ -266,23 +267,27 @@ ZIMBRA-AUTH-002 — Retornar identidade mínima autenticada
 | `displayName` | Sim | Nome de exibição |
 | `zimbraId` | Sim | Identificador único no Zimbra |
 
-## Fluxo de Integração (Abstrato)
+## Fluxo de Integração (Homologado)
 
 ```text
-1. Portal redireciona para URL de autenticação Zimbra
-   [ZIMBRA_AUTH_URL — configurável por ambiente]
+1. GET /api/v1/auth/login → 302 para página de login do Portal
+   [AUTH_LOGIN_PAGE_URL / application.zimbra.login-page-url]
 
-2. Usuário autentica no Zimbra
+2. Usuário informa credenciais na página do Portal
 
-3. Zimbra redireciona para callback do Portal
-   GET /api/v1/auth/callback?{parametros_retorno}
-   [Parâmetros dependem do protocolo corporativo]
+3. POST /api/v1/auth/login → backend valida no Zimbra:
+   IMAP (primário) → SMTP AUTH (fallback) → SOAP AuthRequest (fallback)
 
-4. Portal valida retorno e consulta Zimbra para confirmar identidade
-   [ZIMBRA_VALIDATE_URL — configurável por ambiente]
+4. Após mail auth bem-sucedido, identidade mínima via SOAP
+   (fallback local se SOAP falhar após mail auth)
 
-5. Portal recebe dados mínimos de identidade
+5. Variante: GET /api/v1/auth/callback?token&state
+   → SOAP AuthRequest com authToken opaco
+
+6. Portal recebe dados mínimos de identidade e conclui sessão
 ```
+
+**Obsoleto (não usar):** `ZIMBRA_AUTH_URL`, `ZIMBRA_VALIDATE_URL` e qualquer narrativa de OAuth/JSON fictício contra o Zimbra corporativo.
 
 ## Tratamento de Indisponibilidade
 
@@ -293,14 +298,16 @@ ZIMBRA-AUTH-002 — Retornar identidade mínima autenticada
 | Resposta inválida | HTTP 400; autenticação não concluída |
 | Credenciais inválidas | Autenticação recusada pelo Zimbra; nenhuma sessão criada |
 
-## Variáveis de Ambiente (Abstratas)
+## Variáveis de Ambiente (Homologadas)
 
 | Variável | Descrição |
 |----------|-----------|
-| `ZIMBRA_AUTH_URL` | URL de autenticação do Zimbra |
-| `ZIMBRA_VALIDATE_URL` | URL de validação de identidade |
-| `ZIMBRA_CALLBACK_URL` | URL de callback registrada no Zimbra |
+| `AUTH_LOGIN_PAGE_URL` | Página de login do Portal (redirect de `GET /auth/login`) |
+| `ZIMBRA_IMAP_HOST` / `ZIMBRA_IMAP_PORT` / `ZIMBRA_IMAP_SSL` | Validação IMAP |
+| `ZIMBRA_SMTP_HOST` / `ZIMBRA_SMTP_PORT` / … | Fallback SMTP AUTH |
+| `ZIMBRA_SOAP_URL` | SOAP identidade / fallback / callback |
 | `ZIMBRA_TIMEOUT_MS` | Timeout de comunicação (padrão: 10000) |
+| `AUTH_FRONTEND_REDIRECT_URL` | Redirect pós-login |
 
 ---
 
@@ -351,6 +358,7 @@ DDL executável será definida na implementação conforme `docs/implementation/
 | DA-AUTH-008 | Consulta única ao Zimbra (apenas no login) | `decisions.md` |
 | DA-AUTH-009 | Permissões mantidas pelo banco do Portal | `decisions.md` |
 | DA-AUTH-010 | Sessões simultâneas limitadas (máx. 3) | `decisions.md` |
+| DA-AUTH-012 | Protocolo Zimbra = proxy de credenciais IMAP/SMTP/SOAP | `decisions.md` |
 
 ---
 
@@ -359,6 +367,16 @@ DDL executável será definida na implementação conforme `docs/implementation/
 - `specs/features/authentication/specification.md`
 - `specs/features/authentication/api.md`
 - `specs/features/authentication/decisions.md`
+- `docs/discovery/ft-auth-zimbra-homologacao.md`
 - `docs/architecture/06-security-architecture.md`
 - `docs/architecture/08-decision-records.md` (ADR-003)
 - `docs/implementation/07-api-standards.md`
+
+---
+
+# Histórico
+
+| Data | Descrição |
+|------|-----------|
+| 2026-07-08 | v1.0 — Arquitetura Stateless, JWT, contrato Zimbra abstrato |
+| 2026-07-24 | v1.1 — Alinhamento ao protocolo homologado (proxy IMAP/SMTP/SOAP); remoção de narrativa OAuth fictícia |

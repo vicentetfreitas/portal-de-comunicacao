@@ -65,19 +65,20 @@ Colaborador, Zimbra, Portal (Backend), Frontend
 ### Fluxo Principal
 
 1. Colaborador solicita acesso ao Portal
-2. Frontend redireciona para `GET /api/v1/auth/login`
-3. Backend gera state anti-CSRF e redireciona ao Zimbra
-4. Colaborador informa credenciais no Zimbra
-5. Zimbra valida credenciais
-6. Zimbra redireciona para `GET /api/v1/auth/callback`
-7. Backend valida state e consulta Zimbra para confirmar identidade (**única consulta**)
-8. Backend localiza ou cria Colaborador no banco
-9. Backend verifica autorização para utilizar o Portal
-10. Backend verifica limite de sessões simultâneas (máx. 3)
-11. Backend emite Access Token (JWT, 15 min) e Refresh Token (8h ou 30d)
-12. Backend registra sessão no banco (`AUTH_SESSAO`)
-13. Backend define Cookies HttpOnly + Secure (`access_token`, `refresh_token`)
-14. Backend redireciona Frontend para área autenticada
+2. Frontend exibe página de login do Portal (`/auth`) — opcionalmente iniciada via `GET /api/v1/auth/login` (302 + `state`)
+3. Colaborador informa e-mail corporativo e senha
+4. Frontend envia `POST /api/v1/auth/login` (form-urlencoded; CSRF; `state` opcional)
+5. Backend autentica no Zimbra (IMAP → SMTP → SOAP) — **única consulta ao IdP**
+6. Backend obtém identidade mínima (`email`, `displayName`, `zimbraId`)
+7. Backend localiza ou cria Colaborador no banco
+8. Backend verifica autorização para utilizar o Portal (colaborador ativo)
+9. Backend verifica limite de sessões simultâneas (máx. 3)
+10. Backend emite Access Token (JWT, 15 min) e Refresh Token (8h ou 30d)
+11. Backend registra sessão no banco (`AUTH_SESSAO`)
+12. Backend define Cookies HttpOnly + Secure (`access_token`, `refresh_token`)
+13. Backend redireciona Frontend para área autenticada
+
+> Sequência normativa completa: `specs/architecture/authentication-architecture.md`. Protocolo Zimbra: DA-AUTH-012.
 
 ### Fluxos Alternativos
 

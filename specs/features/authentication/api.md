@@ -32,13 +32,17 @@ Prefixo oficial: `/api/v1`
 # Fluxo das Chamadas
 
 ```text
-Frontend ──GET /api/v1/auth/login──► Backend ──redirect──► Zimbra
-Zimbra ──callback──► GET /api/v1/auth/callback ──► Backend (emite cookies)
+Frontend ──GET /api/v1/auth/login──► Backend ──302──► Página login do Portal (state)
+Frontend ──POST /api/v1/auth/login──► Backend ──IMAP/SMTP/SOAP──► Zimbra
+Backend ──302 + cookies──► Frontend (AUTH_FRONTEND_REDIRECT_URL)
+(variante) GET /api/v1/auth/callback?token&state ──► SOAP authToken ──► mesmo finalizeLogin
 Frontend ──GET /api/v1/auth/me──► Backend (valida JWT do cookie)
 Frontend ──POST /api/v1/auth/refresh──► Backend (renova Access Token)
 Frontend ──POST /api/v1/auth/logout──► Backend (revoga + remove cookies)
 Administrador ──revoga session_id──► Backend (RF-AUTH-010; ver seção abaixo)
 ```
+
+Protocolo Zimbra: DA-AUTH-012. Detalhes operacionais: `docs/discovery/ft-auth-zimbra-homologacao.md`.
 
 ---
 
@@ -95,11 +99,14 @@ X-XSRF-TOKEN: {valor do cookie XSRF-TOKEN}
 | Operação | Método | Endpoint | Autenticação |
 |----------|--------|----------|--------------|
 | Iniciar login | GET | `/api/v1/auth/login` | Não |
-| Callback Zimbra | GET | `/api/v1/auth/callback` | Fluxo Zimbra |
+| Login com credenciais | POST | `/api/v1/auth/login` | Não (+ CSRF quando habilitado) |
+| Callback (token opaco) | GET | `/api/v1/auth/callback` | Fluxo Zimbra |
 | Consultar identidade | GET | `/api/v1/auth/me` | Cookie `access_token` |
 | Renovar Access Token | POST | `/api/v1/auth/refresh` | Cookie `refresh_token` + CSRF |
 | Encerrar sessão | POST | `/api/v1/auth/logout` | Cookie + CSRF |
 | Revogar sessão (admin) | DELETE | `/api/v1/admin/sessions/{sessionId}` | Cookie `access_token` + CSRF |
+
+Contrato detalhado de `POST /login` (form fields e códigos): `docs/api/authentication.md` (espelha a implementação).
 
 ---
 
@@ -120,14 +127,14 @@ X-XSRF-TOKEN: {valor do cookie XSRF-TOKEN}
 ### Comportamento
 
 1. Gera `state` anti-CSRF e armazena temporariamente
-2. Redireciona ao Zimbra (`ZIMBRA_AUTH_URL`)
+2. Redireciona à página de login do Portal (`AUTH_LOGIN_PAGE_URL` / `application.zimbra.login-page-url`)
 
 ### Respostas
 
 | Código | Situação |
 |--------|----------|
-| 302 | Redirecionamento ao Zimbra |
-| 503 | Zimbra indisponível |
+| 302 | Redirecionamento à página de login do Portal |
+| 503 | Integração indisponível (quando aplicável) |
 | 500 | Erro interno |
 
 ### Requisitos
@@ -145,14 +152,16 @@ RF-AUTH-001 | UC-AUTH-001 | AC-AUTH-001, AC-AUTH-014
 ### Comportamento
 
 1. Valida `state` anti-CSRF
-2. Consulta Zimbra para confirmar identidade (**única consulta**)
+2. Resolve identidade via SOAP `AuthRequest` com `authToken` opaco (**única consulta** ao Zimbra neste caminho)
 3. Localiza ou cria Colaborador no banco
-4. Verifica autorização para o Portal
+4. Verifica autorização para o Portal (colaborador ativo)
 5. Verifica limite de sessões (máx. 3)
 6. Emite Access Token (JWT) e Refresh Token
 7. Registra sessão em `AUTH_SESSAO`
 8. Define cookies HttpOnly + Secure
 9. Redireciona Frontend para área autenticada
+
+> Caminho principal de login com senha: `POST /api/v1/auth/login` (ver `docs/api/authentication.md`).
 
 ### Respostas
 
@@ -209,11 +218,19 @@ Cookie `access_token` (JWT)
     "id": 42,
     "email": "colaborador@unimedceara.com.br",
     "name": "João Silva",
-    "permissions": ["DOCUMENT_READ", "DOCUMENT_WRITE"],
-    "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    "permissions": [],
+    "sessionId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "organizationalLinks": {
+      "federationId": 1,
+      "singularId": null,
+      "areaId": null,
+      "teamId": null
+    }
   }
 }
 ```
+
+> `permissions` permanece vazio até Feature de autorização/papéis. `organizationalLinks` é responsabilidade de FT-SESSION (vínculos de `COLABORADOR`).
 
 ### AuthenticatedUserResponse
 
@@ -222,8 +239,9 @@ Cookie `access_token` (JWT)
 | `id` | long | `COD_COLABORADOR` |
 | `email` | string | E-mail corporativo |
 | `name` | string | Nome do colaborador |
-| `permissions` | string[] | Permissões do banco do Portal |
+| `permissions` | string[] | Permissões do banco do Portal (hoje: lista vazia até Feature de autorização) |
 | `sessionId` | string | Identificador da sessão |
+| `organizationalLinks` | object | Vínculos do `COLABORADOR`: `federationId`, `singularId`, `areaId`, `teamId` |
 
 ### Respostas
 
@@ -409,8 +427,8 @@ RF-AUTH-010 | UC-AUTH-006 | AC-AUTH-010 | TASK-AUTH-BE-020
 | Refresh Token revogado | 401 | UNAUTHORIZED |
 | CSRF inválido | 403 | FORBIDDEN |
 | State/nonce inválido | 400 | VALIDATION_ERROR |
-| Zimbra indisponível | 503 | SERVICE_UNAVAILABLE |
-| Timeout Zimbra | 503 | SERVICE_UNAVAILABLE |
+| Zimbra indisponível | 503 | INTEGRATION_UNAVAILABLE |
+| Timeout Zimbra | 503 | INTEGRATION_UNAVAILABLE |
 | Erro interno | 500 | INTERNAL_SERVER_ERROR |
 
 ---
