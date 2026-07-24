@@ -33,6 +33,7 @@ ehthumbs.db
 .vscode/
 *.swp
 *.swo
+.cursor/settings.json
 
 ## Eclipse / Spring Tool Suite
 .apt_generated/
@@ -90,8 +91,10 @@ backend/runtime/schema-audit-results.txt
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+
 ## Compiled classes
 *.class
+*.jar
 
 # ============================================================================
 # Node.js / Frontend
@@ -151,3 +154,7 @@ cms/wp-content/upgrade/
 *.seed
 *.pid
 *:Zone.Identifier
+
+# Local audit / one-off execution outputs (not project artifacts)
+.git-inventory.txt
+**/atomic-commits-report.txt
