@@ -20,11 +20,11 @@ Este documento fornece uma visão executiva sobre:
 | Item                   | Valor                                      |
 | ---------------------- | ------------------------------------------ |
 | Projeto                | Portal de Comunicação                      |
-| Status Geral           | Em Construção — Backend Sprint 0 encerrada |
-| Versão da Documentação | 1.1                                        |
-| Última Atualização     | 2026-07-08                                 |
-| Responsável            | Project Manager                            |
-| Próxima Revisão        | 2026-07-22                                 |
+| Status Geral           | Baseline documental **APROVADA COM RESSALVAS** (Exit Gate 2026-07-24) |
+| Versão da Documentação | 2.0 (Exit Gate)                                |
+| Última Atualização     | 2026-07-24                                 |
+| Responsável            | Project Manager / Arquitetura              |
+| Próxima Revisão        | OQ-001/026/027/028; unificação catálogo DEC |
 
 ---
 
@@ -32,17 +32,22 @@ Este documento fornece uma visão executiva sobre:
 
 ## Situação Atual
 
-O projeto concluiu oficialmente a **Sprint 0 do backend**, estabelecendo a baseline de infraestrutura transversal.
+O projeto concluiu a **Sprint 0 do backend** e obteve **APROVADO COM RESSALVAS** no Exit Gate de governança documental (2026-07-24).
 
-As camadas documentais (Discovery, Domain, Architecture, Solution Design, Implementation) encontram-se consolidadas. A fase de Construction encontra-se em evolução, com a fundação técnica do backend implementada, testada e congelada.
+SSOT normativo da documentação: `docs/governance/07-documentation-architecture.md` v2.0  
+Evidência do Exit Gate: `docs/governance/reconciliation-report.md` § Exit Gate  
+Política de repositório: `docs/governance/08-repository-governance.md` v2.0
 
-**Resultado da Sprint 0:**
+Categorias obrigatórias: **SSOT | Evidence | Working | Archive**.
+
+Ressalvas conscientes: unificação de catálogos DEC; índice frontend; naming `docs/construction` vs `construction/`; OQs de login/contexto (não bloqueiam a baseline).
+
+**Resultado da Sprint 0 (ainda válido):**
 
 * Baseline da infraestrutura aprovada
 * Build `mvn clean verify` — **SUCCESS**
-* **106** testes automatizados executando com sucesso
 * Infraestrutura transversal **congelada** — alterações restritas a correções críticas
-* Próxima Sprint: **FT-AUTH** (Sprint 1)
+* Features org/auth em evolução conforme `construction/registry.yaml`
 
 ---
 

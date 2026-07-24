@@ -4,9 +4,11 @@
 
 Definir o escopo MVP oficial único do projeto.
 
-**Fonte normativa:** `docs/audit/10-mvp-consolidation-audit.md`  
+**Fonte normativa (SSOT do escopo MVP):** este documento (`docs/backlog/04-mvp-scope.md`)  
+**Evidence da consolidação:** `docs/audit/10-mvp-consolidation-audit.md` (não evolui regras novas)  
 **Origem arquitetural:** `docs/solution-design/10-delivery-roadmap.md` — Etapas 1–5  
-**Data de reconciliação:** 2026-06-22
+**Data de reconciliação:** 2026-06-22  
+**Categoria documental:** SSOT
 
 ---
 

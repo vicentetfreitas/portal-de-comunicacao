@@ -66,7 +66,7 @@ Uma questão deve ser registrada quando:
 | ----------- | ---------- |
 | Abertas     | 6          |
 | Em Análise  | 0          |
-| Respondidas | 0          |
+| Respondidas | 2          |
 | Encerradas  | 1          |
 
 ---
@@ -127,11 +127,11 @@ Arquitetura.
 
 ### Status
 
-Aberta.
+**Respondida** (2026-07-24).
 
-### Observação Sprint 0
+### Resposta
 
-Integração com Serviço Corporativo de Autenticação identificada como obrigatória para FT-AUTH (Sprint 1). Detalhes contratuais pendentes de validação com equipe de integração.
+Sim. Integração obrigatória: **Zimbra** como Identity Provider (IMAP/SMTP/SOAP). Homologação: `docs/discovery/ft-auth-zimbra-homologacao.md`. Arquitetura: `specs/architecture/authentication-architecture.md` (DA-AUTH-012).
 
 ---
 
@@ -259,6 +259,43 @@ Aberta.
 
 ---
 
+## QST-008
+
+### Pergunta
+
+Quais bloqueantes de autenticação/sessão devem ser resolvidos antes do novo fluxo de login?
+
+### Categoria
+
+Arquitetura / Domínio.
+
+### Impacto
+
+Crítico.
+
+### Responsável
+
+Arquitetura + Product Owner.
+
+### Status
+
+Aberta.
+
+### Observação
+
+Não duplicar conteúdo de domínio. Acompanhar em:
+
+| Bloqueante | Tipo | SSOT |
+|------------|------|------|
+| Fluxo oficial de primeiro acesso | Negócio | OQ-001, OQ-026 (`docs/domain/10-open-questions.md`) |
+| Multi-contexto nesta entrega | Negócio + Arquitetura | OQ-027, OQ-008 |
+| Painel inicial / home route | Arquitetura + Planejamento | OQ-028 |
+| Alinhamento OAuth → protocolo homologado | — | **Encerrado** (DA-AUTH-012) |
+
+DEC provisórias multi-contexto/painel foram **canceladas** no Gate Final (eram OQ + colisão de ID com `docs/technology/04-decision-log.md`).
+
+---
+
 # Questões Críticas
 
 As questões abaixo possuem potencial de bloqueio para evolução do projeto.
@@ -268,6 +305,7 @@ As questões abaixo possuem potencial de bloqueio para evolução do projeto.
 | QST-003 | Requisitos regulatórios    |
 | QST-004 | Disponibilidade da solução |
 | QST-005 | Retenção de dados          |
+| QST-008 | Bloqueantes auth/sessão    |
 
 ---
 

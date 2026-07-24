@@ -58,7 +58,7 @@ Os riscos registrados aqui devem possuir:
 
 | Categoria    | Quantidade |
 | ------------ | ---------- |
-| Abertos      | 6          |
+| Abertos      | 7          |
 | Em Mitigação | 0          |
 | Monitorados  | 1          |
 | Resolvidos   | 1          |
@@ -386,6 +386,47 @@ Aberto.
 | RSK-006 | Média         | Alto    | Alto        | Aberto     |
 | RSK-007 | Média         | Crítico | Crítico     | Aberto     |
 | RSK-008 | Média         | Alto    | Alto        | Aberto     |
+| RSK-009 | Alta          | Alto    | Alto        | Aberto     |
+
+---
+
+## RSK-009
+
+### Título
+
+Lacunas de autorização e bootstrap de sessão no TO-BE.
+
+### Categoria
+
+Segurança / Arquitetura.
+
+### Descrição
+
+`permissions` em `/auth/me` retorna lista vazia; guard de autorização no frontend desligado; `OAuthStateService` em memória (risco em escala horizontal); painel inicial hardcoded.
+
+### Probabilidade
+
+Alta.
+
+### Impacto
+
+Alto.
+
+### Mitigação
+
+Feature de autorização/papéis; DEC-009; state distribuído antes de multi-instância. Não reabrir narrativa OAuth (DA-AUTH-012).
+
+### Responsável
+
+Arquitetura.
+
+### Status
+
+Aberto.
+
+### Referência
+
+Incorporado a partir da análise AUTH-SESSION-FAR-001 (2026-07-24).
 
 ---
 
@@ -397,6 +438,7 @@ Os riscos classificados como críticos devem receber acompanhamento prioritário
 
 * RSK-002 — Mudanças frequentes de requisitos.
 * RSK-007 — Falhas de segurança (mitigação iniciará com FT-AUTH na Sprint 1).
+* RSK-009 — Lacunas de autorização e bootstrap de sessão.
 
 ---
 

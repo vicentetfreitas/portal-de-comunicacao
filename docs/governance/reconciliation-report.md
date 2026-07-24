@@ -193,3 +193,131 @@ docs/audit/10-mvp-consolidation-audit.md
 | Próxima etapa | Indefinida | **Sprint 1 — FT-AUTH** |
 
 **Condição:** Documentação, implementação, arquitetura e tecnologia **alinhadas** para o escopo da Sprint 0. Nenhuma inconsistência remanescente classificada como falha da Sprint 0. Itens remanescentes estão formalmente classificados como backlog ou sprint futura.
+
+---
+
+# Limpeza de Governança Documental — 2026-07-24
+
+**Objetivo:** Eliminar artefatos transitórios, corrigir camadas e reforçar SSOT (`docs/governance/07-documentation-architecture.md`).
+
+## Removidos
+
+| Documento | Motivo | SSOT que absorveu o conhecimento |
+|-----------|--------|----------------------------------|
+| `docs/audit/authentication-session-functional-architecture-report.md` | `PENDING_REMOVAL` — relatório analítico já incorporado | `specs/architecture/authentication-architecture.md`, DA-AUTH-012, FT-SESSION, OQ-026–028, homologação Zimbra |
+| `docs/audit/07-final-readiness-report.md` | Template vazio; duplicava propósito de `11-final-readiness-audit.md` | `docs/audit/11-final-readiness-audit.md` |
+
+## Movidos (correção de camada)
+
+| De | Para | Motivo |
+|----|------|--------|
+| `specs/features/equipe/review-report.md` | `construction/features/FT-EQUIPE/review/specification-gate1-review-report.md` | Evidência de revisão não pertence a `specs/` |
+
+Referência atualizada: `construction/frontend/features/FT-EQUIPE/review/readiness-checklist.md`.
+
+## Atualizados
+
+| Documento | Motivo |
+|-----------|--------|
+| `docs/governance/07-documentation-architecture.md` | SSOT table: audit = ARCHIVE; política PENDING_REMOVAL; governance OQs/DECs |
+
+## Preservados (ARCHIVE / SSOT)
+
+| Conjunto | Justificativa |
+|----------|---------------|
+| `docs/audit/01–06`, `08–11`, readiness versionados | Evidence/Archive de fases (`08-repository-governance.md`); MVP SSOT = `docs/backlog/04-mvp-scope.md` (audit 10 = Evidence) |
+| `docs/discovery/`, `docs/domain/`, ADRs, specs, construction feature reports | SSOT ou ARCHIVE permanente |
+| `database/reports/` | Histórico explícito (README); baseline/`ddl` é SSOT do banco |
+
+## Revisão humana recomendada
+
+| Item | Motivo |
+|------|--------|
+| Sobreposição security (`architecture` × `solution-design` × `implementation` × `construction`) | Camadas legítimas com risco de duplicação — consolidar referências cruzadas sem apagar camadas |
+| `docs/frontend/` × `docs/construction/frontend/` × `docs/implementation/05-frontend-architecture.md` | Três entradas frontend |
+| `docs/api/` × `specs/features/*/api.md` | Contrato implementado vs contrato SDD |
+| `docs/audit/01–06`, `08`, `09` | Podem ser arquivados em lote após confirmar que nenhum SSOT depende deles |
+| `docs/construction/` (Sprint 0) vs `construction/` (execução) | Naming confuso; pasta `docs/construction` permanece operacional complementar |
+
+**Resultado:** cada conhecimento permanente permanece em um SSOT; relatórios analíticos `PENDING_REMOVAL` eliminados; estrutura ligeiramente mais simples (2 remoções + 1 correção de camada).
+
+---
+
+# Gate Final de Governança Documental — 2026-07-24
+
+**Categoria deste registro:** Evidence (registro de marco) — regras permanentes em `07-documentation-architecture.md` v2.0.
+
+## O que foi questionado e decidido
+
+| Tema | Conclusão |
+|------|-----------|
+| Categorias | SSOT / Evidence / Working / Archive — obrigatórias |
+| DEC-008 / DEC-009 (governança) | **Canceladas** — OQ prematuras + **colisão de ID** com technology DEC-008/009 |
+| Escopo MVP | SSOT = `docs/backlog/04-mvp-scope.md`; audit 10 = Evidence |
+| `docs/audit/` | Evidence/Archive — nunca SSOT de regras |
+| `docs/construction/` vs `construction/` | Ambos permanecem; papéis distintos (padrões vs execução) |
+| `docs/api/` vs `specs/*/api.md` | Ambos permanecem; SDD prevalece em conflito normativo |
+| Working restantes | Nenhum `PENDING_REMOVAL` ativo após limpeza anterior |
+
+## Revisão humana (REVIEW — não removidos)
+
+| Item | Por quê ainda existe? | Alguém sentiria falta? |
+|------|----------------------|------------------------|
+| Sobreposição security (4 camadas) | Camadas do ciclo Discovery→Implementation | Sim — mas precisa de índices cruzados, não de 4 SSOTs |
+| Fragmentação frontend (3 entradas) | Papéis distintos (alvo / construção / implementation) | Parcial — consolidar índice, não fundir cegamente |
+| `docs/audit/01–06`, `08`, `09` | Evidence de fase | Sim para auditoria histórica; não para regras novas |
+| Catálogos DEC duplicados (`governance/03` vs `technology/04-decision-log`) | Colisão de IDs comprovada no Gate Final | Unificar numeração ou prefixar (ex. TECH-DEC / GOV-DEC) |
+
+## Critério Gate Final
+
+Política documental consolidada em `07-documentation-architecture.md` v2.0.  
+**Aprovação formal da baseline:** ver seção **Exit Gate — Validação Final** abaixo.
+
+---
+
+# Exit Gate — Validação Final da Governança Documental — 2026-07-24
+
+**Papel:** Arquiteto de Software / Governança Documental  
+**Categoria deste registro:** Evidence  
+**Normativo permanente:** `docs/governance/07-documentation-architecture.md`  
+**Correções críticas aplicadas na validação:** SSOT explícito security Architecture vs Solution Design; fluxo OQ→DEC em `03-open-decisions.md`; cabeçalho mínimo em `07`; responsável OQ-026–028; remoção da contradição “audit 10 = normativa MVP”.
+
+## Resultado dos Gates
+
+| Gate | Resultado | Evidência resumida |
+|------|-----------|-------------------|
+| GATE-01 Governança oficial | **PASS** | Autoridade máxima: `07-documentation-architecture.md`. `08-repository-governance.md` declara complementar. Conflito “MVP normativo = audit 10” corrigido nesta validação. |
+| GATE-02 Classificação | **PASS** | Categorias SSOT/Evidence/Working/Archive com definição, finalidade e ciclo em `07`. |
+| GATE-03 Fluxo decisório | **PASS** | Fluxo OQ→DEC em `07` e alinhado em `03-open-decisions.md`. DEC prematuras canceladas. DEC-002/003/004 são escolhas estratégicas abertas. |
+| GATE-04 Ciclo de vida | **PASS** | Criação/atualização/incorporação/remoção/arquivamento em `07`+`08`. Cabeçalho mínimo obrigatório para novos docs. |
+| GATE-05 SSOT | **PASS** | Amostras: MVP→`backlog/04`; Auth→specs architecture + homologação Evidence; Segurança→`architecture/06` SSOT. |
+| GATE-06 Working | **PASS** | Sem `PENDING_REMOVAL` ativo; política Working→remoção após SSOT. |
+| GATE-07 Evidence | **PASS** | Evidence não substitui specs (política). Homologação Zimbra e audits = Evidence/Archive. |
+| GATE-08 Pendências | **PASS** | OQs/QST-008 com local/tipo/responsável; REVIEW conscientes abaixo. |
+| GATE-09 Complexidade | **PASS** | Remoções AUTH-SESSION + template readiness; move review FT-EQUIPE; DEC prematuras canceladas; `07` v2.0. |
+| GATE-10 Reincidência | **PASS** | Questionário existência; Working transitório; OQ→DEC; IDs DEC únicos; checklist release em `08`. |
+
+## Pendências conscientes (não bloqueiam desenvolvimento)
+
+| Pendência | Responsável | Local | Por que permanece |
+|-----------|-------------|-------|-------------------|
+| Unificar catálogos DEC (governance × technology) | Arquitetura | `03-open-decisions` + `technology/04-decision-log` | Migração de IDs exige plano; anti-colisão já em `07` |
+| Índice único frontend (3 entradas) | Arquitetura FE | REVIEW | Fundir agora quebra links |
+| Naming `docs/construction/` vs `construction/` | Arquitetura | REVIEW | Renomear só com migração |
+| OQ-001/026/027/028 (login/contexto/painel) | PO + Arquitetura | `domain/10` + QST-008 | Bloqueiam *novo* login, não a baseline de governança |
+| Texto histórico ainda sobreposto em security SD | Arquitetura | Aceito | Hierarquia SSOT declarada; limpeza incremental |
+
+## Questionamento final
+
+1. **Organizaria exatamente assim se começasse hoje?** Não — preferiria catálogo DEC único e menos entradas frontend. Não bloqueia baseline.
+2. **Simplificação evidente pendente?** Sim (DEC IDs; índice FE; rename construction). **Bloqueia desenvolvimento?** **NÃO**.
+3. **Motivo técnico para NÃO criar baseline agora?** **NÃO**.
+
+## Parecer
+
+**APROVADO COM RESSALVAS**
+
+A governança documental está consolidada. A baseline pode ser versionada. O desenvolvimento pode prosseguir.
+
+As pendências restantes são conhecidas, registradas e não impedem o desenvolvimento.
+

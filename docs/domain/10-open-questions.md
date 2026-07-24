@@ -28,7 +28,7 @@ Perguntas cuja resposta pode alterar significativamente o domínio, os aggregate
 
 | ID | Questão | Impacto |
 | -- | ------- | ------- |
-| OQ-001 | Qual é o fluxo oficial de onboarding: seleção direta de singular/área ou solicitação com aprovação administrativa? | Define pré-requisitos de Colaborador Integrado, BR-011 e aggregate Organização Corporativa |
+| OQ-001 | Qual é o fluxo oficial de onboarding: seleção direta de singular/área ou solicitação com aprovação administrativa? *(TO-BE 2026-07-24: FT-AUTH auto-cria colaborador sem área; legado usa `/app/onboarding`; ver OQ-026)* | Define pré-requisitos de Colaborador Integrado, BR-011 e aggregate Organização Corporativa |
 | OQ-002 | Parceiro autorizado e convidado são perfis distintos? Quais critérios de elegibilidade e permissões aplicam a cada um? | Afeta BR-001, BR-033 e governança de acesso externo |
 | OQ-003 | O fluxo de solicitação de permissão opera de ponta a ponta (registro → decisão → notificação)? | Valida BR-029 a BR-032 e eventos do aggregate Controle de Acesso |
 | OQ-004 | Comunicado é categoria de documento, publicação institucional independente ou ambos com regras distintas? | Define fronteira entre Gestão Documental e Comunicação Interna; afeta BR-039 |
@@ -42,7 +42,7 @@ Perguntas cuja resposta pode alterar significativamente o domínio, os aggregate
 | ID | Questão | Impacto |
 | -- | ------- | ------- |
 | OQ-007 | Quais pré-condições de negócio definem o evento Colaborador Integrado em cada modelo de onboarding? | BR-011 pode ter critérios diferentes conforme o fluxo |
-| OQ-008 | Colaborador pode pertencer a múltiplas equipes ou apenas uma por área? | Afeta BR-012 e contexto organizacional |
+| OQ-008 | Colaborador pode pertencer a múltiplas equipes ou apenas uma por área? *(TO-BE: `COLABORADOR` tem um `equipeId`; RN-SESSION-003 depende de OQ-027)* | Afeta BR-012 e contexto organizacional |
 | OQ-009 | Qual o processo de negócio para alteração de vínculo organizacional (singular, área, equipe) após integração? | Impacta Vínculo Organizacional Alterado e escopos nos demais aggregates |
 | OQ-010 | Representações divergentes de equipe como agrupamento organizacional estão consolidadas em um único modelo? | Pode exigir revisão de BR-008 e invariantes do aggregate Organização Corporativa |
 
@@ -84,12 +84,29 @@ Perguntas cuja resposta pode alterar significativamente o domínio, os aggregate
 
 ---
 
+## Questões de Autenticação, Sessão e Navegação (pós FT-AUTH)
+
+Cada item declara **tipo** conforme `docs/governance/07-documentation-architecture.md`.  
+**Responsável padrão deste bloco:** Arquitetura + Product Owner (até atribuição nominal).
+
+| ID | Tipo | Questão | Impacto |
+| -- | ---- | ------- | ------- |
+| OQ-026 | Negócio | BR-010 (colaborador sem área não opera) aplica-se no **login** (negar sessão) ou apenas na **navegação operacional** após sessão criada? | Alinha domínio × UX do primeiro acesso; impacta UC-AUTH-001 FA-002 |
+| OQ-027 | Negócio + Arquitetura | A próxima entrega de login/sessão exige suporte a **múltiplos contextos** (N Singulares/Áreas/Equipes/papéis) ou permanece fase 1 (um vínculo em `COLABORADOR`)? | Bloqueia ou adia RN-SESSION-003 e UI de seleção |
+| OQ-028 | Arquitetura + Planejamento | Quem define o **painel inicial** (home route) e qual contrato API o frontend consome? | Evita redirect hardcoded `/app`; ver `docs/frontend/frontend-flow.md` |
+
+> Após resposta: criar DEC (se houver alternativas) e atualizar SSOT correspondente — não manter DEC espelhando OQ aberta.  
+> OQ-001 permanece sob responsável de domínio (onboarding) — ver seção Questões Críticas.
+
+---
+
 ## Questões Relacionadas a Regras de Negócio
 
 | Regra | Questão Relacionada |
 | ----- | ------------------- |
 | BR-001 | Quem qualifica como parceiro autorizado e com quais permissões? (OQ-002, OQ-018) |
 | BR-011 | Qual fluxo de onboarding é oficial e quais pré-condições aplicam? (OQ-001, OQ-007) |
+| BR-010 | BR-010 aplica no login ou só na navegação operacional? (OQ-026) |
 | BR-017 | Como funciona herança de regras na hierarquia de pastas? (OQ-012) |
 | BR-019 | Como alterar visibilidade ou compartilhamento após definição inicial? (OQ-011) |
 | BR-020 | Federação no compartilhamento equivale à federação organizacional? (OQ-013) |
@@ -174,6 +191,9 @@ Perguntas cuja resposta pode alterar significativamente o domínio, os aggregate
 | Questão | Risco |
 | ------- | ----- |
 | OQ-001 | Integração inconsistente de novos colaboradores; bloqueio operacional |
+| OQ-026 | Sessão criada sem área vs. BR-010; UX e domínio divergentes |
+| OQ-027 | Entrega de multi-contexto sem modelo de dados; retrabalho |
+| OQ-028 | Painel inicial implícito; Features de negócio sem home route |
 | OQ-002 | Acesso externo mal governado; violação de política institucional |
 | OQ-003 | Expectativa de fluxo de permissão não atendida; frustração de usuários |
 | OQ-004 | Duplicidade conceitual de comunicado; modelagem incorreta de aggregates |
@@ -191,7 +211,10 @@ Perguntas cuja resposta pode alterar significativamente o domínio, os aggregate
 
 | ID | Prioridade | Justificativa |
 | -- | ---------- | ------------- |
-| OQ-001 | Alta | Pré-requisito upstream de todo o fluxo de valor |
+| OQ-001 | Crítica | Pré-requisito de primeiro acesso; TO-BE auto-create diverge do legado |
+| OQ-026 | Crítica | Define se login nega ou permite sessão sem área |
+| OQ-027 | Alta | Define escopo de RN-SESSION-003 na próxima entrega |
+| OQ-028 | Alta | Contrato de painel inicial / home route |
 | OQ-002 | Alta | Política institucional de acesso sem operacionalização |
 | OQ-003 | Alta | Fluxo central de concessão de acesso a recursos privados |
 | OQ-004 | Alta | Fronteira entre dois aggregates e catálogo de eventos |
@@ -206,7 +229,7 @@ Perguntas cuja resposta pode alterar significativamente o domínio, os aggregate
 | OQ-018 | Média | Extensão de OQ-002 para perfil específico |
 | OQ-020 | Média | Governança administrativa por escopo |
 | OQ-023 | Média | Canal interno com baixa confiança documentada |
-| OQ-008 | Baixa | Detalhamento de modelo de equipe |
+| OQ-008 | Alta | Base de multi-contexto / RN-SESSION-003 (elevada em 2026-07-24) |
 | OQ-009 | Baixa | Cenário de manutenção, não fluxo principal |
 | OQ-010 | Baixa | Depende de validação técnica e de negócio conjunta |
 | OQ-014 | Baixa | Refinamento conceitual de aggregate |
@@ -223,7 +246,9 @@ Perguntas cuja resposta pode alterar significativamente o domínio, os aggregate
 
 | Tema | Objetivo |
 | ---- | -------- |
-| Integração e onboarding | Validar fluxo oficial e pré-condições de Colaborador Integrado |
+| Integração e onboarding | Validar fluxo oficial e pré-condições de Colaborador Integrado (OQ-001, OQ-026) |
+| Multi-contexto e sessão | Decidir N vínculos e se RN-SESSION-003 entra na entrega (OQ-008, OQ-027) |
+| Painel inicial | Definir dono e contrato de home route (OQ-028) |
 | Perfis de acesso externo | Definir parceiro autorizado vs. convidado e critérios de elegibilidade |
 | Solicitação e revogação de permissão | Confirmar ciclo de vida completo e papel do responsável pelo recurso |
 | Compartilhamento e visibilidade | Alinhar regras de exposição, escopo de federação e herança em pastas |

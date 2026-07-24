@@ -1,173 +1,105 @@
 # Repository Governance
 
-**Versão:** 1.0
-**Status:** Approved
-**Categoria:** Governança
-**Objetivo:** Definir a política oficial de versionamento do repositório.
+| Item | Valor |
+|------|-------|
+| Versão | 2.0 |
+| Status | Approved — Baseline Gate Final |
+| Categoria documental | **SSOT** |
+| Complementa | `docs/governance/07-documentation-architecture.md` |
+| Última atualização | 2026-07-24 |
 
 ---
 
 # Objetivo
 
-Estabelecer critérios objetivos para determinar quais artefatos devem permanecer versionados ao longo da vida do projeto.
+Definir o que permanece versionado no repositório, alinhado às categorias **SSOT / Evidence / Working / Archive**.
 
-Esta política tem como finalidade preservar o conhecimento permanente do projeto, evitando o crescimento desnecessário do repositório por artefatos temporários ou reconstruíveis.
+Evitar crescimento por artefatos temporários ou reconstruíveis.
 
 ---
 
 # Princípios
 
-Todo artefato deve responder à seguinte pergunta:
+> Este artefato agregará valor daqui a um ano?
 
-> **Este artefato continuará agregando valor ao projeto daqui a um ano?**
+> Se puder ser reconstruído integralmente e a perda não comprometer conhecimento permanente, não integra a baseline.
 
-Caso a resposta seja negativa, sua permanência no repositório deve ser reavaliada.
-
-Além disso, aplica-se a seguinte regra:
-
-> **Se um artefato puder ser reconstruído integralmente a partir dos demais arquivos do projeto, e sua perda não comprometer o conhecimento permanente, ele não deve fazer parte da baseline.**
+> Relatórios analíticos e investigação são Working por padrão — Git guarda o histórico após remoção.
 
 ---
 
-# Classificação dos artefatos
+# Classificação (alinhada à arquitetura documental)
 
-## KEEP — Conhecimento Permanente
+| Categoria documental | Política de repositório | Ação |
+|---------------------|-------------------------|------|
+| **SSOT** | KEEP | Sempre versionar |
+| **Evidence** | KEEP / ARCHIVE | Versionar; não promove a SSOT |
+| **Archive** | ARCHIVE | Versionar; não evolui |
+| **Working** | REMOVE após incorporação | Remover quando SSOT absorveu o conteúdo |
+| Artefatos reconstruíveis (build, logs, cache, `.env` local) | REMOVE | Nunca na baseline |
 
-Devem permanecer versionados.
+## KEEP — SSOT e Evidence necessária
 
-Incluem:
+Inclui: código, testes, specs, docs permanentes, templates, ADRs, DDL, regras de agentes, feature manifests, construction-state, closure reports, homologações.
 
-* código-fonte;
-* testes;
-* Specifications;
-* documentação;
-* templates;
-* ADRs;
-* contratos de API;
-* DDL;
-* scripts permanentes;
-* regras de agentes;
-* retrospectivas;
-* auditorias finais;
-* closure reports;
-* feature manifests;
-* construction-state final.
+## ARCHIVE — Evidência histórica
 
-Esses artefatos representam a fonte oficial de conhecimento do projeto.
+Inclui: session.md de Features fechadas, audits de fase (`docs/audit/`), `docs/governance/history/`, `database/reports/` (não são estado oficial do banco).
 
----
+## REMOVE — Working absorvido e reconstruíveis
 
-## ARCHIVE — Evidência Histórica
-
-Representam registros importantes de auditoria ou rastreabilidade.
-
-Podem permanecer versionados quando agregarem contexto histórico que não possa ser reconstruído.
-
-Exemplos:
-
-* session.md;
-* review;
-* relatórios finais;
-* auditorias;
-* retrospectivas.
-
-A manutenção desses arquivos deve ser avaliada periodicamente.
-
----
-
-## REMOVE — Artefatos Reconstruíveis
-
-Não devem fazer parte da baseline.
-
-Incluem:
-
-* logs;
-* artefatos de build;
-* runtime;
-* caches;
-* coverage;
-* relatórios temporários;
-* arquivos de IDE;
-* arquivos locais;
-* backups;
-* arquivos temporários;
-* credenciais;
-* variáveis locais.
-
-Esses artefatos podem ser recriados automaticamente.
-
----
+Inclui: logs, build, runtime, coverage, IDE, backups, credenciais, relatórios Working com `PENDING_REMOVAL`, templates vazios.
 
 ## REVIEW
 
-Artefatos cuja permanência depende de análise humana.
-
-Aplica-se quando existir dúvida legítima sobre seu valor futuro.
+Dúvida legítima sobre valor futuro → manter e registrar; decidir com humano.
 
 ---
 
 # Critérios de permanência
 
-Um arquivo deve permanecer no repositório quando atender a pelo menos um dos critérios abaixo:
+Permanecer se atender ao menos um:
 
-* representa conhecimento permanente;
-* é a fonte oficial da informação (SSOT);
-* possui valor histórico relevante;
-* não pode ser reconstruído integralmente;
-* é necessário para reproduzir o projeto.
+- é SSOT;
+- é Evidence não reconstruível;
+- é Archive com valor histórico;
+- necessário para reproduzir o projeto.
 
 ---
 
 # Critérios de remoção
 
-Um arquivo deve ser removido da baseline quando:
+Remover se:
 
-* for gerado automaticamente;
-* puder ser reconstruído;
-* representar apenas estado temporário;
-* possuir informações locais;
-* contiver credenciais;
-* representar apenas execução operacional sem valor histórico.
+- Working já incorporado ao SSOT;
+- gerado automaticamente / reconstruível;
+- apenas estado intermediário;
+- local / credencial;
+- template vazio sem uso.
 
 ---
 
-# Baseline do projeto
+# Baseline
 
-A baseline oficial deve conter apenas artefatos classificados como:
+Baseline oficial = **SSOT + Evidence + Archive**.
 
-* KEEP
-* ARCHIVE
-
-Artefatos classificados como REMOVE jamais devem integrar uma release oficial.
+Working e REMOVE não integram release.
 
 ---
 
 # Checklist para Releases
 
-Antes de qualquer release:
-
-* validar `.gitignore`;
-* verificar ausência de credenciais;
-* confirmar ausência de artefatos de build;
-* confirmar ausência de logs;
-* revisar arquivos adicionados ao índice do Git;
-* executar o processo de Security Readiness Review;
-* executar o Repository Readiness Review.
+- validar `.gitignore`;
+- ausência de credenciais e artefatos de build/logs;
+- ausência de Working `PENDING_REMOVAL`;
+- novos docs declaram categoria + SSOT (ver `07-documentation-architecture.md`);
+- Security / Repository Readiness quando aplicável.
 
 ---
 
-# Responsabilidades
+# Histórico
 
-Toda inclusão de novo diretório ou novo tipo de artefato deve observar esta política.
-
-Caso exista dúvida sobre a classificação de um artefato, deve ser realizada uma Repository Readiness Review antes da sua inclusão permanente no repositório.
-
----
-
-# Evolução desta política
-
-Esta política deve evoluir apenas quando evidências obtidas durante a execução de Features demonstrarem a necessidade de alteração.
-
-Alterações não devem ser realizadas por preferência pessoal ou especulação.
-
-Toda mudança deve ser fundamentada em retrospectivas, auditorias ou revisões oficiais do projeto.
+| Versão | Data | Descrição |
+|--------|------|-----------|
+| 1.0 | — | KEEP / ARCHIVE / REMOVE |
+| 2.0 | 2026-07-24 | Gate Final — alinhamento a SSOT/Evidence/Working/Archive |

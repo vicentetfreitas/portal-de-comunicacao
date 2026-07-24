@@ -17,7 +17,7 @@
 | Critério | Evidência | Status |
 |----------|-----------|--------|
 | `feature.yaml` → `status.specification: APPROVED` | `specs/features/equipe/feature.yaml` | ✅ |
-| Gate 1 concluído | `specs/features/equipe/review-report.md` | ✅ APPROVED WITH MINOR ISSUES |
+| Gate 1 concluído | `construction/features/FT-EQUIPE/review/specification-gate1-review-report.md` | ✅ APPROVED WITH MINOR ISSUES |
 
 ---
 

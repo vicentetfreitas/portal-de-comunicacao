@@ -7,6 +7,7 @@
 | Data | 2026-07-17 |
 | Revisor | Specification Reviewer |
 | Escopo da revisão | Backend (já implementado) + adendo **camada frontend administrativa** (v1.1) |
+| Localização | `construction/features/FT-EQUIPE/review/` (movido de `specs/` em 2026-07-24 — evidência de revisão não pertence a `specs/`) |
 
 ---
 
@@ -127,3 +128,4 @@ Critérios DoR atendidos para iniciar **Construction frontend** após congelamen
 | Versão | Data | Descrição |
 |--------|------|-----------|
 | 1.0 | 2026-07-17 | Gate 1 — aprovação com ressalvas NC-01, NC-02 |
+| 1.1 | 2026-07-24 | Movido de `specs/features/equipe/` para Construction (governança documental) |
