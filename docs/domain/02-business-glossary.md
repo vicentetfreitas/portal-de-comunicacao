@@ -38,11 +38,13 @@ O glossário cobre o domínio do Portal de Comunicação conforme consolidado em
 | Visibilidade | Nível de exposição de um documento ou pasta — público ou privado conforme escopo (singular, área, colaborador) | `01-vision` Conceitos Centrais; `README.md` |
 | Compartilhamento | Regra de negócio que define quem pode acessar um documento ou pasta (pessoal, setor, federação, singulares ou colaboradores específicos) | `01-vision` Conceitos Centrais; `sharing.ts` |
 | Papel | Papel de negócio que determina o que uma pessoa pode fazer no portal e em qual escopo organizacional | `01-vision` Conceitos Centrais; Atores |
-| Contexto organizacional | Combinação de singular, área e equipe que delimita a visão e as ações do colaborador no portal | `01-vision` Conceitos Centrais |
+| Contexto organizacional | Combinação de federação, singular e área (equipe opcional) que delimita a visão e as ações do colaborador | `01-vision`; DEC-ORG-001 |
+| Contexto Ativo | Projeção derivada do único vínculo cadastral do COLABORADOR (`federationId`, `singularId`, `areaId`, `teamId` opcional) em vigor na sessão; base da navegação operacional — **não** é estado cadastral separado (DH-02) | DEC-FA-003 P2/P3; FT-SESSION / FT-PRIMEIRO-ACESSO; `construction/review/contexto-ativo-dh02-investigacao.md` |
+| Onboarding | Processo de Primeiro Acesso: wizard de vínculo (domínio → Singular → Área → Equipe opcional) + criação do COLABORADOR antes da operação plena (DH-03) | DEC-FA-001, BR-011; **obsoleto** como solicitação administrativa |
+| Home | Painel inicial dinâmico determinado pelo backend após Contexto Ativo | DEC-FA-004 |
 | Notificação | Comunicação de evento relevante dirigida ao colaborador dentro do portal | `01-vision` Conceitos Centrais |
 | Solicitação de permissão | Pedido formal de acesso a recurso privado, aguardando decisão do responsável | `01-vision` Conceitos Centrais; Fluxo de Valor |
 | Auditoria | Registro consultável de eventos de controle de acesso e alterações relevantes | `01-vision` Conceitos Centrais |
-| Onboarding | Processo de vinculação inicial do colaborador à singular e área adequadas | `01-vision` Conceitos Centrais |
 | Convidado | Pessoa com perfil de acesso restrito a documentos e conteúdos públicos | `01-vision` Conceitos Centrais; Atores |
 | Parceiro autorizado | Pessoa externa à operação cotidiana, com acesso restrito conforme política institucional do portal | `01-vision` Atores; `AppFooter.vue` |
 | Administrador global | Responsável pela gestão completa do portal, usuários, estrutura organizacional e auditoria | `01-vision` Atores |
@@ -175,7 +177,7 @@ O glossário cobre o domínio do Portal de Comunicação conforme consolidado em
 | Definição operacional de "parceiro autorizado" vs. "convidado" | Impossibilita vocabulário unificado para acesso externo |
 | Termo oficial para módulo "Central de Colaboração" além do nome de interface | Escopo de colaboração entre pessoas não estabilizado |
 | Distinção formal entre "comunicado" (categoria) e "comunicado" (módulo corporativo) | Risco de duplicidade conceitual na comunicação interna |
-| Termo consolidado para o fluxo de aprovação no onboarding (seleção vs. solicitação) | Integração de novos colaboradores sem vocabulário de processo único |
+| Termo consolidado para o fluxo de aprovação no onboarding (seleção vs. solicitação) | **Obsoleto no TO-BE** — DEC-FA-001 define primeiro acesso como resolução de Contexto Ativo |
 | Vocabulário oficial para "métricas administrativas" e indicadores exibidos | Gestão do portal sem léxico de indicadores confirmado |
 | Termo de negócio para "organização" quando usado como sinônimo de singular | Interfaces administrativas podem divergir do glossário oficial |
 

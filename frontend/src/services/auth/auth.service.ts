@@ -4,9 +4,26 @@ import { httpConfig } from "@/config/http";
 import type { AuthenticatedUser } from "@/auth/types";
 import { getHttpClient } from "@/services/http";
 import { readCsrfToken } from "@/services/http/csrf";
-import { ApiError, normalizeApiError } from "@/types/api";
+
+import {
+  ApiError,
+  categorizeStatus,
+  isErrorResponseBody,
+  normalizeApiError
+} from "@/types/api";
 
 import type { AuthMeApiResponse } from "./auth-contracts";
+
+async function ensureCsrfCookie(): Promise<void> {
+  if (readCsrfToken()) {
+    return;
+  }
+
+  await fetch(`${env.apiBaseUrl}${AUTH_API_PATHS.me}`, {
+    method: "GET",
+    credentials: "include"
+  });
+}
 
 export interface AuthLoginOptions {
   rememberMe?: boolean;
@@ -58,6 +75,8 @@ export class AuthApiService {
   }
 
   private async submitCredentials(options: AuthLoginOptions): Promise<void> {
+    await ensureCsrfCookie();
+
     const params = new URLSearchParams();
     params.set("email", options.email ?? "");
     params.set("password", options.password ?? "");
@@ -97,11 +116,16 @@ export class AuthApiService {
       return;
     }
 
+    const body: unknown = await response.json().catch(() => undefined);
+    if (isErrorResponseBody(body)) {
+      throw ApiError.fromErrorResponse(body);
+    }
+
     throw new ApiError({
       status: response.status,
       code: "AUTH_LOGIN_FAILED",
       message: "Não foi possível concluir o login",
-      category: response.status === 401 ? "authentication" : "unknown"
+      category: categorizeStatus(response.status)
     });
   }
 

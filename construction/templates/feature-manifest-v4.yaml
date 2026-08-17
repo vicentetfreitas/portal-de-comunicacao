@@ -108,7 +108,15 @@ dependencies:
     - code: frontend-foundation
       path: ../../frontend/
       manifest: ../../frontend/sprint-0-manifest.yaml
-  features: []
+  features:
+    # Regra padrão (sem scope): predecessor FEATURE_APPROVED no registry
+    - code: {{FEATURE_BASE}}
+      path: ../FT-{{FEATURE_BASE}}/feature-manifest.yaml
+    # Exceção Workstream-scoped (HANDOFF-01 / DL-EF-4.1-012):
+    # - code: FT-SESSION
+    #   path: ../FT-SESSION/feature-manifest.yaml
+    #   scope: backend          # backend | frontend
+    #   required_phase: closed  # padrão: closed
   foundation:
     - ../../../specs/foundation/
     - ../../../specs/features/FEATURE_BASELINE.md

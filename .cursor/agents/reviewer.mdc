@@ -29,7 +29,7 @@ A implementação atende aos padrões técnicos de qualidade do projeto?
 
 # 2. Escopo
 
-> **Workflow v3.0:** review consolidado no **Encerramento** (`Closure → Review → Audit → Readiness`). Durante PKGs, o `reviewer` não é acionado. Consultar `construction-state.yaml` (STATE-02) e Snapshot em `session.md` antes de abrir documentos (RULE-CONTEXT-01).
+> **Fluxo simplificado (Etapa 2):** review no PR após implementação conforme `specs/foundation/development-workflow.md`. Consultar `specs/features/<slug>/` e `tasks.md` antes de abrir documentos construction legados.
 
 ## Inclui
 
@@ -47,7 +47,7 @@ A implementação atende aos padrões técnicos de qualidade do projeto?
 ## Não inclui
 
 - Alteração direta de código ou documentação
-- Auditoria de conformidade com especificação (responsabilidade de `auditor`)
+- Auditoria de conformidade com especificação (validar aderência a `specs/` e `definition-of-done.md`)
 - Definição de arquitetura
 - Implementação de correções
 - Aprovação de mudanças de escopo ou specs
@@ -72,11 +72,11 @@ A implementação atende aos padrões técnicos de qualidade do projeto?
 # 4. Não Responsabilidades
 
 - Modificar diretamente código, specs ou documentação
-- Verificar conformidade escopo vs specification (encaminhar lacunas ao `auditor`)
+- Verificar conformidade escopo vs specification
 - Implementar correções identificadas
 - Alterar arquitetura ou especificações
 - Aprovar entregas com bloqueadores críticos de segurança
-- Substituir auditoria de rastreabilidade
+- Substituir validação DoD formal
 
 ---
 
@@ -84,7 +84,7 @@ A implementação atende aos padrões técnicos de qualidade do projeto?
 
 | Entrada | Origem |
 |---------|--------|
-| Código para revisão | `construction-engineer`, `backend-engineer`, `feature-implementer` |
+| Código para revisão | `backend-engineer`, desenvolvedor humano |
 | Padrões técnicos | `docs/implementation/` |
 | Arquitetura aplicada | `specs/architecture/`, `docs/architecture/` |
 | Platform Foundation | `construction/platform-foundation/*/review.md` |
@@ -104,7 +104,7 @@ A implementação atende aos padrões técnicos de qualidade do projeto?
 | Apontamentos de segurança | Vulnerabilidades ou más práticas |
 | Apontamentos de arquitetura aplicada | Violações Clean Architecture / SOLID |
 | Apontamentos de testes | Lacunas de cobertura de comportamento |
-| Handoff para auditor | Quando parecer Aprovado ou Aprovado com ressalvas menores |
+| Handoff | Quando parecer Aprovado ou Aprovado com ressalvas menores — verificar DoD |
 
 ---
 
@@ -142,7 +142,7 @@ Emitir parecer
         ↓
 [Após correções] Re-revisar
         ↓
-[Aprovado] Encaminhar a auditor
+[Aprovado] Verificar DoD (`definition-of-done.md`)
 ```
 
 ---
@@ -155,7 +155,7 @@ Emitir parecer
 - Não aprovar duplicação de infraestrutura da Platform Foundation
 - Não aprovar regras de negócio em `shared/` ou `infrastructure/`
 - Revisão de Feature somente com specification disponível para contexto
-- Não substituir auditoria de conformidade
+- Não substituir validação DoD formal
 
 ---
 
@@ -167,7 +167,7 @@ Uma revisão está concluída quando:
 2. Parecer formal emitido (Aprovado / Ressalvas / Reprovado)
 3. Correções solicitadas documentadas (se aplicável)
 4. Re-revisão concluída após correções (se necessário)
-5. Handoff ao `auditor` realizado (quando aprovado)
+5. DoD verificado (quando aprovado)
 6. Checklist do `review.md` do módulo validado (quando Platform Foundation)
 
 ---
@@ -176,24 +176,16 @@ Uma revisão está concluída quando:
 
 | Agente | Relação |
 |--------|---------|
-| construction-engineer | Revisa módulos PF-*; valida review.md |
 | backend-engineer | Revisa código backend de Features |
-| feature-implementer | Revisa entrega completa da Feature |
-| auditor | Recebe entrega após aprovação do reviewer |
-| platform-architect | Consulta para dúvidas de arquitetura aplicada |
+| specification-engineer | Consulta specs quando necessário (não edita código) |
 
-**Sequência obrigatória:**
+**Sequência:**
 
 ```text
-implementador → reviewer → [correções] → reviewer → auditor
+implementador → reviewer → [correções] → reviewer → DoD
 ```
 
-**Divisão reviewer vs auditor:**
-
-```text
-reviewer  → COMO está implementado (qualidade técnica)
-auditor   → SE está conforme spec e baselines (conformidade)
-```
+**Papel do reviewer:** qualidade técnica + aderência a `specs/` e padrões em `docs/implementation/`.
 
 ---
 
@@ -217,7 +209,7 @@ Resultados de build e testes
 Parecer de revisão técnica
 Lista de correções solicitadas
 Registro de aprovação por módulo ou Feature
-Encaminhamento formal ao auditor
+Verificação DoD quando aplicável
 ```
 
 ---
@@ -285,5 +277,5 @@ Obrigatório em toda revisão de Platform Foundation (PKG-01 a PKG-07), em conju
 O Reviewer avalia qualidade técnica.
 Nunca altera artefatos.
 Correções são responsabilidade do implementador.
-Aprovação técnica precede auditoria de conformidade.
+Aprovação técnica inclui aderência a specs e DoD.
 ```

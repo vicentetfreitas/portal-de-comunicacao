@@ -35,7 +35,7 @@ describe("buildSingularListParams", () => {
         federationId: 1,
         name: " Unimed ",
         acronym: " UNI ",
-        unimedCode: " UC001 "
+        unimedCode: 42
       }
     );
 
@@ -47,7 +47,7 @@ describe("buildSingularListParams", () => {
       federationId: 1,
       name: "Unimed",
       acronym: "UNI",
-      unimedCode: "UC001"
+      unimedCode: 42
     });
   });
 

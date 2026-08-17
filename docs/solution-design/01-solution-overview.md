@@ -154,13 +154,18 @@ Princípios derivados dos ADRs aceitos. A solução implementável deve material
 - Gerenciar conteúdo institucional complementar ao núcleo de negócio do portal.
 - Publicar páginas e conteúdos estáticos ou editoriais conforme política institucional.
 - Operar de forma autônoma em relação às regras centrais de negócio do backend.
+- Atuar **exclusivamente** como **provedor de conteúdo** (DEC-CMS-001).
 
 ### Limites
 
-- **Não** contém regras centrais de negócio (publicação documental, autorização, organização).
+- **Não** faz parte da estrutura organizacional (Federação, Singular, Área, Equipe, Colaborador).
+- **Não** controla perfis, permissões ou autorização do Portal.
+- **Não** contém regras centrais de negócio (publicação documental operacional, autorização, organização).
 - **Não** acessa diretamente o banco de dados do backend nem entidades internas do backend.
 - **Não** efetua decisões de autorização sobre recursos documentais governados pelo backend.
 - Integrações com o núcleo do portal ocorrem **exclusivamente por API** do Backend.
+- Toda autorização permanece sob responsabilidade do Portal (Backend).
+
 
 ### Dependências
 

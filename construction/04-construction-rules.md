@@ -242,6 +242,17 @@ Referência: `construction/16-frontend-validation-gates.md`
 
 Referência: `frontend/test/e2e/README.md`
 
+## R-28 — Handoff entre Features (HANDOFF-01)
+
+| Regra | Descrição |
+|-------|-----------|
+| HANDOFF-01-01 | **Padrão:** dependência de feature **sem** `scope` → predecessor `FEATURE_APPROVED` no registry (todos Workstreams) |
+| HANDOFF-01-02 | **Exceção:** dependência **com** `scope: backend\|frontend` + `required_phase` (padrão `closed`) → validar `construction-state.yaml` do Workstream alvo (STATE-WS-01) |
+| HANDOFF-01-03 | Ausência de `scope` → sempre regra padrão — nunca inferir exceção |
+| HANDOFF-01-04 | Fundações (`dependencies.construction`) e `depends_on_workstreams` intra-Feature não usam `scope` |
+
+SSOT: `construction/12-fullstack-orchestrator.md` § Handoff · Decisão: DL-EF-4.1-012
+
 ## R-22 — Validation Summary (VAL-01)
 
 Ao concluir um PKG, o relatório principal (`pkg-XX/status.md`) deve conter a seção **VALIDATION SUMMARY** no formato de `construction/templates/pkg-validation-summary.md`.

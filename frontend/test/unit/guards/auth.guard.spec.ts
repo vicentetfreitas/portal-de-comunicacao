@@ -37,6 +37,20 @@ function createRoute(
   } as RouteLocationNormalized;
 }
 
+const sampleUser = {
+  id: 1,
+  email: "a@b.com",
+  name: "User",
+  permissions: [],
+  sessionId: "s",
+  organizationalLinks: {
+    federationId: 1,
+    singularId: 2,
+    areaId: 3,
+    teamId: 4
+  }
+};
+
 describe("createAuthGuard", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -77,19 +91,7 @@ describe("createAuthGuard", () => {
   });
 
   it("allows protected routes when authenticated", async () => {
-    fetchCurrentUser.mockResolvedValue({
-      id: 1,
-      email: "a@b.com",
-      name: "User",
-      permissions: [],
-      sessionId: "s",
-      organizationalLinks: {
-        federationId: 1,
-        singularId: 2,
-        areaId: 3,
-        teamId: 4
-      }
-    });
+    fetchCurrentUser.mockResolvedValue(sampleUser);
 
     const store = useAuthStore();
     await store.hydrateSession();
@@ -108,11 +110,7 @@ describe("createAuthGuard", () => {
 
   it("redirects authenticated users away from guest-only routes", async () => {
     fetchCurrentUser.mockResolvedValue({
-      id: 1,
-      email: "a@b.com",
-      name: "User",
-      permissions: [],
-      sessionId: "s",
+      ...sampleUser,
       organizationalLinks: {
         federationId: 1,
         singularId: null,

@@ -8,8 +8,31 @@
 | Status | **Stable** |
 | Projeto | Portal de Comunicação |
 | Camada | `construction/` |
-| Última atualização | 2026-07-16 |
+| Última atualização | 2026-08-13 |
 | Histórico de versões | `CHANGELOG.md` |
+| **Simplificação (Etapa 2)** | Fluxo diário: [`../specs/foundation/development-workflow.md`](../specs/foundation/development-workflow.md) · SSOT: [`../specs/foundation/minimal-ssot.md`](../specs/foundation/minimal-ssot.md) |
+
+---
+
+# Fluxo simplificado (preferencial)
+
+Desde a Etapa 2 (2026-08-13), o desenvolvimento diário **não** exige Session/PKG/Registry status:
+
+```text
+specs/features/<slug>/ → tasks.md → código → CI → PR review
+```
+
+| Legado | Substituto |
+|--------|------------|
+| `feature-manifest` paths | `specs/foundation/path-conventions.md` |
+| `execution-plan.md` | `tasks.md` |
+| `session.md` | specs direto |
+| `pkg-XX/status.md` | CI logs / PR |
+| `registry.status` | `construction-state.yaml` ou estado derivado |
+
+Escopo aprovado: [`../docs/governance/09-framework-simplification-scope.md`](../docs/governance/09-framework-simplification-scope.md).
+
+O conteúdo abaixo documenta o **Engineering Framework v4.1 legado** (histórico e Features em transição).
 
 ---
 
@@ -271,7 +294,7 @@ Detalhamento em `04-construction-rules.md` e `11-feature-execution-workflow.md`.
 | CAP-01 | `capabilities[]` opcional no manifest — ausência = v4.0 |
 | CAP-02 | Registry expõe `current_capability` computado |
 | EXEC-STRAT-01 | `execution_strategy` padrão `sequential` |
-| HANDOFF-01 | Handoff usa `dependencies` do Manifest + registry |
+| HANDOFF-01 | Padrão: predecessor FEATURE_APPROVED. Exceção: `scope` + `required_phase` no manifest → só o Workstream indicado |
 | RETRO-01 | Paths e artefatos v3.2/v4.0 preservados |
 
 Detalhamento: `construction/12-fullstack-orchestrator.md`

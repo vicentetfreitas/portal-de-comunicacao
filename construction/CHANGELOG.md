@@ -3,11 +3,37 @@
 | Item | Valor |
 |------|-------|
 | Nome | **Engineering Framework** |
-| Versão atual | **v4.1.5** |
+| Versão atual | **v4.1.6** |
 | Baseline | **v4.0** |
 | Status | **Stable** |
 | Camada | `construction/` |
-| Última atualização | 2026-07-17 |
+| Última atualização | 2026-07-24 |
+
+---
+
+## [4.1.6] — 2026-07-24 — HANDOFF-01 Workstream-scoped (DL-EF-4.1-012)
+
+### Marco
+
+- Elimina ambiguidade entre Orchestrator (Feature inteira), Golden Template (camada) e prática Sprint 3.
+
+### Adicionado
+
+- Decisão **DL-EF-4.1-012** — exceção `scope` + `required_phase` no manifest
+- Regra **R-28** (HANDOFF-01) em `04-construction-rules.md`
+
+### Alterado
+
+- `12-fullstack-orchestrator.md` — §8 passo 4 + § Handoff (regra padrão + exceção)
+- `13-framework-decisions-v4.md` — DL-EF-4.0-007
+- `14-framework-decisions-v4.1.md` — DL-EF-4.1-012
+- `README.md`, `golden-template/FT-SINGULAR.md`, `11-feature-execution-workflow.md`
+- `templates/feature-manifest-v4.yaml` — exemplo `scope`/`required_phase`
+- `features/FT-PRIMEIRO-ACESSO/feature-manifest.yaml` — dependências scoped
+
+### Retrocompatibilidade
+
+- Manifests sem `scope` preservam regra padrão (FEATURE_APPROVED).
 
 ---
 

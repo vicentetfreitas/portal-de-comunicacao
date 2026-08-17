@@ -13,7 +13,7 @@ export interface SingularListFilters {
   federationId: number | null;
   name: string;
   acronym: string;
-  unimedCode: string;
+  unimedCode: number | null;
 }
 
 export interface SingularTablePagination {
@@ -34,7 +34,7 @@ export function createDefaultSingularListFilters(): SingularListFilters {
     federationId: null,
     name: "",
     acronym: "",
-    unimedCode: ""
+    unimedCode: null
   };
 }
 
@@ -78,9 +78,8 @@ export function buildSingularListParams(
     params.acronym = acronym;
   }
 
-  const unimedCode = filters.unimedCode.trim();
-  if (unimedCode.length > 0) {
-    params.unimedCode = unimedCode;
+  if (filters.unimedCode !== null) {
+    params.unimedCode = filters.unimedCode;
   }
 
   return params;

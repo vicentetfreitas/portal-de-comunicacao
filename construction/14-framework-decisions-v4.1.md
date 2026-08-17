@@ -159,6 +159,22 @@
 
 ---
 
+# DL-EF-4.1-012 — HANDOFF-01 Workstream-scoped (exceção explícita)
+
+| Campo | Valor |
+|-------|-------|
+| Decisão | Formalizar exceção Workstream-scoped ao HANDOFF-01 |
+| Problema | Texto do Orchestrator exigia FEATURE_APPROVED na Feature inteira; Golden Template e Sprint 3 operavam dependência por camada |
+| Regra padrão | Dependência **sem** `scope` → predecessor `FEATURE_APPROVED` (todos Workstreams) |
+| Exceção | Dependência **com** `scope: backend\|frontend` + `required_phase` (padrão `closed`) → validar `construction-state.yaml` do Workstream alvo |
+| SSOT validação scoped | STATE-WS-01 — state da camada, não estado agregado |
+| Ausência de declaração | Sempre regra padrão (Feature inteira) |
+| Retrocompatibilidade | Manifests existentes sem `scope` inalterados — comportamento preservado |
+| Implementação | `12-fullstack-orchestrator.md` §8 passo 4 + § Handoff; `templates/feature-manifest-v4.yaml` |
+| Regra | HANDOFF-01 / R-28 em `04-construction-rules.md` |
+
+---
+
 # Referências
 
 - `construction/CHANGELOG.md` — [4.1.0]

@@ -1,0 +1,67 @@
+# Construction State — FT-PRIMEIRO-ACESSO (frontend Workstream)
+
+version: 3
+
+scope:
+  type: business_feature
+  layer: construction/frontend/features/FT-PRIMEIRO-ACESSO
+
+feature:
+  id: primeiro-acesso
+  code: FT-PRIMEIRO-ACESSO
+  name: Primeiro acesso e resolução de contexto
+
+depends_on:
+  - frontend-foundation
+  - FT-AUTH
+  - FT-SESSION
+  - FT-PRIMEIRO-ACESSO-backend
+
+state:
+  phase: execution
+  current_pkg: pkg-fe-01
+  completed: []
+  pending:
+    - pkg-fe-01
+    - pkg-fe-02
+    - pkg-fe-03
+    - pkg-fe-04
+    - pkg-fe-05
+    - pkg-fe-06
+
+snapshot:
+  version: 0
+  created_at: null
+  immutable: false
+
+cache:
+  valid: false
+  reason: "Implementação FE em andamento (session store, auth) — reconciliação Etapa 2 2026-08-13"
+
+manifest:
+  version: 2
+  path: feature-manifest.yaml
+
+review:
+  status: pending
+
+audit:
+  status: pending
+
+build:
+  incremental: true
+  full_verify: pending
+
+readiness:
+  status: pending
+
+closure:
+  status: pending
+
+metrics:
+  pkgs_total: 6
+  pkgs_completed: 0
+
+metadata:
+  created_at: "2026-07-24"
+  updated_at: "2026-07-24"

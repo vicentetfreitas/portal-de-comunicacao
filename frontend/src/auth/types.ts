@@ -25,34 +25,36 @@ export interface AuthenticatedUser {
   roles?: string[];
 }
 
+/**
+ * Auth cycle state only — authenticated user lives in session.store.
+ */
 export interface AuthSessionState {
   status: AuthSessionStatus;
-  user: AuthenticatedUser | null;
 }
 
 /**
- * FT-AUTH — hydrate session from GET /auth/me (not implemented in Sprint 0).
+ * FT-AUTH — hydrate session from GET /auth/me.
  */
 export interface AuthSessionHydrator {
   hydrate(): Promise<void>;
 }
 
 /**
- * FT-AUTH — login redirect handler (not implemented in Sprint 0).
+ * FT-AUTH — login redirect handler.
  */
 export interface AuthLoginHandler {
   login(options?: { rememberMe?: boolean; redirectTo?: string }): void;
 }
 
 /**
- * FT-AUTH — logout handler (not implemented in Sprint 0).
+ * FT-AUTH — logout handler.
  */
 export interface AuthLogoutHandler {
   logout(): Promise<void>;
 }
 
 /**
- * FT-AUTH — token refresh handler (not implemented in Sprint 0).
+ * FT-AUTH — token refresh handler.
  */
 export interface AuthRefreshHandler {
   refresh(): Promise<boolean>;

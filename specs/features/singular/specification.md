@@ -157,8 +157,8 @@ A Feature materializa o agregado **Organização Corporativa** para o conceito *
 | Campo | Valor |
 |--------|--------|
 | Identificador | RN-SINGULAR-004 |
-| Descrição | O código Unimed é obrigatório, limitado a 20 caracteres e único em todo o sistema. |
-| Motivação | `UK_SINGULAR_COD_UNIMED`. |
+| Descrição | O código Unimed é obrigatório, numérico (1–999) e único em todo o sistema. |
+| Motivação | `UK_SINGULAR_COD_UNIMED`; modelo físico `COD_UNIMED NUMBER(3) NOT NULL`. |
 | Impacto | Conflito retorna erro de negócio (HTTP 422). |
 | Requisitos | RF-SINGULAR-001, RF-SINGULAR-004 |
 

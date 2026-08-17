@@ -7,7 +7,8 @@ export interface SingularResponse {
   federationId: number;
   name: string;
   acronym: string;
-  unimedCode: string;
+  unimedCode: number;
+  registroAns: string;
   status: SingularStatus;
   createdAt: string;
   updatedAt: string | null;
@@ -17,13 +18,15 @@ export interface CreateSingularRequest {
   federationId: number;
   name: string;
   acronym: string;
-  unimedCode: string;
+  unimedCode: number;
+  registroAns: string;
 }
 
 export interface UpdateSingularRequest {
   name: string;
   acronym: string;
-  unimedCode: string;
+  unimedCode: number;
+  registroAns: string;
 }
 
 export interface UpdateSingularStatusRequest {
@@ -35,5 +38,5 @@ export interface SingularListParams extends PageRequestParams {
   federationId?: number;
   name?: string;
   acronym?: string;
-  unimedCode?: string;
+  unimedCode?: number;
 }

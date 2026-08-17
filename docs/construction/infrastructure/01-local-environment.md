@@ -80,20 +80,20 @@ Versão mínima:
 
 ## Node.js
 
-Versão:
+Versão mínima:
 
 ```text
-LTS
+22.12+
 ```
 
 ---
 
-## pnpm
+## Yarn
 
 Versão:
 
 ```text
-10+
+1.22.22 (packageManager do frontend)
 ```
 
 ---
@@ -121,12 +121,15 @@ Versão:
 # Estrutura do Workspace
 
 ```text
-workspace
-├── backend
-├── frontend
-├── docs
-├── scripts
-└── infrastructure
+portal-de-comunicacao/
+├── backend/
+├── frontend/
+├── database/
+├── specs/
+├── docs/
+├── construction/
+├── scripts/
+└── docker-compose.yml
 ```
 
 ---
@@ -154,7 +157,7 @@ mvn spring-boot:run
 ## Instalação
 
 ```bash
-pnpm install
+cd frontend && yarn install
 ```
 
 ---
@@ -162,47 +165,57 @@ pnpm install
 ## Execução
 
 ```bash
-pnpm dev
+cd frontend && yarn dev
 ```
+
+Servidor de desenvolvimento: **http://localhost:9000** (proxy `/api` → backend).
 
 ---
 
 # Banco de Dados
 
-Banco local executado via Docker.
+O backend utiliza **Oracle Database 11g+** com schema `UNMPORTCOM` e usuário de aplicação `UNMPORTCOM_APP` (DEC-DB-024).
+
+SSOT: `database/README.md`, `database/GOVERNANCE.md`.
 
 ---
 
-## PostgreSQL
+## Oracle (obrigatório)
 
-Container padrão:
+Configurar via `.env` na raiz do repositório:
 
-```text
-postgres:16-alpine
+```env
+SPRING_DATASOURCE_URL=jdbc:oracle:thin:@<host>:<porta>/<service>
+SPRING_DATASOURCE_USERNAME=UNMPORTCOM_APP
+SPRING_DATASOURCE_PASSWORD=<senha>
+SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=UNMPORTCOM
 ```
 
-**Rastreabilidade:** `docs/implementation/06-database-standards.md`.
+Instalação greenfield: `database/ddl/000-install.sql` (executar como DBA).
+
+> **Atenção:** `docker-compose.yml` na raiz ainda provisiona PostgreSQL (legado). Não usar para o backend Oracle. Alinhamento previsto na Etapa 5.
 
 ---
 
 # Variáveis de Ambiente
 
-Backend:
+Backend (`.env` na raiz):
 
 ```env
 SPRING_PROFILES_ACTIVE=local
-
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=portal
+SPRING_DATASOURCE_URL=jdbc:oracle:thin:@localhost:1521/XEPDB1
+SPRING_DATASOURCE_USERNAME=UNMPORTCOM_APP
+SPRING_DATASOURCE_PASSWORD=<senha>
 ```
 
 ---
 
-Frontend:
+Frontend (`frontend/.env`):
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8080
+VITE_APP_ENV=local
+VITE_API_BASE_URL=/api/v1
+BACKEND_URL=http://localhost:8080
 ```
 
 ---
@@ -250,9 +263,8 @@ Visual Studio Code
 
 ```text
 ESLint
-Prettier
+Oxlint
 Docker
-Tailwind CSS
 GitLens
 ```
 
@@ -263,23 +275,18 @@ GitLens
 Executar antes de commitar:
 
 ```bash
-mvn verify
+cd backend && mvn verify
 ```
 
 ```bash
-pnpm lint
-```
-
-```bash
-pnpm test
+cd frontend && yarn lint && yarn test
 ```
 
 ---
 
 # Critérios de Aceite
 
-* Ambiente configurado em menos de 30 minutos.
-* Backend inicia sem erros.
-* Frontend inicia sem erros.
-* Banco local disponível.
-* Docker operacional.
+* Backend inicia sem erros (com Oracle configurado).
+* Frontend inicia sem erros (`yarn dev` na porta 9000).
+* Oracle acessível com `UNMPORTCOM_APP`.
+* Docker operacional (opcional).

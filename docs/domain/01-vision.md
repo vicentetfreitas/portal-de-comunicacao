@@ -116,15 +116,17 @@ O sistema se encaixa na **Unimed Ceará** como plataforma de **comunicação e g
 
 ## Fluxo de Valor de Alto Nível
 
-1. O **colaborador** acessa o portal com identidade corporativa (e-mail da organização).
-2. Se for novo usuário, passa pelo **onboarding** para vincular-se à **singular** e **área** adequadas.
-3. O sistema estabelece o **contexto organizacional** (singular, área, equipe) e o **papel** do colaborador.
-4. O colaborador **navega** na estrutura organizacional e consulta **documentos** e **pastas** conforme sua visibilidade e permissões.
-5. Quando não possui acesso a um recurso privado, pode **solicitar permissão** ao responsável.
-6. O responsável **aprova ou nega** a solicitação; o colaborador é **notificado** do resultado.
-7. **Administradores** estruturam singulares, áreas, equipes, colaboradores e políticas de acesso; **auditoria** registra eventos relevantes.
+1. O **colaborador** autentica-se com identidade corporativa (FT-AUTH).
+2. O Portal verifica se existe **COLABORADOR** com vínculo completo (DH-03).
+3. Se necessário, **FT-PRIMEIRO-ACESSO** conduz onboarding (domínio → Singular → Área → Equipe opcional) e cria o COLABORADOR.
+4. O **Contexto Ativo** é derivado do único vínculo cadastral (DH-02); o backend determina a **Home** dinâmica; o frontend renderiza.
+5. O colaborador **navega** no Contexto Ativo derivado e consulta **documentos** e **pastas** conforme visibilidade e permissões.
+6. Quando não possui acesso a um recurso privado, pode **solicitar permissão** ao responsável.
+7. O responsável **aprova ou nega** a solicitação; o colaborador é **notificado** do resultado.
+8. **Administradores** estruturam Federação → Singular → Área → Equipe → Colaborador; **auditoria** registra eventos relevantes.
 
-Evidência: módulos ATIVOS e PARCIAIS em `01`; contextos em `02`; entidades em `03`; fluxo de solicitação em `README.md` e `01` Solicitação de Permissões.
+Hierarquia oficial (DEC-ORG-001): Federação → Singular → Área → Equipe → Colaborador.
+
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 description: Documentation Dependency Rules
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Objetivo

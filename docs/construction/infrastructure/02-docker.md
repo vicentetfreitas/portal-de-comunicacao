@@ -38,7 +38,7 @@ Garantir:
 
 ```text
 ┌──────────────────┐
-│ Frontend Next.js │
+│ Frontend Vue/Quasar │
 └────────┬─────────┘
          │
 ┌────────▼─────────┐
@@ -46,25 +46,22 @@ Garantir:
 └────────┬─────────┘
          │
 ┌────────▼─────────┐
-│ PostgreSQL       │
+│ Oracle (externo) │
 └──────────────────┘
 ```
+
+> Compose na raiz (`docker-compose.yml`) inclui serviço Postgres legado — não substitui Oracle do backend.
 
 ---
 
 # Estrutura
 
 ```text
-infrastructure
-├── docker
-│   ├── backend
-│   ├── frontend
-│   └── database
-│
-├── compose
-│   ├── docker-compose.yml
-│   ├── docker-compose.dev.yml
-│   └── docker-compose.prod.yml
+portal-de-comunicacao/
+├── backend/Dockerfile
+├── frontend/Dockerfile
+├── docker-compose.yml      # raiz — backend + frontend (+ Postgres legado)
+└── database/ddl/           # Oracle — instalação via DBA
 ```
 
 ---

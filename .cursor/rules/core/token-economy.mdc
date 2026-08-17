@@ -1,6 +1,6 @@
 ---
 description: Token Economy Rules
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Objetivo
@@ -62,9 +62,11 @@ Não devem ser redescobertas.
 
 ---
 
-# Cache de Contexto (Construction v3.1)
+# Cache de Contexto (Construction v3.1) — LEGADO
 
-Durante execução de PKGs após Sessão da Feature:
+> **Substituto (Etapa 2):** consultar `specs/foundation/minimal-ssot.md` e `path-conventions.md` antes de abrir documentos construction.
+
+Durante execução de PKGs após Sessão da Feature (framework legado):
 
 Hierarquia obrigatória:
 

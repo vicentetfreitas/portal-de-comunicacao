@@ -12,29 +12,39 @@ As especificações definem **o que** o sistema deve fazer e **como** deve se co
 
 ## Escopo desta camada
 
-Este diretório contém, neste momento, apenas a **Foundation**: a base metodológica do Spec-Driven Development (SDD) adotado pelo projeto.
-
-A Foundation não descreve funcionalidades, domínio, arquitetura ou APIs. Ela define como o projeto utiliza SDD.
-
----
-
-## Artefatos
-
 ```text
 specs/
-└── foundation/
-    ├── principles.md    — Princípios do SDD
-    ├── workflow.md      — Fluxo de trabalho
-    └── conventions.md   — Convenções e relação com docs/
+├── foundation/          — processo SDD, DoR/DoD, mapa SSOT
+├── features/<slug>/     — especificações funcionais por feature
+├── architecture/        — arquitetura normativa (ex.: authentication)
+└── templates/           — templates oficiais de feature
 ```
+
+Mapa SSOT operacional: [`foundation/minimal-ssot.md`](foundation/minimal-ssot.md).
 
 ---
 
-## Documentação histórica
+## Artefatos Foundation
 
-O diretório `docs/` contém documentação importada do sistema legado e das fases anteriores do projeto.
+| Artefato | Papel |
+|----------|-------|
+| `principles.md` | Princípios do SDD |
+| `workflow.md` | Ciclo SDD geral |
+| `conventions.md` | Convenções e relação com `docs/` |
+| `minimal-ssot.md` | **Mapa SSOT** (Etapa 2/3) |
+| `path-conventions.md` | Paths sem manifest |
+| `development-workflow.md` | Fluxo simplificado diário |
+| `definition-of-ready.md` | DoR |
+| `definition-of-done.md` | DoD |
+| `feature-yaml.md` | Contrato `feature.yaml` |
 
-`docs/` possui caráter **exclusivamente consultivo**. Não orienta implementação diretamente.
+---
+
+## Documentação consultiva
+
+O diretório `docs/` contém documentação de engenharia (domínio, arquitetura, governança).
+
+`docs/` possui caráter **consultivo** para specs. Não orienta implementação diretamente.
 
 Em caso de conflito entre uma especificação em `specs/` e um documento em `docs/`, prevalece a especificação.
 

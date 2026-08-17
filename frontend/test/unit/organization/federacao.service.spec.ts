@@ -73,7 +73,8 @@ describe("FederacaoApiService", () => {
     expect(getMock).toHaveBeenCalledWith(FEDERACAO_API_PATHS.base, {
       params: { status: "ACTIVE" }
     });
-    expect(result.content[0].unimedCode).toBe(979);
+    expect(result.content).toHaveLength(1);
+    expect(result.content[0]?.unimedCode).toBe(979);
   });
 
   it("creates federacao", async () => {
@@ -91,6 +92,6 @@ describe("FederacaoApiService", () => {
       acronym: "UNMFED",
       unimedCode: 979,
       ansRegistration: "32195-8"
-    });
+    }, undefined);
   });
 });

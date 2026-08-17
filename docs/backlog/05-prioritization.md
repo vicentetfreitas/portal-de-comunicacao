@@ -16,6 +16,7 @@ Classificar épicos, features e entregas conforme prioridade documentada em Solu
 **Fontes:** `docs/solution-design/10-delivery-roadmap.md`, `docs/implementation/01-implementation-backlog.md`, `docs/construction/delivery/01-mvp.md`, `docs/construction/delivery/02-release-plan.md`
 
 **Data de consolidação:** 2026-06-22  
+**Última reconciliação:** 2026-08-14 — FEATURE-016 alinhada a DEC-FA-001 e `04-mvp-scope.md`  
 **MVP oficial:** `docs/audit/10-mvp-consolidation-audit.md` — reconciliado em 2026-06-22
 
 ---
@@ -54,6 +55,7 @@ Classificar épicos, features e entregas conforme prioridade documentada em Solu
 | FEATURE-001 a FEATURE-005 | Critérios de prontidão Etapa 1 |
 | FEATURE-015, FEATURE-010 a FEATURE-014 | Capacidades obrigatórias Etapa 2 — estrutura organizacional |
 | FEATURE-020 a FEATURE-025, FEATURE-028 | Autenticação Zimbra, sessão, autorização — obrigatórias Etapa 2 |
+| FEATURE-016 | Primeiro acesso / resolução de Contexto Ativo — bloqueia operação pós-auth (DEC-FA-001; FT-PRIMEIRO-ACESSO) |
 | FEATURE-004 | Observabilidade base desde Etapa 1; incluída Release 1 |
 
 ### User Stories
@@ -104,7 +106,6 @@ US-030 a US-034, US-040, US-041 a US-044, US-070, US-071, US-081
 
 | Feature | Justificativa |
 | ------- | ------------- |
-| FEATURE-016 | Onboarding PARCIAL — OQ-001 |
 | FEATURE-026, FEATURE-027 | Solicitação permissão, perfis externos — OQ-002, OQ-003 |
 | FEATURE-041 (pleno) | Comunicados — após OQ-004 |
 | FEATURE-042, FEATURE-043, FEATURE-045 | PARCIAL AS-IS |
@@ -164,6 +165,7 @@ Analytics, automações, recursos avançados
 | EPIC-003 | FEATURE-020 | US-010, US-011 | Sim | P0 |
 | EPIC-003 | FEATURE-021 | US-012 | Sim | P0 |
 | EPIC-003 | FEATURE-023 | US-013 | Sim | P0 |
+| EPIC-003 | FEATURE-016 | — | Sim | P0 |
 | EPIC-003 | FEATURE-025 | US-014 | Sim | P0 |
 | EPIC-002 | FEATURE-010 | US-020 | Sim (SD) | P0 |
 | EPIC-002 | FEATURE-011 | US-021 | Sim (SD) | P0 |

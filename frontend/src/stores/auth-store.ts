@@ -2,82 +2,59 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
 import { redirectAfterLogout } from "@/auth/session-redirect";
-import type { AuthenticatedUser, AuthSessionStatus } from "@/auth/types";
+import type { AuthSessionStatus } from "@/auth/types";
 import { authService } from "@/services/auth/auth.service";
+import { useSessionStore } from "@/stores/session.store";
 import { normalizeApiError } from "@/types/api";
 
 /**
- * Auth store — session state derived from HttpOnly cookies via /auth/me.
+ * Auth store — authentication and token cycle only.
+ * User/context state lives in session.store (FT-SESSION).
  */
 export const useAuthStore = defineStore("auth", () => {
   const status = ref<AuthSessionStatus>("idle");
-  const user = ref<AuthenticatedUser | null>(null);
   let hydrationPromise: Promise<void> | null = null;
 
-  const isAuthenticated = computed(
-    () => status.value === "authenticated" && user.value !== null
-  );
+  const isAuthenticated = computed(() => status.value === "authenticated");
 
-  const permissions = computed(() => user.value?.permissions ?? []);
-
-  const roles = computed(() => user.value?.roles ?? []);
-
-  function hasRole(role: string): boolean {
-    return roles.value.includes(role);
-  }
-
-  function hasAnyRole(requiredRoles: readonly string[]): boolean {
-    if (requiredRoles.length === 0) {
-      return true;
-    }
-    return requiredRoles.some(role => hasRole(role));
-  }
-
-  function hasCapability(capability: string): boolean {
-    return permissions.value.includes(capability);
-  }
-
-  function hasAnyCapability(requiredCapabilities: readonly string[]): boolean {
-    if (requiredCapabilities.length === 0) {
-      return true;
-    }
-    return requiredCapabilities.some(capability => hasCapability(capability));
-  }
-
-  function setSession(sessionUser: AuthenticatedUser): void {
-    user.value = sessionUser;
+  function markAuthenticated(): void {
     status.value = "authenticated";
   }
 
-  function clearSession(): void {
-    user.value = null;
-    status.value = "unauthenticated";
-  }
-
   function markUnauthenticated(): void {
-    clearSession();
+    status.value = "unauthenticated";
   }
 
   function setLoading(): void {
     status.value = "loading";
   }
 
-  async function hydrateSession(): Promise<void> {
+  /**
+   * Bootstraps session via /auth/me (session.store) and syncs auth status.
+   * Keeps a single hydration entry-point for boot + guards.
+   */
+  async function hydrateSession(options?: { force?: boolean }): Promise<void> {
     if (hydrationPromise) {
       return hydrationPromise;
+    }
+
+    const sessionStore = useSessionStore();
+    const force = options?.force === true;
+
+    if (!force && sessionStore.isReady && status.value === "authenticated") {
+      return;
     }
 
     hydrationPromise = (async () => {
       setLoading();
       try {
-        const sessionUser = await authService.fetchCurrentUser();
-        setSession(sessionUser);
-      } catch (error) {
-        const apiError = normalizeApiError(error);
-        if (apiError.category === "authentication") {
-          markUnauthenticated();
+        await sessionStore.hydrate(options);
+        if (sessionStore.isReady) {
+          markAuthenticated();
           return;
         }
+        markUnauthenticated();
+      } catch (error) {
         markUnauthenticated();
         throw error;
       }
@@ -100,6 +77,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   async function logout(): Promise<void> {
+    const sessionStore = useSessionStore();
     try {
       await authService.logout();
     } catch (error) {
@@ -108,24 +86,32 @@ export const useAuthStore = defineStore("auth", () => {
         throw error;
       }
     } finally {
-      clearSession();
+      sessionStore.clear();
+      markUnauthenticated();
       redirectAfterLogout();
     }
   }
 
   async function refreshSession(): Promise<boolean> {
+    const sessionStore = useSessionStore();
     const refreshed = await authService.refresh();
     if (!refreshed) {
+      sessionStore.clear();
       markUnauthenticated();
       return false;
     }
 
     try {
-      const sessionUser = await authService.fetchCurrentUser();
-      setSession(sessionUser);
-      return true;
+      await sessionStore.hydrate({ force: true });
+      if (sessionStore.isReady) {
+        markAuthenticated();
+        return true;
+      }
+      markUnauthenticated();
+      return false;
     } catch (error) {
       if (normalizeApiError(error).category === "authentication") {
+        sessionStore.clear();
         markUnauthenticated();
         return false;
       }
@@ -135,16 +121,8 @@ export const useAuthStore = defineStore("auth", () => {
 
   return {
     status,
-    user,
     isAuthenticated,
-    permissions,
-    roles,
-    hasRole,
-    hasAnyRole,
-    hasCapability,
-    hasAnyCapability,
-    setSession,
-    clearSession,
+    markAuthenticated,
     markUnauthenticated,
     setLoading,
     hydrateSession,

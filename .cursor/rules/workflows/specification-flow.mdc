@@ -1,7 +1,7 @@
 ---
 description: Specification Workflow
 globs:
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Specification Workflow

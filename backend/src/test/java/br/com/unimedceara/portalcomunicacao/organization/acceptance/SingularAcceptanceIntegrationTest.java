@@ -151,6 +151,100 @@ class SingularAcceptanceIntegrationTest extends AbstractMockMvcIntegrationTest {
         mockMvc.perform(get("/api/v1/singulares/1")).andExpect(status().isUnauthorized());
     }
 
+    @Test
+    void shouldRejectMissingRegistroAnsOnCreate() throws Exception {
+        Cookie csrfCookie = obtainCsrfCookie();
+        String acronym = IntegrationTestUniqueData.singularSigla("MR");
+        int unimedCode = IntegrationTestUniqueData.singularUnimedCode();
+
+        mockMvc.perform(post("/api/v1/singulares")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(adminCookie(), csrfCookie)
+                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
+                        .content("""
+                                {
+                                  "federationId": %d,
+                                  "name": "Singular Sem ANS",
+                                  "acronym": "%s",
+                                  "unimedCode": %d
+                                }
+                                """
+                                .formatted(authProperties.defaultFederationId(), acronym, unimedCode)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldRejectBlankRegistroAnsOnCreate() throws Exception {
+        Cookie csrfCookie = obtainCsrfCookie();
+        String acronym = IntegrationTestUniqueData.singularSigla("BR");
+        int unimedCode = IntegrationTestUniqueData.singularUnimedCode();
+
+        mockMvc.perform(post("/api/v1/singulares")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(adminCookie(), csrfCookie)
+                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
+                        .content("""
+                                {
+                                  "federationId": %d,
+                                  "name": "Singular ANS Vazio",
+                                  "acronym": "%s",
+                                  "unimedCode": %d,
+                                  "registroAns": ""
+                                }
+                                """
+                                .formatted(authProperties.defaultFederationId(), acronym, unimedCode)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldRejectRegistroAnsExceedingMaxLengthOnCreate() throws Exception {
+        Cookie csrfCookie = obtainCsrfCookie();
+        String acronym = IntegrationTestUniqueData.singularSigla("LR");
+        int unimedCode = IntegrationTestUniqueData.singularUnimedCode();
+
+        mockMvc.perform(post("/api/v1/singulares")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(adminCookie(), csrfCookie)
+                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
+                        .content("""
+                                {
+                                  "federationId": %d,
+                                  "name": "Singular ANS Longo",
+                                  "acronym": "%s",
+                                  "unimedCode": %d,
+                                  "registroAns": "123456789012345678901"
+                                }
+                                """
+                                .formatted(authProperties.defaultFederationId(), acronym, unimedCode)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldAcceptValidRegistroAnsOnCreate() throws Exception {
+        Cookie csrfCookie = obtainCsrfCookie();
+        String acronym = IntegrationTestUniqueData.singularSigla("VR");
+        int unimedCode = IntegrationTestUniqueData.singularUnimedCode();
+        String registroAns = "12345678901234567890";
+
+        mockMvc.perform(post("/api/v1/singulares")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .cookie(adminCookie(), csrfCookie)
+                        .header(SecurityConstants.CSRF_HEADER, csrfCookie.getValue())
+                        .content("""
+                                {
+                                  "federationId": %d,
+                                  "name": "Singular ANS Valido",
+                                  "acronym": "%s",
+                                  "unimedCode": %d,
+                                  "registroAns": "%s"
+                                }
+                                """
+                                .formatted(
+                                        authProperties.defaultFederationId(), acronym, unimedCode, registroAns)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.registroAns").value(registroAns));
+    }
+
     private SingularEntity seedSingular() {
         int unimedCode = IntegrationTestUniqueData.singularUnimedCode();
         return seedSingular(IntegrationTestUniqueData.singularSigla("SN"), unimedCode);

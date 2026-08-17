@@ -32,6 +32,10 @@
         <dd>{{ singular.unimedCode }}</dd>
       </div>
       <div class="singular-info-card__item">
+        <dt>{{ $t("singular.form.registroAns") }}</dt>
+        <dd>{{ singular.registroAns }}</dd>
+      </div>
+      <div class="singular-info-card__item">
         <dt>{{ $t("singular.detail.fields.createdAt") }}</dt>
         <dd>{{ formatDateTime(singular.createdAt) }}</dd>
       </div>

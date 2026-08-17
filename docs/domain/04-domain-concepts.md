@@ -14,7 +14,7 @@ O domínio do Portal de Comunicação organiza-se em quatro grupos conceituais s
 
 | Grupo Conceitual | Descrição | Conceitos Principais |
 | ---------------- | --------- | -------------------- |
-| Estrutura Organizacional | Hierarquia federativa multi-singular que estrutura pessoas, escopos e vínculos operacionais | Federação, Singular, Área, Equipe, Colaborador, Contexto organizacional, Onboarding |
+| Estrutura Organizacional | Hierarquia federativa: Federação → Singular → Área → Equipe → Colaborador (DEC-ORG-001) | Federação, Singular, Área, Equipe, Colaborador, Contexto organizacional, Contexto Ativo, Onboarding / Primeiro acesso, Home |
 | Gestão Documental | Publicação, organização e exposição controlada de artefatos de comunicação | Documento, Pasta, Visibilidade, Compartilhamento, Recurso privado, Recurso público |
 | Controle de Acesso | Autorização por papéis, escopo organizacional e fluxos formais de concessão de acesso | Papel, Solicitação de permissão, Responsável pelo recurso, Auditoria, Autenticação corporativa |
 | Comunicação Interna | Canais e mecanismos de informação, notificação e interação entre colaboradores | Notificação, Comunicado, Fique por Dentro, Central de Colaboração, Busca unificada |
@@ -46,15 +46,16 @@ Conceitos centrais que sustentam o funcionamento do domínio, conforme `01-visio
 
 | Conceito | Papel no Domínio | Relacionamentos |
 | -------- | ---------------- | --------------- |
-| Federação | Conjunto organizacional mais amplo no qual a Unimed Ceará e outras singulares coexistem; delimita escopo de compartilhamento institucional | Singular pertence/compõe Federação |
-| Singular | Unidade organizacional que agrupa áreas, colaboradores e documentos | Pertence à Federação; contém Áreas; vincula Colaboradores e Documentos |
-| Área | Setor departamental que delimita escopo de documentos, pastas e colaboradores | Pertence a Singular; contém Equipes; vincula Colaboradores e Documentos |
+| Federação | Conjunto organizacional mais amplo; raiz da hierarquia oficial | Contém Singulares (DEC-ORG-001) |
+| Singular | Unidade organizacional que agrupa áreas, colaboradores e documentos | Pertence à Federação; contém Áreas |
+| Área | Setor departamental; vínculo obrigatório do colaborador operacional | Pertence a Singular; contém Equipes; vincula Colaboradores |
 | Equipe | Agrupamento operacional dentro de uma área | Pertence a Área; Colaborador pode pertencer a Equipe |
-| Colaborador | Pessoa com vínculo operacional a singular e área | Vinculado a Singular e Área; pode pertencer a Equipe; possui Contexto organizacional |
-| Contexto organizacional | Combinação de singular, área e equipe que delimita visão e ações do colaborador | Delimita visão do Colaborador |
+| Colaborador | Pessoa com **um** vínculo cadastral (Federação + Singular + Área + Equipe opcional — DH-02) | Exige Área para operação; criado no PA quando ausente (DH-03) |
+| Contexto organizacional / Contexto Ativo | `federationId` + `singularId` + `areaId` (+ equipe opcional) — **derivado** do vínculo único de `COLABORADOR` | Base da navegação operacional; sem persistência separada |
 | Código Unimed | Identificador da unidade cooperativa associada a uma singular | Associado a Singular |
-| Onboarding | Processo de vinculação inicial do colaborador à singular e área adequadas | Vincula Colaborador; seleciona Singular e Área |
-| Unimed Ceará | Organização de saúde cooperativa proprietária e operadora do portal | Contexto institucional; delimita política de acesso |
+| Onboarding / Primeiro acesso | Wizard de vínculo + criação de COLABORADOR antes da Home (FT-PRIMEIRO-ACESSO) | DEC-FA-001, DH-03; fluxos legados de request admin **obsoletos** |
+| Home | Painel inicial dinâmico definido pelo backend | DEC-FA-004 |
+| Unimed Ceará | Organização de saúde cooperativa proprietária e operadora do portal | Contexto institucional |
 
 ---
 
@@ -224,7 +225,7 @@ Lacunas herdadas dos documentos aprovados, sem inferência adicional.
 | ------ | ------- |
 | Definição operacional de "parceiro autorizado" vs. "convidado" | Impossibilita vocabulário unificado para acesso externo |
 | Distinção formal entre "comunicado" (categoria) e "comunicado" (módulo corporativo) | Risco de duplicidade conceitual na comunicação interna |
-| Termo consolidado para o fluxo de aprovação no onboarding (seleção vs. solicitação) | Integração de novos colaboradores sem vocabulário de processo único |
+| Termo consolidado para o fluxo de aprovação no onboarding (seleção vs. solicitação) | **Obsoleto no TO-BE** — DEC-FA-001 |
 | Escopo e critérios de "parceiro autorizado" não detalhados | Limite entre colaborador e parceiro externo não formalizado |
 | Relação operacional entre equipe como agrupamento e representações alternativas | Modelo organizacional de equipes pode gerar inconsistência |
 | Solicitação de permissões sem confirmação completa de persistência | Fluxo de aprovação pode estar incompleto |

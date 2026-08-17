@@ -7,7 +7,8 @@ export interface MockSingular {
   federationId: number;
   name: string;
   acronym: string;
-  unimedCode: string;
+  unimedCode: number;
+  registroAns: string;
   status: MockSingularStatus;
   createdAt: string;
   updatedAt: string | null;
@@ -107,7 +108,7 @@ function filterSingulares(
 
   const unimedCode = params.get("unimedCode");
   if (unimedCode) {
-    items = items.filter(item => item.unimedCode.includes(unimedCode));
+    items = items.filter(item => item.unimedCode === Number(unimedCode));
   }
 
   const sort = params.get("sort") ?? "name,asc";
@@ -209,7 +210,8 @@ export async function installSingularApiMock(
         federationId: number;
         name: string;
         acronym: string;
-        unimedCode: string;
+        unimedCode: number;
+        registroAns: string;
       }>(route);
 
       if (!body) {
@@ -233,7 +235,8 @@ export async function installSingularApiMock(
         federationId: body.federationId,
         name: body.name.trim(),
         acronym: body.acronym.trim(),
-        unimedCode: body.unimedCode.trim(),
+        unimedCode: body.unimedCode,
+        registroAns: body.registroAns.trim(),
         status: "ACTIVE",
         createdAt: new Date().toISOString(),
         updatedAt: null
@@ -253,7 +256,8 @@ export async function installSingularApiMock(
       const body = await readJsonBody<{
         name: string;
         acronym: string;
-        unimedCode: string;
+        unimedCode: number;
+        registroAns: string;
       }>(route);
 
       if (!singular || !body) {
@@ -280,7 +284,8 @@ export async function installSingularApiMock(
 
       singular.name = body.name.trim();
       singular.acronym = body.acronym.trim();
-      singular.unimedCode = body.unimedCode.trim();
+      singular.unimedCode = body.unimedCode;
+      singular.registroAns = body.registroAns.trim();
       singular.updatedAt = new Date().toISOString();
 
       await route.fulfill({

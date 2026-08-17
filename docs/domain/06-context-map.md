@@ -227,7 +227,7 @@ Contexto responsável pela definição oficial de cada conceito, conforme `05-bo
 | ------ | ------- |
 | Definição operacional de parceiro autorizado vs. convidado | Fronteira do Controle de Acesso para perfis externos não estabilizada no mapa |
 | Distinção formal entre comunicado (categoria) e comunicado (módulo corporativo) | Relação Gestão Documental ↔ Comunicação Interna indefinida |
-| Fluxo consolidado de onboarding (seleção vs. solicitação) | Dependência upstream de Organização Corporativa ambígua |
+| Fluxo consolidado de onboarding (seleção vs. solicitação) | **Resolvido no TO-BE** — DEC-FA-001 |
 | Escopo da Central de Colaboração | Subdomínio de Comunicação Interna sem definição de negócio |
 | Solicitação de permissões sem confirmação completa | Dependência crítica Controle de Acesso ↔ Gestão Documental pode estar incompleta |
 | Representações divergentes de equipe | Pode afetar posição de Organização Corporativa como contexto upstream |

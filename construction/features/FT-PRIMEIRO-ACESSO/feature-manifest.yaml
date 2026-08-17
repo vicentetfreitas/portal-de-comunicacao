@@ -1,0 +1,142 @@
+# Feature Manifest — FT-PRIMEIRO-ACESSO (SSOD v4.1)
+# LEGADO — índice de paths. SSOT paths: specs/foundation/path-conventions.md
+
+version: 4
+role: ssod
+
+feature:
+  id: primeiro-acesso
+  code: FT-PRIMEIRO-ACESSO
+  name: Primeiro acesso e resolução de contexto
+  description: >
+    Resolução de vínculos, Contexto Ativo, Home dinâmica e bloqueio sem vínculo
+    (DEC-FA-001..004, DEC-ORG-001, DEC-CMS-001).
+
+execution_strategy: sequential
+
+status:
+  phase: not_started
+
+specification:
+  path: ../../../specs/features/primeiro-acesso/
+  documents:
+    specification: specification.md
+    api: api.md
+    use_cases: use-cases.md
+    tasks: tasks.md
+    acceptance_tests: acceptance-tests.md
+    traceability: traceability.md
+
+construction:
+  path: .
+  root: construction/features/FT-PRIMEIRO-ACESSO/
+  frontend:
+    path: ../../frontend/features/FT-PRIMEIRO-ACESSO/
+    manifest: ../../frontend/features/FT-PRIMEIRO-ACESSO/feature-manifest.yaml
+    state: ../../frontend/features/FT-PRIMEIRO-ACESSO/construction-state.yaml
+
+workstreams:
+  - id: backend
+    type: backend
+    order: 1
+    path: .
+    manifest: feature-manifest.yaml
+    state: construction-state.yaml
+    pkgs_pattern: "pkg-{NN}"
+    pkgs_total: 5
+  - id: frontend
+    type: frontend
+    order: 2
+    path: ../../frontend/features/FT-PRIMEIRO-ACESSO/
+    manifest: ../../frontend/features/FT-PRIMEIRO-ACESSO/feature-manifest.yaml
+    state: ../../frontend/features/FT-PRIMEIRO-ACESSO/construction-state.yaml
+    depends_on_workstreams:
+      - backend
+    pkgs_pattern: "pkg-fe-{NN}"
+    pkgs_total: 6
+
+implementation:
+  backend:
+    - ../../../backend/src/main/java/br/com/unimedceara/portalcomunicacao/accesscontrol/
+  frontend:
+    - ../../../frontend/src/stores/
+    - ../../../frontend/src/router/guards/
+    - ../../../frontend/src/services/
+    - ../../../frontend/src/pages/
+
+artifacts:
+  manifest: feature-manifest.yaml
+  registry_entry: ../../registry.yaml
+  state: construction-state.yaml
+  execution_plan: execution-plan.md
+  session: session.md
+  closure: closure-report.md
+  review: review/
+  reports: reports/
+  pkgs:
+    - pkg-01/status.md
+    - pkg-02/status.md
+    - pkg-03/status.md
+    - pkg-04/status.md
+    - pkg-05/status.md
+
+dependencies:
+  construction:
+    - code: platform-foundation
+      path: ../../platform-foundation/
+      manifest: ../../platform-foundation/feature-manifest.yaml
+    - code: frontend-foundation
+      path: ../../frontend/
+      manifest: ../../frontend/sprint-0-manifest.yaml
+  features:
+    - code: FT-AUTH
+      path: ../FT-AUTH/feature-manifest.yaml
+    - code: FT-SESSION
+      path: ../FT-SESSION/feature-manifest.yaml
+      scope: backend
+      required_phase: closed
+    - code: FT-COLABORADOR
+      path: ../FT-COLABORADOR/feature-manifest.yaml
+      scope: backend
+      required_phase: closed
+  foundation:
+    - ../../../specs/foundation/
+
+engineering:
+  golden_template:
+    - ../../golden-template/FT-SINGULAR.md
+
+owners:
+  architect: platform-architect
+  implementer: feature-implementer
+  orchestrator: construction-orchestrator
+
+metrics:
+  workstreams: 2
+  pkgs_backend: 5
+  pkgs_frontend: 6
+
+pkgs:
+  - id: pkg-01
+    name: Modelo N vínculos e persistência Contexto Ativo
+  - id: pkg-02
+    name: API contexts e context
+  - id: pkg-03
+    name: API Home dinâmica
+  - id: pkg-04
+    name: Evolução /auth/me e validações
+  - id: pkg-05
+    name: Auditoria, aceite backend e closure WS
+
+invalidation:
+  triggers:
+    - specification
+    - api
+    - use_cases
+    - manifest
+    - registry
+
+discovery:
+  version: 3
+  rule: SSOD-01
+  framework: "4.1"

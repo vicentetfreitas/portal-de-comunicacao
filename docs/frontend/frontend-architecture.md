@@ -150,7 +150,7 @@ Reservadas à **Frontend Foundation**. Nenhuma Feature de negócio define ou sub
 | Store | Arquivo | Papel |
 |-------|---------|-------|
 | **Auth** | `src/stores/auth.store.ts` | Ciclo de autenticação — login, logout, refresh, expiração, cookies, CSRF |
-| **Session** | `src/stores/session.store.ts` | Contexto resolvido — usuário, organização, área/equipe ativa, permissões, menus |
+| **Session** | `src/stores/session.store.ts` | Estado de sessão — usuário, vínculos, Contexto Ativo (`federationId`, `singularId`, `areaId`) |
 | **App** | `src/stores/app.store.ts` | Preferências e UI global (sidebar, tema) — sem domínio de negócio |
 
 Definição conceitual completa de Auth e Session: ver `frontend-structure.md` § `stores/`.
@@ -278,34 +278,30 @@ Componentes de Feature não devem ser reutilizados por outros módulos.
 Fluxo principal:
 
 ```text
-Splash (auth.store.ts)
+Splash (auth.store)
 
 ↓
 
-Login (auth.store.ts)
+Login (auth.store) — FT-AUTH
 
 ↓
 
-Callback (auth.store.ts)
+Loading Session (session.store) — /auth/me
 
 ↓
 
-Loading Session (session.store.ts)
+FT-PRIMEIRO-ACESSO — Contexto Ativo (1 → auto; N → escolha; 0 → bloqueio)
 
 ↓
 
-Resolve Context (session.store.ts)
-
-↓
-
-Dashboard
+Home dinâmica (backend → frontend renderiza) — DEC-FA-004
 
 ↓
 
 Feature (features/<feature>/stores/)
 ```
 
-Toda navegação depende de `session.store.ts` inicializada após `auth.store.ts`.
+Toda navegação operacional depende de **Contexto Ativo** na `session.store` após FT-PRIMEIRO-ACESSO. SSOT do fluxo: `docs/frontend/frontend-flow.md`.
 
 ---
 

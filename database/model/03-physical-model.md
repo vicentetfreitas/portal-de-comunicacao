@@ -375,6 +375,7 @@ Manter cadastro das cooperativas singulares e sua associação com a Federação
 | NOM_SINGULAR    | VARCHAR2(200) | Sim         | -            | -          |
 | SIG_SINGULAR    | VARCHAR2(30)  | Sim         | -            | UK         |
 | COD_UNIMED      | NUMBER(3)     | Sim         | -            | UK         |
+| NUM_REGISTRO_ANS | VARCHAR2(20) | Sim         | -            | -          |
 | FLG_ATIVO       | CHAR(1)       | Sim         | 'S'          | CK         |
 | DAT_CADASTRO    | TIMESTAMP(6)  | Sim         | SYSTIMESTAMP | -          |
 | DAT_ATUALIZACAO | TIMESTAMP(6)  | Não         | NULL         | -          |
@@ -395,8 +396,8 @@ Manter cadastro das cooperativas singulares e sua associação com a Federação
 
 #### Observações
 
-- Representa cooperativas filiadas — apenas identidade própria (nome, sigla, código Unimed)
-- Não duplica atributos da federação (registro ANS, site institucional da federação, etc.)
+- Representa cooperativas filiadas — identidade própria (nome, sigla, código Unimed, registro ANS opcional)
+- Não duplica atributos institucionais da federação (site, descrição, etc.)
 - Endereços e contatos em `ENDERECO` e `CONTATO` (DEC-DB-013)
 
 ---
@@ -710,10 +711,11 @@ Manter identificação, vínculo organizacional, dados pessoais/profissionais e 
 #### Observações
 
 - COD_FEDERACAO é obrigatório para todos os colaboradores
-- COD_SINGULAR, COD_AREA e COD_EQUIPE dependem do contexto organizacional
-- Colaboradores da Federação não possuem obrigatoriedade de vínculo com Singular, Área ou Equipe
-- Colaborador federativo: COD_FEDERACAO obrigatório; demais vínculos nulos
-- Colaborador de singular: COD_FEDERACAO, COD_SINGULAR e COD_AREA obrigatórios; COD_EQUIPE opcional
+- **TO-BE (DEC-DB-028, DH-04):** `COD_SINGULAR` e `COD_AREA` são obrigatórios no COLABORADOR persistido; `COD_EQUIPE` permanece opcional
+- **AS-IS (DDL):** `COD_SINGULAR`, `COD_AREA` e `COD_EQUIPE` são nullable — GAP de implementação; migration futura
+- ~~Colaboradores da Federação não possuem obrigatoriedade de vínculo com Singular, Área ou Equipe~~ — **revogado** por DH-04 (2026-08-14)
+- ~~Colaborador federativo: COD_FEDERACAO obrigatório; demais vínculos nulos~~ — **revogado** como estado persistido permitido; identidade autenticada pré-COLABORADOR não é colaborador federativo persistido
+- Colaborador de singular: COD_FEDERACAO, COD_SINGULAR e COD_AREA obrigatórios; COD_EQUIPE opcional — alinhado ao TO-BE
 - O escopo de atuação é determinado exclusivamente pela entidade PAPEL_ATRIBUICAO
 - `DES_EMAIL` é e-mail de identidade/login (FT-AUTH/DEC-DB-011) — canais adicionais em `CONTATO` (DEC-DB-016)
 - `ID_ZIMBRA` é obrigatório e único; preenchido no cadastro administrativo ou na autenticação via Zimbra (FT-AUTH)

@@ -34,7 +34,8 @@ const sampleSingular: SingularResponse = {
   federationId: 1,
   name: "Unimed Ceará",
   acronym: "UNI-CE",
-  unimedCode: "UC001",
+  unimedCode: 42,
+  registroAns: "123456",
   status: "ACTIVE",
   createdAt: "2026-07-16T12:00:00Z",
   updatedAt: null
@@ -67,7 +68,8 @@ describe("SingularApiService", () => {
       federationId: 1,
       name: "Unimed Ceará",
       acronym: "UNI-CE",
-      unimedCode: "UC001"
+      unimedCode: 42,
+      registroAns: "123456"
     });
 
     expect(postMock).toHaveBeenCalledWith(
@@ -76,7 +78,8 @@ describe("SingularApiService", () => {
         federationId: 1,
         name: "Unimed Ceará",
         acronym: "UNI-CE",
-        unimedCode: "UC001"
+        unimedCode: 42,
+        registroAns: "123456"
       },
       undefined
     );
@@ -131,7 +134,8 @@ describe("SingularApiService", () => {
     await service.update(1, {
       name: "Unimed Ceará",
       acronym: "UNI-CE",
-      unimedCode: "UC001"
+      unimedCode: 42,
+      registroAns: "123456"
     });
 
     expect(putMock).toHaveBeenCalledWith(
@@ -139,7 +143,8 @@ describe("SingularApiService", () => {
       {
         name: "Unimed Ceará",
         acronym: "UNI-CE",
-        unimedCode: "UC001"
+        unimedCode: 42,
+        registroAns: "123456"
       },
       undefined
     );

@@ -21,7 +21,7 @@ API: `/api/v1/colaboradores`
 - Cadastro administrativo com contexto organizacional
 - Consulta, listagem paginada, atualização, ativação/inativação lógica
 - Validação de vínculos com singular, área, equipe e gestor
-- Preservação do fluxo `locateOrCreate` de FT-AUTH
+- Preservação do fluxo `locateOrCreate` de FT-AUTH — **AS-IS apenas**; comportamento normativo superseded por DH-03/DEC-DB-028 (criação após vínculo completo; correção em etapa futura)
 
 ## Fora do Escopo
 

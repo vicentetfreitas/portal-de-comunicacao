@@ -22,9 +22,9 @@ Este documento fornece uma visão executiva sobre:
 | Projeto                | Portal de Comunicação                      |
 | Status Geral           | Baseline documental **APROVADA COM RESSALVAS** (Exit Gate 2026-07-24) |
 | Versão da Documentação | 2.0 (Exit Gate)                                |
-| Última Atualização     | 2026-07-24                                 |
+| Última Atualização     | 2026-08-14                                 |
 | Responsável            | Project Manager / Arquitetura              |
-| Próxima Revisão        | OQ-001/026/027/028; unificação catálogo DEC |
+| Próxima Revisão        | Etapa 5 — infraestrutura local (Oracle)    |
 
 ---
 
@@ -32,31 +32,27 @@ Este documento fornece uma visão executiva sobre:
 
 ## Situação Atual
 
-O projeto concluiu a **Sprint 0 do backend** e obteve **APROVADO COM RESSALVAS** no Exit Gate de governança documental (2026-07-24).
+O projeto concluiu a **Sprint 0 do backend**, múltiplas features de **Etapa 2** (org + auth/sessão) e a **revalidação SSOT (Etapa 3)** em 2026-08-14.
 
-SSOT normativo da documentação: `docs/governance/07-documentation-architecture.md` v2.0  
-Evidência do Exit Gate: `docs/governance/reconciliation-report.md` § Exit Gate  
-Política de repositório: `docs/governance/08-repository-governance.md` v2.0
+SSOT operacional: `specs/foundation/minimal-ssot.md`  
+SSOT normativo documental: `docs/governance/07-documentation-architecture.md` v2.0  
+Estado de implementação: `construction/registry.yaml` + git/CI
 
-Categorias obrigatórias: **SSOT | Evidence | Working | Archive**.
+**Progresso de construção (indicativo):**
 
-Ressalvas conscientes: unificação de catálogos DEC; índice frontend; naming `docs/construction` vs `construction/`; OQs de login/contexto (não bloqueiam a baseline).
-
-**Resultado da Sprint 0 (ainda válido):**
-
-* Baseline da infraestrutura aprovada
-* Build `mvn clean verify` — **SUCCESS**
-* Infraestrutura transversal **congelada** — alterações restritas a correções críticas
-* Features org/auth em evolução conforme `construction/registry.yaml`
+* FT-AUTH, FT-AREA, FT-SINGULAR, FT-EQUIPE, FT-SESSION — **closed**
+* FT-COLABORADOR — BE closed, FE em execução
+* FT-PRIMEIRO-ACESSO — spec **APPROVED**; BE not_started, FE em execução
+* Integration sprint-03-org-backend — **APPROVED** (2026-07-14)
 
 ---
 
 ## Objetivos da Fase Atual
 
-* Implementar a Golden Feature **FT-AUTH** (Sprint 1).
+* Concluir **FT-COLABORADOR** (FE) e implementar **FT-PRIMEIRO-ACESSO** (BE + FE).
+* Validar ambiente local Oracle (Etapa 5).
 * Manter aderência entre `specs/`, `docs/` e código.
-* Evoluir bounded contexts conforme roadmap de entrega do MVP.
-* Preservar a baseline arquitetural estabelecida na Sprint 0.
+* Evoluir Etapas 3–5 do MVP conforme `docs/backlog/04-mvp-scope.md`.
 
 ---
 
@@ -138,16 +134,16 @@ Resultado Atual:
 
 | Item            | Status                                              |
 | --------------- | --------------------------------------------------- |
-| Backend         | 🟩 Sprint 0 concluída — infraestrutura transversal  |
-| Frontend        | ⬜ Não iniciado                                      |
-| Banco de Dados  | 🟩 Oracle — baseline DDL (DBA)                      |
-| Testes          | 🟩 106 testes unitários — infraestrutura transversal |
+| Backend         | 🟩 Etapa 2 parcial — org + auth/sessão implementados |
+| Frontend        | 🟩 Foundation + org CRUD (Singular, Equipe); Colaborador e Primeiro Acesso em execução |
+| Banco de Dados  | 🟩 Oracle — baseline homologado; 6 entidades JPA alinhadas (Etapa 4) |
+| Testes          | 🟩 Unit + integração Oracle (features org/auth) |
 | Observabilidade | 🟨 Parcial — Correlation ID + Actuator              |
 
 Resultado Atual:
 
 ```text
-🟨 Em andamento — fundação backend concluída; features pendentes
+🟨 Em andamento — Etapa 2 parcial; Etapas 3–5 pendentes
 ```
 
 ---
@@ -156,8 +152,8 @@ Resultado Atual:
 
 | Item            | Status                                              |
 | --------------- | --------------------------------------------------- |
-| Ambiente Local  | 🟩 Backend operacional (perfil `local`)             |
-| Docker          | 🟨 Planejado — Sprint futura                        |
+| Ambiente Local  | 🟨 Backend + FE dev operáveis; Oracle externo obrigatório |
+| Docker          | 🟨 Compose na raiz — Postgres legado; alinhar na Etapa 5 |
 | CI/CD           | ⬜ Não iniciado                                      |
 | Observabilidade | 🟨 Parcial — logging e Correlation ID implementados |
 
@@ -216,6 +212,9 @@ Resultado Atual:
 | M6    | Reconciliação MVP Consolidation                        | 2026-06-22 |
 | M7    | **Sprint 0 Backend — Infraestrutura Transversal**      | 2026-07-08 |
 | M8    | **Baseline Arquitetural Backend — Aprovada e Congelada** | 2026-07-08 |
+| M9    | Integration sprint-03-org-backend APPROVED | 2026-07-14 |
+| M10   | FT-AUTH, FT-SINGULAR (BE+FE), FT-EQUIPE, FT-SESSION closed | 2026-08 |
+| M11   | Revalidação SSOT Etapa 3 + auditoria JPA Etapa 4 | 2026-08-14 |
 
 ---
 
@@ -223,7 +222,8 @@ Resultado Atual:
 
 | Marco | Descrição                              | Status          |
 | ----- | -------------------------------------- | --------------- |
-| M9    | Sprint 1 — FT-AUTH (Golden Feature)    | Em Preparação   |
+| M12   | FT-COLABORADOR (FE) + FT-PRIMEIRO-ACESSO | Em execução   |
+| M13   | Etapa 5 — infraestrutura local Oracle  | Planejado       |
 
 ---
 
@@ -246,7 +246,7 @@ Resultado Atual:
 | Construção Preparada | 🟩     | Infraestrutura backend operacional              |
 | MVP Planejado        | 🟩     | Roadmap e backlog alinhados                     |
 
-**Andamento geral estimado:** ~25% (documentação e fundação técnica concluídas; features de negócio pendentes).
+**Andamento geral estimado:** ~45% (Etapas 1–2 parcialmente implementadas; documental e comunicação pendentes).
 
 ---
 
@@ -254,7 +254,7 @@ Resultado Atual:
 
 ## Impedimentos Atuais
 
-Nenhum impedimento bloqueando o início da Sprint 1 (FT-AUTH).
+Nenhum impedimento bloqueando FT-COLABORADOR (FE) ou FT-PRIMEIRO-ACESSO. Ambiente local requer Oracle acessível (`UNMPORTCOM_APP`).
 
 ---
 
@@ -262,10 +262,9 @@ Nenhum impedimento bloqueando o início da Sprint 1 (FT-AUTH).
 
 ## Curto Prazo
 
-1. Iniciar Sprint 1 — implementação da Golden Feature **FT-AUTH**.
-2. Configurar `SecurityFilterChain` e integração com Serviço Corporativo de Autenticação.
-3. Manter aderência à baseline congelada da Sprint 0.
-4. Revisar riscos e decisões abertas ao final da Sprint 1.
+1. Concluir FT-COLABORADOR (FE) e implementar FT-PRIMEIRO-ACESSO (BE + FE).
+2. Etapa 5 — alinhar `docker-compose.yml` e docs de infra ao Oracle.
+3. Manter aderência ao fluxo simplificado (`specs/foundation/development-workflow.md`).
 
 ---
 
@@ -276,3 +275,4 @@ Nenhum impedimento bloqueando o início da Sprint 1 (FT-AUTH).
 | YYYY-MM-DD | Project Manager | Criação inicial do documento                           |
 | 2026-06-22 | Reconciliação   | Atualização pós-consolidação MVP                       |
 | 2026-07-08 | Governança      | Encerramento oficial da Sprint 0 — baseline congelada  |
+| 2026-08-14 | Revalidação     | Etapa 3 SSOT aprovada com ressalvas; Etapa 4 JPA audit |

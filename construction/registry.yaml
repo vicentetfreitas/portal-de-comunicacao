@@ -1,6 +1,7 @@
 # Feature Registry — Engineering Framework v4.1 (Full Stack)
-# SSOD de índice: localizar Features e Workstreams sem hardcode de paths.
-# O Feature Manifest permanece SSOT de cada Feature; este registry agrega Workstreams.
+# Índice unificado (REGISTRY-01): localizar Features e Workstreams sem hardcode de paths.
+# SSOT de paths: specs/foundation/path-conventions.md (não feature-manifest).
+# Status/closure neste arquivo são indicativos — ver discovery.status_policy.
 # v4.1: current_capability indica Capability em execução quando declarada no manifest.
 
 version: 3
@@ -198,16 +199,19 @@ features:
     manifest: features/FT-SESSION/feature-manifest.yaml
     aggregate_state: computed
     current_capability: null
-    status: execution
-    closure: null
+    status: closed
+    closure: FEATURE_APPROVED
+    notes:
+      - REF-DB-CTX-01 — persistência AUTH_SESSAO removida; escopo FE encerrado
+      - status alinhado a construction-state (reconciliação Etapa 2 2026-08-13)
     workstreams:
       - id: backend
         type: backend
         order: 1
         manifest: features/FT-SESSION/feature-manifest.yaml
         state: features/FT-SESSION/construction-state.yaml
-        status: execution
-        closure: null
+        status: closed
+        closure: FEATURE_APPROVED
         pkgs_pattern: "pkg-{NN}"
         pkgs_total: 4
       - id: frontend
@@ -216,12 +220,49 @@ features:
         sprint: 3
         manifest: frontend/features/FT-SESSION/feature-manifest.yaml
         state: frontend/features/FT-SESSION/construction-state.yaml
+        status: closed
+        closure: FEATURE_APPROVED
+        depends_on_workstreams:
+          - backend
+        pkgs_pattern: "pkg-fe-{NN}"
+        pkgs_total: 2
+
+  - code: FT-PRIMEIRO-ACESSO
+    slug: primeiro-acesso
+    name: Primeiro acesso e resolução de contexto
+    sprint: null
+    golden: false
+    manifest: features/FT-PRIMEIRO-ACESSO/feature-manifest.yaml
+    aggregate_state: computed
+    current_capability: null
+    status: execution
+    closure: null
+    notes:
+      - BE not_started · FE execution (pkg-fe-01) — reconciliação Etapa 2 2026-08-13
+    workstreams:
+      - id: backend
+        type: backend
+        order: 1
+        manifest: features/FT-PRIMEIRO-ACESSO/feature-manifest.yaml
+        state: features/FT-PRIMEIRO-ACESSO/construction-state.yaml
+        execution_plan: features/FT-PRIMEIRO-ACESSO/execution-plan.md
+        status: not_started
+        closure: null
+        pkgs_pattern: "pkg-{NN}"
+        pkgs_total: 5
+      - id: frontend
+        type: frontend
+        order: 2
+        manifest: frontend/features/FT-PRIMEIRO-ACESSO/feature-manifest.yaml
+        state: frontend/features/FT-PRIMEIRO-ACESSO/construction-state.yaml
+        execution_plan: frontend/features/FT-PRIMEIRO-ACESSO/execution-plan.md
+        frontend_tasks: frontend/features/FT-PRIMEIRO-ACESSO/frontend-tasks.md
         status: execution
         closure: null
         depends_on_workstreams:
           - backend
         pkgs_pattern: "pkg-fe-{NN}"
-        pkgs_total: 2
+        pkgs_total: 6
 
 # Tipos de Workstream suportados pelo framework (extensível)
 workstream_types:
@@ -245,10 +286,16 @@ workstream_types:
     legacy_path: construction/mobile/features/<FEATURE_CODE>/
 
 discovery:
-  rule: REGISTRY-01 — consultar construction/registry.yaml antes de paths hardcoded
-  ssot_feature: feature-manifest.yaml em cada Workstream ou raiz backend
+  rule: REGISTRY-01 — índice de paths; status de workstream em construction-state.yaml
+  status_policy: >
+    Campos status/closure neste registry são indicativos (legado).
+    SSOT operacional: construction-state.yaml por workstream.
+    SSOT simplificado: specs/foundation/minimal-ssot.md (estado derivado git/CI).
+  ssot_feature: specs/features/<slug>/ + path-conventions.md (manifest legado para paths históricos)
   ssot_workstream_state: construction-state.yaml por Workstream
-  aggregate_state: computado pelo Orchestrator (STATE-AGG-01)
+  aggregate_state: computado — não persistir cópia divergente (STATE-AGG-01)
+  path_conventions: specs/foundation/path-conventions.md
+  development_workflow: specs/foundation/development-workflow.md
   current_capability: computado pelo Orchestrator quando manifest declara capabilities[] (CAP-01)
 
 retrocompatibility:

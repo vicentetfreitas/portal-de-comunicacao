@@ -1,12 +1,22 @@
 import type { Page } from "@playwright/test";
 
+/**
+ * Homologated GET /auth/me payload (AUTH-API-003).
+ * Optional `roles` aligns with frontend AuthenticatedUser (authorization helpers).
+ */
 const ADMIN_USER = {
   id: 1,
   email: "admin@unimedceara.com.br",
   name: "Administrador",
   permissions: [] as string[],
   sessionId: "session-e2e",
-  roles: ["ADMIN"]
+  roles: ["ADMIN"] as string[],
+  organizationalLinks: {
+    federationId: 1 as number | null,
+    singularId: null as number | null,
+    areaId: null as number | null,
+    teamId: null as number | null
+  }
 };
 
 function successEnvelope<T>(data: T) {

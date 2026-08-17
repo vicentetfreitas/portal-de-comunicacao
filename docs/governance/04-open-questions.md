@@ -279,20 +279,23 @@ Arquitetura + Product Owner.
 
 ### Status
 
-Aberta.
+Aberta (bloqueantes de auth/sessão **parcialmente encerrados**).
 
 ### Observação
 
 Não duplicar conteúdo de domínio. Acompanhar em:
 
-| Bloqueante | Tipo | SSOT |
-|------------|------|------|
-| Fluxo oficial de primeiro acesso | Negócio | OQ-001, OQ-026 (`docs/domain/10-open-questions.md`) |
-| Multi-contexto nesta entrega | Negócio + Arquitetura | OQ-027, OQ-008 |
-| Painel inicial / home route | Arquitetura + Planejamento | OQ-028 |
-| Alinhamento OAuth → protocolo homologado | — | **Encerrado** (DA-AUTH-012) |
+| Bloqueante | Tipo | SSOT | Status |
+|------------|------|------|--------|
+| Fluxo oficial de primeiro acesso | Negócio | DEC-FA-001, FT-PRIMEIRO-ACESSO | **Encerrado** |
+| BR-010 / vínculos obrigatórios | Negócio | DEC-FA-002 | **Encerrado** |
+| Multi-contexto nesta entrega | Negócio + Arquitetura | DEC-FA-003 | **Encerrado** |
+| Painel inicial / home route | Arquitetura + Planejamento | DEC-FA-004 | **Encerrado** |
+| Alinhamento OAuth → protocolo homologado | — | DA-AUTH-012 | **Encerrado** |
+| Modelo físico N vínculos | Dados | FT-SESSION / FT-PRIMEIRO-ACESSO (especificação futura) | Pendente implementação |
+| OQ-007 (evento Colaborador Integrado) | Domínio | `docs/domain/10-open-questions.md` | Aberta |
 
-DEC provisórias multi-contexto/painel foram **canceladas** no Gate Final (eram OQ + colisão de ID com `docs/technology/04-decision-log.md`).
+DEC provisórias multi-contexto/painel canceladas no Gate Final foram **substituídas** por DEC-FA-003 e DEC-FA-004 (IDs sem colisão com technology).
 
 ---
 

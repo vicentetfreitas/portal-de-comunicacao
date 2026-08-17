@@ -208,15 +208,47 @@ Máximo **3 sessões simultâneas** por colaborador. Ao exceder, a sessão mais 
 
 # DA-AUTH-011 — Identidade do Colaborador sem Matrícula
 
-## Decisão Adotada
+## Decisão Adotada (texto histórico — 2026-07-10)
 
 A criação e localização de colaborador no login **não exige número de matrícula corporativa**. A identidade persistida é composta por identificador interno (`COD_COLABORADOR`), e-mail institucional e identificador Zimbra (`ID_ZIMBRA`), conforme DEC-DB-011.
 
-O primeiro login, no escopo de FT-AUTH, consiste em: autenticação Zimbra → localização/criação do colaborador → verificação de ativo → criação da sessão. **Seleção de Área/Equipe e onboarding não fazem parte de FT-AUTH** (REF-DB-CTX-01; ver FT-SESSION e OQ-001).
+O primeiro login, no escopo de FT-AUTH, consistia em: autenticação Zimbra → localização/criação do colaborador → verificação de ativo → criação da sessão. **Seleção de Contexto Ativo, onboarding/primeiro acesso e Home dinâmica não fazem parte de FT-AUTH** (REF-DB-CTX-01; ver FT-SESSION, FT-PRIMEIRO-ACESSO, DEC-FA-001..004).
+
+## Supersession parcial (2026-08-14/15 — DH-03, DH-PA-01)
+
+Os itens abaixo do texto histórico que tratam de **`locateOrCreate` no login**, **criação automática de `COLABORADOR`** e **`AUTH_SESSAO` operacional imediata** para identidade sem vínculo completo estão **superseded** pelas decisões humanas vigentes:
+
+| Item histórico | Status após DH-03 / DH-PA-01 |
+|----------------|------------------------------|
+| `locateOrCreate` no login como comportamento normativo | **SUPERSEDED** — GAP-028-01 |
+| Criação de `COLABORADOR` durante autenticação | **SUPERSEDED** — COLABORADOR somente após vínculo completo (DH-03) |
+| `AUTH_SESSAO` operacional no login para identidade em Primeiro Acesso | **SUPERSEDED** — credencial temporária sem sessão operacional (DH-PA-01) |
+| Identidade sem matrícula (e-mail + Zimbra) | **MANTIDO** |
+| FT-AUTH não resolve Contexto Ativo / onboarding / Home | **MANTIDO** |
+
+### Regra vigente (FT-AUTH — hand-off pós-autenticação)
+
+```text
+Autenticação (Zimbra)
+    ↓
+identidade validada
+    ↓
+verificação de Primeiro Acesso (FT-PRIMEIRO-ACESSO)
+    ↓
+se necessário → onboarding (credencial temporária — DH-PA-01)
+    ↓
+vínculo completo (Federação + Singular + Área + Equipe opcional)
+    ↓
+persistência do COLABORADOR (DH-03)
+    ↓
+sessão operacional + Contexto Ativo derivado do vínculo (DH-02)
+```
+
+**FATO:** A implementação AS-IS (`ColaboradorService.locateOrCreate` em `finalizeLogin`) ainda reflete o texto histórico — ver `construction/review/baseline-saneamento.md` § Pendências de implementação.
 
 ## Status
 
-**Approved** (2026-07-10); texto alinhado em 2026-07-24 (remoção de seleção de contexto no primeiro login).
+**Approved** (2026-07-10); texto alinhado em 2026-07-24; **supersession parcial** registrada em 2026-08-17 (baseline saneamento).
 
 ---
 

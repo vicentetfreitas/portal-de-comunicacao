@@ -43,12 +43,18 @@ Cada regra recebe identificador único (`BR-XXX`) para rastreabilidade em arquit
 | ------ | ----- | ------- |
 | BR-007 | Área pertence a uma singular | Define hierarquia departamental e escopo organizacional |
 | BR-008 | Equipe pertence a uma área | Delimita agrupamento operacional dentro da estrutura departamental |
-| BR-009 | Colaborador operacional possui vínculo a singular e área | Pré-requisito para operação, publicação e autorização no portal |
-| BR-010 | Colaborador sem área vinculada não pode operar no portal | Impede operação até regularização do vínculo organizacional |
-| BR-011 | Onboarding deve vincular colaborador à singular e área adequadas antes da operação plena | Integra novos colaboradores ao contexto organizacional correto |
-| BR-012 | Contexto organizacional combina singular, área e eventual equipe de forma coerente | Orienta visão, escopo documental e referência de autorização |
+| BR-009 | Colaborador operacional possui vínculo a singular e área; colaborador **persistido** possui Federação, Singular e Área obrigatórias (DH-04, DEC-DB-028) | Pré-requisito para operação, publicação e autorização no portal |
+| BR-010 | Colaborador operacional autenticado possui pelo menos um vínculo organizacional com Área; sem Área não há operação nem navegação operacional; após persistência o login recupera o vínculo; toda navegação operacional ocorre no Contexto Ativo; identidade autenticada sem COLABORADOR persistido permanece não operacional | Impede operação sem contexto; alinha autenticação × primeiro acesso (DEC-FA-002, DH-03) |
+| BR-011 | O primeiro acesso (onboarding) estabelece o vínculo mínimo e cria o COLABORADOR antes da operação plena: domínio → Singular; seleção de Área; Equipe opcional; Contexto Ativo após vínculo completo. **CARGO não participa** do fluxo de Primeiro Acesso e **não bloqueia** a criação do COLABORADOR nem o estado operacional (DH-PA-03) | Integra colaborador ao contexto correto (DEC-FA-001, DH-03, DEC-ORG-003); substitui fluxos legados de solicitação administrativa |
+| BR-012 | Contexto organizacional / Contexto Ativo combina federação, singular e área de forma coerente (equipe opcional) | Orienta visão, escopo documental e autorização |
 | BR-013 | Singular agrupa áreas e colaboradores no escopo organizacional | Delimita unidade de gestão e referência de escopo |
 | BR-014 | Código Unimed identifica singular de forma única no contexto da federação | Garante identificação institucional da unidade cooperativa |
+| BR-040 | Hierarquia oficial: Federação → Singular → Área → Equipe → Colaborador | Estrutura organizacional única do domínio (DEC-ORG-001) |
+| BR-041 | Um colaborador pode possuir N vínculos organizacionais; a sessão possui um único Contexto Ativo (`federationId`, `singularId`, `areaId`) | Multi-contexto oficial (DEC-FA-003). **Supersession parcial (2026-08-14):** cardinalidade **N vínculos cadastrais** superseded por DH-02/DEC-DB-028 (1 vínculo); **Contexto Ativo único** mantido |
+| BR-042 | Após Contexto Ativo resolvido, a Home é determinada pelo backend; o frontend apenas renderiza | Home dinâmica (DEC-FA-004) |
+| BR-043 | O domínio do e-mail corporativo autenticado determina a Singular da identidade; resolução é autoridade do backend; o usuário não seleciona Singular diferente da determinada pelo domínio; a Área é selecionada dentro da Singular resolvida; a Equipe é opcional | Primeiro acesso e onboarding (DEC-ORG-003, DH-03, DH-PA-02) |
+| BR-044 | Cada domínio de e-mail determina no máximo uma Singular; cada Singular possui no máximo um domínio de e-mail; quando o domínio autenticado não possuir Singular cadastrada, o Primeiro Acesso não prossegue automaticamente e o frontend informa o usuário; o sistema deverá possuir posteriormente capacidade administrativa para cadastrar a associação domínio → Singular pelo Administrador do Sistema | Cardinalidade e comportamento do mapeamento (DH-PA-02). **Implementação física pendente** (GAP-028-04) |
+| BR-045 | CARGO representa função organizacional do colaborador e é **distinto** de PAPEL (autorização). CARGO **não é requisito** para criação/cadastro de COLABORADOR em **qualquer** fluxo (Primeiro Acesso, administrativo ou futuro). CARGO **não é requisito** para autenticação nem para estado operacional. CARGO **não determina** PAPEL. A definição de CARGO **poderá ocorrer posteriormente** (DH-CARGO-01, DH-PA-03, DEC-ORG-002) | Separação CARGO/PAPEL; obrigatoriedade na criação removida (supersession parcial DEC-DB-027) |
 
 ---
 
@@ -105,7 +111,7 @@ Regras cuja violação compromete o funcionamento do negócio.
 | Código | Regra | Justificativa |
 | ------ | ----- | ------------- |
 | BR-009 | Colaborador operacional possui vínculo a singular e área | Ator central do fluxo de valor; sem vínculo não há contexto operacional válido |
-| BR-010 | Colaborador sem área vinculada não pode operar no portal | Documentado como impedimento operacional nos aggregates aprovados |
+| BR-010 | Colaborador operacional autenticado exige vínculo com Área e Contexto Ativo para navegar; identidade autenticada sem COLABORADOR persistido não é operacional | Impedimento operacional e de primeiro acesso (DEC-FA-002, DH-03) |
 | BR-003 | Autorização depende de papel e contexto organizacional | Governança fundamental de quem pode agir no portal |
 | BR-019 | Compartilhamento coerente com visibilidade | Protege confidencialidade e evita exposição indevida |
 | BR-031 | Decisão de permissão exclusiva do responsável pelo recurso | Materializa governança de acesso a recursos privados |
@@ -145,7 +151,7 @@ Regras cuja violação compromete o funcionamento do negócio.
 
 | Aggregate | Regras Protegidas |
 | --------- | ----------------- |
-| Organização Corporativa | BR-007, BR-008, BR-009, BR-010, BR-011, BR-012, BR-013, BR-014 |
+| Organização Corporativa | BR-007, BR-008, BR-009, BR-010, BR-011, BR-012, BR-013, BR-014, BR-040, BR-041, BR-042, BR-043, BR-044, BR-045 |
 | Gestão Documental | BR-015, BR-016, BR-017, BR-018, BR-019, BR-020, BR-021, BR-022, BR-023, BR-024, BR-004 |
 | Controle de Acesso | BR-001, BR-003, BR-005, BR-025, BR-026, BR-027, BR-028, BR-029, BR-030, BR-031, BR-032, BR-033, BR-034 |
 | Comunicação Interna | BR-035, BR-036, BR-037, BR-038, BR-039 |
@@ -171,7 +177,7 @@ Regras cuja violação compromete o funcionamento do negócio.
 
 | Item | Impacto |
 | ---- | ------- |
-| Onboarding com fluxos coexistentes (seleção direta vs. solicitação com aprovação) | BR-011 pode ter pré-condições diferentes não consolidadas |
+| ~~Onboarding com fluxos coexistentes~~ | **Resolvido** — DEC-FA-001 / BR-011 (primeiro acesso = resolução de Contexto Ativo; solicitação admin obsoleta como onboarding oficial) |
 | Parceiro autorizado vs. convidado | BR-001 e BR-033 não cobrem critérios operacionais de parceiro autorizado |
 | Comunicado como categoria de documento vs. publicação institucional | BR-039 sem aggregate responsável único |
 | Compartilhamento vs. acesso efetivo | BR-020 e BR-003 podem divergir se audiência definida não coincidir com permissão efetiva |
@@ -190,6 +196,9 @@ Regras cuja violação compromete o funcionamento do negócio.
 | Regras da Central de Colaboração | Sem políticas de interação entre colaboradores |
 | Regras de métricas administrativas | Sem léxico de indicadores e políticas de exibição |
 | Regras consolidadas de comunicado institucional | BR-039 sem distinção formal categoria vs. módulo |
+| Implementação física do mapeamento domínio de e-mail → Singular | **DH-PA-02 aprovada** (2026-08-15); cardinalidade e comportamento definidos (BR-044); implementação técnica pendente — ver `docs/governance/03-open-decisions.md` (GAP-028-04) |
+| Credencial temporária de Primeiro Acesso (sem AUTH_SESSAO operacional) | **DH-PA-01 aprovada** (2026-08-15); implementação técnica pendente — ver `docs/governance/03-open-decisions.md` |
+| Política de CARGO na criação do COLABORADOR | **DH-CARGO-01 aprovada** (2026-08-17) — CARGO não obrigatório em qualquer cadastro; reconciliação DEC-DB-027 encerrada — ver `docs/governance/03-open-decisions.md` |
 | Regras de herança de permissões em hierarquia de pastas | BR-017 referencia estrutura hierárquica sem regras de herança detalhadas |
 
 ---

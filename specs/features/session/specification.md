@@ -1,48 +1,80 @@
 # Specification — FT-SESSION
 
+| Item | Valor |
+|------|-------|
+| Feature | FT-SESSION |
+| Status | APPROVED (evolução documental 2026-07-24; reconciliado 2026-08-17) |
+| Decisões | DEC-FA-002, DEC-FA-003, DEC-ORG-001, DH-02; REF-DB-CTX-01 |
+
 ## Objetivo
 
-Após autenticação FT-AUTH, expor o **contexto organizacional** do colaborador em `/auth/me` e nas claims do JWT, sem persistir seleção em `AUTH_SESSAO` (REF-DB-CTX-01).
+Após autenticação FT-AUTH, expor e manter o **estado de sessão** do colaborador — vínculo organizacional e **Contexto Ativo** (projeção derivada) — para consumo do Portal.
 
-## Regras (fase 1 — implementada)
+A **condução do Primeiro Acesso** e o **encerramento do onboarding** pertencem a **FT-PRIMEIRO-ACESSO**.
 
-- **RN-SESSION-001:** Contexto inicial derivado dos vínculos do `COLABORADOR` autenticado (`federationId`, `singularId`, `areaId`, `teamId`).
-- **RN-SESSION-002:** Com um único contexto disponível, o sistema resolve automaticamente no login.
-- **RN-SESSION-004:** O contexto ativo é refletido no access token (claims organizacionais) e em `organizationalLinks` em `GET /api/v1/auth/me`; `AUTH_SESSAO` persiste apenas dados de sessão (refresh token, revogação, dispositivo).
+## Hierarquia organizacional (DEC-ORG-001)
 
-### Modelo físico atual
+```text
+Federação → Singular → Área → Equipe → Colaborador
+```
 
-`COLABORADOR` possui **um** vínculo de cada tipo (`singularId`, `areaId`, `equipeId`). Não há tabela de múltiplos vínculos nem endpoints de troca de contexto.
+Colaborador operacional exige Área. Sem vínculo válido não há operação (BR-010).
 
-## Regras (fase 2 — backlog; não implementar sem decisão)
+## Contexto Ativo × vínculo cadastral (DH-02)
 
-- **RN-SESSION-003:** Com múltiplos contextos, o usuário deve escolher antes de acessar rotas protegidas de negócio (padrão semelhante a alternância de contas). Momento: **após** autenticação/sessão de identidade; **antes** do painel inicial.
+Com **1 vínculo cadastral** por COLABORADOR (DH-02, DEC-DB-028), o Contexto Ativo **não** constitui estado cadastral independente:
 
-Pré-requisitos de fase 2:
+```text
+COLABORADOR
+    ↓
+único vínculo cadastral (FKs escalares)
+    ↓
+Contexto Ativo = projeção derivada para sessão/UI/navegação
+```
 
-1. Resposta a **OQ-027** / **OQ-008** (`docs/domain/10-open-questions.md`) — multi-contexto é requisito?
-2. Evolução do modelo de dados para N vínculos (sem reintroduzir `COD_*_CTX` em `AUTH_SESSAO`).
-3. Contrato de seleção consumido pelo fluxo em `docs/frontend/frontend-flow.md`.
-4. Após OQ respondida: criar DEC aprovada (fluxo OQ → DEC).
+- **Não** introduzir persistência separada de Contexto Ativo apenas para representar o vínculo.
+- `AUTH_SESSAO` **não** persiste `COD_*_CTX` (REF-DB-CTX-01).
+- O vínculo é persistido nas FKs de `COLABORADOR`; a store de sessão expõe `activeContext` como espelho derivado.
 
-### Composição mínima de um contexto (alvo)
+## Regras oficiais
 
-| Dimensão | Campo | Operação plena |
-|----------|-------|----------------|
-| Federação | `federationId` | Sim |
-| Singular | `singularId` | Sim (BR-009) |
-| Área | `areaId` | Sim (BR-009, BR-010) |
-| Equipe | `teamId` | Opcional (BR-002/BR-012) |
-| Papel ativo | role/perfil | Sim para autorização (BR-003) — Feature futura |
+- **RN-SESSION-001:** Vínculo derivado do colaborador autenticado (`federationId`, `singularId`, `areaId`, `teamId` opcional).
+- **RN-SESSION-002:** Com COLABORADOR persistido e vínculo completo, o Contexto Ativo é **derivado automaticamente** do único vínculo (orquestrado por FT-PRIMEIRO-ACESSO na primeira entrada; FT-SESSION na hidratação).
+- **RN-SESSION-003:** ~~Com múltiplos vínculos, o usuário escolhe o Contexto Ativo~~ — **SUPERSEDED** (DH-02, 2026-08-14). Não há seleção entre N vínculos cadastrais. *Parte histórica preservada abaixo.*
+- **RN-SESSION-004:** O Contexto Ativo é refletido na sessão de aplicação e em contratos de identidade (`/auth/me`); `AUTH_SESSAO` **não** persiste `COD_*_CTX` (REF-DB-CTX-01).
+- **RN-SESSION-005:** Contexto Ativo mínimo: `federationId`, `singularId`, `areaId`. Toda navegação operacional usa esse contexto.
+
+### RN-SESSION-003 — texto histórico (superseded no eixo cadastral)
+
+> Com **múltiplos** vínculos, o usuário escolhe o Contexto Ativo **após** autenticação e **antes** da Home (FT-PRIMEIRO-ACESSO).
+
+**Status:** **SUPERSEDED** por DH-02 (1 vínculo cadastral). A regra de **navegação no Contexto Ativo** (RN-SESSION-005) permanece vigente.
+
+## Multi-contexto (DEC-FA-003 — supersession parcial)
+
+| Item DEC-FA-003 | Status após DH-02 |
+|-----------------|-------------------|
+| N vínculos cadastrais | **SUPERSEDED** |
+| Contexto Ativo na sessão | **MANTIDO** — derivado do único vínculo |
+| Navegação no Contexto Ativo | **MANTIDO** |
+| Seleção quando N>1 (RN-SESSION-003) | **SUPERSEDED** |
+| Sem `COD_*_CTX` em `AUTH_SESSAO` | **MANTIDO** |
+
+Fonte: `docs/governance/03-open-decisions.md` — DEC-FA-003 § Supersession parcial.
 
 ## Non-goals
 
-- Persistência de contexto organizacional em `AUTH_SESSAO` (`COD_*_CTX` removidos — REF-DB-CTX-01).
-- Endpoints `GET /auth/contexts` e `POST /auth/context` (removidos).
-- Gestão de múltiplos vínculos por colaborador (backlog — fase 2).
-- Substituição do modelo de permissões (PAPEL).
-- Definição do painel inicial / home route (**OQ-028**).
+- Login/logout/refresh (FT-AUTH).
+- Wizard de onboarding e criação de COLABORADOR (FT-PRIMEIRO-ACESSO).
+- UI de seleção entre N vínculos (superseded).
+- CMS / permissões editoriais.
+- Persistência de contexto em `AUTH_SESSAO`.
+- Persistência separada de Contexto Ativo além das FKs de `COLABORADOR`.
 
 ## Relação com primeiro acesso
 
-Auto-create de colaborador no login é de FT-AUTH. Vínculo operacional (singular/área) e onboarding são governados por BR-011 e OQ-001 — **não** por esta Feature na fase 1.
+FT-AUTH autentica a identidade (Zimbra).  
+FT-SESSION hidrata identidade + vínculo quando COLABORADOR existir.  
+**FT-PRIMEIRO-ACESSO** conduz onboarding, cria COLABORADOR com vínculo completo e estabelece operação; Contexto Ativo é derivado do vínculo.
+
+Fluxos legados de onboarding CMS/frontend: **obsoletos** no TO-BE — ver `specs/features/primeiro-acesso/specification.md`.

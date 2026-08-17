@@ -31,7 +31,8 @@ test.describe("AT-FE-SINGULAR-001 — Cadastro", () => {
     await page.goto("/app/administrador/singulares/novo");
     await page.getByLabel("Nome").fill("Unimed Fortaleza");
     await page.getByLabel("Sigla").fill("UNI-FOR");
-    await page.getByLabel("Código Unimed").fill("UC010");
+    await page.getByLabel("Código Unimed").fill("10");
+    await page.getByLabel("Registro ANS").fill("12345678901234567890");
     await page.getByRole("button", { name: "Cadastrar singular" }).click();
 
     await expect(page).toHaveURL(/\/app\/administrador\/singulares\/\d+$/);
@@ -48,7 +49,8 @@ test.describe("AT-FE-SINGULAR-001 — Cadastro", () => {
         federationId: 1,
         name: "Unimed Ceará",
         acronym: "UNI-CE",
-        unimedCode: "UC001",
+        unimedCode: 1,
+        registroAns: "32195-8",
         status: "ACTIVE",
         createdAt: "2026-07-16T12:00:00Z",
         updatedAt: null
@@ -58,7 +60,8 @@ test.describe("AT-FE-SINGULAR-001 — Cadastro", () => {
     await page.goto("/app/administrador/singulares/novo");
     await page.getByLabel("Nome").fill("Outra Singular");
     await page.getByLabel("Sigla").fill("UNI-CE");
-    await page.getByLabel("Código Unimed").fill("UC999");
+    await page.getByLabel("Código Unimed").fill("999");
+    await page.getByLabel("Registro ANS").fill("999999");
     await page.getByRole("button", { name: "Cadastrar singular" }).click();
 
     await expect(
@@ -75,7 +78,8 @@ test.describe("AT-FE-SINGULAR-002 — Detalhe", () => {
         federationId: 1,
         name: "Unimed Sul",
         acronym: "UNI-SUL",
-        unimedCode: "UC042",
+        unimedCode: 42,
+        registroAns: "35612-3",
         status: "ACTIVE",
         createdAt: "2026-07-16T12:00:00Z",
         updatedAt: null
@@ -87,7 +91,7 @@ test.describe("AT-FE-SINGULAR-002 — Detalhe", () => {
       page.getByRole("heading", { name: "Unimed Sul" })
     ).toBeVisible();
     await expect(singularFieldValue(page, "Sigla")).toHaveText("UNI-SUL");
-    await expect(singularFieldValue(page, "Código Unimed")).toHaveText("UC042");
+    await expect(singularFieldValue(page, "Código Unimed")).toHaveText("42");
   });
 
   test("404 exibe estado amigável", async ({ page }) => {
@@ -106,7 +110,8 @@ test.describe("AT-FE-SINGULAR-003 — Listagem", () => {
         federationId: 1,
         name: "Alpha Ativa",
         acronym: "ALP-A",
-        unimedCode: "001",
+        unimedCode: 1,
+        registroAns: "32195-8",
         status: "ACTIVE",
         createdAt: "2026-07-16T12:00:00Z",
         updatedAt: null
@@ -116,7 +121,8 @@ test.describe("AT-FE-SINGULAR-003 — Listagem", () => {
         federationId: 1,
         name: "Beta Inativa",
         acronym: "BET-I",
-        unimedCode: "002",
+        unimedCode: 2,
+        registroAns: "35612-4",
         status: "INACTIVE",
         createdAt: "2026-07-16T12:00:00Z",
         updatedAt: null
@@ -126,7 +132,8 @@ test.describe("AT-FE-SINGULAR-003 — Listagem", () => {
         federationId: 1,
         name: `Ativa ${index + 1}`,
         acronym: `ATV-${index + 1}`,
-        unimedCode: `00${index + 3}`,
+        unimedCode: index + 3,
+        registroAns: `ANS-${index + 1}`,
         status: "ACTIVE" as const,
         createdAt: "2026-07-16T12:00:00Z",
         updatedAt: null
@@ -180,7 +187,8 @@ test.describe("AT-FE-SINGULAR-004 — Edição", () => {
         federationId: 1,
         name: "Unimed Original",
         acronym: "ORG",
-        unimedCode: "007",
+        unimedCode: 7,
+        registroAns: "107-ANS",
         status: "ACTIVE",
         createdAt: "2026-07-16T12:00:00Z",
         updatedAt: null
@@ -190,7 +198,8 @@ test.describe("AT-FE-SINGULAR-004 — Edição", () => {
     await page.goto("/app/administrador/singulares/7/editar");
     await page.getByLabel("Nome").fill("Unimed Atualizada");
     await page.getByLabel("Sigla").fill("ATU");
-    await page.getByLabel("Código Unimed").fill("007A");
+    await page.getByLabel("Código Unimed").fill("107");
+    await page.getByLabel("Registro ANS").fill("107-UPDATED");
     await page.getByRole("button", { name: "Salvar alterações" }).click();
 
     await expect(page).toHaveURL("/app/administrador/singulares/7");
@@ -207,7 +216,8 @@ test.describe("AT-FE-SINGULAR-004 — Edição", () => {
         federationId: 1,
         name: "Singular A",
         acronym: "SIG-A",
-        unimedCode: "001",
+        unimedCode: 1,
+        registroAns: "32195-8",
         status: "ACTIVE",
         createdAt: "2026-07-16T12:00:00Z",
         updatedAt: null
@@ -217,7 +227,8 @@ test.describe("AT-FE-SINGULAR-004 — Edição", () => {
         federationId: 1,
         name: "Singular B",
         acronym: "SIG-B",
-        unimedCode: "002",
+        unimedCode: 2,
+        registroAns: "35612-4",
         status: "ACTIVE",
         createdAt: "2026-07-16T12:00:00Z",
         updatedAt: null
@@ -242,7 +253,8 @@ test.describe("AT-FE-SINGULAR-005 — Status", () => {
         federationId: 1,
         name: "Singular Ativa",
         acronym: "ATV",
-        unimedCode: "005",
+        unimedCode: 5,
+        registroAns: "5-ANS",
         status: "ACTIVE",
         createdAt: "2026-07-16T12:00:00Z",
         updatedAt: null
@@ -269,7 +281,8 @@ test.describe("AT-FE-SINGULAR-005 — Status", () => {
         federationId: 1,
         name: "Singular Bloqueada",
         acronym: "BLK",
-        unimedCode: "008",
+        unimedCode: 8,
+        registroAns: "8-ANS",
         status: "ACTIVE",
         createdAt: "2026-07-16T12:00:00Z",
         updatedAt: null,

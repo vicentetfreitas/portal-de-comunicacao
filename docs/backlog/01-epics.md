@@ -59,7 +59,7 @@ Consolidar épicos derivados exclusivamente da documentação oficial do projeto
 - `docs/solution-design/10-delivery-roadmap.md` — Etapa 2
 - `docs/implementation/01-implementation-backlog.md` — ORG-001 a ORG-006, FE-006
 
-**Status arquitetural:** ATIVO (onboarding PARCIAL — OQ-001)
+**Status arquitetural:** ATIVO (onboarding/primeiro acesso — DEC-FA-001; FT-PRIMEIRO-ACESSO)
 
 ---
 

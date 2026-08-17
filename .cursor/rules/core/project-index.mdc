@@ -1,404 +1,69 @@
 ---
-description: Project Knowledge Index
+description: Project Knowledge Index (Simplified)
 alwaysApply: true
 ---
 
-# Objetivo
+# Índice do Projeto — Simplificado (Etapa 2)
 
-Centralizar a navegação do conhecimento do projeto.
-
-Este documento define onde o agente deve buscar informações antes de analisar, especificar, implementar, revisar ou validar qualquer artefato.
+Navegação mínima para humanos e agentes. Detalhes: [`docs/governance/09-framework-simplification-scope.md`](../../docs/governance/09-framework-simplification-scope.md).
 
 ---
 
-# Regra Fundamental
+## SSOT — consultar primeiro
 
-O agente NÃO deve explorar o repositório arbitrariamente.
+| Necessidade | Caminho |
+|-------------|---------|
+| Comportamento / contrato / tasks | `specs/features/<slug>/` |
+| Identidade da feature | `specs/features/<slug>/feature.yaml` |
+| Mapa SSOT mínimo | `specs/foundation/minimal-ssot.md` |
+| Paths e convenções | `specs/foundation/path-conventions.md` |
+| Fluxo de desenvolvimento | `specs/foundation/development-workflow.md` |
+| DoR / DoD | `specs/foundation/definition-of-ready.md`, `definition-of-done.md` |
+| Padrões de código | `docs/implementation/` |
+| Arquitetura | `docs/architecture/` |
+| Schema Oracle | `database/` |
+| Governança documental | `docs/governance/07-documentation-architecture.md` |
 
-Toda consulta deve iniciar por este índice.
-
-O conhecimento do projeto está dividido em três categorias:
-
-- `specs/` → especificação oficial do produto.
-- `docs/` → documentação consultiva da engenharia e do sistema legado.
-- `engineering/` → governança da Sprint de Integração (processo manual, pós-construction).
-
----
-
-# Fonte Oficial da Verdade
-
-## specs/
-
-O diretório `specs/` é a fonte oficial para todo desenvolvimento.
-
-Ele define:
-
-- comportamento esperado;
-- regras funcionais;
-- contratos;
-- critérios de aceite;
-- tarefas de implementação.
-
-Quando existir conflito entre `specs/` e qualquer outra documentação, prevalece `specs/`.
+**Conflito:** prevalece `specs/` sobre `docs/` sobre código.
 
 ---
 
-## docs/
+## Implementação
 
-O diretório `docs/` contém documentação consultiva.
+| Camada | Diretório | Validação |
+|--------|-----------|-----------|
+| Backend | `backend/` | `cd backend && mvn clean verify` |
+| Frontend | `frontend/` | lint, typecheck, unit; E2E no closure |
+| CI | `.github/workflows/` | evidence principal |
 
-Seu objetivo é fornecer contexto técnico, histórico e arquitetural.
-
-A documentação em `docs/` nunca deve ser utilizada diretamente para orientar implementação sem que a informação esteja consolidada em `specs/`.
-
----
-
-# Estrutura do Projeto
-
-```text
-specs/
-
-├── foundation/
-├── templates/
-└── features/
-
-construction/
-
-├── registry.yaml                     ← v4.1 — índice unificado Features + Workstreams
-├── 12-fullstack-orchestrator.md      ← v4.1 — SSOT orquestração Full Stack
-├── 14-framework-decisions-v4.1.md    ← decisões v4.1
-├── golden-template/FT-SINGULAR.md    ← Golden Template Full Stack
-├── platform-foundation/              ← Sprint 1A (histórico, phase: closed)
-│   └── construction-state.yaml
-├── features/<FEATURE_CODE>/          ← Workstream backend (ex.: FT-AUTH)
-│   ├── feature-manifest.yaml         ← SSOT Feature (consultar primeiro)
-│   ├── construction-state.yaml       ← SSOT Workstream backend
-│   ├── execution-plan.md
-│   ├── session.md
-│   ├── review/
-│   ├── reports/
-│   └── pkg-XX/status.md
-├── features/registry.yaml            ← Alias legado → registry.yaml
-├── frontend/
-│   ├── registry.yaml                 ← Alias legado → registry.yaml
-│   └── features/<FEATURE_CODE>/      ← Workstream frontend (quando existir)
-
-engineering/
-
-├── integration/                      ← Sprint de Integração (v1.0)
-│   ├── 01-integration-sprint-workflow.md  ← SSOT
-│   ├── registry.yaml
-│   └── sprints/<SPRINT_ID>/        ← Instância por sprint
-│       ├── integration-manifest.yaml ← SSOD
-│       ├── integration-state.yaml  ← SSOT
-│       └── integration-checklist.md
-
-database/                             ← SSOT banco Oracle (schema UNMPORTCOM)
-
-├── README.md · GOVERNANCE.md
-├── baseline/ · validation/
-├── ddl/ · dml/ · migrations/
-├── model/ · reports/
-
-docs/
-
-├── discovery/
-├── domain/
-├── architecture/
-├── solution-design/
-├── implementation/
-└── construction/
-```
+Golden references: `specs/features/authentication/`, `construction/golden-template/FT-SINGULAR.md`.
 
 ---
 
-# Ordem de Consulta
+## Construction (legado — transição)
 
-## Para implementar uma Feature
+Estado operacional por workstream: `construction/features/<CODE>/construction-state.yaml`.
 
-Consultar obrigatoriamente:
+Índice (sem confiar em `status` manual): `construction/registry.yaml`.
 
-```text
-1. construction/12-fullstack-orchestrator.md      ← workflow v4.1 Full Stack
-2. construction/11-feature-execution-workflow.md    ← workflow v3.2 por Workstream
-   construction/16-frontend-validation-gates.md     ← gates PKG vs E2E (frontend, BUILD-02 / E2E-01)
-   construction/17-frontend-e2e-behavior-policy.md  ← política specs Playwright (E2E-02)
-
-3. construction/registry.yaml (REGISTRY-01) — descobrir Feature e Workstreams
-
-4. feature-manifest.yaml (SSOD-01) — SSOT Feature:
-   - Feature:  construction/features/<FEATURE_CODE>/feature-manifest.yaml
-
-5. construction-state.yaml (STATE-WS-01) — SSOT por Workstream:
-   - Backend:  construction/features/<FEATURE_CODE>/construction-state.yaml
-   - Frontend: construction/frontend/features/<FEATURE_CODE>/construction-state.yaml
-   - Agregado: computado (STATE-AGG-01) — não inferir sem ler cada Workstream
-
-6. execution-plan.md + session.md (Snapshot imutável do Workstream ativo)
-
-5. specs/features/ (path em manifest.specification.path)
-
-6. specs/foundation/
-
-7. docs/implementation/
-
-8. docs/construction/
-
-9. database/ (schema Oracle — baseline, ddl, GOVERNANCE.md) quando persistência ou contrato físico
-```
-
-Durante PKGs: consultar `construction-state.yaml` para estado; Snapshot em `session.md` para contexto — não reler documentos já carregados (CACHE-01, RULE-CONTEXT-01).
+**Não usar** como SSOT: `registry.status`, `session.md`, `pkg-XX/status.md` — ver `minimal-ssot.md`.
 
 ---
 
-## Para executar uma Sprint de Integração
+## Agentes Cursor ativos
 
-Consultar obrigatoriamente:
+| Agente | Uso |
+|--------|-----|
+| `specification-engineer` | Artefatos em `specs/` |
+| `backend-engineer` | Java/Spring em `backend/` |
+| `reviewer` | Review técnico (sem editar) |
 
-```text
-1. engineering/integration/01-integration-sprint-workflow.md   ← SSOT integração
-
-2. integration-manifest.yaml (SSOD-INT-01) — descobrir paths:
-   - Registry: engineering/integration/registry.yaml
-   - Sprint:   engineering/integration/sprints/<SPRINT_ID>/integration-manifest.yaml
-
-3. integration-state.yaml (STATE-INT-01) — estado operacional da sprint
-
-4. integration-plan.md + integration-checklist.md
-
-5. construction/features/registry.yaml — Features no escopo (todas FEATURE_APPROVED)
-
-6. specs/features/ (contratos das Features no escopo)
-
-7. docs/implementation/ e docs/construction/
-```
-
-Durante validação: consultar `integration-state.yaml` para estado; não alterar código nem especificações nesta fase (RULE-INT-02).
+Regras on-demand: `.cursor/rules/reference/backend-implementation.mdc`, `frontend-implementation.mdc`.
 
 ---
 
-## Para criar uma nova especificação
-
-Consultar:
-
-```text
-1. specs/foundation/
-
-2. specs/templates/
-
-3. docs/domain/
-
-4. docs/discovery/
-```
-
----
-
-## Para compreender o legado
-
-Consultar:
-
-```text
-docs/discovery/
-
-↓
-
-docs/domain/
-
-↓
-
-docs/architecture/
-```
-
----
-
-## Para compreender a arquitetura técnica
-
-Consultar:
-
-```text
-docs/architecture/
-
-↓
-
-docs/solution-design/
-
-↓
-
-docs/implementation/
-```
-
----
-
-# Quando Consultar Cada Camada
-
-## specs/foundation
-
-Utilizar para:
-
-- princípios;
-- convenções;
-- workflow;
-- glossário;
-- Definition of Ready;
-- Definition of Done.
-
----
-
-## specs/templates
-
-Utilizar para criar novas Features.
-
----
-
-## specs/features
-
-Utilizar para:
-
-- desenvolvimento;
-- testes;
-- validação;
-- evolução funcional.
-
-É a principal fonte utilizada durante a implementação.
-
----
-
-## docs/discovery
-
-Utilizar apenas para compreender o sistema legado.
-
----
-
-## docs/domain
-
-Utilizar para compreender regras de negócio existentes.
-
----
-
-## docs/architecture
-
-Utilizar para compreender decisões arquiteturais.
-
----
-
-## docs/solution-design
-
-Utilizar para compreender a decomposição da solução.
-
----
-
-## docs/implementation
-
-Utilizar para compreender padrões de implementação.
-
----
-
-## docs/construction
-
-Utilizar durante a construção do backend, frontend, banco de dados e infraestrutura.
-
----
-
-## engineering/integration
-
-Utilizar para:
-
-- executar Sprint de Integração do backend;
-- validar ambiente, infraestrutura, APIs, banco e fluxos cross-feature;
-- registrar evidências, issues e readiness pós-construction.
-
-Não substitui `specs/` nem `construction/`. Não altera código nesta fase documental.
-
----
-
-# Processo de Trabalho
-
-Sempre seguir a sequência abaixo:
-
-```text
-Necessidade
-
-↓
-
-Consultar specs/
-
-↓
-
-Consultar docs/ (quando necessário)
-
-↓
-
-Produzir ou atualizar especificação
-
-↓
-
-Implementar
-
-↓
-
-Validar
-
-↓
-
-Atualizar documentação impactada
-```
-
----
-
-# Regras de Governança
-
-O agente deve obedecer às seguintes prioridades:
-
-```text
-specs/
-
-↓
-
-docs/
-
-↓
-
-código existente
-```
-
-O código nunca deve ser utilizado como fonte da verdade.
-
-Quando existir divergência:
-
-- atualizar a especificação, quando necessário;
-- corrigir a implementação;
-- registrar inconsistências encontradas.
-
----
-
-# Estado Atual do Projeto
-
-```text
-Foundation        CONCLUÍDA
-Templates         CONCLUÍDA
-Features          EM EVOLUÇÃO
-
-Discovery         CONCLUÍDO
-Domain            CONCLUÍDO
-Architecture      CONCLUÍDO
-Solution Design   CONCLUÍDO
-Implementation    CONCLUÍDO
-Construction      EM EVOLUÇÃO
-Integration       CONCLUÍDA (sprint-03-org-backend APPROVED)
-```
-
----
-
-# Próxima Prioridade
-
-```text
-Iniciar Frontend (consumo do backend validado)
-
-↓
-
-Especificar Features Gestão Documental
-
-↓
-
-Implementar conforme specs/
-```
+## Proibido
+
+- Implementar sem spec (DoR).
+- Explorar repositório sem `path-conventions.md`.
+- Tratar `construction/registry.yaml` status como SSOT.

@@ -322,7 +322,7 @@ Este agregado consome fatos dos demais agregados (permissão decidida, documento
 | ------ | ------- |
 | Dono único do evento Comunicado Institucional Publicado | Limite de consistência entre Gestão Documental e Comunicação Interna indefinido |
 | Processos de revogação de permissão e alteração de compartilhamento | Ciclo de vida incompleto nos agregados Gestão Documental e Controle de Acesso |
-| Fluxo consolidado de onboarding | Regras de entrada do agregado Organização Corporativa ambíguas |
+| Fluxo consolidado de onboarding | **Resolvido no TO-BE** — DEC-FA-001 / BR-011 |
 | Central de Colaboração e métricas administrativas | Sem invariantes de mutação estáveis no agregado Comunicação Interna |
 | Parceiro autorizado | Perfil sem invariantes operacionais consolidadas no agregado Controle de Acesso |
 | Granularidade interna dos agregados | Documento e pasta podem exigir sublimites não detalhados neste documento conceitual |

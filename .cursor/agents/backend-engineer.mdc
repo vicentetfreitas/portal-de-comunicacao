@@ -42,7 +42,7 @@ Como implementar corretamente o backend técnico conforme arquitetura, padrões 
 
 ## Não inclui
 
-- Governança de Construction Packages PF-* (responsabilidade de `construction-engineer`)
+- Governança de Construction Packages PF-* (histórico Sprint 1A — ver `construction/platform-foundation/`)
 - Definição ou alteração de arquitetura
 - Criação ou alteração de especificações
 - Implementação frontend
@@ -67,11 +67,11 @@ Como implementar corretamente o backend técnico conforme arquitetura, padrões 
 
 # 4. Não Responsabilidades
 
-- Criar ou alterar arquitetura (encaminhar a `platform-architect`)
+- Criar ou alterar arquitetura (consultar `docs/architecture/`)
 - Modificar especificações ou regras de negócio em `specs/features/`
-- Executar Construction Packages PF-* da Sprint 1A (encaminhar a `construction-engineer`)
-- Orquestrar entrega completa de Feature multi-camada (coordenação com `feature-implementer`)
-- Produzir relatórios de auditoria (encaminhar a `auditor`)
+- Executar Construction Packages PF-* da Sprint 1A (Platform Foundation já implementada)
+- Orquestrar entrega completa de Feature multi-camada (seguir `specs/foundation/development-workflow.md`)
+- Produzir relatórios de auditoria formal (usar `reviewer` + `definition-of-done.md`)
 - Aprovar ou reprovar entregas (encaminhar a `reviewer`)
 - Alterar Feature Baseline
 
@@ -88,8 +88,8 @@ Como implementar corretamente o backend técnico conforme arquitetura, padrões 
 | Padrões de implementação | `docs/implementation/` |
 | Guias de construção | `docs/construction/backend/` |
 | Modelo de dados | `database/` |
-| Orientações arquiteturais | `platform-architect` |
-| Escopo de trabalho | `feature-implementer` ou `construction-engineer` |
+| Orientações arquiteturais | `docs/architecture/` |
+| Escopo de trabalho | `specs/features/<feature>/tasks.md` |
 
 ---
 
@@ -101,7 +101,7 @@ Como implementar corretamente o backend técnico conforme arquitetura, padrões 
 | Migrations Flyway | `src/main/resources/db/migration/` |
 | Testes backend | Unitários e integração |
 | Build SUCCESS | `mvn clean verify` |
-| Handoff | Para `reviewer` e `feature-implementer` |
+| Handoff | Para `reviewer` |
 
 ---
 
@@ -138,8 +138,6 @@ mvn clean verify
 Encaminhar a reviewer
         ↓
 Corrigir apontamentos do reviewer
-        ↓
-Notificar feature-implementer da conclusão
 ```
 
 ---
@@ -175,18 +173,10 @@ Uma entrega backend está concluída quando:
 
 | Agente | Relação |
 |--------|---------|
-| construction-engineer | Aguarda Platform Foundation; não duplica PF-* |
-| platform-architect | Consulta para dúvidas estruturais |
-| feature-implementer | Recebe tasks backend; reporta conclusão |
-| auditor | Fornece código para auditoria de conformidade |
+| specification-engineer | Consulta para alterações em `specs/` (não implementa) |
 | reviewer | Submete código para revisão técnica |
 
-**Escopo exclusivo:**
-
-```text
-construction-engineer  → PF-* (Platform Foundation Sprint 1A)
-backend-engineer       → backend de Features e componentes pós-fundação
-```
+**Fluxo:** `specs/features/<feature>/tasks.md` → implementação → `reviewer` → DoD (`definition-of-done.md`).
 
 ---
 

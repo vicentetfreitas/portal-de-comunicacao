@@ -199,7 +199,7 @@ Eventos fundamentais para o fluxo de valor do portal, conforme `06-context-map` 
 
 | Lacuna | Impacto |
 | ------ | ------- |
-| Fluxo consolidado de onboarding (seleção vs. solicitação com aprovação) | Evento Colaborador Integrado pode ter pré-requisitos de negócio diferentes não documentados |
+| Fluxo consolidado de onboarding (seleção vs. solicitação com aprovação) | **Resolvido no TO-BE** — DEC-FA-001; OQ-007 detalha evento Colaborador Integrado |
 | Solicitação de permissões sem confirmação completa de operação | Sequência Solicitação → Permissão Concedida/Negada → Notificação pode estar incompleta |
 | Distinção comunicado (categoria) vs. comunicado (publicação institucional) | Evento Comunicado Institucional Publicado com contexto de origem indefinido |
 | Escopo da Central de Colaboração | Não foi possível identificar eventos de negócio estáveis para interação entre colaboradores |

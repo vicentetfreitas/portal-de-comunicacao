@@ -105,11 +105,12 @@ erDiagram
 | NOM_SINGULAR | Sim | Nome da cooperativa |
 | SIG_SINGULAR | Sim | UK — sigla |
 | COD_UNIMED | Sim | UK — código Unimed (BR-014) |
+| NUM_REGISTRO_ANS | Sim | Registro ANS |
 | FLG_ATIVO | Sim | S/N |
 | DAT_CADASTRO | Sim | Auditoria |
 | DAT_ATUALIZACAO | Não | Auditoria |
 
-**Responsabilidade:** identidade da cooperativa filiada. Não duplica dados da federação (DEC-DB-012). Endereços e contatos em `ENDERECO` e `CONTATO` (DEC-DB-013).
+**Responsabilidade:** identidade da cooperativa filiada. Registro ANS obrigatório (`NUM_REGISTRO_ANS`). Não duplica atributos institucionais da federação (site, descrição, etc.). Endereços e contatos em `ENDERECO` e `CONTATO` (DEC-DB-013).
 
 ### ENDERECO
 

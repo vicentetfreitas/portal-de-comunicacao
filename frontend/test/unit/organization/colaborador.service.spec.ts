@@ -74,7 +74,8 @@ describe("ColaboradorApiService", () => {
     const result = await service.create({
       federationId: 1,
       name: "Maria Silva",
-      email: "maria@unimedceara.com.br"
+      email: "maria@unimedceara.com.br",
+      zimbraId: "zimbra-maria"
     });
 
     expect(postMock).toHaveBeenCalledWith(
@@ -82,7 +83,8 @@ describe("ColaboradorApiService", () => {
       {
         federationId: 1,
         name: "Maria Silva",
-        email: "maria@unimedceara.com.br"
+        email: "maria@unimedceara.com.br",
+        zimbraId: "zimbra-maria"
       },
       undefined
     );

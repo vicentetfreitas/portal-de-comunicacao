@@ -1,12 +1,11 @@
-# FT-SESSION — escopo encerrado (fase 1)
+# FT-SESSION
 
-A persistência de contexto organizacional em `AUTH_SESSAO` (`COD_*_CTX`) foi removida em **REF-DB-CTX-01**.
+SSOT funcional: `specification.md`.
 
-- Fonte de vínculos organizacionais: entidade `COLABORADOR`
-- API: campo `organizationalLinks` em `GET /api/v1/auth/me`
-- Endpoints removidos: `GET /auth/contexts`, `POST /auth/context`
-- Multi-contexto (RN-SESSION-003): backlog — ver `specification.md`, OQ-027
+| Tema | Estado |
+|------|--------|
+| Vínculos em `/auth/me` (`organizationalLinks`) | Fase 1 entregue |
+| Multi-contexto + Contexto Ativo | **Aprovado** (DEC-FA-003) — implementação sob FT-PRIMEIRO-ACESSO + evolução FT-SESSION |
+| Contexto em `AUTH_SESSAO` | **Proibido** (REF-DB-CTX-01) |
 
-Baseline: `database/ddl/003-create-tables.sql`. Brownfield: `database/migrations/V006__drop_auth_sessao_organizational_context.sql`.
-
-SSOT da Feature: `specification.md` (não duplicar regras aqui).
+Baseline: `database/ddl/003-create-tables.sql`. Brownfield histórico: `database/migrations/V006__drop_auth_sessao_organizational_context.sql`.

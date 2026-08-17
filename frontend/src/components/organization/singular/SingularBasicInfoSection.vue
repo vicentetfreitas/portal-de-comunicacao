@@ -35,8 +35,17 @@
 
     <DsInput
       v-model="model.unimedCode"
+      type="number"
       :label="$t('singular.form.unimedCode')"
       :error="errors.unimedCode"
+      autocomplete="off"
+    />
+
+    <DsInput
+      v-model="model.registroAns"
+      :label="$t('singular.form.registroAns')"
+      :error="errors.registroAns"
+      :maxlength="20"
       autocomplete="off"
     />
   </div>

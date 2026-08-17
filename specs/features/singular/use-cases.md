@@ -81,7 +81,7 @@ Média
 
 ### Fluxo Principal
 
-1. O ator informa `federacaoId`, `name`, `acronym` e `codigoUnimed`.
+1. O ator informa `federationId`, `name`, `acronym` e `unimedCode`.
 2. O sistema valida obrigatoriedade, formatos e regras de negócio (RN-SINGULAR-001 a RN-SINGULAR-004).
 3. O sistema persiste a singular com status ativo e auditoria de criação.
 4. O sistema retorna os dados da singular criada.
@@ -181,7 +181,7 @@ Média
 ### Fluxo Principal
 
 1. O ator solicita listagem com parâmetros opcionais de filtro, paginação e ordenação.
-2. O sistema aplica filtros (`status`, `federacaoId`, `name`, `acronym`, `codigoUnimed`).
+2. O sistema aplica filtros (`status`, `federationId`, `name`, `acronym`, `unimedCode`).
 3. O sistema retorna página de resultados (pode ser vazia).
 
 ### Fluxos de Exceção
@@ -220,7 +220,7 @@ Média
 
 ### Fluxo Principal
 
-1. O ator informa identificador e payload com `name`, `acronym` e `codigoUnimed`.
+1. O ator informa identificador e payload com `name`, `acronym` e `unimedCode`.
 2. O sistema valida regras RN-SINGULAR-002 a RN-SINGULAR-004 e RN-SINGULAR-007.
 3. O sistema atualiza o registro e auditoria.
 4. O sistema retorna dados atualizados.

@@ -33,7 +33,8 @@ const activeSingular: SingularResponse = {
   federationId: 1,
   name: "Unimed Ceará",
   acronym: "UNI-CE",
-  unimedCode: "UC001",
+  unimedCode: 42,
+  registroAns: "123456",
   status: "ACTIVE",
   createdAt: "2026-07-16T12:00:00Z",
   updatedAt: null

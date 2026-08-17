@@ -77,7 +77,7 @@ Feature (FT-<DOMAIN>)
 | CAP-01 | Capability opcional | `capabilities[]` no manifest é opcional; ausência preserva comportamento v4.0 |
 | CAP-02 | Current Capability | Registry expõe `current_capability` computado quando capabilities existem |
 | EXEC-STRAT-01 | Execution Strategy | `execution_strategy` padrão `sequential`; `parallel` reservado — não altera Orchestrator atual |
-| HANDOFF-01 | Handoff por dependências | Transição entre Features usa `dependencies` do Manifest + registry |
+| HANDOFF-01 | Handoff por dependências | Regra padrão: predecessor `FEATURE_APPROVED` (Feature inteira). Exceção: `scope` + `required_phase` no manifest → validar só o Workstream indicado (§ Handoff) |
 | RETRO-01 | Retrocompatibilidade | Paths v3.2/v4.0, registries legados e comandos internos permanecem válidos |
 | VAL-01 | Validation Summary | Resumo padronizado de validação em todo PKG — `templates/pkg-validation-summary.md` |
 | VAL-02 | Ciclo de vida: `PENDING_REVALIDATION` — `templates/pkg-validation-summary.md` |
@@ -410,8 +410,15 @@ O Orchestrator emite internamente conforme algoritmo §8:
      Coletar phase, current_pkg, completed, pending, closure
 
 4. Validar dependências (HANDOFF-01)
-   Para cada dependência em manifest.dependencies:
-     Verificar Feature predecessora closed + FEATURE_APPROVED no registry
+   Para cada entrada em manifest.dependencies (construction + features):
+   a) Regra padrão — sem `scope` na dependência de feature:
+      registry: status = closed AND closure = FEATURE_APPROVED (todos Workstreams)
+      Foundations: registry.foundations → closed + FEATURE_APPROVED
+   b) Exceção Workstream-scoped — quando `scope: backend|frontend` declarado:
+      Localizar Workstream Wd no registry da Feature predecessora
+      Ler construction-state.yaml de Wd (STATE-WS-01)
+      Validar state.phase = required_phase (padrão: closed)
+      Não exige FEATURE_APPROVED agregado da Feature predecessora
 
 5. Selecionar Workstream ativo (WS-ORDER-01)
    W* = primeiro Workstream onde:
@@ -447,44 +454,87 @@ Nota: `Continue FT-<FEATURE>` reutiliza este algoritmo — não há ramo distint
 
 O handoff utiliza dependências **já existentes** nos manifests — sem novo modelo paralelo.
 
+## Regra padrão
+
+Uma dependência de feature **sem** `scope` declarado só é satisfeita quando a Feature predecessora estiver **FEATURE_APPROVED** no registry (todos Workstreams `closed`).
+
+```yaml
+# manifest.dependencies.features — regra padrão
+- code: FT-AUTH
+  path: ../FT-AUTH/feature-manifest.yaml
+  # ausência de scope → exige Feature inteira FEATURE_APPROVED
+```
+
+## Exceção Workstream-scoped
+
+Quando a Feature consumidora declara `scope` e `required_phase` na dependência, **apenas** o Workstream indicado precisa atender o critério — a Feature predecessora pode permanecer em execução em outras camadas.
+
+```yaml
+# manifest.dependencies.features — exceção explícita
+- code: FT-SESSION
+  path: ../FT-SESSION/feature-manifest.yaml
+  scope: backend          # backend | frontend
+  required_phase: closed  # padrão: closed
+```
+
+Validação da exceção (STATE-WS-01):
+
+1. Localizar Workstream `scope` no `registry.yaml` da predecessora
+2. Ler `construction-state.yaml` desse Workstream
+3. Confirmar `state.phase` = `required_phase`
+
+**Ausência de `scope` → regra padrão (Feature inteira).**
+
+Fundações (`dependencies.construction`) e dependências intra-Feature (`depends_on_workstreams` no registry) **não** usam `scope` — permanecem `FEATURE_APPROVED` / `closed` conforme registry.
+
 ## Pré-condições de handoff
 
-Para Feature sucessora `FT-B` iniciar Workstream `W`:
+Para Feature sucessora `FT-B` iniciar Workstream `W*`:
 
 | Critério | Fonte |
 |----------|-------|
-| Specification APPROVED | `specs/features/<slug>/` |
+| Specification APPROVED | `specs/features/<slug>/` (RULE-01) |
 | DoR satisfeito | `execution-plan.md` + STATE |
-| Dependências `FEATURE_APPROVED` | `manifest.dependencies.features` |
-| Workstreams predecessoras closed | `registry.yaml` + STATE-AGG-01 |
-| Fundações aprovadas | `registry.foundations` |
+| Dependências HANDOFF-01 | `manifest.dependencies` — regra padrão ou exceção `scope` |
+| Workstreams intra-Feature | `depends_on_workstreams` closed (WS-ORDER-01) |
+| Fundações aprovadas | `registry.foundations` → FEATURE_APPROVED |
 
 ## Protocolo de handoff
 
 ```text
-Feature predecessora FT-A → FEATURE_APPROVED (todos Workstreams closed)
-        ↓
-Registry atualizado (construction/registry.yaml)
-        ↓
-09-progress.md atualizado no encerramento
+Predecessor satisfeita (FEATURE_APPROVED ou scope+required_phase)
         ↓
 Execute FT-B
         ↓
-Orchestrator valida HANDOFF-01
+Orchestrator valida HANDOFF-01 (passo 4)
         ↓
-Inicia Workstream order=1 de FT-B
+Seleciona W* (WS-ORDER-01)
+        ↓
+Session → PKGs → Closure
 ```
 
-## Exemplo — FT-SINGULAR frontend
+## Exemplos
+
+### FT-SINGULAR frontend (exceção implícita por camada — prática Golden)
 
 ```text
-Pré-requisitos (já documentados em construction-state frontend):
+Pré-requisitos documentados no construction-state frontend:
   - frontend-foundation: FEATURE_APPROVED
-  - FT-AUTH frontend: FEATURE_APPROVED
-  - FT-SINGULAR backend: FEATURE_APPROVED
+  - FT-AUTH frontend Workstream: phase closed
+  - FT-SINGULAR backend Workstream: phase closed
   - API contract: APPROVED
 
-Handoff: backend Workstream closed → frontend Workstream liberado (order: 2)
+Equivalente formal: dependências com scope quando declaradas no manifest.
+Handoff intra-Feature: backend closed → frontend liberado (WS-ORDER-01).
+```
+
+### FT-PRIMEIRO-ACESSO backend (exceção explícita)
+
+```text
+manifest.dependencies.features:
+  - FT-AUTH (sem scope → FEATURE_APPROVED)
+  - FT-SESSION scope: backend, required_phase: closed
+  - FT-COLABORADOR scope: backend, required_phase: closed
 ```
 
 ---

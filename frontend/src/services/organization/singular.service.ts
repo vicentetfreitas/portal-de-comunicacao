@@ -39,7 +39,7 @@ function buildListQueryParams(
   if (params.acronym !== undefined && params.acronym.length > 0) {
     query.acronym = params.acronym;
   }
-  if (params.unimedCode !== undefined && params.unimedCode.length > 0) {
+  if (params.unimedCode !== undefined) {
     query.unimedCode = params.unimedCode;
   }
 

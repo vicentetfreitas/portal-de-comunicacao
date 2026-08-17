@@ -72,16 +72,16 @@ Happy Path / Negative / Business Rule / Authorization
 
 #### Given
 
-Federação `federacaoId=1` ativa e sem singular com sigla "UNI-CE".
+Federação `federationId=1` ativa e sem singular com sigla "UNI-CE".
 
 #### When
 
-`POST /api/v1/singulares` com `{ "federacaoId": 1, "name": "Unimed Ceará", "acronym": "UNI-CE", "codigoUnimed": "UC001" }`.
+`POST /api/v1/singulares` com `{ "federationId": 1, "name": "Unimed Ceará", "acronym": "UNI-CE", "unimedCode": 42, "registroAns": "000042" }`.
 
 #### Then
 
 - HTTP 201
-- Resposta contém `id`, `name=Unimed Ceará`, `status=ACTIVE`, `federacaoId=1`
+- Resposta contém `id`, `name=Unimed Ceará`, `status=ACTIVE`, `federationId=1`
 - Registro persistido em `SINGULAR` com `FLG_ATIVO='S'`
 
 ### Cenário — Sigla duplicada
@@ -103,7 +103,7 @@ Singular ativa com sigla "UNI-CE" já cadastrada.
 
 #### Given
 
-Singular ativa com `codigoUnimed` "UC001" já cadastrado.
+Singular ativa com `unimedCode` 42 já cadastrado.
 
 #### When
 
@@ -118,7 +118,7 @@ Singular ativa com `codigoUnimed` "UC001" já cadastrado.
 
 #### Given
 
-`federacaoId` inexistente ou inativo.
+`federationId` inexistente ou inativo.
 
 #### When
 
@@ -298,13 +298,13 @@ Singular `id=1` existente.
 
 #### When
 
-`PUT /api/v1/singulares/1` com `{ "name": "Unimed Ceará Atualizada", "acronym": "UNI-CE", "codigoUnimed": "UC001" }`.
+`PUT /api/v1/singulares/1` com `{ "name": "Unimed Ceará Atualizada", "acronym": "UNI-CE", "unimedCode": 42, "registroAns": "000042" }`.
 
 #### Then
 
 - HTTP 200
 - `name` atualizado
-- `federacaoId` inalterado
+- `federationId` inalterado
 
 ### Cenário — Sigla duplicada em outra singular
 
@@ -320,7 +320,7 @@ Singular `id=1` existente.
 
 #### Given
 
-Singular `id=1` vinculada à federação `federacaoId=1`, cuja federação está inativa.
+Singular `id=1` vinculada à federação `federationId=1`, cuja federação está inativa.
 
 #### When
 

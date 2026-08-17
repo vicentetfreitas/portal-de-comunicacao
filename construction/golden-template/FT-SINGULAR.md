@@ -93,16 +93,20 @@ PKG-FE-06 consolida: hub admin, specs Playwright (AT-FE), **estabilização E2E*
 
 Política de escrita dos specs: `construction/17-frontend-e2e-behavior-policy.md`.
 
-## 4. Dependências e handoff
+## 4. Dependências e handoff (HANDOFF-01)
 
-Frontend só inicia após:
+**Regra padrão:** dependência sem `scope` → Feature predecessora **FEATURE_APPROVED**.
 
-- Frontend Foundation FEATURE_APPROVED
-- FT-AUTH frontend FEATURE_APPROVED
-- FT-SINGULAR backend FEATURE_APPROVED
+**Exceção (v4.1 — DL-EF-4.1-012):** dependência com `scope: backend|frontend` + `required_phase: closed` → validar só o Workstream indicado (`construction-state.yaml`).
+
+Frontend FT-SINGULAR só inicia após:
+
+- Frontend Foundation FEATURE_APPROVED (fundação)
+- FT-AUTH frontend Workstream `phase: closed` (exceção por camada)
+- FT-SINGULAR backend Workstream `phase: closed` (WS-ORDER-01 intra-Feature)
 - API contract APPROVED
 
-Documentado em `construction/frontend/features/FT-SINGULAR/construction-state.yaml` (DoR).
+Documentado em `construction/frontend/features/FT-SINGULAR/construction-state.yaml` (DoR). SSOT política: `12-fullstack-orchestrator.md` § Handoff.
 
 ## 5. Testes por camada
 

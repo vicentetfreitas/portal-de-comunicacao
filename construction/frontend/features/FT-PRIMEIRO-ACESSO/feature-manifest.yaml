@@ -1,0 +1,101 @@
+# Feature Manifest — FT-PRIMEIRO-ACESSO Frontend (SSOD)
+# LEGADO — índice de paths. SSOT paths: specs/foundation/path-conventions.md
+
+version: 2
+role: ssod
+layer: frontend
+
+feature:
+  id: primeiro-acesso
+  code: FT-PRIMEIRO-ACESSO
+  name: Primeiro acesso e resolução de contexto
+  description: >
+    UI e orquestração client-side do primeiro acesso (máquina de estados,
+    seleção de contexto, Home dinâmica, bloqueio sem vínculo).
+
+status:
+  phase: execution
+
+specification:
+  path: ../../../../specs/features/primeiro-acesso/
+  documents:
+    specification: specification.md
+    api: api.md
+    use_cases: use-cases.md
+    tasks: tasks.md
+    acceptance_tests: acceptance-tests.md
+    traceability: traceability.md
+
+construction:
+  path: .
+  root: construction/frontend/features/FT-PRIMEIRO-ACESSO/
+  backend:
+    path: ../../../features/FT-PRIMEIRO-ACESSO/
+    manifest: ../../../features/FT-PRIMEIRO-ACESSO/feature-manifest.yaml
+    state: ../../../features/FT-PRIMEIRO-ACESSO/construction-state.yaml
+
+implementation:
+  frontend:
+    - ../../../../frontend/src/stores/
+    - ../../../../frontend/src/router/guards/
+    - ../../../../frontend/src/services/
+    - ../../../../frontend/src/composables/
+    - ../../../../frontend/src/pages/
+
+artifacts:
+  manifest: feature-manifest.yaml
+  state: construction-state.yaml
+  execution_plan: execution-plan.md
+  frontend_tasks: frontend-tasks.md
+  session: session.md
+  closure: closure-report.md
+  review: review/
+  reports: reports/
+  pkgs:
+    - pkg-fe-01/status.md
+    - pkg-fe-02/status.md
+    - pkg-fe-03/status.md
+    - pkg-fe-04/status.md
+    - pkg-fe-05/status.md
+    - pkg-fe-06/status.md
+
+dependencies:
+  construction:
+    - code: frontend-foundation
+      state: ../../construction-state.yaml
+      status: FEATURE_APPROVED
+  features:
+    - code: FT-AUTH
+      path: ../../../features/FT-AUTH/feature-manifest.yaml
+    - code: FT-SESSION
+      path: ../../../features/FT-SESSION/feature-manifest.yaml
+    - code: FT-PRIMEIRO-ACESSO
+      path: ../../../features/FT-PRIMEIRO-ACESSO/
+      scope: backend
+      required_phase: closed
+
+owners:
+  implementer: feature-implementer
+  orchestrator: construction-orchestrator
+
+metrics:
+  pkgs: 6
+
+pkgs:
+  - id: pkg-fe-01
+    name: Scaffold & API client
+  - id: pkg-fe-02
+    name: Auto-select & Blocked
+  - id: pkg-fe-03
+    name: Selection UI
+  - id: pkg-fe-04
+    name: Home render
+  - id: pkg-fe-05
+    name: Change context & Reentry
+  - id: pkg-fe-06
+    name: E2E Stabilization & Closure
+
+discovery:
+  version: 1
+  rule: SSOD-01
+  framework: "4.1"

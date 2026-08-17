@@ -38,6 +38,7 @@ O MVP produtivo corresponde à conclusão das **Etapas 1 a 5** do roadmap arquit
 | Capacidade | Bounded context | Etapa | Feature |
 | ---------- | --------------- | ----- | ------- |
 | Autenticação Zimbra + sessão | Controle de Acesso | 2 | FEATURE-020, FEATURE-021 |
+| Primeiro acesso / Contexto Ativo | Controle de Acesso + Organização | 2 | FEATURE-016 (DEC-FA-001; FT-PRIMEIRO-ACESSO) |
 | Autorização papel + escopo | Controle de Acesso | 2 | FEATURE-022, FEATURE-023 |
 | Estrutura organizacional | Organização Corporativa | 2 | FEATURE-010 a FEATURE-015, FEATURE-017 |
 | Publicação e consulta documental | Gestão Documental | 3 | FEATURE-030, FEATURE-031 |
@@ -76,7 +77,7 @@ O MVP produtivo corresponde à conclusão das **Etapas 1 a 5** do roadmap arquit
 
 ## Features Oficiais do MVP
 
-FEATURE-001 a FEATURE-005, FEATURE-010 a FEATURE-015, FEATURE-017, FEATURE-020 a FEATURE-025, FEATURE-028, FEATURE-029, FEATURE-030 a FEATURE-037, FEATURE-040, FEATURE-041 (PARCIAL), FEATURE-049, FEATURE-050 a FEATURE-052.
+FEATURE-001 a FEATURE-005, FEATURE-010 a FEATURE-015, FEATURE-016, FEATURE-017, FEATURE-020 a FEATURE-025, FEATURE-028, FEATURE-029, FEATURE-030 a FEATURE-037, FEATURE-040, FEATURE-041 (PARCIAL), FEATURE-049, FEATURE-050 a FEATURE-052.
 
 **Removidas do MVP:** FEATURE-044 (Métricas Administrativas — pós-MVP), FEATURE-046 (Mensagens), FEATURE-070 (Campanhas).
 
@@ -114,7 +115,6 @@ EPIC-001 → EPIC-002 + EPIC-003 → EPIC-004 → EPIC-005 → EPIC-006
 | Gestão de Mensagens / FEATURE-046 | Sem conceito de domínio | `10-mvp-consolidation-audit.md` C-004 |
 | Painel Operacional / FEATURE-044 | Métricas Administrativas — opcional R-016 | `10-mvp-consolidation-audit.md` C-003 |
 | Descomissionamento / EPIC-007 | Etapa 6 — pós-MVP | `10-delivery-roadmap.md` |
-| Onboarding oficial | OQ-001 | Opcional |
 | Aplicativo Mobile, Multi-idioma, IA, Analytics avançado | Fora do escopo | `01-mvp.md` — Não Incluído |
 
 ---

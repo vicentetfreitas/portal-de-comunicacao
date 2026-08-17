@@ -108,10 +108,11 @@ Toda feature possui vínculo com um épico (`01-epics.md`).
 ### FEATURE-016
 
 **Epic:** EPIC-002  
-**Nome:** Gestão de Onboarding  
-**Descrição:** Vincular novos colaboradores à singular e área adequadas.  
-**Origem:** `docs/architecture/03-component-diagram.md` — Gestão de Onboarding  
-**Status arquitetural:** PARCIAL — OQ-001
+**Nome:** Gestão de Onboarding / Primeiro Acesso  
+**Descrição:** Resolver Contexto Ativo após autenticação (auto-seleção ou escolha), persistir contexto, solicitar Home dinâmica e bloquear operação sem vínculo.  
+**Origem:** DEC-FA-001..004; `specs/features/primeiro-acesso/` (FT-PRIMEIRO-ACESSO)  
+**Status arquitetural:** ATIVO (decisões aprovadas; especificação completa pendente)  
+**Substitui:** fluxos legados CMS `/onboarding/*` e frontend `/onboarding/requests` como onboarding oficial (AS-IS permanece em Discovery).
 
 ### FEATURE-017
 

@@ -153,7 +153,7 @@ Consolidação de questões abertas (OQ), ADRs pendentes e riscos altos/crítico
 
 | ID | Lacuna | Impacto | Origem |
 | -- | ------ | ------- | ------ |
-| L-001 | Fluxo oficial de onboarding indefinido | Gate de entrada do fluxo de valor bloqueado | OQ-001; R-020; ADR-013 |
+| L-001 | Fluxo oficial de onboarding indefinido | **Mitigado** — DEC-FA-001 / FT-PRIMEIRO-ACESSO (especificação completa e implementação pendentes) | DEC-FA-001; BR-011 |
 | L-002 | Solicitação de permissão sem confirmação ponta a ponta | Governança de recursos privados incompleta | OQ-003; R-010 |
 | L-003 | Equivalência compartilhamento ↔ acesso efetivo em aberto | Risco de inconsistência de exposição | OQ-005; R-009; ADR-008 |
 | L-004 | Revogação de permissão não documentada | Ciclo de vida de acesso incompleto | OQ-006, OQ-017; R-011 |
@@ -211,7 +211,7 @@ ADRs que permanecem válidos na arquitetura alvo. Fonte: `08-decision-records.md
 | Equivalência compartilhamento ↔ acesso | Contrato entre componentes | OQ-005; L-003; ADR-008 |
 | Revogação de permissão | Ciclo de vida de acesso | OQ-006, OQ-017; L-004 |
 | Resolução endpoints órfãos | Alinhamento Frontend ↔ API Backend | L-010; contratos por capacidade |
-| Fluxo oficial de onboarding | Gate de entrada | OQ-001; L-001; ADR-013 |
+| Fluxo oficial de onboarding | Gate de entrada | **DEC-FA-001** / FT-PRIMEIRO-ACESSO |
 | Requisitos de continuidade operacional | Recuperação de componentes críticos | L-011; R-015 |
 | Catálogo de auditoria | Completude de governança | OQ-019; L-015 |
 
@@ -225,7 +225,7 @@ ADRs que permanecem válidos na arquitetura alvo. Fonte: `08-decision-records.md
 
 | Prioridade | Ação | Lacunas / Riscos |
 | ---------- | ---- | ---------------- |
-| 1 | Resolver OQ-001 (onboarding oficial) | L-001, R-020 |
+| 1 | Especificar e implementar FT-PRIMEIRO-ACESSO (DEC-FA-*) | L-001 mitigado; modelo N vínculos |
 | 2 | Resolver OQ-003 e OQ-016 (solicitação de permissão) | L-002, L-007, R-010 |
 | 3 | Resolver OQ-005 (compartilhamento ↔ autorização) | L-003, R-009 |
 | 4 | Inventariar e resolver endpoints órfãos | L-010, R-008 |
@@ -293,7 +293,7 @@ ADRs que permanecem válidos na arquitetura alvo. Fonte: `08-decision-records.md
 | ------ | ------- | ------------- |
 | **Núcleo organizacional + documental + acesso (capacidades ATIVAS)** | **Sim, com ressalvas** | ADRs aceitos, containers, componentes e fluxos principais documentados; fronteira compartilhamento/autorização requer decisão OQ-005 antes de implementação completa de governança |
 | **Governança de recursos privados (solicitação/revogação)** | **Não** | OQ-003, OQ-006, OQ-016, OQ-017 em aberto; status PARCIAL |
-| **Onboarding** | **Não** | OQ-001; dois fluxos coexistentes |
+| **Onboarding / Primeiro acesso** | **Decidido** | DEC-FA-001; implementação pendente |
 | **Comunicação Interna e perfis externos** | **Não** | OQ-002, OQ-004; confiança reduzida |
 | **Eliminação de legado e unificação** | **Não** | ADR-015 provisório; decisões pendentes |
 
@@ -473,7 +473,8 @@ flowchart TB
 
 ### Próximos passos
 
-1. Encerrar OQs prioritárias do curto prazo (OQ-001, OQ-003, OQ-005, OQ-016).
+1. Completar especificação e construção de FT-PRIMEIRO-ACESSO (DEC-FA-001..004).
+2. Encerrar OQs prioritárias remanescentes (OQ-003, OQ-005, OQ-007, OQ-016).
 2. Definir requisitos de continuidade operacional (L-011).
 3. Inventariar contratos Frontend ↔ API Backend (L-010).
 4. Iniciar camada de implementação alinhada aos ADRs aceitos.

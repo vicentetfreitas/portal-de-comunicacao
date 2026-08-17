@@ -15,8 +15,9 @@ application:
     csrf-enabled: true
     cors-allowed-origins:
       - http://localhost:4200
+      - http://localhost:9000
   auth:
-    frontend-redirect-url: ${AUTH_FRONTEND_REDIRECT_URL:http://localhost:4200/}
+    frontend-redirect-url: ${AUTH_FRONTEND_REDIRECT_URL:http://localhost:9000/app}
     default-federation-id: ${AUTH_DEFAULT_FEDERATION_ID:1}
   persistence:
     pool-max-size: 10
@@ -27,7 +28,7 @@ application:
     max-retry-attempts: 3
     circuit-breaker-threshold: 50
   zimbra:
-    login-page-url: ${AUTH_LOGIN_PAGE_URL}
+    login-page-url: ${AUTH_LOGIN_PAGE_URL:http://localhost:9000/auth}
     imap-host: ${ZIMBRA_IMAP_HOST}
     imap-port: ${ZIMBRA_IMAP_PORT:993}
     imap-ssl: ${ZIMBRA_IMAP_SSL:true}

@@ -19,7 +19,8 @@
       <DsInput v-model="filters.acronym" :label="$t('singular.form.acronym')" />
 
       <DsInput
-        v-model="filters.unimedCode"
+        v-model="unimedCodeModel"
+        type="number"
         :label="$t('singular.form.unimedCode')"
       />
     </div>
@@ -75,6 +76,18 @@ const federationIdModel = computed({
     }
 
     props.filters.federationId = Number(value);
+  }
+});
+
+const unimedCodeModel = computed({
+  get: () => props.filters.unimedCode ?? "",
+  set: (value: string | number | null) => {
+    if (value === "" || value === null) {
+      props.filters.unimedCode = null;
+      return;
+    }
+
+    props.filters.unimedCode = Number(value);
   }
 });
 </script>

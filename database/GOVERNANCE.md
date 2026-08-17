@@ -129,7 +129,23 @@ Evolução: migrations/ + atualização de baseline (quando aplicável)
 
 ---
 
-## 5. Referências externas
+## 6. AS-IS × TO-BE (reconciliação baseline 2026-08-17)
+
+Scripts em `ddl/` e `dml/` refletem o **AS-IS homologado** (baseline 2026-07-22). Decisões aprovadas posteriores definem estruturas **TO-BE ainda não implementadas** nos scripts — **não alterar DDL nesta etapa**.
+
+| Tema | AS-IS (scripts atuais) | TO-BE (decisões vigentes) | Status implementação |
+|------|------------------------|---------------------------|----------------------|
+| Vínculo COLABORADOR | `COD_SINGULAR`, `COD_AREA` **nullable** em `003-create-tables.sql` | NOT NULL (DEC-DB-028, DH-04) | **Pendente** migration DBA (GAP-028-02) |
+| CARGO | Tabela **ausente**; `DES_CARGO` removido (V007) | Catálogo `CARGO` + `COD_CARGO` opcional na criação (DEC-DB-027 + DH-CARGO-01) | **Pendente** DDL |
+| Domínio → Singular | Sem tabela/coluna de mapeamento | Resolução por domínio (DH-PA-02, DEC-ORG-003) | **Pendente** (GAP-028-04) |
+| Contexto Ativo | FKs em `COLABORADOR`; sem store separado | Derivado do vínculo único (DH-02) | **Alinhado** conceitualmente |
+| Primeiro Acesso | Colaboradores via login (FT-AUTH) — `dml/005` placeholder | Wizard PA + credencial temporária (DH-PA-01) | **Pendente** código |
+
+**Regra:** interpretar `000-install.sql` e baseline como **AS-IS**. TO-BE documentado em `model/05-decisions-and-risks.md` (DEC-DB-027, DEC-DB-028) e `docs/governance/03-open-decisions.md` (DH-*).
+
+---
+
+## 7. Referências externas (anterior §5)
 
 - Nomenclatura e padrões corporativos: `docs/implementation/06-database-standards.md`
 - Decisões DEC-DB-*: `model/05-decisions-and-risks.md`

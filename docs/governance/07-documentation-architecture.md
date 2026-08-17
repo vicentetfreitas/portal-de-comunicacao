@@ -141,7 +141,7 @@ docs → specs → construction → .cursor
 | Fluxo frontend alvo | `docs/frontend/frontend-flow.md` | SSOT |
 | Contrato API **implementado** | `docs/api/` | Evidence + espelho operacional |
 | Contrato API **SDD** | `specs/features/*/api.md` | SSOT |
-| Estado da Feature | `construction/features/` | SSOT operacional |
+| Estado da Feature | `construction-state.yaml` por workstream (transição) · **derivado:** `specs/foundation/minimal-ssot.md` | SSOT operacional / derivado |
 | Protocolo Zimbra homologado | `docs/discovery/ft-auth-zimbra-homologacao.md` | Evidence (SSOT operacional do protocolo) |
 | Arquitetura AUTH normativa | `specs/architecture/authentication-architecture.md` | SSOT |
 | Auditorias de fase | `docs/audit/` | Evidence / Archive |

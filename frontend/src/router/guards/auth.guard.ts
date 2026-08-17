@@ -3,6 +3,7 @@ import type { NavigationGuardNext, RouteLocationNormalized } from "vue-router";
 import { routerGuardConfig } from "@/config/router";
 import { ROUTE_PATHS } from "@/constants/routes";
 import { useAuthStore } from "@/stores/auth-store";
+import { useSessionStore } from "@/stores/session.store";
 
 function buildRedirectQuery(target: string, redirectPath: string) {
   return {
@@ -11,6 +12,10 @@ function buildRedirectQuery(target: string, redirectPath: string) {
   };
 }
 
+/**
+ * Auth guard — bootstraps session via session.store when idle/loading,
+ * then enforces authentication using auth-store status.
+ */
 export function createAuthGuard() {
   return async (
     to: RouteLocationNormalized,
@@ -18,8 +23,14 @@ export function createAuthGuard() {
     next: NavigationGuardNext
   ) => {
     const authStore = useAuthStore();
+    const sessionStore = useSessionStore();
 
-    if (authStore.status === "idle" || authStore.status === "loading") {
+    if (
+      authStore.status === "idle" ||
+      authStore.status === "loading" ||
+      sessionStore.status === "idle" ||
+      sessionStore.status === "loading"
+    ) {
       try {
         await authStore.hydrateSession();
       } catch {
@@ -52,6 +63,10 @@ export function createAuthGuard() {
       next(buildRedirectQuery(ROUTE_PATHS.AUTH, to.fullPath));
       return;
     }
+
+    // TODO(OQ-027): when multi-context is required, block business routes
+    // until activeContext is selected (not in FT-SESSION fase 1).
+    // TODO(OQ-028): post-auth landing route is not decided yet.
 
     next();
   };

@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 
 import { parseAuthErrorCode } from "@/auth";
 import { useAuth } from "@/composables/useAuth";
+import { normalizeApiError, type ApiError } from "@/types/api";
 
 export interface LoginFieldErrors {
   usuario?: string;
@@ -20,10 +21,33 @@ export function useLoginPage() {
   const rememberMe = ref(false);
   const isSubmitting = ref(false);
   const fieldErrors = ref<LoginFieldErrors>({});
+  const submitErrorMessage = ref("");
 
   const authErrorCode = computed(() => parseAuthErrorCode(route.query.error));
 
+  function resolveSubmitErrorMessage(error: ApiError): string {
+    if (error.code === "FORBIDDEN") {
+      return t("layout.auth.errors.portalAccessDenied");
+    }
+
+    switch (error.category) {
+      case "authentication":
+        return t("layout.auth.errors.invalidCredentials");
+      case "authorization":
+        return t("layout.auth.errors.forbidden");
+      case "network":
+      case "server":
+        return t("layout.auth.errors.unavailable");
+      default:
+        return t("layout.auth.errors.unknown");
+    }
+  }
+
   const bannerMessage = computed(() => {
+    if (submitErrorMessage.value) {
+      return submitErrorMessage.value;
+    }
+
     switch (authErrorCode.value) {
       case "unauthorized":
         return t("layout.auth.errors.unauthorized");
@@ -66,16 +90,29 @@ export function useLoginPage() {
       return;
     }
 
+    submitErrorMessage.value = "";
     isSubmitting.value = true;
     try {
-      await login({
+      const credentials: {
+        rememberMe: boolean;
+        email: string;
+        password: string;
+        state?: string;
+      } = {
         rememberMe: rememberMe.value,
         email: usuario.value.trim(),
-        password: senha.value,
-        state:
-          typeof route.query.state === "string" ? route.query.state : undefined
-      });
-    } catch {
+        password: senha.value
+      };
+
+      if (typeof route.query.state === "string") {
+        credentials.state = route.query.state;
+      }
+
+      await login(credentials);
+    } catch (error) {
+      submitErrorMessage.value = resolveSubmitErrorMessage(
+        normalizeApiError(error)
+      );
       isSubmitting.value = false;
     }
   }

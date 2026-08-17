@@ -1,7 +1,7 @@
 ---
 description: Specification Phase Rules
 globs:
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Specification Phase

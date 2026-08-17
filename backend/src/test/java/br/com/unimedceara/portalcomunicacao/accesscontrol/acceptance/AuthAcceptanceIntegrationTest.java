@@ -130,6 +130,55 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
     }
 
     @Test
+    void shouldRejectInvalidCredentialsOnPostLogin() throws Exception {
+        long sessionsBefore = authSessaoRepository.count();
+
+        mockMvc.perform(post("/api/v1/auth/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("email", "invalid@unimedceara.com.br")
+                        .param("password", "wrong")
+                        .param("remember_me", "false"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("UNAUTHORIZED"));
+
+        assertThat(authSessaoRepository.count()).isEqualTo(sessionsBefore);
+    }
+
+    @Test
+    void shouldRejectInactiveColaboradorOnPostLogin() throws Exception {
+        seedInactiveColaborador();
+        long sessionsBefore = authSessaoRepository.count();
+
+        mockMvc.perform(post("/api/v1/auth/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("email", "inactive@unimedceara.com.br")
+                        .param("password", "secret")
+                        .param("remember_me", "false"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("FORBIDDEN"));
+
+        assertThat(authSessaoRepository.count()).isEqualTo(sessionsBefore);
+    }
+
+    @Test
+    void shouldReturnServiceUnavailableWhenZimbraUnavailableOnPostLogin() throws Exception {
+        long sessionsBefore = authSessaoRepository.count();
+
+        mockMvc.perform(post("/api/v1/auth/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("email", "unavailable@unimedceara.com.br")
+                        .param("password", "secret")
+                        .param("remember_me", "false"))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.error").value("INTEGRATION_UNAVAILABLE"));
+
+        assertThat(authSessaoRepository.count()).isEqualTo(sessionsBefore);
+    }
+
+    @Test
     @AcceptanceCriterion(value = "AC-AUTH-002", type = AcceptanceCriterion.TestType.API)
     void acAuth002_shouldRejectInvalidCredentialsWithoutSession() throws Exception {
         long sessionsBefore = authSessaoRepository.count();

@@ -322,7 +322,7 @@ Conceitos cuja responsabilidade primária pertence predominantemente a um único
 | ------ | ------- |
 | Definição operacional de parceiro autorizado vs. convidado | Fronteira do Controle de Acesso para perfis externos não estabilizada |
 | Distinção formal entre comunicado (categoria) e comunicado (módulo corporativo) | Fronteira entre Gestão Documental e Comunicação Interna indefinida |
-| Fluxo consolidado de onboarding (seleção vs. solicitação) | Processo de Organização Corporativa ambíguo |
+| Fluxo consolidado de onboarding (seleção vs. solicitação) | **Resolvido no TO-BE** — DEC-FA-001 / FT-PRIMEIRO-ACESSO |
 | Escopo da Central de Colaboração | Subdomínio de Comunicação Interna sem definição de negócio |
 | Solicitação de permissões sem confirmação completa | Processo central do Controle de Acesso pode estar incompleto |
 | Representações divergentes de equipe | Pode exigir revisão da fronteira de Organização Corporativa |

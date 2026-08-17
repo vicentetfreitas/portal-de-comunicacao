@@ -6,7 +6,7 @@
 | Sistema | Portal de Comunicação — Unimed Ceará |
 | Banco de Dados | Oracle Database |
 | Schema | UNMPORTCOM |
-| Versão | 4.7 |
+| Versão | 4.8 |
 | Status | APPROVED |
 | Base | Domain + Architecture + Database |
 
@@ -39,7 +39,7 @@ Este documento não define o modelo físico nem substitui os artefatos de implem
 |------|----------|
 | Modelo Conceitual | APPROVED — `02-conceptual-model.md` |
 | Modelo Lógico | APPROVED — `02-logical-model.md` |
-| Modelo Físico | APPROVED — `03-physical-model.md` v4.7 |
+| Modelo Físico | APPROVED — `03-physical-model.md` v4.7 (AS-IS); evolução CARGO TO-BE em DEC-DB-027 |
 | Arquitetura Oracle | APPROVED |
 | Administração do Schema (DBA) | APPROVED — DEC-DB-019 |
 | Estratégia de Auditoria | APPROVED |
@@ -74,7 +74,7 @@ As pendências existentes são exclusivamente funcionais e poderão ser tratadas
 | DEC-DB-013 | Endereços e contatos em `ENDERECO` e `CONTATO` com FK explícitas (sem polimorfismo) | APPROVED |
 | DEC-DB-014 | Comunicação via `CONTATO`; liderança via `COLABORADOR` somente com caso de uso de múltiplos responsáveis | APPROVED |
 | DEC-DB-015 | Refinamento final organizacional: `NOM_LOCAL`, `CONTATO` estendido a Área/Equipe, gestor/líder por FK, tipos sem CHECK rígido | APPROVED |
-| DEC-DB-016 | Refinamento final de `COLABORADOR`: perfil intrínseco, `CONTATO` estendido a Colaborador, `COD_GESTOR` auto-referência, `ID_ZIMBRA` obrigatório | APPROVED |
+| DEC-DB-016 | Refinamento final de `COLABORADOR`: perfil intrínseco, `CONTATO` estendido a Colaborador, `COD_GESTOR` auto-referência, `ID_ZIMBRA` obrigatório — **parcialmente superseded** (rejeição de `CARGO` → DEC-ORG-002) | APPROVED |
 | DEC-DB-017 | Adequação à nomenclatura corporativa Oracle Unimed Ceará — limite 30 caracteres e Glossário Oficial de Abreviações | APPROVED |
 | DEC-DB-018 | Geração de PK via JPA/Sequences — sem `DEFAULT SQ_*.NEXTVAL` no DDL; `NEXTVAL` explícito apenas em scripts SQL | APPROVED |
 | DEC-DB-019 | Schema Oracle administrado pelo DBA via baseline DDL oficial; Flyway não utilizado | APPROVED |
@@ -82,6 +82,7 @@ As pendências existentes são exclusivamente funcionais e poderão ser tratadas
 | DEC-DB-022 | Área em nível único — sem auto-referência; detalhamento operacional via Equipe | APPROVED |
 | DEC-DB-023 | Testes de integração backend: Oracle único, `ddl-auto=validate`, sem limpeza automática na fase migração | APPROVED |
 | DEC-DB-024 | Usuário de aplicação Oracle: `UNMPORTCOM` (owner) × `UNMPORTCOM_APP` (conexão) via `UNMPORTCOM_APP_ROLE` e `database/security/` | APPROVED |
+| DEC-DB-027 | Catálogo `CARGO` + vínculo `COLABORADOR.COD_CARGO` — modelo físico TO-BE (obrigatoriedade na criação **superseded** por DH-CARGO-01) | APPROVED |
 
 ---
 
@@ -374,6 +375,19 @@ Isso mantém o modelo enxuto e evita proliferar entidades que representam apenas
 
 **APPROVED** (2026-07-10) — **congelamento do domínio COLABORADOR para DDL**
 
+### Reconciliação de governança (2026-08-14 — DEC-ORG-002; 2026-08-14 — DEC-DB-027)
+
+| Item DEC-DB-016 | Status após DEC-ORG-002 / DEC-DB-027 |
+|-----------------|--------------------------------------|
+| Rejeitado: Entidade `CARGO` | **OBSOLETO** — superseded por DEC-ORG-002 (domínio) e **DEC-DB-027** (persistência TO-BE) |
+| Rejeitado: Entidade `GESTOR` | **Mantido** — Gestor TO-BE é cargo, não entidade `GESTOR` |
+| `COD_GESTOR`, FKs organizacionais, `CONTATO`, identidade | **Mantido** para AS-IS — revisão pendente (PD-04, PD-02) |
+| Congelamento DDL 2026-07-10 | **Mantido** para baseline atual — evolução TO-BE de `CARGO` exige implementação futura conforme DEC-DB-027 |
+
+**Cadeia de decisão (CARGO):** DEC-DB-016 (rejeição histórica) → DEC-ORG-002 (entidade de domínio) → **DEC-DB-027** (modelo físico TO-BE).
+
+Ver: `construction/review/organizational-authorization-formalization-etapa6.md` (seção 12), `construction/review/cargo-vinculo-reconciliation-pd-cargo-01-02-03.md` (v2.0).
+
 ---
 
 ## DEC-DB-020 — Alinhamento COLABORADOR (JPA, DDL e domínio)
@@ -402,6 +416,237 @@ Durante a validação FT-AUTH (VAL-DB-01/02) ocorreu `ORA-00904: "COD_SINGULAR":
 ### Status
 
 **APPROVED** (2026-07-20) — governança VAL-DB-02
+
+### Reconciliação de governança (2026-08-14 — DEC-DB-027)
+
+| Princípio DEC-DB-020 | Relação com DEC-DB-027 |
+|----------------------|------------------------|
+| FKs organizacionais em `COLABORADOR` ≠ `PAPEL_ATRIBUICAO` | **Mantido** — vínculo cadastral ≠ autorização |
+| `PAPEL_ATRIBUICAO` define escopo de autorização | **Mantido** — estendido: **CARGO ≠ PAPEL** (DEC-ORG-002) |
+| Login `locateOrCreate` pode criar colaborador com FKs org NULL | **Mantido** para vínculo AS-IS; **cargo na criação** — obrigatoriedade **superseded** por **DH-CARGO-01** (2026-08-17) |
+
+### Supersession parcial (2026-08-14 — DH-02, DH-03, DH-04, DEC-DB-028)
+
+| Item DEC-DB-020 | Status após DH-03/DH-04 |
+|-----------------|-------------------------|
+| FKs organizacionais em `COLABORADOR` ≠ `PAPEL_ATRIBUICAO` | **MANTIDO** |
+| `PAPEL_ATRIBUICAO` define escopo de autorização | **MANTIDO** |
+| Colunas opcionais no DDL (`COD_SINGULAR`, `COD_AREA` nullable) | **MANTIDO no AS-IS** — TO-BE exige NOT NULL (DEC-DB-028); migration futura |
+| Login `locateOrCreate` pode criar colaborador apenas com `COD_FEDERACAO`; FKs NULL até onboarding/admin | **SUPERSEDED** como comportamento **normativo** — substituído por DH-03 (Alternativa A) e DH-04 |
+| Entidade JPA reflete baseline DDL | **MANTIDO** |
+| Oracle sem `COD_SINGULAR` = schema incompleto | **MANTIDO** |
+
+**Texto histórico preservado.** A implementação AS-IS de `locateOrCreate` permanece até etapa de código — registrada como **GAP de implementação** frente a DEC-DB-028.
+
+**Distinção normativa:** identidade autenticada (Zimbra) pode existir **sem** COLABORADOR persistido durante onboarding; isso **não** autoriza COLABORADOR persistido somente com Federação.
+
+---
+
+## DEC-DB-027 — Catálogo CARGO e vínculo obrigatório com COLABORADOR
+
+### Contexto
+
+A reconciliação PD-CARGO-01/02/03 v2.0 (`construction/review/cargo-vinculo-reconciliation-pd-cargo-01-02-03.md`) consolidou o modelo TO-BE de cargo/função organizacional do colaborador, em continuidade a **DEC-ORG-002** (entidade de domínio) e **DEC-FA-003** (N vínculos organizacionais ortogonais ao cargo).
+
+O repositório AS-IS não possui tabela `CARGO`, coluna `COD_CARGO` em `COLABORADOR`, nem referências em JPA/API/frontend. A coluna legada `DES_CARGO` foi removida por **V007** — atributo texto histórico, não entidade.
+
+É necessária decisão formal de persistência antes de qualquer DDL, migration ou implementação.
+
+### Decisão
+
+1. **CARGO** será persistido como **entidade de catálogo própria** (`CARGO`), representando cargo/função organizacional do colaborador.
+2. Todo **COLABORADOR** possui **exatamente um** cargo: cardinalidade **1 COLABORADOR → 1 CARGO**.
+3. Um mesmo cargo pode ser ocupado por **vários** colaboradores: cardinalidade **CARGO → N COLABORADORES**.
+4. **CARGO é obrigatório no momento da criação** de um colaborador — o cadastro não deve permitir colaborador sem cargo.
+5. **CARGO ≠ PAPEL ≠ ADMIN_*** — o cargo não concede autorização automaticamente.
+6. **CARGO não pertence ao vínculo organizacional** — não duplicar `COD_CARGO` em vínculos.
+
+### Modelo TO-BE (conceitual — não é DDL)
+
+```text
+CARGO
+  COD_CARGO        PK
+  NOM_CARGO        NOT NULL
+  FLG_ATIVO        NOT NULL DEFAULT 'S'
+  DAT_CADASTRO     NOT NULL
+  DAT_ATUALIZACAO  NULL
+
+COLABORADOR
+  COD_CARGO        NOT NULL
+       FK → CARGO.COD_CARGO
+```
+
+#### Atributos — classificação domínio × padrão técnico
+
+| Atributo | Classificação | Especificação |
+|----------|---------------|---------------|
+| `COD_CARGO` | **Requisito de domínio** + padrão técnico | PK surrogate; sequence `SQ_CARGO_COD_CARGO` (padrão `SQ_<TABELA>_<CAMPO>`, DEC-DB-018) |
+| `NOM_CARGO` | **Requisito de domínio** | Obrigatório; nome institucional do cargo (ex.: Gestor de Tecnologia da Informação). Atributo normativo — não utilizar `DES_CARGO` por convenção |
+| `DSC_CARGO` / `DES_CARGO` | **Não criar** por padrão | Somente se requisito explícito de descrição detalhada diferente do nome |
+| `FLG_ATIVO` | **Recomendação** (padrão catálogo) | `CHAR(1)` `'S'/'N'` + CHECK — alinhado a `PAPEL`, `FEDERACAO`, entidades organizacionais |
+| `DAT_CADASTRO` | **Recomendação** (padrão auditoria) | `TIMESTAMP(6) DEFAULT SYSTIMESTAMP NOT NULL` |
+| `DAT_ATUALIZACAO` | **Recomendação** (padrão auditoria) | `TIMESTAMP(6)` nullable |
+
+Referência de padrão Oracle: tabela `PAPEL` (`NOM_PAPEL VARCHAR2(100)`, `FLG_ATIVO`, auditoria); entidades organizacionais para `FLG_ATIVO` e timestamps. Não copiar automaticamente todos os campos de `PAPEL` (ex.: `DSC_PAPEL` não é requisito para `CARGO`).
+
+### Relacionamento e cardinalidade
+
+```text
+CARGO 1 ─── N COLABORADOR     (perspectiva do catálogo)
+COLABORADOR 1 ─── 1 CARGO     (perspectiva do colaborador)
+```
+
+| Elemento | TO-BE |
+|----------|-------|
+| PK | `CARGO.COD_CARGO` |
+| FK | `COLABORADOR.COD_CARGO` → `CARGO.COD_CARGO` |
+| Obrigatoriedade | `COLABORADOR.COD_CARGO` **NOT NULL** |
+| Índice | FK em `COLABORADOR.COD_CARGO` (padrão projeto) |
+
+### Obrigatoriedade na criação
+
+```text
+CREATE COLABORADOR
+        ↓
+CARGO obrigatório (regra de domínio + integridade referencial)
+```
+
+- Não utilizar `nullable=true` como solução temporária do modelo TO-BE.
+- AS-IS: campo **inexistente** — GAP de implementação documentado; não corrigir nesta etapa.
+
+### Separação conceitual
+
+| Eixo | Cardinalidade | Persistência TO-BE |
+|------|---------------|-------------------|
+| Cargo (função) | 1 COLABORADOR → 1 CARGO | `COLABORADOR.COD_CARGO` |
+| Vínculo (operação) | 1 COLABORADOR → N vínculos (DEC-FA-003) | `VINCULO_ORGANIZACIONAL` ou evolução — **PD-02/PD-03** |
+| Autorização | 1 COLABORADOR → N papéis/escopo | `PAPEL_ATRIBUICAO` (existente) |
+
+**Exemplo canônico:**
+
+```text
+Colaborador: Vicente Freitas
+Cargo: Gestor de Tecnologia da Informação
+Vínculos: Área TI; Área Financeiro; Equipe Desenvolvimento
+Papéis: ADMIN_AREA → TI; ADMIN_AREA → Financeiro
+```
+
+Não existe regra `Gestor → ADMIN_AREA`, `Diretor → ADMIN_SINGULAR` nem `Presidente → ADMIN_FEDERACAO`.
+
+### Exclusões (consequência desta decisão)
+
+| Item | Decisão |
+|------|---------|
+| `ATRIBUICAO_CARGO` | **Não criar** — desnecessária para cardinalidade 1:1 |
+| `VINCULO_ORGANIZACIONAL.COD_CARGO` | **Não criar** — cargo no colaborador (Hipótese A, PD-CARGO-03 encerrada) |
+| Histórico de cargos | **Fora do escopo** — sem requisito explícito no repositório |
+| `COLABORADOR.COD_GESTOR` | **Não alterar** — referência a pessoa, não catálogo CARGO (PD-04 pendente) |
+| `AREA.COD_GESTOR` / `EQUIPE.COD_LIDER` | **Não alterar** — DEC-DB-015 vigente; PD-05/06/07 pendentes |
+
+### Relação com decisões anteriores
+
+| Decisão | Relação com DEC-DB-027 |
+|---------|------------------------|
+| **DEC-ORG-002** | **Pré-requisito de domínio** — permanece íntegra; DEC-DB-027 formaliza persistência |
+| **DEC-FA-003** | **Mantida** — N vínculos ortogonais a 1 cargo |
+| **DEC-DB-016** | Item “Rejeitado: Entidade `CARGO`” **superseded**; demais itens **vigentes** para AS-IS |
+| **DEC-DB-015** | **Vigente** — `COD_GESTOR`/`COD_LIDER` não representam cargo |
+| **DEC-DB-020** | **Mantida e ampliada** — distinção vínculo/autorização estendida a cargo ≠ papel |
+| **V007** (`DES_CARGO` removido) | **Mantida** — remoção histórica não impede entidade `CARGO`; atributo normativo TO-BE é `NOM_CARGO`, não recriação obrigatória de `DES_CARGO` |
+
+### AS-IS → TO-BE — GAPs de implementação (documentados; não executar nesta etapa)
+
+| Camada | AS-IS | TO-BE (DEC-DB-027) |
+|--------|-------|-------------------|
+| Oracle | Sem tabela `CARGO`; sem `COLABORADOR.COD_CARGO` | `CREATE TABLE CARGO`; `ALTER COLABORADOR ADD COD_CARGO NOT NULL`; sequence; FK; grants (DBA) |
+| JPA | Sem `CargoEntity` | `CargoEntity` + `@ManyToOne(optional=false)` em `ColaboradorEntity` |
+| Backend/API | Sem campo cargo | Cadastro exige `cargoId`; contrato reflete obrigatoriedade |
+| Frontend | Sem seleção de cargo | Formulário de colaborador exige cargo |
+| Testes | Sem cobertura cargo | Criação com/sem cargo; cargo inexistente; cargo inativo (se regra definida) |
+| Documentação modelo | 23 entidades — sem CARGO | Atualizar modelo lógico/físico após implementação |
+
+### Consequências futuras (sem implementação nesta etapa)
+
+- Migration/script DBA após PD-02/PD-03 resolvidos ou em paralelo conforme plano de governança.
+- Seed de catálogo inicial (Presidente, Gestor TI, Analista, Desenvolvedor, …).
+- FT-COLABORADOR API/FE: campo `cargoId` / embed `cargo`.
+- PKG-FE-02 permanece bloqueado até contrato estável de vínculo (PD-02) — ver `organizational-authorization-formalization-etapa6.md`.
+- Regra de cargo inativo em atribuição: **pendente** (não decidida nesta DEC).
+
+### Não incluído nesta decisão
+
+- Modelo de N vínculos (`VINCULO_ORGANIZACIONAL`) — PD-02/PD-03.
+- `PAPEL_ATRIBUICAO`, matriz OQ-020, regras `ADMIN_*`.
+- Remoção de `COD_GESTOR`, `COD_LIDER`.
+- Implementação de autorização ou PKG-FE-02.
+- UK em `NOM_CARGO` — pendência futura (PD-CARGO-01-R).
+
+### Encerra
+
+| ID | Status |
+|----|--------|
+| PD-CARGO-01 | **Encerrada** (estrutura TO-BE definida) |
+| PD-CARGO-02 | **Encerrada** (cardinalidade 1:1) |
+| PD-CARGO-03 | **Encerrada** (cargo em `COLABORADOR`, Hipótese A) |
+
+### Status
+
+**APPROVED** (2026-08-14) — governança formalização DEC-DB-027; **sem implementação**.
+
+### Ponto de reconciliação — DH-PA-03 (2026-08-17) — HISTÓRICO
+
+> **Nota:** Este bloco registra o estado **anterior** à decisão **DH-CARGO-01**. A reconciliação normativa foi **encerrada** — ver § Supersession parcial (DH-CARGO-01) abaixo.
+
+**Classificação (histórica):** **PONTO DE RECONCILIAÇÃO DE GOVERNANÇA / BANCO**
+
+| Artefato | Conteúdo relevante (na época) |
+|----------|-------------------------------|
+| **DEC-DB-027** | Catálogo `CARGO`; `COLABORADOR.COD_CARGO` **NOT NULL** na criação |
+| **DH-PA-03** | CARGO **não é requisito** no Primeiro Acesso |
+
+### Supersession parcial — DH-CARGO-01 (2026-08-17)
+
+**Status:** **RECONCILIAÇÃO ENCERRADA** — decisão humana **DH-CARGO-01** (`docs/governance/03-open-decisions.md`).
+
+#### O que DEC-DB-027 estabelecia originalmente (texto histórico preservado acima)
+
+Itens 1–6 da § Decisão; modelo TO-BE com `COD_CARGO NOT NULL`; § Obrigatoriedade na criação; proibição de `nullable=true`; consequências AS-IS→TO-BE com `ADD COD_CARGO NOT NULL` e cadastro exigindo `cargoId`.
+
+#### Tabela de reconciliação item a item
+
+| Elemento da DEC-DB-027 | Situação após DH-CARGO-01 | Justificativa |
+|------------------------|---------------------------|---------------|
+| **Item 1** — CARGO como catálogo / domínio próprio | **MANTIDO** | DH-CARGO-01 preserva domínio e persistência própria |
+| **Item 2** — 1 COLABORADOR → 1 CARGO (quando atribuído) | **MANTIDO** | Cardinalidade vigente **com** CARGO; não exige CARGO na criação |
+| **Item 3** — 1 CARGO → N COLABORADORES | **MANTIDO** | Sem conflito |
+| **Item 4** — CARGO obrigatório na criação | **SUPERSEDED** | Conflita com DH-CARGO-01 |
+| **Item 5** — CARGO ≠ PAPEL ≠ ADMIN_* | **MANTIDO** | Sem conflito |
+| **Item 6** — CARGO fora do vínculo organizacional | **MANTIDO** | Sem conflito |
+| `COLABORADOR.COD_CARGO` FK **NOT NULL** na criação | **SUPERSEDED** | Decorre do item 4 superseded |
+| Proibição de `nullable=true` (sustentar obrigatoriedade na criação) | **SUPERSEDED** | Existia para sustentar item 4 |
+| § Obrigatoriedade na criação — diagrama `CREATE → CARGO obrigatório` | **SUPERSEDED** | Regra revogada em negócio |
+| Exclusões (`ATRIBUICAO_CARGO`, etc.) | **MANTIDO** | Sem conflito |
+| Atributos do catálogo (`NOM_CARGO`, auditoria) | **MANTIDO** | Sem conflito |
+| AS-IS→TO-BE: `ADD COD_CARGO NOT NULL` | **SUPERSEDED** como regra universal | Implementação futura não pode assumir NOT NULL na criação |
+| AS-IS→TO-BE: JPA `optional=false` obrigatório na criação | **SUPERSEDED** | Idem |
+| AS-IS→TO-BE: “Cadastro exige cargoId” | **SUPERSEDED** como regra universal | Idem |
+| PD-CARGO-01/02/03 encerradas | **MANTIDO** (estrutura catálogo) | Encerramento permanece; obrigatoriedade na criação não |
+
+#### Ainda não decidido (pós DH-CARGO-01)
+
+- **quando** CARGO será atribuído;
+- **quem** atribuirá;
+- **por qual fluxo**;
+- representação técnica da **ausência** de CARGO (`NULL`, coluna ausente, outro);
+- se e quando CARGO poderá tornar-se obrigatório **posteriormente** à criação.
+
+Implementação física de `CARGO`/`COD_CARGO` permanece **delegada** à engenharia, **sem** obrigatoriedade normativa de CARGO na criação do COLABORADOR.
+
+Ver: `construction/review/primeiro-acesso-dh-pa-03-db-reconciliation.md` (análise histórica); `construction/review/primeiro-acesso-r1-dec-db-027-applicability.md` (R1 decidida).
+
+### Registro definitivo
+
+`construction/review/cargo-vinculo-reconciliation-pd-cargo-01-02-03.md` (v2.0), `docs/governance/03-open-decisions.md` (referência cruzada DEC-ORG-002).
 
 ---
 
@@ -557,19 +802,27 @@ Os testes de integração (`@IntegrationTest`, perfil `test`) validam persistên
 
 ### Situação
 
-A entidade ONBOARDING_SOLICITACAO está definida.
+**Encerrada** — DEC-FA-001 (2026-07-24). O onboarding oficial é resolução/seleção de Contexto Ativo (FT-PRIMEIRO-ACESSO), não solicitação administrativa.
 
-O fluxo operacional permanece pendente de validação funcional.
+### Decisão sobre `ONBOARDING_SOLICITACAO`
+
+| Aspecto | Definição |
+|---------|-----------|
+| **Baseline física** | Tabela **mantida** no DDL homologado (sem remoção nesta etapa) |
+| **TO-BE / JPA** | **Sem mapeamento** — FT-PRIMEIRO-ACESSO não utiliza esta tabela |
+| **Origem** | Fluxo legado de solicitação/aprovação administrativa (rejeitado como onboarding oficial) |
+| **Remoção futura** | Requer decisão explícita + script DBA; não executar sem aprovação |
+
+**Referências:** `docs/governance/03-open-decisions.md` (DEC-FA-001), `specs/features/primeiro-acesso/specification.md`, `docs/domain/09-business-rules.md` (BR-011).
 
 ### Impacto
 
-- APIs
-- Fluxo operacional
-- Estados do processo
+- Nenhuma API TO-BE deve expor CRUD de `ONBOARDING_SOLICITACAO` como primeiro acesso
+- Etapa 4: validar que JPA implementado não referencia esta tabela
 
 ### Prioridade
 
-Alta
+Encerrada
 
 ---
 
@@ -725,6 +978,70 @@ Federação → Singular → Área → Equipe → Colaborador
 
 ---
 
-| Versão | 4.7 |
+## DEC-DB-028 — Modelo de vínculo organizacional único do COLABORADOR
+
+### Contexto
+
+Reconciliações em `construction/review/vinculo-organizacional-*.md` e decisões humanas **DH-02**, **DH-03** e **DH-04** (2026-08-14) consolidam o modelo normativo de vínculo do `COLABORADOR`, substituindo parcialmente premissas de criação antecipada (DEC-DB-020) e cardinalidade N (DEC-FA-003).
+
+### Decisão
+
+1. Todo **COLABORADOR** possui exatamente **1** vínculo organizacional nas FKs escalares de `COLABORADOR` (**DH-02**).
+2. O **COLABORADOR** somente é persistido após o vínculo mínimo estar completo (**DH-03** — Alternativa A).
+3. Vínculo mínimo persistido: `COD_FEDERACAO` + `COD_SINGULAR` + `COD_AREA` NOT NULL; `COD_EQUIPE` NULL permitido (**DH-04**).
+4. **Não** é permitido COLABORADOR persistido somente com Federação.
+5. O domínio do e-mail corporativo autenticado determina a **Singular** (**DEC-ORG-003**, BR-043, **DH-PA-02**); Área selecionada pelo usuário; Equipe opcional.
+6. **Identidade autenticada** (Zimbra) pode existir **antes** do COLABORADOR — não implica registro incompleto. Durante o Primeiro Acesso, o Portal utiliza **credencial temporária** de escopo restrito, **sem `AUTH_SESSAO` operacional** (**DH-PA-01**, 2026-08-15).
+7. `VINCULO_ORGANIZACIONAL` **não** é necessário para cardinalidade 1:1.
+8. Vínculo organizacional permanece **independente** de CARGO e PAPEL (DEC-ORG-002, DEC-DB-020, DEC-DB-027).
+
+### Modelo normativo (COLABORADOR persistido)
+
+```text
+COLABORADOR
+  COD_FEDERACAO  NOT NULL
+  COD_SINGULAR   NOT NULL
+  COD_AREA       NOT NULL
+  COD_EQUIPE     NULL permitido
+```
+
+### Supersession / complemento
+
+| Fonte | Tratamento |
+|-------|------------|
+| DEC-DB-020 — `locateOrCreate` com FKs NULL no login | **Supersession parcial** do item normativo de criação antecipada |
+| DEC-FA-003 — P1, P4, P6, P7 (N vínculos) | **Supersession parcial** — ver `docs/governance/03-open-decisions.md` |
+| DEC-FA-002, BR-010, BR-012 | **Mantidos** — complementados para identidade vs COLABORADOR |
+| BR-041 — N vínculos | **Supersession parcial** do eixo cadastral N |
+
+### GAP de implementação (não resolvido nesta etapa)
+
+| GAP | Descrição |
+|-----|-----------|
+| GAP-028-01 | `locateOrCreate` / `finalizeLogin` AS-IS ainda cria COLABORADOR no login |
+| GAP-028-02 | DDL: `COD_SINGULAR`/`COD_AREA` ainda nullable |
+| GAP-028-03 | Credencial temporária de Primeiro Acesso — **DH-PA-01 aprovada** (2026-08-15); implementação técnica pendente (delegada à engenharia) |
+| GAP-028-04 | Mapeamento domínio → Singular — **DH-PA-02 aprovada** (2026-08-15); decisão de negócio encerrada; implementação técnica pendente (delegada à engenharia) |
+| GAP-028-05 | FT-PRIMEIRO-ACESSO — evolução para fluxo de criação de vínculo |
+| GAP-028-06 | Política de CARGO na criação — **DH-CARGO-01 aprovada** (2026-08-17); reconciliação DEC-DB-027 **encerrada**; implementação física delegada (sem obrigatoriedade na criação) |
+
+### Consequência futura em banco (sem migration nesta etapa)
+
+`COLABORADOR` deverá possuir `COD_SINGULAR` e `COD_AREA` NOT NULL. Não há colaboradores cadastrados no ambiente atual — sem backfill necessário neste momento.
+
+### Status
+
+**APPROVED** (2026-08-14) — consolidando DH-02, DH-03, DH-04 e DEC-ORG-003.
+
+### Referências
+
+- `docs/governance/03-open-decisions.md` (DH, DEC-ORG-003, **DH-PA-01**, **DH-PA-02**, **DH-PA-03**, **DH-CARGO-01**)
+- `docs/domain/09-business-rules.md` (BR-009, BR-010, BR-011, BR-043, BR-044, BR-045)
+- `construction/review/vinculo-organizacional-decision-proposal.md`
+- `construction/review/vinculo-organizacional-alternative-a-architecture-impact.md`
+
+---
+
+| Versão | 4.9 |
 |--------|-----|
 | Status | APPROVED |

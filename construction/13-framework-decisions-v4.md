@@ -84,9 +84,10 @@
 | Campo | Valor |
 |-------|-------|
 | Decisão | Handoff entre Features usa `dependencies` já presentes nos manifests |
-| Protocolo | HANDOFF-01 — predecessor FEATURE_APPROVED antes de sucessor iniciar |
-| Workstream order | `depends_on_workstreams` no registry para ordem intra-Feature |
-| Exemplo | FT-SINGULAR frontend depende de backend Workstream closed |
+| Protocolo | HANDOFF-01 — regra padrão: predecessor **FEATURE_APPROVED** (Feature inteira) |
+| Exceção | `scope` + `required_phase` no manifest → validar só o Workstream indicado (formalizado v4.1 — DL-EF-4.1-012) |
+| Workstream order | `depends_on_workstreams` no registry para ordem intra-Feature (WS-ORDER-01) |
+| Exemplo | FT-SINGULAR frontend: foundation + camadas predecessoras closed |
 
 ---
 

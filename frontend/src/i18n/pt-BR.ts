@@ -63,11 +63,15 @@ export default {
         }
       },
       errors: {
-        unauthorized: "Não foi possível autenticar. Tente novamente.",
-        forbidden: "Você não possui autorização para acessar o Portal.",
+        unauthorized: "Sua sessão expirou. Faça login novamente.",
+        invalidCredentials: "Usuário ou senha inválidos.",
+        forbidden: "Você não possui permissão para executar esta ação.",
+        portalAccessDenied:
+          "Seu cadastro não está autorizado a acessar o Portal. Entre em contato com o administrador.",
         unavailable:
-          "O serviço de autenticação está indisponível. Tente mais tarde.",
-        unknown: "Ocorreu um erro durante a autenticação."
+          "O serviço encontra-se temporariamente indisponível.",
+        unknown:
+          "Ocorreu um erro inesperado. Tente novamente em alguns instantes."
       },
       context: {
         title: "Contexto organizacional",
@@ -235,6 +239,7 @@ export default {
       name: "Nome",
       acronym: "Sigla",
       unimedCode: "Código Unimed",
+      registroAns: "Registro ANS",
       submitCreate: "Cadastrar singular",
       submitEdit: "Salvar alterações",
       cancel: "Cancelar"

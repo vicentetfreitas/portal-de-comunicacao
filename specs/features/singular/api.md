@@ -139,7 +139,7 @@ ApiResponse<SingularResponse>
 | federacaoId | Long | Não | Filtra por federação |
 | name | String | Não | Busca parcial por nome (case insensitive) |
 | acronym | String | Não | Busca parcial por sigla |
-| codigoUnimed | String | Não | Busca exata ou parcial por código Unimed |
+| unimedCode | Integer | Não | Filtro exato por código Unimed (1–999) |
 
 Parâmetros corporativos de paginação e ordenação: `page`, `size`, `sort` (ex.: `sort=name,asc`).
 
@@ -237,10 +237,11 @@ Padrões de DTO: `docs/implementation/07-api-standards.md`.
 
 | Campo | Tipo | Obrigatório | Validação |
 |--------|------|-------------|-----------|
-| federacaoId | Long | Sim | Federação existente e ativa |
+| federationId | Long | Sim | Federação existente e ativa |
 | name | String | Sim | Máx. 200 caracteres; não vazio |
 | acronym | String | Sim | Máx. 30 caracteres; única global |
-| codigoUnimed | String | Sim | Máx. 20 caracteres; único global |
+| unimedCode | Integer | Sim | 1–999; único global |
+| registroAns | String | Sim | Máx. 20 caracteres; não vazio |
 
 ## UpdateSingularRequest
 
@@ -248,7 +249,8 @@ Padrões de DTO: `docs/implementation/07-api-standards.md`.
 |--------|------|-------------|-----------|
 | name | String | Sim | Máx. 200 caracteres |
 | acronym | String | Sim | Máx. 30 caracteres; única global |
-| codigoUnimed | String | Sim | Máx. 20 caracteres; único global |
+| unimedCode | Integer | Sim | 1–999; único global |
+| registroAns | String | Sim | Máx. 20 caracteres; não vazio |
 
 **Imutável:** `federacaoId` não faz parte do payload de atualização (RN-SINGULAR-007).
 
@@ -266,7 +268,8 @@ Padrões de DTO: `docs/implementation/07-api-standards.md`.
 | federacaoId | Long | Federação proprietária |
 | name | String | Nome da singular |
 | acronym | String | Sigla |
-| codigoUnimed | String | Código Unimed |
+| unimedCode | Integer | Código Unimed (1–999) |
+| registroAns | String | Número de registro ANS |
 | status | Enum | `ACTIVE` ou `INACTIVE` |
 | createdAt | Instant | Data de cadastro |
 | updatedAt | Instant | Data da última atualização (nullable) |

@@ -23,7 +23,7 @@
 | AREA | SQ_AREA_COD_AREA | AREA | Áreas organizacionais (nível único; DEC-DB-022) |
 | EQUIPE | SQ_EQUIPE_COD_EQUIPE | EQUIPE | Equipes |
 | COLABORADOR | SQ_COLABORADOR | COLABORADOR | Perfil do colaborador autenticado |
-| ONBOARDING_SOLICITACAO | SQ_ONBOARD_SOLIC | ONBOARDING_SOLICITACAO | Solicitações de cadastro |
+| ONBOARDING_SOLICITACAO | SQ_ONBOARD_SOLIC | ONBOARDING_SOLICITACAO | **Reservada** — legado AS-IS; sem JPA no TO-BE (DEC-FA-001) |
 
 ## Gestão Documental
 

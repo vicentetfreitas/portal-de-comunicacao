@@ -1,3 +1,8 @@
 ---
-alwaysApply: true
+description: Specification phase entry — use specification-engineer agent
+alwaysApply: false
 ---
+
+# Specification
+
+Consultar `specs/foundation/development-workflow.md` e agente `specification-engineer`.

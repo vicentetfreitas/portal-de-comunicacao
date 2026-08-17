@@ -222,10 +222,11 @@ Comando: `Execute Feature <nome>`
 2. Localizar `construction/features/<FEATURE_CODE>/feature-manifest.yaml`
 3. Carregar artefatos **exclusivamente** via Manifest — **sem exploração da árvore**
 4. Validar Definition of Ready
-5. Validar dependências entre PKGs
-6. Montar **Snapshot estruturado** (visão condensada)
-7. Produzir e **congelar** `session.md` (SESSION-01)
-8. Atualizar `construction-state.yaml` — `phase: execution`, `current_pkg`, `pending`
+5. Validar dependências HANDOFF-01 (Orchestrator §8 — regra padrão ou `scope`/`required_phase`)
+6. Validar dependências entre PKGs
+7. Montar **Snapshot estruturado** (visão condensada)
+8. Produzir e **congelar** `session.md` (SESSION-01)
+9. Atualizar `construction-state.yaml` — `phase: execution`, `current_pkg`, `pending`
 
 ## Manifesto obrigatório
 

@@ -1,6 +1,6 @@
 ---
 description: Process Lifecycle Rules
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Objetivo

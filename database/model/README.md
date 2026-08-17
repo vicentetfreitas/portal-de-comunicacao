@@ -19,6 +19,7 @@ Documentação de **engenharia**: conceitual, lógico, físico, catálogo de ent
 
 - Documentação **complementar** (precedência **5**).
 - Em divergência estrutural com a baseline homologada, prevalece [../baseline/oracle-baseline-2026-07-22.md](../baseline/oracle-baseline-2026-07-22.md).
+- **AS-IS × TO-BE:** scripts `ddl/` = AS-IS homologado; DEC-DB-028, DEC-DB-027 (parcial DH-CARGO-01) = TO-BE documentado — ver [../GOVERNANCE.md](../GOVERNANCE.md) §6.
 - Atualização alinhada à baseline ocorre após **DB-SYNC-01**.
 
 Ver: [../GOVERNANCE.md](../GOVERNANCE.md).

@@ -2,6 +2,7 @@ package br.com.unimedceara.portalcomunicacao.configuration.properties;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -11,7 +12,9 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "application.zimbra")
 public record ZimbraProperties(
-        @NotBlank String loginPageUrl,
+        @NotBlank
+        @Pattern(regexp = "https?://\\S+", message = "application.zimbra.login-page-url must be a resolved HTTP(S) URL")
+        String loginPageUrl,
         @NotBlank String imapHost,
         @Min(1) int imapPort,
         boolean imapSsl,
