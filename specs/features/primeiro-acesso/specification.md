@@ -136,7 +136,123 @@ SSOT: `docs/domain/09-business-rules.md`. Esta Feature **referencia**, não rees
 
 ---
 
-# 5. Requisitos Não Funcionais
+# 5. Cenários de rastreabilidade (UC-PA-*)
+
+Identificadores de cenário para rastreabilidade — não representam artefatos separados. UC superseded (003, 004, 005, 007) omitidos do normativo vigente.
+
+| UC | Objetivo | RF | Pré-condição resumida | Resultado esperado |
+|----|----------|-----|----------------------|-------------------|
+| **UC-PA-001** | Hand-off pós-autenticação; verificar necessidade de PA | RF-PA-001 | FT-AUTH concluído; identidade válida (credencial PA se sem COLABORADOR — DH-PA-01) | Estado `CheckingColaborador`; encaminha onboarding (UC-PA-002) ou derivação (UC-PA-008) |
+| **UC-PA-002** | Wizard de vínculo e criação de COLABORADOR | RF-PA-002, RF-PA-011 | Sem COLABORADOR ou vínculo incompleto | COLABORADOR criado (DH-03); Contexto derivado (DH-02); segue UC-PA-006 |
+| **UC-PA-006** | Obter e renderizar Home do backend | RF-PA-005, RF-PA-006 | Contexto Ativo derivado válido; `LoadingHome` | Home renderizada; estado `Operational` |
+| **UC-PA-008** | Reentrada com COLABORADOR existente | RF-PA-008 | Sessão AUTH válida; COLABORADOR com vínculo completo | Deriva contexto → `LoadingHome` → `Operational` (sem wizard) |
+| **UC-PA-009** | Onboarding necessário ou bloqueio de negócio | RF-PA-009 | COLABORADOR ausente **ou** domínio sem Singular (BR-044) | Onboarding (UC-PA-002) **ou** `Blocked`; sem Home operacional |
+| **UC-PA-010** | Contexto inválido | RF-PA-010 | Contexto presente mas inválido (RN-PA-001) | Invalida contexto; re-resolve (onboarding, bloqueio ou retry) |
+
+### Exceções transversais (cenários)
+
+| Código | Situação | Comportamento |
+|--------|----------|---------------|
+| FE-001 | Falha ao carregar vínculos / infra 5xx | `Error`; retry sem novo login se AUTH/credencial PA válida |
+| FE-001 (onboarding) | Domínio sem Singular | UC-PA-009 → `Blocked` (BR-044, DH-PA-02) |
+| FE-002 (onboarding) | Falha criação COLABORADOR | `Error`; retry se credencial PA válida |
+| FE-001 (Home) | Home indisponível | Retry (RNF-PA-006); contexto derivado mantido |
+| FE-002 (Home) | Descriptor inválido | `Error`; frontend não inventa Home |
+| FE-001 (reentrada) | Sessão AUTH expirada | Encaminha FT-AUTH (fora desta Feature) |
+
+---
+
+# 6. Fluxo funcional TO-BE
+
+```text
+Authenticated (FT-AUTH — identidade)
+        ↓
+CheckingColaborador
+        ↓
+   ┌────┴────────────────┐
+   │                     │
+COLABORADOR          sem COLABORADOR
+com vínculo          ou vínculo incompleto
+completo                  │
+   │                     OnboardingWizard
+   │                     (domínio → Singular → Área → Equipe opt.)
+   │                           ↓
+   │                     CreatingColaborador (DH-03)
+   │                           │
+   └───────────┬───────────────┘
+               ↓
+    DeriveContext (Contexto Ativo = vínculo — DH-02)
+               ↓
+         LoadingHome (UC-PA-006)
+               ↓
+          Operational
+```
+
+### Fluxos alternativos
+
+| ID | Descrição | UCs |
+|----|-----------|-----|
+| FA-001 | Reentrada com COLABORADOR — omite wizard | UC-PA-008 → UC-PA-006 |
+| FA-002 | Retry após falha de Home — mesmo contexto derivado | UC-PA-006 |
+
+### Fluxos de exceção
+
+| ID | Descrição | UCs / estados |
+|----|-----------|---------------|
+| FE-001 | Domínio sem Singular (BR-044) | OnboardingWizard → `Blocked` |
+| FE-002 | Vínculo inválido no COLABORADOR | invalidate → UC-PA-010 |
+| FE-003 | Falha de infraestrutura | OnboardingWizard / CreatingColaborador / LoadingHome → `Error` |
+
+---
+
+# 7. Máquina de estados e transições
+
+### Estados (TO-BE)
+
+| Estado | Descrição | Operação permitida? |
+|--------|-----------|---------------------|
+| `Authenticated` | Identidade válida (FT-AUTH ou credencial temporária PA) | Não |
+| `CheckingColaborador` | Verifica COLABORADOR e integridade do vínculo | Não |
+| `OnboardingWizard` | Coleta vínculo: domínio → Singular → Área → Equipe (opt.) | Não |
+| `CreatingColaborador` | Persiste COLABORADOR com vínculo completo (DH-03) | Não |
+| `DeriveContext` | Deriva Contexto Ativo do vínculo único (DH-02) | Não (transiente) |
+| `LoadingHome` | Solicita Home ao backend | Não |
+| `Operational` | Contexto derivado + Home ok | Sim |
+| `Blocked` | Bloqueio de negócio (ex.: domínio sem Singular) | Não |
+| `Error` | Falha recuperável do fluxo | Não |
+
+Estados superseded (pré-DH-02): `LoadingContexts`, `SelectingContext`, `PersistingContext`, `ChangingContext` — não fazem parte do TO-BE vigente.
+
+### Eventos e transições principais
+
+| De | Evento | Condição | Para |
+|----|--------|----------|------|
+| Authenticated | `AUTH_OK` | — | CheckingColaborador |
+| CheckingColaborador | `COLABORADOR_COMPLETE` | vínculo válido (RN-PA-001) | DeriveContext |
+| CheckingColaborador | `COLABORADOR_MISSING` | — | OnboardingWizard |
+| OnboardingWizard | `DOMAIN_NO_SINGULAR` | — | Blocked |
+| OnboardingWizard | `WIZARD_COMPLETE` | — | CreatingColaborador |
+| CreatingColaborador | `COLABORADOR_CREATED` | — | DeriveContext |
+| CreatingColaborador | `FAILURE` | — | Error |
+| DeriveContext | `CONTEXT_DERIVED` | — | LoadingHome |
+| LoadingHome | `HOME_LOADED` | — | Operational |
+| LoadingHome | `FAILURE` | — | Error |
+| Error | `RETRY` | auth/credencial válida | estado anterior recuperável |
+
+### Códigos de falha lógica
+
+| Código | Estado | Comportamento |
+|--------|--------|---------------|
+| `PA_DOMAIN_NO_SINGULAR` | Blocked | Domínio sem Singular; informar usuário (BR-044) |
+| `PA_VINCULO_INVALID` | Error / OnboardingWizard | Vínculo inconsistente |
+| `PA_CREATE_FAILED` | Error | Falha ao criar COLABORADOR |
+| `PA_HOME_FAILED` | Error | Retry mantendo contexto derivado |
+
+A store FT-SESSION reflete vínculo único (`organizationalLinks`), `activeContext` como projeção derivada (DH-02) e `isReady` quando `Operational`. A máquina de estados define o fluxo de PA; a store não redefine regras.
+
+---
+
+# 8. Requisitos Não Funcionais
 
 | ID | Categoria | Requisito |
 |----|-----------|-----------|
@@ -147,11 +263,11 @@ SSOT: `docs/domain/09-business-rules.md`. Esta Feature **referencia**, não rees
 | RNF-PA-005 | Observabilidade | Métricas/logs: tempo `CheckingColaborador` e `OnboardingWizard`, falhas `LoadingHome`, bloqueios (`Blocked`), taxa de conclusão do wizard |
 | RNF-PA-006 | Disponibilidade | Falha ao obter Home não deve corromper Contexto Ativo já persistido; permitir retry |
 | RNF-PA-007 | Usabilidade | Wizard de onboarding com passos legíveis (Singular resolvida, Área, Equipe opcional) |
-| RNF-PA-008 | Rastreabilidade | Estados e transições alinhados a `state-machine.md`; correlacionar requestId nos logs de fluxo |
+| RNF-PA-008 | Rastreabilidade | Estados e transições alinhados a § 7 desta especificação; correlacionar requestId nos logs de fluxo |
 
 ---
 
-# 6. Contexto Ativo — modelo conceitual
+# 9. Contexto Ativo — modelo conceitual
 
 O Contexto Ativo **não** é entidade cadastral separada. Com DH-02, é **projeção derivada** do único vínculo de `COLABORADOR`:
 
@@ -173,7 +289,7 @@ Contexto Ativo (projeção para sessão/UI/navegação)
 
 ---
 
-# 7. Matriz de Responsabilidades
+# 10. Matriz de Responsabilidades
 
 | Responsabilidade | FT-AUTH | FT-SESSION | FT-PRIMEIRO-ACESSO |
 |------------------|---------|------------|---------------------|
@@ -189,11 +305,11 @@ Contexto Ativo (projeção para sessão/UI/navegação)
 | Bloquear estados inválidos (domínio sem Singular, etc.) | ❌ | indica estado | ✅ |
 | CMS conteúdo | ❌ | ❌ | ❌ (DEC-CMS-001) |
 
-Detalhamento: ver também `use-cases.md`, `flows.md`, `state-machine.md`, `api.md`.
+Detalhamento de contratos: `api.md`. Cenários, fluxos e estados: § 5–7 desta especificação.
 
 ---
 
-# 8. Impacto Arquitetural
+# 11. Impacto Arquitetural
 
 | Área | Impacto |
 |------|---------|
@@ -211,23 +327,19 @@ Detalhamento: ver também `use-cases.md`, `flows.md`, `state-machine.md`, `api.m
 
 ---
 
-# 9. Artefatos da Feature
+# 12. Artefatos da Feature
 
 | Artefato | Conteúdo |
 |----------|----------|
-| `specification.md` | Este documento |
-| `use-cases.md` | UC-PA-001 … UC-PA-010 |
-| `flows.md` | Fluxos principal / alternativos / exceção |
-| `state-machine.md` | Estados e transições |
-| `api.md` | Contratos propostos |
+| `feature.yaml` | Identidade e dependências |
+| `specification.md` | Este documento — SSOT funcional (objetivo, BR, RF, cenários, fluxos, estados) |
+| `api.md` | Contratos de API |
 | `acceptance-tests.md` | Critérios de aceite testáveis |
-| `traceability.md` | Matriz DEC→BR→UC→API→AT→TK |
-| `tasks.md` | Identificadores SDD (não registrados em Construction) |
-| `README.md` | Índice |
+| `traceability.md` | Matriz RF → RN → UC → API → AT → TK |
 
 ---
 
-# 10. Consistência com o SSOT
+# 13. Consistência com o SSOT
 
 Esta especificação alinha-se a:
 
@@ -237,11 +349,9 @@ Esta especificação alinha-se a:
 - `specs/features/session/specification.md`
 - `construction/review/contexto-ativo-dh02-investigacao.md`
 
-Conflitos documentais conhecidos: ver `traceability.md` § Inconsistências (reconciliadas em 2026-08-17).
-
 ---
 
-# 11. Governança — modelo normativo consolidado
+# 14. Governança — modelo normativo consolidado
 
 Decisões vigentes que definem o TO-BE desta Feature:
 

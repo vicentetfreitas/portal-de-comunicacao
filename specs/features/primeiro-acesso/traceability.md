@@ -1,100 +1,69 @@
 # Traceability — FT-PRIMEIRO-ACESSO
 
+## Identificação
+
 | Campo | Valor |
 |--------|--------|
 | Feature ID | FT-PRIMEIRO-ACESSO |
-| Status | APPROVED (reconciliado 2026-08-17) |
-| Versão | 1.1 |
+| Template | crud-feature@1.1 |
+| Status | APPROVED |
+| Versão | 1.2 (consolidação estrutural 2026-08-17) |
 
----
+## Objetivo
 
-# Cadeia oficial
+Matriz de rastreabilidade entre requisitos vigentes, regras, cenários, contratos de API, critérios de aceite e tarefas de implementação. Não duplica requisitos, fluxos, contratos ou decisões — ver `specification.md`, `api.md` e `acceptance-tests.md`.
+
+## Escopo da Cadeia
 
 ```text
-DEC → BR → RF → UC → Fluxos / Estados → API → AT → TK → Feature
+RF → RN → UC → API → AT → TK
 ```
 
----
+Somente RF vigentes. RF superseded (RF-PA-003, RF-PA-004, RF-PA-007) e UC superseded (UC-PA-003, UC-PA-004, UC-PA-005, UC-PA-007) excluídos.
 
-# OQs encerradas ↔ DEC
+## Matriz de Rastreabilidade Consolidada
 
-| OQ | DEC | Status |
-|----|-----|--------|
-| OQ-001 | DEC-FA-001 | Encerrada |
-| OQ-026 | DEC-FA-002 | Encerrada |
-| OQ-027 | DEC-FA-003 | Encerrada (supersession parcial DH-02) |
-| OQ-028 | DEC-FA-004 | Encerrada |
-| — | DEC-ORG-001, DEC-ORG-003 | Vigente |
-| — | DH-02, DH-03, DH-04 | Vigente |
-| — | DH-PA-01, DH-PA-02, DH-PA-03 | Vigente |
-| — | DH-CARGO-01 | Vigente |
-| — | DEC-CMS-001 | Fronteira CMS |
-
----
-
-# DEC → BR → RF (TO-BE)
-
-| DEC | BR | RF |
-|-----|----|----|
-| DEC-FA-001, DH-03 | BR-011 | RF-PA-001, RF-PA-011 |
-| DEC-FA-002, DH-04 | BR-010 | RF-PA-001, 009, 010 |
-| DEC-FA-003 (P2/P3), DH-02 | BR-041, BR-012 | RF-PA-002, 008 |
-| DEC-FA-004 | BR-042 | RF-PA-005, 006 |
-| DEC-ORG-001, DEC-ORG-003 | BR-040, BR-043, BR-044 | RF-PA-011 |
-| DH-PA-01 | BR-010 | RF-PA-001 |
-| DH-CARGO-01 | BR-045 | — (CARGO fora do PA) |
-| DEC-CMS-001 | — | RNF-PA-003 / AT-PA-010 |
-
-### RF superseded
-
-| RF | Motivo |
-|----|--------|
-| RF-PA-003 | Seleção N vínculos — DH-02 |
-| RF-PA-004 | Persistência separada de Contexto Ativo — derivar de COLABORADOR |
-| RF-PA-007 | Troca de contexto em sessão — DH-02 |
-
----
-
-# Matriz consolidada RF → UC → API → AT → TK
-
-| RF | RN/BR | UC | API | AT | TK | Status |
-|----|-------|----|-----|----|----|--------|
-| RF-PA-001 | BR-010,011 · RN-PA-004 | UC-PA-001 | PA-API-005 | AT-PA-001 | TK-PA-001 | RECONCILED |
-| RF-PA-002 | BR-041 · RN-PA-002 | UC-PA-002, 008 | PA-API-005 | AT-PA-001 | TK-PA-002 | RECONCILED |
-| RF-PA-003 | — | UC-PA-003, 004 | PA-API-001,003 | AT-PA-002 | TK-PA-003 | **SUPERSEDED** |
-| RF-PA-004 | RN-PA-005 | UC-PA-005 | PA-API-002,003 | AT-PA-004 | TK-PA-004 | **SUPERSEDED** |
+| RF | RN | UC | API | AT | TK | Status |
+|----|----|----|-----|----|----|--------|
+| RF-PA-001 | RN-PA-004 · BR-010, BR-011 | UC-PA-001 | PA-API-005 | AT-PA-003 | TK-PA-001 | RECONCILED |
+| RF-PA-002 | RN-PA-002 · BR-041 | UC-PA-002, UC-PA-008 | PA-API-005 | AT-PA-001, AT-PA-004 | TK-PA-002 | RECONCILED |
 | RF-PA-005 | BR-042 | UC-PA-006 | PA-API-004 | AT-PA-006 | TK-PA-005 | RECONCILED |
 | RF-PA-006 | BR-042 | UC-PA-006 | PA-API-004 | AT-PA-006 | TK-PA-005 | RECONCILED |
-| RF-PA-007 | RN-PA-006 | UC-PA-007 | PA-API-003,004 | AT-PA-005 | TK-PA-006 | **SUPERSEDED** |
-| RF-PA-008 | RN-PA-007 | UC-PA-008 | PA-API-005, 004 | AT-PA-007 | TK-PA-007 | RECONCILED |
-| RF-PA-009 | BR-010,044 · RN-PA-004 | UC-PA-009 | PA-API-006 (pend.) | AT-PA-003 | TK-PA-008 | RECONCILED |
-| RF-PA-010 | RN-PA-001 | UC-PA-010 | PA-API-005 | AT-PA-008,009 | TK-PA-009 | RECONCILED |
-| RF-PA-011 | DH-03, DH-04 | UC-PA-002 | PA-API-006 (pend.) | — | — | RECONCILED |
+| RF-PA-008 | RN-PA-007 | UC-PA-008 | PA-API-005, PA-API-004 | AT-PA-007 | TK-PA-007 | RECONCILED |
+| RF-PA-009 | RN-PA-004 · BR-010, BR-044 | UC-PA-009 | PA-API-006 (pend.) | AT-PA-003 | TK-PA-008 | PARTIAL — API pendente |
+| RF-PA-010 | RN-PA-001 | UC-PA-010 | PA-API-005 | AT-PA-008 | TK-PA-009 | RECONCILED |
+| RF-PA-011 | DH-03, DH-04 · BR-011, BR-043 | UC-PA-002 | PA-API-006 (pend.) | PENDING | PENDING | PARTIAL — AT e TK pendentes; gap documental conhecido |
 
----
+## Cobertura
 
-# Inconsistências — reconciliação (2026-08-17)
+| Item | Total | Cobertos | Pendentes |
+|------|-------|----------|-----------|
+| RF vigentes | 8 | 6 | 2 (RF-PA-009 API pend.; RF-PA-011 AT/TK) |
+| UC vigentes | 6 | 6 | 0 |
+| API vigentes | 2 (+ PA-API-006 pend.) | 2 | 1 (PA-API-006) |
+| AT vigentes | 7 (+ 3 superseded histórico) | 6 RF cobertos | RF-PA-011 sem AT |
+| TK | — | 6 TK vigentes referenciados | RF-PA-011 TK PENDING; TK superseded removidos |
 
-| ID | Descrição original | Resolução |
-|----|-------------------|-----------|
-| INC-PA-001 | N vínculos vs 1 vínculo | **Encerrada** — BR-041 supersession + DH-02 |
-| INC-PA-002 | Frontend fase 1 vs multi-contexto | **Encerrada** — modelo TO-BE = 1 vínculo derivado |
-| INC-PA-003 | `/auth/me` singular vs `contexts[]` | **Encerrada** — `organizationalLinks` único mantido |
-| INC-PA-004 | Persistência física Contexto Ativo | **Encerrada** — derivar de FKs `COLABORADOR`; sem store separado |
-| INC-PA-005 | Template crud-feature | **Mantida** — nota processual; não bloqueia |
-| INC-PA-006 | OQ-007 evento Colaborador Integrado | **Aberta** — fora escopo PA core |
+**Cobertura completa:** não — pendências explícitas em RF-PA-009 (API), RF-PA-011 (AT, TK).
 
----
+## Validações Obrigatórias
 
-# Cobertura
+| Validação | Resultado |
+|-----------|-----------|
+| RF vigentes alinhados a `specification.md` § 4 | OK |
+| RF superseded fora da matriz | OK |
+| UC vigentes somente cenários 001, 002, 006, 008, 009, 010 | OK |
+| API alinhada a `api.md` | OK |
+| AT alinhados a `acceptance-tests.md` | OK |
+| TK não inventados; PENDING onde aplicável | OK |
+| Decisões humanas (DH-PA-*, DH-02, DH-03, DH-04, DEC-ORG-003, BR-043) preservadas | OK |
 
-| Dimensão | Completo? |
-|----------|-----------|
-| Objetivo / escopo TO-BE | Sim |
-| BR referenciadas | Sim |
-| UC reconciliados | Sim (superseded marcados) |
-| Fluxos + Mermaid TO-BE | Sim |
-| Máquina de estados TO-BE | Sim |
-| Contratos vigentes + superseded | Sim |
-| Pendência PA-API-006 | Registrada |
-| Tasks Construction registry | Fora escopo |
+## Critérios de Conclusão
+
+- [x] Matriz contém somente RF vigentes
+- [x] TK superseded (TK-PA-003, TK-PA-004, TK-PA-006) removidos da matriz vigente
+- [x] RF-PA-011 mantido com AT e TK PENDING
+- [x] PA-API-006 registrado como pendente de implementação
+- [ ] Cobertura AT completa para todos RF — **não atingido** (RF-PA-011)
+- [ ] Cobertura TK completa para todos RF — **não atingido** (RF-PA-011)
+- [ ] Implementação PA-API-006 — **fora desta etapa**
