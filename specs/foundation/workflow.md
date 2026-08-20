@@ -13,14 +13,22 @@ Este documento descreve o fluxo geral. Artefatos específicos (features, domíni
 ```text
 Necessidade identificada
         ↓
-Produção da especificação
+Produção da especificação          (status: DRAFT)
         ↓
-Definition of Ready (DoR)
+DoR-Spec + Gate 1                  → READY_FOR_REVIEW
         ↓
-Implementação
+Review de Spec                     → APPROVED  ou  DRAFT
         ↓
-Definition of Done (DoD)
+DoR-Implementation                 → IMPLEMENTING
+        ↓
+Implementação + Validate + Review de PR (Gate 3)
+        ↓
+DoD + Gate 6                       → DONE
 ```
+
+O SSOT de estado é `specs/features/<slug>/feature.yaml`. Contrato: `specs/foundation/feature-yaml.md`.
+
+DoR, Gates, Review e Validate **não** são estados. Detalhe cotidiano: `development-workflow.md`.
 
 ---
 
@@ -52,7 +60,7 @@ A especificação deve ser revisada quanto a:
 - aderência aos princípios definidos em `principles.md`;
 - conformidade com as convenções definidas em `conventions.md`.
 
-Uma especificação consolidada está pronta para orientar implementação.
+Uma especificação consolidada e **aprovada** (`APPROVED`) pode orientar implementação somente após DoR-Implementation.
 
 ### 4. Implementação
 
@@ -70,17 +78,15 @@ Divergências são resolvidas na origem: se a especificação está correta, cor
 
 ## Consulta a `docs/`
 
-`docs/` é utilizado exclusivamente na etapa de produção da especificação, como fonte consultiva.
+`docs/domain/` (e demais docs consultivos de legado) alimenta a **produção da spec**, não o comportamento a implementar.
 
 ```text
-docs/  →  consulta  →  specs/  →  implementação
+docs/ (domínio, legado)  →  consulta  →  specs/  →  implementação
 ```
 
-Nunca:
+Durante `IMPLEMENTING`, `docs/implementation/` pode ser usado como **padrões de código** da camada tocada. Não substitui a spec como SSOT de comportamento.
 
-```text
-docs/  →  implementação
-```
+Não implementar comportamento de produto direto de documentação histórica.
 
 ---
 

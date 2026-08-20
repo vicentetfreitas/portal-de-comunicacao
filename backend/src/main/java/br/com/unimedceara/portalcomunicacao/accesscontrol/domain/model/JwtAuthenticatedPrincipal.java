@@ -6,10 +6,12 @@ import java.security.Principal;
  * Principal autenticado extraído do JWT validado criptograficamente.
  */
 public record JwtAuthenticatedPrincipal(
-        long colaboradorId,
+        Long colaboradorId,
         String sessionId,
         String email,
         String name,
+        String zimbraId,
+        boolean primeiroAcesso,
         Long federationId,
         Long singularId,
         Long areaId,
@@ -17,6 +19,9 @@ public record JwtAuthenticatedPrincipal(
 
     @Override
     public String getName() {
-        return String.valueOf(colaboradorId);
+        if (colaboradorId != null) {
+            return String.valueOf(colaboradorId);
+        }
+        return email;
     }
 }

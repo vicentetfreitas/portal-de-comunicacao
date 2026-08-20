@@ -14,7 +14,7 @@
 
 ```text
 GET  /auth/login     → 302 página de login do Portal (credenciais)
-POST /auth/login     → valida Zimbra + 302 Frontend + cookies
+POST /auth/login     → valida Zimbra + 200 OK + cookies
 GET  /auth/callback  → 302 Frontend + cookies (token opaco)
 GET  /auth/me        → identidade (autenticado)
 POST /auth/refresh   → renova JWT
@@ -71,7 +71,7 @@ Valida e-mail e senha no Zimbra (IMAP/SMTP/SOAP) e conclui login.
 
 | Código | Descrição |
 |--------|-----------|
-| 302 | Sucesso — redirect `frontend-redirect-url` + Set-Cookie |
+| 200 | Sucesso — `Set-Cookie` (`access_token`, e `refresh_token` quando aplicável) |
 | 401 | Credenciais inválidas |
 | 403 | Colaborador inativo |
 | 503 | Zimbra indisponível |

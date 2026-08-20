@@ -31,6 +31,9 @@
   --color-secondary: #{palette.$color-secondary-100};
   --color-secondary-dark: #{palette.$color-secondary-300};
 
+  // Neutral (theme-invariant)
+  --color-white: #{palette.$color-white};
+
   // Semantic
   --color-success: #{palette.$color-success-500};
   --color-warning: #{palette.$color-warning-500};
@@ -133,8 +136,11 @@
   --spacing-xl: #{spacing.$spacing-8};
   --spacing-2xl: #{spacing.$spacing-10};
   --spacing-3xl: #{spacing.$spacing-12};
+  --spacing-14: #{spacing.$spacing-14};
   --spacing-4xl: #{spacing.$spacing-16};
+  --spacing-18: #{spacing.$spacing-18};
   --spacing-5xl: #{spacing.$spacing-24};
+  --spacing-30: #{spacing.$spacing-30};
 
   // Borders
   --border-width-none: #{borders.$border-width-none};

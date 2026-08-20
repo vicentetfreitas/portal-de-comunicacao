@@ -2,6 +2,7 @@ package br.com.unimedceara.portalcomunicacao.accesscontrol.application.service;
 
 import br.com.unimedceara.portalcomunicacao.accesscontrol.domain.model.JwtClaims;
 import br.com.unimedceara.portalcomunicacao.configuration.properties.SecurityProperties;
+import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
@@ -82,6 +83,26 @@ public class JwtTokenService {
     }
 
     /**
+     * Emite Access Token de Primeiro Acesso (identidade Zimbra, sem COLABORADOR / AUTH_SESSAO).
+     */
+    public String issuePrimeiroAcessoToken(String email, String name, String zimbraId) {
+        Instant now = Instant.now();
+        Instant expiration = now.plusSeconds(securityProperties.jwtAccessTtlMinutes() * 60L);
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("sub", email);
+        payload.put("email", email);
+        payload.put("name", name);
+        payload.put("zid", zimbraId);
+        payload.put("typ", SecurityConstants.JWT_TYP_PRIMEIRO_ACESSO);
+        payload.put("iat", now.getEpochSecond());
+        payload.put("exp", expiration.getEpochSecond());
+        payload.put("iss", securityProperties.jwtIssuer());
+
+        return encodeToken(payload);
+    }
+
+    /**
      * Valida assinatura, expiração e estrutura do JWT, retornando os claims quando válido.
      */
     public Optional<JwtClaims> validateAndParse(String token) {
@@ -116,10 +137,34 @@ public class JwtTokenService {
             }
 
             String subject = readText(payload, "sub");
-            String sessionId = readText(payload, "sid");
             String email = readText(payload, "email");
             String name = readText(payload, "name");
-            if (subject == null || sessionId == null || email == null || name == null) {
+            if (subject == null || email == null || name == null) {
+                return Optional.empty();
+            }
+
+            boolean primeiroAcesso = SecurityConstants.JWT_TYP_PRIMEIRO_ACESSO
+                    .equals(readText(payload, "typ"));
+            if (primeiroAcesso) {
+                String zimbraId = readText(payload, "zid");
+                if (zimbraId == null) {
+                    return Optional.empty();
+                }
+                return Optional.of(new JwtClaims(
+                        null,
+                        null,
+                        email,
+                        name,
+                        zimbraId,
+                        true,
+                        null,
+                        null,
+                        null,
+                        null));
+            }
+
+            String sessionId = readText(payload, "sid");
+            if (sessionId == null) {
                 return Optional.empty();
             }
 
@@ -133,6 +178,8 @@ public class JwtTokenService {
                     sessionId,
                     email,
                     name,
+                    null,
+                    false,
                     federationId,
                     singularId,
                     areaId,

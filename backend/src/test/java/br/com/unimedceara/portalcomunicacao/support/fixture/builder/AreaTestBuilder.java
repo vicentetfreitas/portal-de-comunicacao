@@ -10,6 +10,7 @@ public final class AreaTestBuilder {
 
     private long singularId;
     private String nome = "Área Teste";
+    private String ativo = AreaStatus.ACTIVE.toFlag();
 
     private AreaTestBuilder() {}
 
@@ -24,11 +25,16 @@ public final class AreaTestBuilder {
         return this;
     }
 
+    public AreaTestBuilder inativa() {
+        this.ativo = AreaStatus.INACTIVE.toFlag();
+        return this;
+    }
+
     public AreaEntity build() {
         AreaEntity area = new AreaEntity();
         area.setSingularId(singularId);
         area.setNome(nome);
-        area.setAtivo(AreaStatus.ACTIVE.toFlag());
+        area.setAtivo(ativo);
         area.setDataCadastro(Instant.now());
         return area;
     }

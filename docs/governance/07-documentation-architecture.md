@@ -141,7 +141,7 @@ docs → specs → construction → .cursor
 | Fluxo frontend alvo | `docs/frontend/frontend-flow.md` | SSOT |
 | Contrato API **implementado** | `docs/api/` | Evidence + espelho operacional |
 | Contrato API **SDD** | `specs/features/*/api.md` | SSOT |
-| Estado da Feature | `construction-state.yaml` por workstream (transição) · **derivado:** `specs/foundation/minimal-ssot.md` | SSOT operacional / derivado |
+| Estado da Feature | `specs/features/<slug>/feature.yaml` | SSOT |
 | Protocolo Zimbra homologado | `docs/discovery/ft-auth-zimbra-homologacao.md` | Evidence (SSOT operacional do protocolo) |
 | Arquitetura AUTH normativa | `specs/architecture/authentication-architecture.md` | SSOT |
 | Auditorias de fase | `docs/audit/` | Evidence / Archive |
@@ -153,7 +153,7 @@ docs → specs → construction → .cursor
 | Par | Papel | Decisão Gate Final |
 |-----|-------|---------------------|
 | `docs/construction/` | Padrões operacionais Sprint 0 (como construir) | **Manter** — distinto de execução; renomear só se reduzir confusão comprovada |
-| `construction/` | Estado/execução de Features | **Manter** — SSOT de progresso |
+| `construction/` | Execução histórica / índice de workstreams | **Manter** — não é SSOT de estado da Feature (`feature.yaml`) |
 | `docs/api/` | Contrato refletindo implementação | **Manter** — Evidence operacional; SDD prevalece em conflito normativo |
 | `specs/*/api.md` | Contrato SDD | **Manter** — SSOT funcional |
 | `docs/frontend/` | Arquitetura/fluxo FE alvo | **Manter** |

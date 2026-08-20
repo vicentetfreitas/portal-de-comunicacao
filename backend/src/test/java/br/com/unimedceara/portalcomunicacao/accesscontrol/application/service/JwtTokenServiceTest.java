@@ -55,6 +55,23 @@ class JwtTokenServiceTest {
         assertThat(claims.get().singularId()).isEqualTo(2L);
         assertThat(claims.get().areaId()).isEqualTo(3L);
         assertThat(claims.get().teamId()).isEqualTo(4L);
+        assertThat(claims.get().primeiroAcesso()).isFalse();
+    }
+
+    @Test
+    void shouldIssueAndValidatePrimeiroAcessoTokenWithoutColaborador() {
+        String token = jwtTokenService.issuePrimeiroAcessoToken(
+                "novo@unimedceara.com.br", "Novo Usuario", "zimbra-new");
+
+        Optional<JwtClaims> claims = jwtTokenService.validateAndParse(token);
+
+        assertThat(claims).isPresent();
+        assertThat(claims.get().primeiroAcesso()).isTrue();
+        assertThat(claims.get().colaboradorId()).isNull();
+        assertThat(claims.get().sessionId()).isNull();
+        assertThat(claims.get().email()).isEqualTo("novo@unimedceara.com.br");
+        assertThat(claims.get().name()).isEqualTo("Novo Usuario");
+        assertThat(claims.get().zimbraId()).isEqualTo("zimbra-new");
     }
 
     @Test

@@ -22,7 +22,6 @@ export { default as DsServiceCard } from "./molecules/DsServiceCard.vue";
 
 // Organisms
 export { default as DsDataTable } from "./organisms/DsDataTable.vue";
-export { default as DsFormCard } from "./organisms/DsFormCard.vue";
 export {
   dsNotify,
   dsNotifyError,

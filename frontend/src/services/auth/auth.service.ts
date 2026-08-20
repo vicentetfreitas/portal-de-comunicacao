@@ -1,7 +1,11 @@
 import { AUTH_API_PATHS } from "@/config/auth";
 import { env } from "@/config/env";
 import { httpConfig } from "@/config/http";
-import type { AuthenticatedUser } from "@/auth/types";
+import type {
+  AuthenticatedUser,
+  CompletePrimeiroAcessoRequest,
+  PrimeiroAcessoArea
+} from "@/auth/types";
 import { getHttpClient } from "@/services/http";
 import { readCsrfToken } from "@/services/http/csrf";
 
@@ -12,7 +16,10 @@ import {
   normalizeApiError
 } from "@/types/api";
 
-import type { AuthMeApiResponse } from "./auth-contracts";
+import type {
+  AuthMeApiResponse,
+  PrimeiroAcessoAreasApiResponse
+} from "./auth-contracts";
 
 async function ensureCsrfCookie(): Promise<void> {
   if (readCsrfToken()) {
@@ -38,6 +45,20 @@ function unwrapMeResponse(payload: AuthMeApiResponse): AuthenticatedUser {
       status: 500,
       code: "API_RESPONSE_NOT_SUCCESSFUL",
       message: payload.message ?? "Resposta de autenticação inválida"
+    });
+  }
+
+  return payload.data;
+}
+
+function unwrapPrimeiroAcessoAreas(
+  payload: PrimeiroAcessoAreasApiResponse
+): PrimeiroAcessoArea[] {
+  if (payload.success !== true || payload.data === undefined) {
+    throw new ApiError({
+      status: 500,
+      code: "API_RESPONSE_NOT_SUCCESSFUL",
+      message: payload.message ?? "Resposta de áreas inválida"
     });
   }
 
@@ -99,20 +120,10 @@ export class AuthApiService {
       method: "POST",
       credentials: "include",
       headers,
-      body: params.toString(),
-      redirect: "manual"
+      body: params.toString()
     });
 
-    if (response.status === 302) {
-      const location = response.headers.get("Location");
-      if (location) {
-        window.location.assign(location);
-        return;
-      }
-    }
-
     if (response.ok) {
-      window.location.assign("/app");
       return;
     }
 
@@ -132,6 +143,25 @@ export class AuthApiService {
   async fetchCurrentUser(): Promise<AuthenticatedUser> {
     const client = getHttpClient();
     const response = await client.get<AuthMeApiResponse>(AUTH_API_PATHS.me);
+    return unwrapMeResponse(response.data);
+  }
+
+  async listPrimeiroAcessoAreas(): Promise<PrimeiroAcessoArea[]> {
+    const client = getHttpClient();
+    const response = await client.get<PrimeiroAcessoAreasApiResponse>(
+      AUTH_API_PATHS.primeiroAcessoAreas
+    );
+    return unwrapPrimeiroAcessoAreas(response.data);
+  }
+
+  async completePrimeiroAcesso(
+    payload: CompletePrimeiroAcessoRequest
+  ): Promise<AuthenticatedUser> {
+    const client = getHttpClient();
+    const response = await client.post<AuthMeApiResponse>(
+      AUTH_API_PATHS.completePrimeiroAcesso,
+      { areaId: payload.areaId, teamId: payload.teamId ?? null }
+    );
     return unwrapMeResponse(response.data);
   }
 

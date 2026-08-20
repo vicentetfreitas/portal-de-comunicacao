@@ -7,7 +7,9 @@ export const AUTH_API_PATHS = {
   callback: "/auth/callback",
   me: "/auth/me",
   logout: "/auth/logout",
-  refresh: "/auth/refresh"
+  refresh: "/auth/refresh",
+  primeiroAcessoAreas: "/auth/primeiro-acesso/areas",
+  completePrimeiroAcesso: "/auth/primeiro-acesso"
 } as const;
 
 /**

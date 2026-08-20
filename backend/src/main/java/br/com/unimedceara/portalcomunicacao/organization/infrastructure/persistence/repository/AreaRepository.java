@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -36,4 +37,6 @@ public interface AreaRepository extends JpaRepository<AreaEntity, Long> {
             Pageable pageable);
 
     Optional<AreaEntity> findByIdAndAtivo(Long id, String ativo);
+
+    List<AreaEntity> findBySingularIdAndAtivoOrderByNomeAsc(Long singularId, String ativo);
 }

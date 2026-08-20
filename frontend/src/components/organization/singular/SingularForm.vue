@@ -1,6 +1,6 @@
 <template>
   <q-form class="singular-form" @submit.prevent="emit('submit')">
-    <DsFormCard :title="title">
+    <DsCard :title="title">
       <SingularBasicInfoSection :model="model" :errors="errors" :mode="mode" />
 
       <template #actions>
@@ -11,7 +11,7 @@
           {{ submitLabel }}
         </DsButton>
       </template>
-    </DsFormCard>
+    </DsCard>
   </q-form>
 </template>
 
@@ -19,7 +19,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { DsButton, DsFormCard } from "@/components/ds";
+import { DsButton, DsCard } from "@/components/ds";
 import type { SingularFormModel } from "@/composables/organization/useSingularForm";
 
 import SingularBasicInfoSection, {

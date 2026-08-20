@@ -30,6 +30,7 @@ const sampleUser = {
   name: "João",
   permissions: [],
   sessionId: "abc",
+  primeiroAcesso: false,
   organizationalLinks: {
     federationId: 1,
     singularId: 2,
@@ -110,5 +111,47 @@ describe("useAuthStore", () => {
     await authStore.hydrateSession();
 
     expect(authStore).not.toHaveProperty("user");
+  });
+
+  it("marks authenticated when primeiro acesso is required", async () => {
+    fetchCurrentUser.mockResolvedValue({
+      id: null,
+      email: "novo@unimedceara.com.br",
+      name: "Novo",
+      permissions: [],
+      sessionId: null,
+      primeiroAcesso: true,
+      organizationalLinks: null
+    });
+
+    const authStore = useAuthStore();
+    const sessionStore = useSessionStore();
+    await authStore.hydrateSession();
+
+    expect(authStore.isAuthenticated).toBe(true);
+    expect(sessionStore.isBlocked).toBe(true);
+    expect(sessionStore.isReady).toBe(false);
+  });
+
+  it("marks authenticated when primeiro acesso has resolved Singular", async () => {
+    fetchCurrentUser.mockResolvedValue({
+      id: null,
+      email: "novo@unimedceara.com.br",
+      name: "Novo",
+      permissions: [],
+      sessionId: null,
+      primeiroAcesso: true,
+      organizationalLinks: null,
+      resolvedOrganization: { singularId: 10, federationId: 1 }
+    });
+
+    const authStore = useAuthStore();
+    const sessionStore = useSessionStore();
+    await authStore.hydrateSession();
+
+    expect(authStore.isAuthenticated).toBe(true);
+    expect(sessionStore.needsPrimeiroAcesso).toBe(true);
+    expect(sessionStore.isBlocked).toBe(false);
+    expect(sessionStore.isReady).toBe(false);
   });
 });

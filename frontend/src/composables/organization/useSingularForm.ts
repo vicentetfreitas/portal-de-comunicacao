@@ -102,10 +102,7 @@ export function useSingularForm(initial?: Partial<SingularFormModel>) {
       },
       unimedCode: {
         value: form.unimedCode,
-        rules: [
-          required("Código Unimed é obrigatório"),
-          unimedCodeRange()
-        ]
+        rules: [required("Código Unimed é obrigatório"), unimedCodeRange()]
       },
       registroAns: {
         value: form.registroAns,
@@ -129,10 +126,7 @@ export function useSingularForm(initial?: Partial<SingularFormModel>) {
       },
       unimedCode: {
         value: form.unimedCode,
-        rules: [
-          required("Código Unimed é obrigatório"),
-          unimedCodeRange()
-        ]
+        rules: [required("Código Unimed é obrigatório"), unimedCodeRange()]
       },
       registroAns: {
         value: form.registroAns,

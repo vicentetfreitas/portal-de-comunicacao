@@ -1,14 +1,15 @@
 --------------------------------------------------------------------------------
 -- Projeto : Portal de Comunicação
 -- Arquivo : 901-validation.sql
--- Versão  : 1.2
+-- Versão  : 1.3
 --
 -- Objetivo
 --   Validar a instalação do schema UNMPORTCOM.
 --
--- Contagens esperadas (baseline homologada 2026-07-22, DB-SYNC-99):
---   23 tabelas · 12 sequences · 95 índices
---   Constraints: 23 PK · 36 FK · 11 UNIQUE · 172 CHECK (242 total P/R/U/C)
+-- Contagens esperadas (greenfield pós GAP-028-04):
+--   23 tabelas · 12 sequences · 96 índices
+--   Constraints: 23 PK · 36 FK · 12 UNIQUE · 172 CHECK (243 total P/R/U/C)
+--   (+1 UNIQUE/índice: UK_SINGULAR_DOMINIO_EMAIL)
 --
 -- Banco
 --   Oracle Database 11g+
@@ -29,8 +30,8 @@ PROMPT ==========================================================
 
 DEFINE EXPECT_TABLES     = 23
 DEFINE EXPECT_SEQUENCES  = 12
-DEFINE EXPECT_INDEXES    = 95
-DEFINE EXPECT_CONSTRAINTS = 242
+DEFINE EXPECT_INDEXES    = 96
+DEFINE EXPECT_CONSTRAINTS = 243
 
 COLUMN OBJETO   FORMAT A30
 COLUMN ESPERADO FORMAT 999999

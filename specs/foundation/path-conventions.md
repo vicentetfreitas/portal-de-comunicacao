@@ -20,7 +20,7 @@ Consultar este documento antes de inferir paths no repositório.
 
 ```text
 specs/features/<slug>/
-├── feature.yaml
+├── feature.yaml      ← SSOT de identidade e estado (ciclo completo; ver feature-yaml.md)
 ├── specification.md
 ├── use-cases.md
 ├── api.md

@@ -26,6 +26,8 @@ public interface SingularRepository extends JpaRepository<SingularEntity, Long> 
 
     boolean existsByFederacaoIdAndAtivo(Long federacaoId, String ativo);
 
+    Optional<SingularEntity> findByDominioEmailIgnoreCaseAndAtivo(String dominioEmail, String ativo);
+
     @Query("""
             SELECT s FROM SingularEntity s
             WHERE (:federacaoId IS NULL OR s.federacaoId = :federacaoId)

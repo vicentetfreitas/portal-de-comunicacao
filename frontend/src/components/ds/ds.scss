@@ -286,7 +286,7 @@
 
   &__media {
     flex-shrink: 0;
-    width: 120px;
+    width: var(--spacing-30);
     border-radius: var(--radius-md);
     overflow: hidden;
   }
@@ -344,21 +344,12 @@
     var(--color-border);
   background-color: var(--color-surface);
 
-  &--clickable {
-    cursor: pointer;
-    transition: background-color 0.15s ease;
-
-    &:hover {
-      background-color: var(--color-surface-hover);
-    }
-  }
-
   &__icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: var(--spacing-2xl);
+    height: var(--spacing-2xl);
     border-radius: var(--radius-md);
     background-color: var(--color-surface-muted);
     color: var(--color-primary);
@@ -366,8 +357,8 @@
   }
 
   &__thumb {
-    width: 48px;
-    height: 48px;
+    width: var(--spacing-3xl);
+    height: var(--spacing-3xl);
     border-radius: var(--radius-sm);
     overflow: hidden;
     flex-shrink: 0;
@@ -415,24 +406,12 @@
   background-color: var(--color-surface);
   box-shadow: var(--elevation-card);
 
-  &--clickable {
-    cursor: pointer;
-    transition:
-      box-shadow 0.15s ease,
-      border-color 0.15s ease;
-
-    &:hover {
-      border-color: var(--color-primary-200);
-      box-shadow: var(--shadow-md);
-    }
-  }
-
   &__icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
+    width: var(--spacing-3xl);
+    height: var(--spacing-3xl);
     border-radius: var(--radius-md);
     background-color: var(--color-primary-50);
     color: var(--color-primary);
@@ -475,10 +454,11 @@
 
   &--primary {
     background-color: var(--color-primary);
-    color: #ffffff;
+    color: var(--color-white);
 
     .ds-action-card__description {
-      color: rgb(255 255 255 / 0.85);
+      color: var(--color-white);
+      opacity: 0.85;
     }
   }
 
@@ -575,21 +555,6 @@
   tbody tr td {
     color: var(--color-text-primary);
     font-size: var(--text-body-small-size);
-  }
-}
-
-.ds-form-card {
-  &__title {
-    color: var(--color-text-primary);
-    font-size: var(--text-card-title-size);
-    font-weight: var(--text-card-title-weight);
-    margin: 0 0 var(--spacing-md);
-  }
-
-  &__content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
   }
 }
 

@@ -3,6 +3,7 @@
     :is="tag"
     :class="navItemClasses"
     :aria-current="active ? 'page' : undefined"
+    :aria-label="mini ? label : undefined"
     v-bind="componentAttrs"
   >
     <span v-if="icon" class="ds-nav-item__icon">

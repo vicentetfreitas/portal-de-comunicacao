@@ -753,7 +753,7 @@ Um **COLABORADOR** **não pode** existir persistentemente somente com Federaçã
 
 ### Pendências arquiteturais (vínculo organizacional)
 
-- Implementação física do mapeamento **domínio → Singular** (ver DEC-ORG-003, BR-043, **DH-PA-02** aprovada 2026-08-15; **GAP-028-04** — implementação técnica pendente).
+- Implementação física do mapeamento **domínio → Singular** (ver DEC-ORG-003, BR-043, **DH-PA-02** aprovada 2026-08-15; **GAP-028-04** — artefatos no repositório; execução DBA da V008 no Oracle pendente).
 
 ---
 
@@ -911,12 +911,12 @@ A engenharia deverá propor solução técnica **compatível** com esta decisão
 | ID | Tema | Status |
 |----|------|--------|
 | **DH-PA-03** | Política de CARGO no Primeiro Acesso | **APROVADA** (2026-08-17) |
-| **GAP-028-04** | Implementação física do mapeamento domínio → Singular | Implementação técnica pendente |
+| **GAP-028-04** | Implementação física do mapeamento domínio → Singular | Artefatos no repositório (DDL, V008, DML); execução DBA no Oracle pendente |
 | **RECONCILIAÇÃO-DEC-DB-027** | Reconciliação DH-PA-03 × DEC-DB-027 | **Encerrada** (2026-08-17) — **DH-CARGO-01** |
 
 #### Registro definitivo
 
-Esta seção. Encerra decisão de negócio de **LA-02** e **GAP-028-04** (nível de decisão); implementação permanece como GAP até etapa de código.
+Esta seção. Encerra decisão de negócio de **LA-02** e **GAP-028-04** (nível de decisão); artefatos de persistência preparados no repositório; aplicação da V008 no Oracle permanece com o DBA.
 
 ---
 
@@ -1280,3 +1280,4 @@ Uma decisão somente pode ser encerrada quando:
 | 2026-08-15 | Governança      | **DH-PA-02** aprovada — cardinalidade domínio→Singular (1:1); domínio sem Singular bloqueia PA automaticamente; capacidade administrativa futura; LA-02 e GAP-028-04 encerrados em nível de decisão |
 | 2026-08-17 | Governança      | **DH-PA-03** aprovada — CARGO não é requisito para criação nem operação no Primeiro Acesso; reconciliação com DEC-DB-027 registrada como pendente (PONTO DE RECONCILIAÇÃO) |
 | 2026-08-17 | Governança      | **DH-CARGO-01** aprovada — CARGO não obrigatório na criação de qualquer COLABORADOR; supersession parcial DEC-DB-027; reconciliação DEC-DB-027 × DH-PA-03 encerrada; R1 decidida (escopo geral) |
+| 2026-08-17 | Engenharia      | **GAP-028-04** — artefatos de persistência no repositório (`DES_DOMINIO_EMAIL`, `UK_SINGULAR_DOMINIO_EMAIL`, V008, DML); execução DBA no Oracle pendente |

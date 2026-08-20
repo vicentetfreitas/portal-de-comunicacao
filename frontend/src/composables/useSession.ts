@@ -14,6 +14,8 @@ export function useSession() {
     activeContext,
     isHydrated,
     isReady,
+    needsPrimeiroAcesso,
+    isBlocked,
     permissions,
     roles,
     organizationalLinks
@@ -26,6 +28,8 @@ export function useSession() {
     activeContext,
     isHydrated,
     isReady,
+    needsPrimeiroAcesso,
+    isBlocked,
     permissions,
     roles,
     organizationalLinks,

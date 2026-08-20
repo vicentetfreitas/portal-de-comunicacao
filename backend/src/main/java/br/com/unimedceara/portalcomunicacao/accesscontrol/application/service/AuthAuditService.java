@@ -18,6 +18,20 @@ public class AuthAuditService {
     }
 
     /**
+     * Registra emissão de credencial temporária de Primeiro Acesso.
+     */
+    public void logPrimeiroAcessoLogin(String email) {
+        log.info("auth_event=PRIMEIRO_ACESSO_LOGIN email={}", email);
+    }
+
+    /**
+     * Registra conclusão do Primeiro Acesso (criação de COLABORADOR + sessão operacional).
+     */
+    public void logPrimeiroAcessoCompleted(long colaboradorId, long areaId) {
+        log.info("auth_event=PRIMEIRO_ACESSO_COMPLETED colaboradorId={} areaId={}", colaboradorId, areaId);
+    }
+
+    /**
      * Registra falha de login.
      */
     public void logLoginFailure(String reason) {

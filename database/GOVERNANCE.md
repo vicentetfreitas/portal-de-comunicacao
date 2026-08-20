@@ -137,7 +137,7 @@ Scripts em `ddl/` e `dml/` refletem o **AS-IS homologado** (baseline 2026-07-22)
 |------|------------------------|---------------------------|----------------------|
 | Vínculo COLABORADOR | `COD_SINGULAR`, `COD_AREA` **nullable** em `003-create-tables.sql` | NOT NULL (DEC-DB-028, DH-04) | **Pendente** migration DBA (GAP-028-02) |
 | CARGO | Tabela **ausente**; `DES_CARGO` removido (V007) | Catálogo `CARGO` + `COD_CARGO` opcional na criação (DEC-DB-027 + DH-CARGO-01) | **Pendente** DDL |
-| Domínio → Singular | Sem tabela/coluna de mapeamento | Resolução por domínio (DH-PA-02, DEC-ORG-003) | **Pendente** (GAP-028-04) |
+| Domínio → Singular | DDL/DML/V008 no repositório (`DES_DOMINIO_EMAIL`, `UK_SINGULAR_DOMINIO_EMAIL`) | Resolução por domínio (DH-PA-02, DEC-ORG-003) | **Artefatos prontos**; Oracle brownfield aguarda V008 (GAP-028-04) |
 | Contexto Ativo | FKs em `COLABORADOR`; sem store separado | Derivado do vínculo único (DH-02) | **Alinhado** conceitualmente |
 | Primeiro Acesso | Colaboradores via login (FT-AUTH) — `dml/005` placeholder | Wizard PA + credencial temporária (DH-PA-01) | **Pendente** código |
 

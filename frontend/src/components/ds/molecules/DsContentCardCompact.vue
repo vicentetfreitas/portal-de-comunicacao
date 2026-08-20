@@ -1,8 +1,5 @@
 <template>
-  <article
-    class="ds-content-card-compact"
-    :class="{ 'ds-content-card-compact--clickable': clickable }"
-  >
+  <article class="ds-content-card-compact">
     <div v-if="icon" class="ds-content-card-compact__icon">
       <DsIcon :name="icon" size="md" />
     </div>
@@ -35,11 +32,9 @@ withDefaults(
     icon?: string;
     imageSrc?: string;
     imageAlt?: string;
-    clickable?: boolean;
   }>(),
   {
-    imageAlt: "",
-    clickable: false
+    imageAlt: ""
   }
 );
 </script>

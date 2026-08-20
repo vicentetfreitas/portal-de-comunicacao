@@ -40,13 +40,20 @@ export function createAuthGuard() {
 
     const requiresAuth = to.meta.requiresAuth === true;
     const guestOnly = to.meta.guestOnly === true;
+    const allowsPrimeiroAcesso = to.meta.allowsPrimeiroAcesso === true;
     const isAuthenticated = authStore.isAuthenticated;
+    const needsPrimeiroAcesso =
+      sessionStore.needsPrimeiroAcesso || sessionStore.isBlocked;
 
     if (
       guestOnly &&
       isAuthenticated &&
       routerGuardConfig.enforceAuthentication
     ) {
+      if (needsPrimeiroAcesso) {
+        next(ROUTE_PATHS.PRIMEIRO_ACESSO);
+        return;
+      }
       const redirect =
         typeof to.query?.redirect === "string"
           ? to.query.redirect
@@ -64,9 +71,26 @@ export function createAuthGuard() {
       return;
     }
 
-    // TODO(OQ-027): when multi-context is required, block business routes
-    // until activeContext is selected (not in FT-SESSION fase 1).
-    // TODO(OQ-028): post-auth landing route is not decided yet.
+    if (
+      requiresAuth &&
+      isAuthenticated &&
+      needsPrimeiroAcesso &&
+      !allowsPrimeiroAcesso &&
+      routerGuardConfig.enforceAuthentication
+    ) {
+      next(ROUTE_PATHS.PRIMEIRO_ACESSO);
+      return;
+    }
+
+    if (
+      allowsPrimeiroAcesso &&
+      isAuthenticated &&
+      !needsPrimeiroAcesso &&
+      sessionStore.isReady
+    ) {
+      next(ROUTE_PATHS.APP);
+      return;
+    }
 
     next();
   };

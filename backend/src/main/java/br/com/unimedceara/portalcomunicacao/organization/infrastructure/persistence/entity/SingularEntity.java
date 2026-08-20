@@ -45,6 +45,9 @@ public class SingularEntity {
     @Column(name = "NUM_REGISTRO_ANS", nullable = false, length = 20)
     private String registroAns;
 
+    @Column(name = "DES_DOMINIO_EMAIL", length = 255)
+    private String dominioEmail;
+
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = "FLG_ATIVO", nullable = false, length = 1)
     private String ativo;

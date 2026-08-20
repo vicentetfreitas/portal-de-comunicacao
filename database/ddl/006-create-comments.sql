@@ -55,6 +55,7 @@ COMMENT ON COLUMN SINGULAR.COD_FEDERACAO IS 'Federação à qual pertence.';
 COMMENT ON COLUMN SINGULAR.NOM_SINGULAR IS 'Nome da Singular.';
 COMMENT ON COLUMN SINGULAR.SIG_SINGULAR IS 'Sigla da Singular.';
 COMMENT ON COLUMN SINGULAR.COD_UNIMED IS 'Código oficial da Singular.';
+COMMENT ON COLUMN SINGULAR.DES_DOMINIO_EMAIL IS 'Domínio de e-mail corporativo que determina esta Singular (DEC-ORG-003, DH-PA-02).';
 COMMENT ON COLUMN SINGULAR.FLG_ATIVO IS 'Indica se a Singular está ativa.';
 COMMENT ON COLUMN SINGULAR.DAT_CADASTRO IS 'Data de cadastro.';
 COMMENT ON COLUMN SINGULAR.DAT_ATUALIZACAO IS 'Data da última atualização.';

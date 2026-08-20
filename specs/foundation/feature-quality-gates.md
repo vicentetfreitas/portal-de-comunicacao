@@ -2,131 +2,116 @@
 
 | Campo | Valor |
 |--------|--------|
-| Versão | 1.1 |
+| Versão | 1.2 |
 | Status | STABLE |
 
 ## Objetivo
 
-Os Quality Gates definem verificações obrigatórias durante o ciclo de vida de uma Feature.
+Os Quality Gates são **verificações formais de critérios**. Não são estados da Feature. Não constituem uma segunda máquina de estados.
 
-Nenhum Gate pode ser ignorado.
+O SSOT de estado é `specs/features/<slug>/feature.yaml` (`status`: `DRAFT` \| `READY_FOR_REVIEW` \| `APPROVED` \| `IMPLEMENTING` \| `DONE`).
+
+Resultados de Gate são **PASS** ou **FAIL** (verificação). Não gravar `APPROVED` nem `REWORK` como `status` da Feature a partir dos Gates 2–5.
+
+---
+
+# Uso no fluxo cotidiano mínimo
+
+| Gate | Obrigatoriedade | Momento |
+|------|-----------------|--------|
+| Gate 1 | **Obrigatório** | Antes de `DRAFT` → `READY_FOR_REVIEW` (DoR-Spec) |
+| Gate 2 | Condicional | Aderência arquitetural quando a Feature exigir |
+| Gate 3 | **Obrigatório** | Review de PR durante `IMPLEMENTING`; exigido para `DONE` |
+| Gate 4 | Condicional | Sincronização código/documentação quando aplicável |
+| Gate 5 | Condicional | Auditoria completa da Feature quando aplicável |
+| Gate 6 | **Obrigatório** | Encerramento: DoD; exigido para `IMPLEMENTING` → `DONE` |
+
+Gates condicionais **permanecem disponíveis**. Não foram removidos. Não precisam ser serializados como etapas de status.
 
 ---
 
 # Gate 1 — Specification Ready
 
-Objetivo:
+Objetivo: garantir que a especificação está pronta para revisão formal.
 
-Garantir que a especificação esteja completa.
+Verificações (DoR-Spec):
 
-Verificações:
+- critérios DoR-Spec em `definition-of-ready.md`
+- `feature.yaml` conforme `feature-yaml.md`
+- artefatos obrigatórios do template (ex.: specification.md, use-cases.md, api.md, acceptance-tests.md; `traceability.md` quando exigido)
+- ausência de bloqueadores conhecidos para a revisão da spec
 
-- Definition of Ready
-- `feature.yaml` conforme `specs/foundation/feature-yaml.md`
-- specification.md
-- use-cases.md
-- api.md
-- acceptance-tests.md
-- tasks.md
-- traceability.md (quando o template oficial exigir — ex.: `crud-feature`)
+`tasks.md` completo **não** é exigência do Gate 1 (pertence ao DoR-Implementation).
 
-Resultado:
+Resultado da verificação: **PASS** ou **FAIL**.
 
-READY_FOR_REVIEW ou REWORK
+- PASS: autoriza transitar `status` para `READY_FOR_REVIEW`
+- FAIL: `status` permanece `DRAFT`
 
 ---
 
 # Gate 2 — Architecture Review
 
-Objetivo:
+Objetivo: validar aderência à arquitetura (quando aplicável).
 
-Validar aderência à arquitetura.
+Verificações: padrões arquiteturais; domínio; integrações; segurança; decisões técnicas.
 
-Verificações:
-
-- padrões arquiteturais
-- domínio
-- integrações
-- segurança
-- decisões técnicas
-
-Resultado:
-
-APPROVED ou REWORK
+Resultado: **PASS** ou **FAIL**. Não altera `status` da Feature para `APPROVED`.
 
 ---
 
 # Gate 3 — Implementation Review
 
-Objetivo:
+Objetivo: validar a implementação (Review de PR).
 
-Validar implementação.
+Verificações: código; testes; qualidade; performance; segurança; aderência à spec.
 
-Verificações:
+Resultado: **PASS** ou **FAIL**.
 
-- código
-- testes
-- qualidade
-- performance
-- segurança
-
-Resultado:
-
-APPROVED ou REWORK
+Obrigatório no caminho para `DONE`. Não substitui Validate. Não altera `status` automaticamente.
 
 ---
 
 # Gate 4 — Documentation Review
 
-Objetivo:
+Objetivo: sincronização entre código e documentação (quando aplicável).
 
-Garantir sincronização entre código e documentação.
+Verificações: specification; API; testes; decisões; tarefas.
 
-Verificações:
-
-- specification
-- API
-- testes
-- decisões
-- tarefas
-
-Resultado:
-
-APPROVED ou REWORK
+Resultado: **PASS** ou **FAIL**. Não é `status` da Feature.
 
 ---
 
 # Gate 5 — Feature Readiness Review
 
-Objetivo:
+Objetivo: auditoria completa da Feature (quando aplicável).
 
-Executar auditoria completa da Feature.
+Verificações: consistência entre artefatos; rastreabilidade (`traceability.md` quando aplicável); cobertura dos requisitos; critérios de aceitação; riscos.
 
-Verificações:
-
-- consistência entre artefatos
-- rastreabilidade (`traceability.md` quando aplicável)
-- cobertura dos requisitos
-- critérios de aceitação
-- riscos
-
-Resultado:
-
-APPROVED ou REWORK
+Resultado: **PASS** ou **FAIL**. Não é `status` da Feature.
 
 ---
 
 # Gate 6 — Definition of Done
 
-Objetivo:
-
-Validar encerramento da Feature.
+Objetivo: validar encerramento.
 
 Verificações:
 
-- DoD completo
-- Todos os Gates aprovados
+- DoD completo (`definition-of-done.md`)
+- Gate 1 e Gate 3 com PASS
+- Gates 2, 4 e 5 com PASS **quando tiverem sido aplicáveis**
 
-Resultado:
+Resultado: **PASS** ou **FAIL**.
 
-DONE
+- PASS: autoriza transitar `status` para `DONE`
+- FAIL: `status` permanece `IMPLEMENTING`
+
+---
+
+# Histórico
+
+| Versão | Data | Descrição |
+|--------|------|-----------|
+| 1.1 | — | Gates 1–6; resultados misturados com estados (`REWORK`, `APPROVED`) |
+| 1.2 | 2026-08-19 | Gates como verificação; 1/3/6 obrigatórios no mínimo; 2/4/5 condicionais |

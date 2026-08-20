@@ -10,6 +10,7 @@ SELECT SQ_SINGULAR_COD_SINGULAR.NEXTVAL,
        f.COD_FEDERACAO,
        'Unimed Ceará',
        'UNMCEA',
+       979,
        '32195-8',
        'S',
        SYSTIMESTAMP
@@ -45,3 +46,14 @@ SELECT SQ_SINGULAR_COD_SINGULAR.NEXTVAL,
  WHERE F.COD_FEDERACAO = 1
    AND F.FLG_ATIVO     = 'S'
    AND F.COD_UNIMED    = 979 ;
+
+-- Domínios normativos DEC-ORG-003 / DH-PA-02 (1:1). Sobral sem domínio normativo.
+UPDATE SINGULAR
+   SET DES_DOMINIO_EMAIL = 'unimedceara.com.br'
+ WHERE SIG_SINGULAR = 'UNMCEA'
+   AND DES_DOMINIO_EMAIL IS NULL;
+
+UPDATE SINGULAR
+   SET DES_DOMINIO_EMAIL = 'unimedcariri.com.br'
+ WHERE SIG_SINGULAR = 'UNMCAR'
+   AND DES_DOMINIO_EMAIL IS NULL;

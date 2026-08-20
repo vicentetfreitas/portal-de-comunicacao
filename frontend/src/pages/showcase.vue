@@ -225,7 +225,6 @@
         icon="mdi-file-document-outline"
         :title="$t('showcase.compactCardTitle')"
         :description="$t('showcase.compactCardDescription')"
-        clickable
       />
 
       <div class="ds-showcase__card-grid q-mb-md">
@@ -263,17 +262,19 @@
     <section class="ds-showcase__section">
       <h2 class="ds-showcase__section-title">{{ $t("showcase.organisms") }}</h2>
 
-      <DsFormCard :title="$t('showcase.formCardTitle')" class="q-mb-lg">
-        <DsInput v-model="formName" :label="$t('showcase.formName')" />
-        <DsInput
-          v-model="formEmail"
-          type="email"
-          :label="$t('showcase.formEmail')"
-        />
+      <DsCard :title="$t('showcase.formCardTitle')" class="q-mb-lg">
+        <div class="column q-gutter-md">
+          <DsInput v-model="formName" :label="$t('showcase.formName')" />
+          <DsInput
+            v-model="formEmail"
+            type="email"
+            :label="$t('showcase.formEmail')"
+          />
+        </div>
         <template #actions>
           <DsButton variant="primary">{{ $t("showcase.save") }}</DsButton>
         </template>
-      </DsFormCard>
+      </DsCard>
 
       <DsDataTable
         :title="$t('showcase.tableTitle')"
@@ -308,7 +309,6 @@ import {
   DsContentCardCompact,
   DsDataTable,
   DsDialog,
-  DsFormCard,
   DsIcon,
   DsInput,
   DsNavItem,

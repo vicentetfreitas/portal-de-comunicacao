@@ -1,0 +1,9 @@
+feature:
+  id: FT-NOTICIA
+  name: Notícia
+
+template:
+  name: crud-feature
+  version: "1.1"
+
+status: DRAFT

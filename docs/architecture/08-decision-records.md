@@ -735,3 +735,13 @@ Decisões físicas e operacionais do Oracle estão em `database/model/05-decisio
 | ID | Título | Documento |
 |----|--------|-----------|
 | DEC-DB-024 | Application user (`UNMPORTCOM_APP`) × schema owner | [decisions/DEC-DB-024-application-user-strategy.md](decisions/DEC-DB-024-application-user-strategy.md) |
+
+---
+
+## Design System (reconstrução)
+
+Contrato de escopo da reconstrução do Design System da Frontend Foundation. Não é Feature (`FT-DS` não existe e não deve ser criado). Não é ADR de identidade DS-01–DS-10 (ainda pendente).
+
+| ID | Título | Status | Documento |
+|----|--------|--------|-----------|
+| DS-RECONSTRUCTION-SCOPE-01 | Escopo da reconstrução do Design System | `RECONSTRUCTION_SCOPE_DEFINED_WITH_PENDING_DECISIONS` | [decisions/DS-RECONSTRUCTION-SCOPE-01.md](decisions/DS-RECONSTRUCTION-SCOPE-01.md) |

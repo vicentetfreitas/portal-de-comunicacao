@@ -4,8 +4,9 @@
 |--------|--------|
 | Artefato | agent-commands.md |
 | Camada | Foundation |
-| Versão | 1.1 |
+| Versão | 1.3 |
 | Status | STABLE |
+| Categoria documental | SSOT |
 
 ---
 
@@ -17,7 +18,13 @@ Os comandos substituem prompts extensos que repetem instruções já documentada
 
 **Este catálogo não é um framework, DSL ou processo paralelo.** É apenas uma convenção de invocação para agentes.
 
-O catálogo contém **apenas comandos de alto nível** — intenções significativas do usuário. Etapas internas do workflow (validação cruzada, review, audit, build) são executadas pelo agente conforme os documentos oficiais, sem comando próprio.
+O fluxo cotidiano é o da Etapa 2 (`specs/foundation/development-workflow.md`):
+
+```text
+DRAFT → READY_FOR_REVIEW → APPROVED → IMPLEMENTING → DONE
+```
+
+Estado em `feature.yaml`. Comandos invocam atividades; não redefinem a máquina de estados.
 
 ---
 
@@ -36,44 +43,32 @@ O catálogo contém **apenas comandos de alto nível** — intenções significa
 | Formato | `FT-<DOMAIN>` | `FT-AREA`, `FT-AUTH` |
 | Caixa | MAIÚSCULAS | `FT-AREA` |
 | Contrato | `specs/foundation/feature-yaml.md` | — |
-
-## Comandos parametrizados
-
-```text
-Gate <N> <Feature>
-PKG-<NN> <Feature>
-```
-
-Exemplos:
-
-```text
-Gate 1 FT-AREA
-PKG-02 FT-AUTH
-```
+| Paths | `specs/foundation/path-conventions.md` | slug kebab-case |
 
 ## O que o agente deve fazer ao receber um comando
 
 1. Identificar a atividade correspondente neste catálogo.
 2. Consultar **exclusivamente** os documentos oficiais referenciados.
-3. Executar a atividade e suas etapas internas conforme o workflow vigente.
+3. Executar a atividade e suas etapas internas conforme o **workflow vigente** (`development-workflow.md` para o cotidiano).
 4. Emitir o resultado esperado — sem reinterpretar o processo.
+5. Se a tarefa depender **exclusivamente** de Session, PKG, Snapshot, Cache ou orchestrator v4.1: **não improvisar equivalência**; interromper e solicitar decisão humana.
 
 ---
 
-# 3. Catálogo
+# 3. Catálogo cotidiano (Etapa 2)
 
-O catálogo possui **8 comandos essenciais**, organizados por intenção do usuário.
+Seis comandos de alto nível. São o padrão para Claude Code e para o trabalho diário.
 
 | # | Comando | Intenção |
 |---|---------|----------|
 | 1 | `Specify` | Produzir ou evoluir a Specification |
-| 2 | `Gate` | Executar um Quality Gate |
-| 3 | `Readiness` | Validar prontidão pré-Construction |
-| 4 | `Execute Feature` | Iniciar Sessão da Feature |
-| 5 | `PKG-<NN>` | Implementar um Construction Package |
-| 6 | `Close` | Encerrar a Feature |
-| 7 | `Status` | Consultar estado |
-| 8 | `Report` | Gerar relatório |
+| 2 | `Readiness` | Avaliar DoR-Spec e/ou DoR-Implementation (não é estado) |
+| 3 | `Implement` | Executar `tasks.md` após `IMPLEMENTING` autorizado |
+| 4 | `Validate` | Evidência da camada alterada; **não** altera `feature.yaml` |
+| 5 | `Review` | Review de Spec ou Review de PR (distintos) |
+| 6 | `Status` | Consultar estado sem alterar artefatos |
+
+Estes comandos **não** reimplementam DoR, DoD, Gates nem governança: apenas invocam os documentos oficiais.
 
 ---
 
@@ -82,124 +77,86 @@ O catálogo possui **8 comandos essenciais**, organizados por intenção do usu�
 | Campo | Valor |
 |-------|--------|
 | **Finalidade** | Produzir, evoluir ou refinar os artefatos de Specification conforme o template em `feature.yaml`. |
-| **Quando utilizar** | Elaboração inicial; retorno após `REWORK`; refinamento pós-`Gate 1` (correção de NCs documentais). |
-| **Artefatos envolvidos** | `feature.yaml`; artefatos do template em `specs/features/<feature>/`. |
-| **Resultado esperado** | Artefatos completos e consistentes; `READY_FOR_REVIEW` (elaboração) ou `APPROVED` (refinamento com Specification congelada). |
-| **Referências** | `.cursor/rules/workflows/specification-flow.mdc`; `.cursor/orchestrator/specification-orchestrator.mdc`; `specs/templates/<template>/`. |
+| **Quando utilizar** | Elaboração inicial; retorno após lacuna documental; refinamento da spec. |
+| **Artefatos envolvidos** | `feature.yaml`; artefatos do template em `specs/features/<slug>/`. |
+| **Resultado esperado** | Artefatos consistentes com `feature.yaml`; spec utilizável para Readiness. |
+| **Não faz** | Implementar código no lugar da especificação. |
+| **Referências** | `specs/foundation/workflow.md`; `specs/foundation/feature-yaml.md`; `specs/templates/`; a feature em `specs/features/<slug>/`. |
 
-**Etapas internas** (sem comando próprio): validação cruzada entre artefatos (Specification-flow, Etapa 9); ajustes pontuais de não conformidades do `Gate 1`.
+Etapas internas (sem comando próprio): validação cruzada entre artefatos da spec; consulta a `docs/domain/` e `docs/architecture/` quando a feature o exigir.
 
 ---
 
-## 3.2 `Gate`
+## 3.2 `Readiness`
 
 | Campo | Valor |
 |-------|--------|
-| **Finalidade** | Executar um Quality Gate formal da Feature. |
-| **Sintaxe** | `Gate <N> <Feature>` — onde `<N>` é `1` a `6`. |
-| **Quando utilizar** | Conforme o momento do ciclo de vida (ver tabela abaixo). |
-| **Resultado esperado** | Parecer ou status do Gate (`APPROVED`, `REWORK`, `REJECTED`, etc.) conforme `feature-quality-gates.md`. |
-| **Referências** | `specs/foundation/feature-quality-gates.md`; `specs/foundation/review-process.md` (Gate 1); `specs/foundation/definition-of-done.md` (Gate 6). |
-
-| Gate | Nome | Momento típico |
-|------|------|----------------|
-| 1 | Specification Ready | Com `status.specification: READY_FOR_REVIEW` |
-| 2 | Architecture Review | Antes ou durante Construction |
-| 3 | Implementation Review | Após PKGs ou no encerramento |
-| 4 | Documentation Review | Após implementação |
-| 5 | Feature Readiness Review | No encerramento (também executado por `Close`) |
-| 6 | Definition of Done | Após `Close` e Gates anteriores aprovados |
-
-**Nota:** `Gate 5` é etapa interna de `Close`. Utilize `Gate 5` apenas quando precisar executar esse Gate de forma isolada.
+| **Finalidade** | Avaliar Definition of Ready no contexto pedido. Readiness **não** é estado. |
+| **Quando utilizar** | DoR-Spec: antes de `DRAFT` → `READY_FOR_REVIEW`. DoR-Implementation: antes de `APPROVED` → `IMPLEMENTING`. |
+| **Artefatos envolvidos** | `feature.yaml`; artefatos em `specs/features/<slug>/`; `tasks.md` no DoR-Implementation. |
+| **Resultado esperado** | Prontidão confirmada ou lista de bloqueadores. **Não** transitar para `IMPLEMENTING` nem implementar código enquanto o DoR-Implementation não estiver atendido. |
+| **Referências** | `specs/foundation/definition-of-ready.md`; `specs/foundation/feature-yaml.md`. |
 
 ---
 
-## 3.3 `Readiness`
+## 3.3 `Implement`
 
 | Campo | Valor |
 |-------|--------|
-| **Finalidade** | Validar Definition of Ready e dependências **antes** de iniciar Construction. |
-| **Quando utilizar** | Com `status.specification: APPROVED`; imediatamente antes de `Execute Feature`. |
-| **Artefatos envolvidos** | `feature.yaml`; artefatos em `specs/features/<feature>/`; dependências declaradas. |
-| **Resultado esperado** | Prontidão confirmada ou lista de bloqueadores. |
-| **Referências** | `specs/foundation/definition-of-ready.md`; `specs/templates/crud-feature/README.md`. |
+| **Finalidade** | Executar o plano de implementação da feature. |
+| **Quando utilizar** | Após Readiness de implementação aprovado (`status: IMPLEMENTING`). |
+| **Artefatos envolvidos** | `specs/features/<slug>/tasks.md` (plano principal); spec da feature; `docs/implementation/` conforme a camada. |
+| **Resultado esperado** | Tasks executadas sem redefinir comportamento de produto. |
+| **Não faz** | Criar Session, PKG, Snapshot ou Cache; alterar regras de negócio fora da spec. |
+| **Referências** | `specs/foundation/development-workflow.md`; `specs/foundation/path-conventions.md`; `docs/implementation/`. |
 
-**Distinção:** `Readiness` é pré-Construction. `Gate 5` (Feature Readiness Review) é pós-implementação e integra `Close`.
+Substitui, no fluxo cotidiano, `Execute Feature` + `PKG-<NN>` (ver apêndice histórico).
 
 ---
 
-## 3.4 `Execute Feature`
+## 3.4 `Validate`
 
 | Campo | Valor |
 |-------|--------|
-| **Finalidade** | Iniciar a **Sessão da Feature** — carregar contexto via SSOD, criar Snapshot e congelar `session.md`. |
-| **Quando utilizar** | Após `Readiness` aprovado; antes do primeiro PKG. |
-| **Artefatos envolvidos** | `feature-manifest.yaml`; `construction-state.yaml`; `session.md`; artefatos descobertos via manifesto. |
-| **Resultado esperado** | `phase: execution`; Session imutável; contexto pronto para PKGs. |
-| **Referências** | `construction/11-feature-execution-workflow.md`; `.cursor/rules/workflows/feature-construction-workflow.mdc`. |
+| **Finalidade** | Executar as validações apropriadas à camada alterada e registrar evidência observável. |
+| **Quando utilizar** | Após implementação; antes ou durante preparação de PR. |
+| **Resultado esperado** | Distinção entre falha de implementação, falha de ambiente e ausência de evidência. |
+| **Referências** | `specs/foundation/development-workflow.md` (Validação); CI em `.github/workflows/`. |
+
+| Camada | Comando / evidência |
+|--------|---------------------|
+| Backend | `cd backend && mvn clean verify` |
+| Frontend | lint, typecheck, unit; E2E no closure da feature |
+| CI | `.github/workflows/` |
+
+No cotidiano, logs de CI / PR são **evidência**, não SSOT de estado (`feature.yaml`).
 
 ---
 
-## 3.5 `PKG-<NN>`
+## 3.5 `Review`
 
 | Campo | Valor |
 |-------|--------|
-| **Finalidade** | Executar um Construction Package (implementação focada). |
-| **Sintaxe** | `PKG-01 FT-AREA`, `PKG-02 FT-AREA`, etc. |
-| **Quando utilizar** | Com Session ativa; respeitando dependências entre PKGs. |
-| **Artefatos envolvidos** | `construction-state.yaml`; `pkg-<NN>/status.md` (VALIDATION SUMMARY); `pkg-<NN>/evidence/`; código; `session.md` (somente leitura). |
-| **Resultado esperado** | PKG em `DONE` ou `BLOCKED`; seção **VALIDATION SUMMARY** em `status.md` (status: `PASS`, `BUILD_FAILURE`, `ENVIRONMENT_FAILURE` ou `PENDING_REVALIDATION`); resumo operacional curto. |
-| **Referências** | `construction/11-feature-execution-workflow.md`; `construction/templates/pkg-validation-summary.md`; workstream frontend: `construction/16-frontend-validation-gates.md` (BUILD-02 / E2E-01); `construction/17-frontend-e2e-behavior-policy.md` (E2E-02). |
+| **Finalidade** | Review de Spec (antes de `APPROVED`) ou Review de PR (durante `IMPLEMENTING`). |
+| **Quando utilizar** | Revisão da especificação; ou revisão de PR / somente review de código. |
+| **Resultado esperado** | Parecer. Review de Spec pode transitar `APPROVED` ou `READY_FOR_REVIEW` → `DRAFT` (motivo na evidência). Review de PR **não** altera `feature.yaml` automaticamente e **não** substitui Validate. |
+| **Referências** | `specs/foundation/review-process.md`; spec da feature; `specs/foundation/definition-of-done.md` no encerramento. |
 
 ---
 
-## 3.6 `Close`
-
-| Campo | Valor |
-|-------|--------|
-| **Finalidade** | Encerrar formalmente a Feature — executa a sequência consolidada de encerramento. |
-| **Quando utilizar** | Todos os PKGs em `DONE`; Session ativa. |
-| **Artefatos envolvidos** | `construction-state.yaml`; `review/`; `reports/`; `construction/09-progress.md`. |
-| **Resultado esperado** | `phase: closed`; `closure-report.md`; estados finais de review, audit, readiness e build. |
-| **Referências** | `construction/11-feature-execution-workflow.md` (Fase 3); `.cursor/orchestrator/construction-orchestrator.mdc`. |
-
-**Etapas internas** (sem comando próprio):
-
-```text
-Closure → Review → Audit → Readiness (Gate 5) → Build (mvn clean verify)
-```
-
-Alias aceito no Engineering Framework: `Encerrar Feature <Feature>`.
-
----
-
-## 3.7 `Status`
+## 3.6 `Status`
 
 | Campo | Valor |
 |-------|--------|
 | **Finalidade** | Consultar estado atual da Feature sem alterar artefatos. |
 | **Quando utilizar** | A qualquer momento; para decidir o próximo comando. |
-| **Artefatos envolvidos** | `feature.yaml`; `construction-state.yaml`; `pkg-<NN>/status.md`; `session.md`. |
-| **Resultado esperado** | Resumo: fase, PKG ativo, Gates pendentes, bloqueios. |
-| **Referências** | `construction/11-feature-execution-workflow.md` (STATE-02); `specs/foundation/feature-yaml.md`. |
+| **Artefatos envolvidos** | `feature.yaml` (SSOT de estado); `tasks.md` (plano); git/CI (evidência); `construction-state.yaml` somente como espelho histórico. |
+| **Resultado esperado** | Resumo: `status`, DoR, tasks, evidências, bloqueios. Não tratar registry/CI/`tasks.md` como SSOT de estado. |
+| **Referências** | `specs/foundation/feature-yaml.md`; `specs/foundation/minimal-ssot.md`; `specs/foundation/development-workflow.md`. |
 
 ---
 
-## 3.8 `Report`
-
-| Campo | Valor |
-|-------|--------|
-| **Finalidade** | Gerar relatório sobre a Feature. |
-| **Quando utilizar** | Quando o usuário precisar de consolidação documental explícita (progresso, PKG, encerramento). |
-| **Artefatos envolvidos** | `reports/` da Feature; artefatos de spec e construction conforme escopo solicitado. |
-| **Resultado esperado** | Relatório estruturado. O escopo (progresso, PKG, closure) pode ser indicado na mesma linha do comando. |
-| **Referências** | `construction/11-feature-execution-workflow.md`. |
-
-Exemplo com escopo explícito: `Report closure FT-AUTH` — não constitui comando separado; é `Report` com qualificador textual.
-
----
-
-# 4. Regras
+# 4. Regras (catálogo cotidiano)
 
 ## 4.1 Governança
 
@@ -208,35 +165,136 @@ Exemplo com escopo explícito: `Report closure FT-AUTH` — não constitui coman
 | CMD-01 | Comandos **não alteram** o processo SDD, Gates, templates ou workflows. |
 | CMD-02 | Comandos **apenas invocam** atividades já definidas nos documentos oficiais. |
 | CMD-03 | Toda lógica permanece nos artefatos oficiais — **nunca** duplicada no prompt. |
-| CMD-04 | Etapas internas de um comando **não** geram novos comandos no catálogo. |
-| CMD-05 | Consultar SSOT/SSOD antes de inferir caminhos (`feature.yaml`, `feature-manifest.yaml`, `construction-state.yaml`). |
+| CMD-04 | Etapas internas de um comando **não** geram novos comandos no catálogo cotidiano. |
+| CMD-05 | Consultar `path-conventions.md` e `feature.yaml` antes de inferir caminhos. Não usar `feature-manifest.yaml` para localizar artefatos em features novas. |
 
 ## 4.2 Dependências
 
 | ID | Regra |
 |----|-------|
-| CMD-06 | `Gate 1` exige `READY_FOR_REVIEW`. |
-| CMD-07 | `Readiness` exige `status.specification: APPROVED`. |
-| CMD-08 | `Execute Feature` exige Readiness pré-Construction aprovado. |
-| CMD-09 | `PKG-<NN>` exige Session ativa (`SESSION-01`). |
-| CMD-10 | `Close` exige todos os PKGs em `DONE`. |
-| CMD-11 | Nenhum Gate pode ser ignorado — use `Gate <N>` ou absorva via `Close` quando aplicável. |
+| CMD-07 | `Readiness` avalia DoR-Spec e/ou DoR-Implementation (`definition-of-ready.md`). Não é estado. |
+| CMD-17 | `Implement` exige `status: IMPLEMENTING` (DoR-Implementation atendido). |
+| CMD-18 | `Review` no modo somente revisão **não altera** código nem artefatos de produto. |
+| CMD-19 | Comandos da cerimônia v4.1 **não** são padrão do fluxo cotidiano nem do Claude Code. Dependência exclusiva desses mecanismos: interromper e solicitar decisão humana. |
 
 ## 4.3 Restrições
 
 | ID | Regra |
 |----|-------|
-| CMD-12 | `Status` e `Report` não alteram artefatos. |
-| CMD-13 | Durante `PKG-<NN>`, é proibido `Close`, build global (`mvn clean verify`) ou atualização de documentação global. |
-| CMD-14 | Ao concluir `PKG-<NN>`, preencher **VALIDATION SUMMARY** em `pkg-<NN>/status.md` (VAL-01 + VAL-02); log completo em `evidence/`. |
-| CMD-15 | Status de validação: `PASS` \| `BUILD_FAILURE` \| `ENVIRONMENT_FAILURE` \| `PENDING_REVALIDATION` — determinação por condições observáveis (VAL-02), sem prioridade fixa. |
-| CMD-16 | Artefatos por PKG: somente `status.md` + `evidence/*.log` opcional (ART-01) — ver `pkg-artifact-model.md`. |
+| CMD-12 | `Status` não altera artefatos. |
+| CMD-20 | Não tratar `construction/registry.yaml` status, `session.md` ou `pkg-XX/status.md` como SSOT de produto ou de progresso global. |
 
 ---
 
-# 5. Exemplos
+# 5. Exemplos (Etapa 2)
 
-## Ciclo típico — Feature CRUD
+```text
+Specify FT-AREA
+Readiness FT-AREA
+Implement FT-AREA
+Validate FT-AREA
+Review FT-AREA
+Status FT-AREA
+```
+
+Consulta:
+
+```text
+Status FT-AUTH
+```
+
+---
+
+# 6. Mapa de referências (cotidiano)
+
+| Comando | Documento principal |
+|---------|---------------------|
+| `Specify` | `specs/foundation/workflow.md`; `specs/foundation/feature-yaml.md` |
+| `Readiness` | `specs/foundation/definition-of-ready.md` |
+| `Implement` | `specs/foundation/development-workflow.md`; `path-conventions.md` |
+| `Validate` | `specs/foundation/development-workflow.md` |
+| `Review` | `review-process.md` (Spec vs PR); spec da feature |
+| `Status` | `feature-yaml.md`; `minimal-ssot.md` |
+| Identidade | `specs/foundation/feature-yaml.md` |
+| Precedência | `specs/foundation/minimal-ssot.md` |
+
+---
+
+# 7. Evolução
+
+Novos comandos somente quando representarem intenções **já formalizadas** e **não absorvíveis** por comando existente.
+
+Antes de adicionar: verificar se a atividade é etapa interna de outro comando.
+
+---
+
+# Apêndice A — Referência histórica (catálogo v1.1 / framework v4.1)
+
+Este apêndice **não é o fluxo cotidiano**. Preserva rastreabilidade. Archive operacional: `docs/governance/09-framework-simplification-scope.md`; `construction/11-feature-execution-workflow.md`.
+
+Não eliminar. Não usar como comandos padrão do Claude Code.
+
+## A.1 Comandos históricos
+
+| Comando | Intenção histórica | Substituto cotidiano |
+|---------|--------------------|----------------------|
+| `Gate <N>` | Quality Gate formal 1–6 | DoR (`Readiness`) / DoD / review de PR conforme `development-workflow.md` |
+| `Execute Feature` | Iniciar Sessão da Feature (SSOD, Snapshot, `session.md`) | `Implement` após `Readiness` |
+| `PKG-<NN>` | Construction Package com Session ativa | tasks TK-* em `tasks.md` |
+| `Close` | Encerramento formal v4.1 (Closure → Review → Audit → Gate 5 → Build) | Validate + Review + DoD + CI/PR |
+| `Report` | Relatório de progresso/PKG/closure | Solicitação explícita; não faz parte do catálogo cotidiano |
+
+### `Gate`
+
+Sintaxe histórica: `Gate <N> <Feature>` — `<N>` de `1` a `6`.
+
+Referências: `specs/foundation/feature-quality-gates.md`; `specs/foundation/review-process.md` (Gate 1); `specs/foundation/definition-of-done.md` (Gate 6).
+
+`Gate 5` era etapa interna de `Close`.
+
+### `Execute Feature`
+
+Iniciava Sessão: `feature-manifest.yaml`; `construction-state.yaml`; `session.md`.
+
+Referências: `construction/11-feature-execution-workflow.md`; `.cursor/rules/workflows/feature-construction-workflow.mdc`.
+
+### `PKG-<NN>`
+
+Sintaxe: `PKG-01 FT-AREA`. Exigia Session ativa (SESSION-01).
+
+Referências: `construction/11-feature-execution-workflow.md`; `construction/templates/pkg-validation-summary.md`; workstreams frontend `construction/16-frontend-validation-gates.md`, `construction/17-frontend-e2e-behavior-policy.md`.
+
+### `Close`
+
+Exigia todos os PKGs em `DONE`. Produzia `closure-report.md` e `phase: closed`.
+
+Referências: `construction/11-feature-execution-workflow.md` (Fase 3); `.cursor/orchestrator/construction-orchestrator.mdc`.
+
+Alias histórico: `Encerrar Feature <Feature>`.
+
+### `Report`
+
+Não alterava artefatos. Exemplo: `Report closure FT-AUTH`.
+
+Referência: `construction/11-feature-execution-workflow.md`.
+
+## A.2 Regras históricas (v1.1) — não aplicar ao cotidiano
+
+| ID | Regra |
+|----|-------|
+| CMD-05 (v1.1) | Consultar SSOT/SSOD (`feature.yaml`, `feature-manifest.yaml`, `construction-state.yaml`). |
+| CMD-06 | `Gate 1` exige `READY_FOR_REVIEW`. |
+| CMD-08 | `Execute Feature` exige Readiness pré-Construction aprovado. |
+| CMD-09 | `PKG-<NN>` exige Session ativa (`SESSION-01`). |
+| CMD-10 | `Close` exige todos os PKGs em `DONE`. |
+| CMD-11 | Nenhum Gate pode ser ignorado — use `Gate <N>` ou absorva via `Close` quando aplicável. |
+| CMD-12 (parcial) | `Report` não altera artefatos. |
+| CMD-13 | Durante `PKG-<NN>`, é proibido `Close`, build global (`mvn clean verify`) ou atualização de documentação global. |
+| CMD-14 | Ao concluir `PKG-<NN>`, preencher **VALIDATION SUMMARY** em `pkg-<NN>/status.md`. |
+| CMD-15 | Status de validação: `PASS` \| `BUILD_FAILURE` \| `ENVIRONMENT_FAILURE` \| `PENDING_REVALIDATION`. |
+| CMD-16 | Artefatos por PKG: somente `status.md` + `evidence/*.log` opcional. |
+
+## A.3 Exemplo histórico (não usar no cotidiano)
 
 ```text
 Specify FT-AREA
@@ -251,48 +309,18 @@ Gate 6 FT-AREA
 Status FT-AREA
 ```
 
-## Apenas consulta
-
-```text
-Status FT-AUTH
-```
-
-## Revisão de Specification (sem Construction)
-
-```text
-Gate 1 FT-AREA
-```
-
-## Um PKG
-
-```text
-PKG-03 FT-AUTH
-```
-
----
-
-# 6. Mapa de referências
+## A.4 Mapa de referências históricas
 
 | Comando | Documento principal |
 |---------|---------------------|
-| `Specify` | `.cursor/rules/workflows/specification-flow.mdc` |
+| `Specify` (v1.1) | `.cursor/rules/workflows/specification-flow.mdc`; `.cursor/orchestrator/specification-orchestrator.mdc` |
 | `Gate` | `specs/foundation/feature-quality-gates.md` |
-| `Readiness` | `specs/foundation/definition-of-ready.md` |
 | `Execute Feature`, `PKG-<NN>`, `Close` | `construction/11-feature-execution-workflow.md` |
-| `Status`, `Report` | `construction/11-feature-execution-workflow.md` (STATE-02) |
-| Identidade | `specs/foundation/feature-yaml.md` |
+| `Status`, `Report` (v1.1) | `construction/11-feature-execution-workflow.md` (STATE-02) |
 
 ---
 
-# 7. Evolução
-
-Novos comandos somente quando representarem intenções **já formalizadas** e **não absorvíveis** por comando existente.
-
-Antes de adicionar: verificar se a atividade é etapa interna de outro comando.
-
----
-
-# Apêndice — Consolidação v1.0 → v1.1
+# Apêndice B — Consolidação v1.0 → v1.1
 
 | Comando v1.0 | Destino v1.1 | Justificativa |
 |--------------|--------------|---------------|
@@ -305,9 +333,27 @@ Antes de adicionar: verificar se a atividade é etapa interna de outro comando.
 | `Gate 5` (entrada separada) | `Close` (padrão) / `Gate 5` (isolado) | Feature Readiness Review integra `Close`; comando `Gate 5` mantido apenas para execução isolada. |
 | `Report Closure`, `Report PKG` (variantes) | `Report` | Escopo indicado como qualificador textual — um único comando de relatório. |
 
-**Comandos mantidos sem alteração de nome:** `Specify`, `Readiness`, `Execute Feature`, `PKG-<NN>`, `Close`, `Status`, `Report`.
+**Comandos mantidos sem alteração de nome na v1.1:** `Specify`, `Readiness`, `Execute Feature`, `PKG-<NN>`, `Close`, `Status`, `Report`.
 
-**Redução:** 18 entradas de catálogo → **8 comandos essenciais**.
+**Redução v1.0 → v1.1:** 18 entradas de catálogo → **8 comandos essenciais**.
+
+---
+
+# Apêndice C — Alinhamento v1.1 → v1.2 (Etapa 2)
+
+Autorizado por `specs/foundation/migrations/SPEC-MIGRATION-CLAUDE-CODE.md` (D2).
+
+| Comando v1.1 | Destino v1.2 | Justificativa |
+|--------------|--------------|---------------|
+| `Specify` | `Specify` (cotidiano) | Intenção preservada; referências cotidianas passam a `specs/foundation/` (não duplicar lógica em `.cursor/`). |
+| `Readiness` | `Readiness` (cotidiano) | DoR permanece obrigatório. |
+| `Status` | `Status` (cotidiano) | Consulta sem mutação; fontes passam a `feature.yaml` + git/CI + `minimal-ssot.md`. |
+| `Execute Feature` + `PKG-<NN>` | `Implement` | Substituição aprovada na Etapa 2 (tasks TK-*). Histórico no Apêndice A. |
+| (validação de build/testes) | `Validate` | Etapa explícita de `development-workflow.md`. Distinto da validação cruzada documental absorvida em `Specify` na v1.1. |
+| `Review` (antes em `Close`) | `Review` | Review de PR no fluxo simplificado; modo somente revisão não edita. |
+| `Gate <N>` | Apêndice A | Não faz parte do fluxo cotidiano Claude. |
+| `Close` | Apêndice A | Cerimônia v4.1. |
+| `Report` | Apêndice A | Fora da lista de invocações cotidianas da migração. |
 
 ---
 
@@ -317,3 +363,5 @@ Antes de adicionar: verificar se a atividade é etapa interna de outro comando.
 |--------|------|-----------|
 | 1.0 | 2026-07-13 | Catálogo inicial de comandos para agentes |
 | 1.1 | 2026-07-13 | Consolidação minimalista — redução de redundâncias |
+| 1.2 | 2026-08-19 | Alinhamento ao fluxo Etapa 2; cerimônia v4.1 como referência histórica |
+| 1.3 | 2026-08-19 | Máquina de estados da Feature; DoR-Spec / DoR-Implementation; Review de Spec vs PR |

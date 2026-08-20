@@ -106,6 +106,7 @@ erDiagram
 | SIG_SINGULAR | Sim | UK — sigla |
 | COD_UNIMED | Sim | UK — código Unimed (BR-014) |
 | NUM_REGISTRO_ANS | Sim | Registro ANS |
+| DES_DOMINIO_EMAIL | Não | UK — domínio de e-mail 1:1 (DEC-ORG-003, DH-PA-02); NULL se ainda não cadastrado |
 | FLG_ATIVO | Sim | S/N |
 | DAT_CADASTRO | Sim | Auditoria |
 | DAT_ATUALIZACAO | Não | Auditoria |
@@ -300,6 +301,7 @@ Detalhamento de colunas, índices e constraints: `03-physical-model.md` e script
 | Líder único de equipe | EQUIPE.COD_LIDER → COLABORADOR |
 | E-mail único por colaborador | UK_COLABORADOR_EMAIL |
 | Código Unimed único por singular | UK_SINGULAR_COD_UNIMED |
+| Domínio de e-mail único por singular | UK_SINGULAR_DOMINIO_EMAIL |
 | Sigla única por singular | UK_SINGULAR_SIGLA |
 | Identidade Zimbra única (quando informada) | UK_COLABORADOR_ZIMBRA |
 | session_id único | UK_AUTH_SESSAO_ID |

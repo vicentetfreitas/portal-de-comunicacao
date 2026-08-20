@@ -15,13 +15,32 @@ export interface ColaboradorOrganizationalLinks {
   teamId: number | null;
 }
 
-export interface AuthenticatedUser {
+export interface ResolvedPrimeiroAcessoOrganization {
+  singularId: number;
+  federationId: number;
+}
+
+export interface PrimeiroAcessoArea {
   id: number;
+  name: string;
+  acronym: string | null;
+}
+
+export interface CompletePrimeiroAcessoRequest {
+  areaId: number;
+  teamId?: number | null;
+}
+
+export interface AuthenticatedUser {
+  id: number | null;
   email: string;
   name: string;
   permissions: string[];
-  sessionId: string;
-  organizationalLinks: ColaboradorOrganizationalLinks;
+  sessionId: string | null;
+  organizationalLinks: ColaboradorOrganizationalLinks | null;
+  primeiroAcesso: boolean;
+  resolvedOrganization?: ResolvedPrimeiroAcessoOrganization | null;
+  primeiroAcessoBlockCode?: string | null;
   roles?: string[];
 }
 

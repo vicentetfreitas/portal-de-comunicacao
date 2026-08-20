@@ -92,14 +92,15 @@ SELECT COD_FEDERACAO, NOM_FEDERACAO, FLG_ATIVO
 
 ## Singulares (`002`)
 
-Fonte: [Unimeds Filiadas](https://www.unimedceara.com.br/institucional/unimeds-filiadas/). `COD_UNIMED` da singular = registro ANS (dígitos).
+Fonte institucional: [Unimeds Filiadas](https://www.unimedceara.com.br/institucional/unimeds-filiadas/). Conteúdo efetivo do script:
 
-| SIG_SINGULAR | NOM_SINGULAR | COD_UNIMED | No script |
-|--------------|--------------|------------|-----------|
-| CARIRI | Unimed do Cariri | 356123 | Sim |
-| SOBRAL | Unimed de Sobral | 303178 | Sim |
-| ARACATI | Unimed Regional de Aracati | 322717 | Sim |
-| Demais filiadas | — | Pendente | Atualizar `002` + migration se pós-go-live |
+| SIG_SINGULAR | NOM_SINGULAR | COD_UNIMED | NUM_REGISTRO_ANS | DES_DOMINIO_EMAIL |
+|--------------|--------------|------------|------------------|-------------------|
+| UNMCEA | Unimed Ceará | 979 | 32195-8 | unimedceara.com.br |
+| UNMCAR | Unimed Cariri | 107 | 35612-3 | unimedcariri.com.br |
+| UNMSOB | Unimed Sobral | 112 | 303178 | NULL (sem domínio normativo) |
+
+Domínios aplicados por `UPDATE` após os `INSERT` (DEC-ORG-003 / DH-PA-02). Evolução de base já carregada: `migrations/V008__singular_email_domain.sql`.
 
 ---
 

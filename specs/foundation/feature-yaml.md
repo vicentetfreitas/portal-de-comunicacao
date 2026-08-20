@@ -4,16 +4,20 @@
 |--------|--------|
 | Artefato | feature-yaml.md |
 | Camada | Foundation |
-| Versão | 1.1 |
+| Versão | 1.2 |
 | Status | STABLE |
 
 ---
 
 # Objetivo
 
-Este documento define o contrato oficial do arquivo `feature.yaml`, Single Source of Truth (SSOT) de identidade e estado de uma Feature no Specification Framework.
+Este documento define o contrato oficial do arquivo `feature.yaml`: Single Source of Truth (SSOT) de **identidade** e de **estado** de uma Feature.
+
+O campo `status` representa o **ciclo de vida completo** da Feature — não somente a fase de Specification.
 
 Nenhum artefato em `specs/features/<feature>/` pode contradizer as informações declaradas neste arquivo.
+
+Git, CI, testes, logs e `tasks.md` são evidência ou plano operacional. **Não** substituem `feature.yaml` como SSOT de estado.
 
 ---
 
@@ -38,8 +42,7 @@ template:
   name: <string>
   version: <string>
 
-status:
-  specification: <enum>
+status: <enum>
 ```
 
 ---
@@ -99,35 +102,81 @@ Versão do template utilizada pela Feature. Deve corresponder à versão documen
 
 ---
 
-## `status.specification`
+## `status`
 
 | Propriedade | Valor |
 |-------------|--------|
 | Tipo | `enum` |
 | Obrigatório | Sim |
-| Valores permitidos | Ver tabela abaixo |
+| Valores persistentes permitidos | `DRAFT` \| `READY_FOR_REVIEW` \| `APPROVED` \| `IMPLEMENTING` \| `DONE` |
 
-Estado da fase de Specification.
+Estado do ciclo de vida completo da Feature.
 
-| Valor | Descrição |
-|-------|-----------|
-| `DRAFT` | Feature em elaboração; artefatos incompletos ou em revisão interna |
-| `READY_FOR_REVIEW` | Fase de Specification concluída; aguardando revisão formal |
-| `REWORK` | Revisão exigiu correções; retorno à elaboração |
-| `APPROVED` | Especificação aprovada na revisão; apta para Readiness Review e implementação futura |
+### Máquina oficial
 
-**Estado oficial de conclusão da fase de Specification:** `READY_FOR_REVIEW`.
+```text
+DRAFT
+  ↓
+READY_FOR_REVIEW
+  ↓
+APPROVED
+  ↓
+IMPLEMENTING
+  ↓
+DONE
+```
+
+Retrabalho de especificação (único retorno persistente):
+
+```text
+READY_FOR_REVIEW → DRAFT
+```
+
+`REWORK` **não é estado persistente**. Problemas na revisão da spec fazem `READY_FOR_REVIEW` → `DRAFT`. O motivo pertence à evidência da revisão.
+
+### Semântica
+
+| Valor | Significado |
+|-------|-------------|
+| `DRAFT` | Feature em elaboração. Spec pode estar incompleta. **Não** autoriza implementação. |
+| `READY_FOR_REVIEW` | Spec atingiu o mínimo para revisão formal. DoR-Spec e Gate 1 verificados. Sem bloqueadores conhecidos para a revisão da spec. |
+| `APPROVED` | Spec formalmente revisada e aprovada. Distinto da revisão de PR. **Não** autoriza código até DoR-Implementation. |
+| `IMPLEMENTING` | Implementação formalmente autorizada e em execução. Inicia **após** Readiness de implementação (DoR-Implementation), não no primeiro commit. |
+| `DONE` | Feature concluída. DoD, Gate 3, Gate 6, validação, revisão de PR e evidências atendidos. |
+
+### Transições
+
+| De | Para | Condição |
+|----|------|----------|
+| (criação) | `DRAFT` | `feature.yaml` criado |
+| `DRAFT` | `READY_FOR_REVIEW` | DoR-Spec atendido; Gate 1 verificado; artefatos obrigatórios presentes; sem bloqueadores para revisão da spec |
+| `READY_FOR_REVIEW` | `APPROVED` | Review de Spec aprovada |
+| `READY_FOR_REVIEW` | `DRAFT` | Review de Spec com problemas (evidência na revisão) |
+| `APPROVED` | `IMPLEMENTING` | DoR-Implementation atendido; Readiness de implementação aprovado; tarefas identificadas; dependências e impactos relevantes conhecidos |
+| `IMPLEMENTING` | `DONE` | Implementação concluída; validação realizada; Review de PR realizada; Gate 3; DoD; Gate 6; evidências disponíveis |
+
+Readiness é **avaliação** (comando/atividade), não estado.
+
+Validate é **atividade de evidência**. Não altera `feature.yaml`.
+
+Gates são **verificações**. Não são estados. Resultados PASS/FAIL dos Gates 2–5 **não** viram `status` da Feature.
 
 ---
 
-# Campos Opcionais
+# Compatibilidade
 
-Campos adicionais em `status` ou na raiz do documento **não fazem parte deste contrato v1.1** e devem ser ignorados por consumidores do Framework até formalização em versão futura.
+Features existentes podem ainda usar o formato legado:
 
-Exemplos não padronizados (evitar até especificação futura):
+```yaml
+status:
+  specification: <enum>
+```
 
-- `status.construction`
-- `metadata.*`
+Esse formato **não faz parte do contrato v1.2**. Valores legados (`REWORK`, apenas fase de specification) são **impacto de migração futura**. Não migrar Features nesta versão do contrato.
+
+Até a migração: `status.specification` não substitui o enum de ciclo completo. Consumidores novos devem usar `status:` escalar.
+
+Campos adicionais (`status.construction`, `metadata.*`) **não** fazem parte deste contrato e não são SSOT de estado.
 
 ---
 
@@ -147,7 +196,11 @@ Exemplos não padronizados (evitar até especificação futura):
 - `feature.id` não pode ser alterado após aprovação da Feature sem processo formal de governança.
 - `template.name` e `template.version` devem referenciar template existente e estável.
 - Não utilizar `feature.yaml` para regras de negócio, contratos de API ou conteúdo funcional — esses pertencem aos artefatos do template.
-- Status `APPROVED` só pode ser atribuído após revisão formal bem-sucedida (Gate 1).
+- `READY_FOR_REVIEW` só após DoR-Spec e Gate 1.
+- `APPROVED` só após Review de Spec. Gate 1 **não** atribui `APPROVED`.
+- `IMPLEMENTING` só após DoR-Implementation e Readiness de implementação.
+- `DONE` só após DoD, Gate 3 e Gate 6 (e evidências associadas).
+- Não persistir `REWORK` em `status`.
 
 ---
 
@@ -162,30 +215,31 @@ template:
   name: crud-feature
   version: "1.1"
 
-status:
-  specification: READY_FOR_REVIEW
+status: READY_FOR_REVIEW
 ```
 
 ---
 
 # Validação
 
-Antes de iniciar ou encerrar a fase de Specification, validar:
+Antes de transitar `status`, validar:
 
 - [ ] Arquivo existe em `specs/features/<feature>/feature.yaml`
 - [ ] Todos os campos obrigatórios presentes
 - [ ] `feature.id` segue o padrão `FT-<DOMAIN>`
 - [ ] `template.name` corresponde a diretório existente em `specs/templates/`
 - [ ] `template.version` corresponde à versão do template referenciado
-- [ ] `status.specification` utiliza valor do enum oficial
+- [ ] `status` utiliza um dos cinco valores persistentes oficiais
 
 ---
 
 # Referências
 
-- `specs/foundation/feature-quality-gates.md` — Gate 1
-- `specs/foundation/definition-of-ready.md`
-- `.cursor/rules/workflows/specification-flow.mdc` — fluxo oficial
+- `specs/foundation/definition-of-ready.md` — DoR-Spec e DoR-Implementation
+- `specs/foundation/feature-quality-gates.md` — verificações (não estados)
+- `specs/foundation/review-process.md` — Review de Spec e Review de PR
+- `specs/foundation/definition-of-done.md` — critério de `DONE`
+- `specs/foundation/development-workflow.md` — fluxo cotidiano
 
 ---
 
@@ -193,4 +247,5 @@ Antes de iniciar ou encerrar a fase de Specification, validar:
 
 | Versão | Data | Descrição |
 |--------|------|-----------|
-| 1.1 | 2026-07-13 | Contrato inicial formal (Sprint Framework v1.1) |
+| 1.1 | 2026-07-13 | Contrato inicial (`status.specification`; `REWORK` persistente) |
+| 1.2 | 2026-08-19 | Ciclo completo em `status`; `IMPLEMENTING` e `DONE`; `REWORK` não persistente |

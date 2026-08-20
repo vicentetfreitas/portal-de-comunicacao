@@ -32,6 +32,9 @@ export interface AppRouteMeta {
   /** Requires authenticated session (enforced when router guards enabled) */
   requiresAuth?: boolean;
 
+  /** Allows Primeiro Acesso credential (DH-PA-01) without operational COLABORADOR */
+  allowsPrimeiroAcesso?: boolean;
+
   /** Only for guests — redirects authenticated users (FT-AUTH) */
   guestOnly?: boolean;
 

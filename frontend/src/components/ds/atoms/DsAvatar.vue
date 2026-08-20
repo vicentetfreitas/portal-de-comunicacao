@@ -34,11 +34,11 @@ const props = withDefaults(
 
 const quasarSize = computed(() => {
   const map: Record<DsSize, string> = {
-    xs: "24px",
-    sm: "32px",
-    md: "40px",
-    lg: "56px",
-    xl: "72px"
+    xs: "var(--spacing-lg)",
+    sm: "var(--spacing-xl)",
+    md: "var(--spacing-2xl)",
+    lg: "var(--spacing-14)",
+    xl: "var(--spacing-18)"
   };
   return map[props.size];
 });

@@ -144,11 +144,8 @@ describe("AuthApiService", () => {
         }
       })
       .mockResolvedValueOnce({
-        status: 302,
-        ok: false,
-        headers: {
-          get: (name: string) => (name === "Location" ? "/app" : null)
-        }
+        status: 200,
+        ok: true
       });
 
     await authService.login({
@@ -174,19 +171,19 @@ describe("AuthApiService", () => {
     );
   });
 
-  it("posts credentials to login when email and password are provided", async () => {
+  it("resolves when login returns 200", async () => {
     fetchMock.mockResolvedValue({
-      status: 302,
-      headers: {
-        get: (name: string) => (name === "Location" ? "/app" : null)
-      }
+      status: 200,
+      ok: true
     });
 
-    await authService.login({
-      email: "user@unimedceara.com.br",
-      password: "secret",
-      rememberMe: true
-    });
+    await expect(
+      authService.login({
+        email: "user@unimedceara.com.br",
+        password: "secret",
+        rememberMe: true
+      })
+    ).resolves.toBeUndefined();
 
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/v1/auth/login",
@@ -195,7 +192,48 @@ describe("AuthApiService", () => {
         credentials: "include"
       })
     );
-    expect(assignMock).toHaveBeenCalledWith("/app");
+    expect(assignMock).not.toHaveBeenCalled();
+  });
+
+  it("does not use redirect manual on credential login", async () => {
+    fetchMock.mockResolvedValue({
+      status: 200,
+      ok: true
+    });
+
+    await authService.login({
+      email: "user@unimedceara.com.br",
+      password: "secret"
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/v1/auth/login",
+      expect.not.objectContaining({ redirect: "manual" })
+    );
+  });
+
+  it("does not treat 302 as successful credential login", async () => {
+    fetchMock.mockResolvedValue({
+      status: 302,
+      ok: false,
+      headers: {
+        get: (name: string) => (name === "Location" ? "/app" : null)
+      },
+      json: async () => undefined
+    });
+
+    await expect(
+      authService.login({
+        email: "user@unimedceara.com.br",
+        password: "secret"
+      })
+    ).rejects.toMatchObject({
+      status: 302,
+      code: "AUTH_LOGIN_FAILED",
+      category: "unknown"
+    });
+
+    expect(assignMock).not.toHaveBeenCalled();
   });
 
   it("fetches current user from /auth/me", async () => {
@@ -208,6 +246,7 @@ describe("AuthApiService", () => {
           name: "Maria",
           permissions: ["DOCUMENT_READ"],
           sessionId: "session-1",
+          primeiroAcesso: false,
           organizationalLinks: {
             federationId: 1,
             singularId: null,
@@ -227,6 +266,54 @@ describe("AuthApiService", () => {
       areaId: null,
       teamId: null
     });
+  });
+
+  it("lists primeiro acesso areas from dedicated endpoint", async () => {
+    getMock.mockResolvedValue({
+      data: {
+        success: true,
+        data: [{ id: 20, name: "TI", acronym: "TI" }]
+      }
+    });
+
+    const areas = await authService.listPrimeiroAcessoAreas();
+
+    expect(getMock).toHaveBeenCalledWith(AUTH_API_PATHS.primeiroAcessoAreas);
+    expect(areas).toEqual([{ id: 20, name: "TI", acronym: "TI" }]);
+  });
+
+  it("completes primeiro acesso without sending colaborador identity", async () => {
+    postMock.mockResolvedValue({
+      data: {
+        success: true,
+        data: {
+          id: 9,
+          email: "novo@unimedceara.com.br",
+          name: "Novo",
+          permissions: [],
+          sessionId: "s-op",
+          primeiroAcesso: false,
+          organizationalLinks: {
+            federationId: 1,
+            singularId: 2,
+            areaId: 20,
+            teamId: null
+          }
+        }
+      }
+    });
+
+    const user = await authService.completePrimeiroAcesso({ areaId: 20 });
+
+    expect(postMock).toHaveBeenCalledWith(
+      AUTH_API_PATHS.completePrimeiroAcesso,
+      {
+        areaId: 20,
+        teamId: null
+      }
+    );
+    expect(user.primeiroAcesso).toBe(false);
+    expect(user.id).toBe(9);
   });
 
   it("returns false when refresh fails with 401", async () => {

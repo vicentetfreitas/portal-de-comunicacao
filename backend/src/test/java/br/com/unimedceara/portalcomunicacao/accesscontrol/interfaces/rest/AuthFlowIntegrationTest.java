@@ -3,6 +3,9 @@ package br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.JwtTokenService;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.OAuthStateService;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.RefreshTokenService;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.repository.ColaboradorRepository;
+import br.com.unimedceara.portalcomunicacao.configuration.properties.AuthProperties;
+import br.com.unimedceara.portalcomunicacao.support.fixture.builder.ColaboradorTestBuilder;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationRequest;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationResult;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.application.port.IdentityCredentialValidator;
@@ -42,8 +45,20 @@ class AuthFlowIntegrationTest extends AbstractTransactionalMockMvcIntegrationTes
     @Autowired
     private RefreshTokenService refreshTokenService;
 
+    @Autowired
+    private ColaboradorRepository colaboradorRepository;
+
+    @Autowired
+    private AuthProperties authProperties;
+
     @Test
     void shouldCompleteLoginCallbackMeRefreshAndLogoutFlow() throws Exception {
+        ColaboradorTestBuilder.forFederation(authProperties.defaultFederationId())
+                .email("colaborador@unimedceara.com.br")
+                .nome("Colaborador Teste")
+                .zimbraId("zimbra-id-test")
+                .persist(colaboradorRepository);
+
         String state = oAuthStateService.createState(false);
 
         MvcResult callbackResult = mockMvc.perform(get("/api/v1/auth/callback")

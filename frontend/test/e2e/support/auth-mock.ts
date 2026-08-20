@@ -10,6 +10,7 @@ const ADMIN_USER = {
   name: "Administrador",
   permissions: [] as string[],
   sessionId: "session-e2e",
+  primeiroAcesso: false,
   roles: ["ADMIN"] as string[],
   organizationalLinks: {
     federationId: 1 as number | null,

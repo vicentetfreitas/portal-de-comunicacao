@@ -14,6 +14,8 @@ Mapa operacional de fontes autoritativas para o fluxo simplificado de desenvolvi
 
 **Este documento prevalece** sobre `construction/registry.yaml` status manual, `feature-manifest.status` e `pkg-XX/status.md` em conflito de estado.
 
+SSOT de **estado da Feature**: `specs/features/<slug>/feature.yaml` (contrato: `feature-yaml.md`). Git/CI/testes = evidência. `tasks.md` = plano. `construction-state.yaml` = espelho de workstream histórico, se existir.
+
 ---
 
 ## Hierarquia de precedência
@@ -36,7 +38,7 @@ artefatos históricos / legados
 | Regras de negócio transversais | `docs/domain/09-business-rules.md` — features referenciam, não reescrevem |
 | Contrato API | `specs/features/*/api.md` > `docs/api/` (Evidence) |
 | Schema físico Oracle | `database/` (baseline > ddl > migrations) |
-| Estado de implementação | `feature.yaml` + git/CI > `construction-state.yaml` > `registry.yaml` > `feature-manifest.status` |
+| Estado da Feature | `specs/features/<slug>/feature.yaml` (git/CI = evidência; `tasks.md` = plano; `construction-state.yaml` = espelho) |
 
 ### Dependência de camadas
 
@@ -55,12 +57,13 @@ docs/ → specs/ → construction/ → .cursor/
 | Visão / escopo MVP | `docs/domain/01-vision.md`, `docs/backlog/04-mvp-scope.md` | seções de escopo em specs | — | — |
 | Requisitos funcionais | `specs/features/*/specification.md` | `traceability.md` | — | — |
 | Regras de negócio | `docs/domain/09-business-rules.md` | RF/RN em specs | — | — |
-| Glossário | `docs/domain/02-business-glossary.md`, `03-ubiquitous-language.md` | `specs/foundation/glossary.md` | — | termos desalinhados em `03` |
+| Glossário de negócio | `docs/domain/02-business-glossary.md`, `03-ubiquitous-language.md` | — | — | — |
+| Glossário de engenharia / framework | `specs/foundation/glossary.md` | — | — | — |
 | Identidade de feature | `specs/features/<slug>/feature.yaml` | — | — | — |
 | Especificação de feature | `specs/features/<slug>/` | use-cases, flows, state-machine | — | — |
 | Casos de uso | `specs/features/*/use-cases.md` | traceability | — | — |
 | Fluxos | `specs/features/*/flows.md` | — | — | — |
-| Estados | `specs/features/*/state-machine.md` | — | — | — |
+| Estados de domínio | `specs/features/*/state-machine.md` | — | — | — |
 | Contrato API (SDD) | `specs/features/*/api.md` | — | `docs/api/` | — |
 | Modelo físico | `database/` | `database/model/` | — | — |
 | Modelo lógico | `docs/architecture/05-data-architecture.md` | `solution-design/07-data-ownership.md` | — | — |
@@ -70,7 +73,7 @@ docs/ → specs/ → construction/ → .cursor/
 | Tarefas / plano | **`specs/features/*/tasks.md`** | `frontend-tasks.md` | — | PKG tables, `execution-plan.md` |
 | Fluxo de desenvolvimento | `development-workflow.md` | — | CI + PR | PKG/session/orchestrator |
 | Paths de código | `path-conventions.md` | manifests (legado) | — | `feature-manifest.yaml` |
-| Estado implementação | `feature.yaml` + git/CI | `construction-state.yaml` | `registry.yaml` (índice) | `manifest.status.phase` |
+| Estado da Feature | `specs/features/<slug>/feature.yaml` (`feature-yaml.md`) | — | `tasks.md` (plano); git/CI (evidência); `construction-state.yaml` (espelho histórico) | `registry.yaml` status, `manifest.status.phase` |
 | CI | `.github/workflows/` | — | logs de build | — |
 | Config Cursor | `.cursor/rules/core/project-index.mdc` | rules on-demand | agents ativos | archived agents |
 | Registry construction | `construction/registry.yaml` | legacy registries | construction-state | manifest como SSOD |
@@ -88,7 +91,7 @@ docs/ → specs/ → construction/ → .cursor/
 | `execution-plan.md` | Histórico de planejamento — ver `tasks.md` |
 | `session.md` | Snapshot imutável de sessão fechada — Archive |
 | `pkg-XX/status.md` | Histórico local de PKG — Evidence, não estado global |
-| `construction/registry.yaml` status fields | Indicativo — derivar de construction-state ou git/CI |
+| `construction/registry.yaml` status fields | Indicativo — **não** SSOT de estado; estado em `feature.yaml` |
 | `.cursor/rules/workflows/feature-construction-workflow.mdc` | Framework v4.1 legado — Archive |
 
 ---

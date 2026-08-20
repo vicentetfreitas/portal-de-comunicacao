@@ -15,6 +15,8 @@ export type SessionHydrationStatus =
   | "idle"
   | "loading"
   | "ready"
+  | "primeiroAcesso"
+  | "blocked"
   | "unauthenticated"
   | "error";
 
@@ -36,12 +38,23 @@ export const useSessionStore = defineStore("session", () => {
   let hydrationPromise: Promise<void> | null = null;
 
   const isHydrated = computed(
-    () => status.value === "ready" || status.value === "unauthenticated"
+    () =>
+      status.value === "ready" ||
+      status.value === "primeiroAcesso" ||
+      status.value === "blocked" ||
+      status.value === "unauthenticated"
   );
 
   const isReady = computed(
-    () => status.value === "ready" && user.value !== null
+    () =>
+      status.value === "ready" &&
+      user.value !== null &&
+      !user.value.primeiroAcesso
   );
+
+  const needsPrimeiroAcesso = computed(() => status.value === "primeiroAcesso");
+
+  const isBlocked = computed(() => status.value === "blocked");
 
   const permissions = computed(() => user.value?.permissions ?? []);
 
@@ -75,14 +88,20 @@ export const useSessionStore = defineStore("session", () => {
 
   function applyAuthenticatedUser(sessionUser: AuthenticatedUser): void {
     user.value = sessionUser;
-    // Contract: organizationalLinks is required on GET /auth/me.
-    const links: OrganizationalContext = sessionUser.organizationalLinks;
-    availableContext.value = links;
 
-    // RN-SESSION-002: single COLABORADOR link set → auto-resolve as active.
-    // TODO(OQ-027): multi-context selection before protected business routes.
-    // TODO(OQ-001 / OQ-026): first-access / onboarding when links are incomplete.
-    // TODO(OQ-028): landing/dashboard route after session ready — not in this increment.
+    if (sessionUser.primeiroAcesso || sessionUser.id == null) {
+      availableContext.value = null;
+      activeContext.value = null;
+      const resolved = sessionUser.resolvedOrganization;
+      const blocked =
+        sessionUser.primeiroAcessoBlockCode === "PA_DOMAIN_NO_SINGULAR" ||
+        resolved == null;
+      status.value = blocked ? "blocked" : "primeiroAcesso";
+      return;
+    }
+
+    const links: OrganizationalContext | null = sessionUser.organizationalLinks;
+    availableContext.value = links;
     activeContext.value = links;
     status.value = "ready";
   }
@@ -109,7 +128,13 @@ export const useSessionStore = defineStore("session", () => {
   async function hydrate(options?: { force?: boolean }): Promise<void> {
     const force = options?.force === true;
 
-    if (!force && status.value === "ready" && user.value !== null) {
+    if (
+      !force &&
+      user.value !== null &&
+      (status.value === "ready" ||
+        status.value === "primeiroAcesso" ||
+        status.value === "blocked")
+    ) {
       return;
     }
 
@@ -150,6 +175,8 @@ export const useSessionStore = defineStore("session", () => {
     activeContext,
     isHydrated,
     isReady,
+    needsPrimeiroAcesso,
+    isBlocked,
     permissions,
     roles,
     organizationalLinks,

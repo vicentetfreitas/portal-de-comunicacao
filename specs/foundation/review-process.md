@@ -2,137 +2,115 @@
 
 ## Objetivo
 
-Padronizar a revisão das Features utilizando um processo único e reproduzível.
+Padronizar dois momentos de revisão, semanticamente distintos. Não são estados. Não substituem Validate nem Gates.
 
-O processo deve ser executado antes da implementação e antes da conclusão da Feature.
+O SSOT de estado permanece em `feature.yaml`.
+
+| Momento | Quando | Objeto | Efeito em `status` |
+|---------|--------|--------|-------------------|
+| **Review de Spec** | `READY_FOR_REVIEW` | Especificação | `APPROVED` ou `DRAFT` |
+| **Review de PR** | durante `IMPLEMENTING` | Spec × código × testes × comportamento | Não altera `feature.yaml` automaticamente; Gate 3 é a verificação formal |
 
 ---
 
-# Etapa 1 — Validação de Estrutura
+# Review de Spec
+
+Ocorre **antes** de `READY_FOR_REVIEW` → `APPROVED`.
+
+Avalia a especificação. Não avalia o pull request.
+
+Se houver problemas:
+
+```text
+READY_FOR_REVIEW → DRAFT
+```
+
+O motivo do retorno é **evidência da revisão** (parecer). Não persistir `REWORK` em `feature.yaml`.
+
+## Etapa 1 — Validação de Estrutura
 
 Verificar:
 
-- existência de todos os artefatos obrigatórios (incluindo `api.md` e `traceability.md` quando exigidos pelo template);
+- existência dos artefatos obrigatórios (incluindo `api.md` e `traceability.md` quando exigidos pelo template);
 - organização do diretório da Feature;
 - nomenclatura dos arquivos;
-- conformidade de `feature.yaml` com `specs/foundation/feature-yaml.md`;
+- conformidade de `feature.yaml` com `specs/foundation/feature-yaml.md`.
 
-Resultado:
+Resultado: PASS ou FAIL.
 
-PASS ou FAIL.
+## Etapa 2 — Validação Individual
 
----
+Completude; clareza; consistência interna; aderência aos templates.
 
-# Etapa 2 — Validação Individual
+Resultado: PASS ou FAIL.
 
-Revisar cada documento de forma isolada.
+## Etapa 3 — Consistência Cruzada
 
-Itens:
+Requisitos presentes nos documentos; APIs compatíveis com casos de uso; testes cobrindo requisitos; tarefas previstas quando já identificadas.
 
-- completude;
-- clareza;
-- consistência interna;
-- aderência aos templates.
+Resultado: PASS ou FAIL.
 
-Resultado:
+## Etapa 4 — Rastreabilidade
 
-PASS ou FAIL.
+Requisito → Caso de Uso → API → Teste → Tarefa (quando `tasks.md` já existir).
 
----
+`traceability.md` (quando aplicável) sem divergências.
 
-# Etapa 3 — Consistência Cruzada
+Resultado: PASS ou FAIL.
 
-Comparar todos os artefatos.
+## Etapa 5 — Qualidade
 
-Verificar:
+Ambiguidades; duplicidades; conflitos; requisitos órfãos; requisitos sem testes.
 
-- requisitos presentes em todos os documentos;
-- APIs compatíveis com casos de uso;
-- testes cobrindo requisitos;
-- tarefas cobrindo implementação.
+Resultado: PASS ou FAIL.
 
-Resultado:
+## Etapa 6 — Parecer Final
 
-PASS ou FAIL.
+A revisão deve produzir evidência contendo:
 
----
+### Resumo Executivo
 
-# Etapa 4 — Rastreabilidade
+Situação da spec.
 
-Validar que seja possível rastrear:
-
-Requisito
-
-↓
-
-Caso de Uso
-
-↓
-
-API
-
-↓
-
-Teste
-
-↓
-
-Tarefa
-
-O artefato `traceability.md` (quando aplicável) deve refletir a mesma cadeia sem divergências.
-
-Resultado:
-
-PASS ou FAIL.
-
----
-
-# Etapa 5 — Qualidade
-
-Verificar:
-
-- ambiguidades;
-- duplicidades;
-- conflitos;
-- requisitos órfãos;
-- requisitos sem testes;
-- tarefas faltantes.
-
-Resultado:
-
-PASS ou FAIL.
-
----
-
-# Etapa 6 — Parecer Final
-
-A revisão deve produzir um relatório contendo:
-
-## Resumo Executivo
-
-Situação geral da Feature.
-
-## Pontos Positivos
+### Pontos Positivos
 
 Aspectos que atendem aos critérios.
 
-## Não Conformidades
+### Não Conformidades
 
-Lista detalhada dos problemas encontrados.
+Problemas encontrados (motivo de retorno a `DRAFT`, quando houver).
 
-## Classificação
+### Classificação do parecer
 
-- APPROVED
-- APPROVED WITH MINOR ISSUES
-- REWORK REQUIRED
-- REJECTED
+- APPROVED — transitar `status` para `APPROVED`
+- APPROVED WITH MINOR ISSUES — transitar para `APPROVED` com pendências não bloqueantes registradas na evidência
+- RETURN_TO_DRAFT — transitar `READY_FOR_REVIEW` → `DRAFT` (equivalente histórico: “REWORK REQUIRED”; **não** é estado)
+- REJECTED — não transitar para `APPROVED`; evidência obrigatória
 
-## Ações Recomendadas
+### Ações Recomendadas
 
-Lista priorizada das correções necessárias.
+Correções priorizadas.
+
+Nenhuma Feature transita para `APPROVED` sem este parecer.
+
+---
+
+# Review de PR
+
+Ocorre **durante** `IMPLEMENTING`.
+
+Avalia aderência entre spec, código, testes e comportamento implementado.
+
+Não substitui Validate (Validate produz evidência de execução de testes/CI).
+
+A verificação formal correspondente no fluxo mínimo é o **Gate 3**.
+
+O parecer de Review de PR **não** altera `status` por si só. `DONE` exige Gate 3, DoD e Gate 6 (além das demais condições de `feature-yaml.md`).
 
 ---
 
 # Regra Geral
 
-Nenhuma Feature pode avançar para a implementação ou ser considerada concluída sem aprovação formal do processo de revisão.
+- Sem Review de Spec aprovada: não há `APPROVED`.
+- Sem Review de PR (Gate 3) e DoD (Gate 6): não há `DONE`.
+- Implementação de código exige `IMPLEMENTING`, autorizado pelo DoR-Implementation — não pela Review de Spec isoladamente.

@@ -58,6 +58,13 @@ public class AuthCookieService {
     }
 
     /**
+     * Remove o cookie do Refresh Token (credencial de Primeiro Acesso não emite refresh).
+     */
+    public void clearRefreshTokenCookie(HttpServletResponse response) {
+        clearCookie(response, SecurityConstants.REFRESH_TOKEN_COOKIE, AUTH_COOKIE_PATH);
+    }
+
+    /**
      * Remove os cookies de autenticação da resposta.
      */
     public void clearAuthCookies(HttpServletResponse response) {

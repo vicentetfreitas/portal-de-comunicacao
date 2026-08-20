@@ -2,6 +2,7 @@ package br.com.unimedceara.portalcomunicacao.infrastructure.integration.executor
 
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.exception.IntegrationException;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.exception.IntegrationUnavailableException;
+import br.com.unimedceara.portalcomunicacao.shared.exception.UnauthorizedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.retry.Retry;
@@ -50,6 +51,18 @@ class IntegrationHttpExecutorTest {
                 .isInstanceOf(IntegrationUnavailableException.class);
 
         assertThat(attempts).hasValue(4);
+    }
+
+    @Test
+    void shouldPropagateUnauthorizedExceptionWithoutWrapping() {
+        IntegrationHttpExecutor executor = createExecutor(100, 100, 1);
+
+        assertThatThrownBy(() -> executor.execute(() -> {
+            throw new UnauthorizedException("Autenticação não realizada");
+        }))
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage("Autenticação não realizada")
+                .isNotInstanceOf(IntegrationException.class);
     }
 
     private IntegrationHttpExecutor createExecutor(int failureThreshold, int windowSize, int maxAttempts) {

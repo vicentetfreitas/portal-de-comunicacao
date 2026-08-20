@@ -10,6 +10,7 @@ export const lazyPages = {
   showcase: () => import("@/pages/showcase.vue"),
   auth: () => import("@/pages/auth/index.vue"),
   app: () => import("@/pages/app/index.vue"),
+  primeiroAcesso: () => import("@/pages/primeiro-acesso/index.vue"),
   admin: () => import("@/pages/admin/index.vue"),
   unauthorized: () => import("@/pages/unauthorized.vue"),
   notFound: () => import("@/pages/[...path].vue")
@@ -68,6 +69,17 @@ export const foundationRoutes: RouteRecordRaw[] = [
         { labelKey: "layout.nav.home", to: ROUTE_PATHS.HOME, icon: "mdi-home" },
         { labelKey: "layout.app.title", icon: "mdi-view-dashboard" }
       ]
+    }
+  },
+  {
+    path: ROUTE_PATHS.PRIMEIRO_ACESSO,
+    name: ROUTE_NAMES.PRIMEIRO_ACESSO,
+    component: lazyPages.primeiroAcesso,
+    meta: {
+      layout: "auth",
+      requiresAuth: true,
+      allowsPrimeiroAcesso: true,
+      pageTitleKey: "layout.primeiroAcesso.title"
     }
   },
   {

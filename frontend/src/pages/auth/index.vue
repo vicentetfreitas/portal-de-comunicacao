@@ -25,86 +25,86 @@
           aria-label="Formulário de login"
         >
           <div class="login-page__form-card">
-          <form
-            class="login-page__form"
-            novalidate
-            @submit.prevent="handleSubmit"
-          >
-            <q-banner
-              v-if="bannerMessage"
-              class="login-page__banner"
-              dense
-              rounded
-              role="alert"
+            <form
+              class="login-page__form"
+              novalidate
+              @submit.prevent="handleSubmit"
             >
-              {{ bannerMessage }}
-            </q-banner>
+              <q-banner
+                v-if="bannerMessage"
+                class="login-page__banner"
+                dense
+                rounded
+                role="alert"
+              >
+                {{ bannerMessage }}
+              </q-banner>
 
-            <div class="login-page__field">
-              <label class="login-page__label" for="login-usuario">
-                {{ $t("layout.auth.figma.userLabel") }}
-              </label>
-              <DsInput
-                id="login-usuario"
-                v-model="usuario"
-                class="login-page__input"
-                variant="filled"
-                type="email"
-                autocomplete="username"
+              <div class="login-page__field">
+                <label class="login-page__label" for="login-usuario">
+                  {{ $t("layout.auth.figma.userLabel") }}
+                </label>
+                <DsInput
+                  id="login-usuario"
+                  v-model="usuario"
+                  class="login-page__input"
+                  variant="filled"
+                  type="email"
+                  autocomplete="username"
+                  :disable="isSubmitting"
+                  :error="fieldErrors.usuario"
+                  :aria-invalid="fieldErrors.usuario ? 'true' : undefined"
+                  @update:model-value="clearFieldError('usuario')"
+                />
+              </div>
+
+              <div class="login-page__field">
+                <label class="login-page__label" for="login-senha">
+                  {{ $t("layout.auth.figma.passwordLabel") }}
+                </label>
+                <DsInput
+                  id="login-senha"
+                  v-model="senha"
+                  class="login-page__input"
+                  variant="filled"
+                  type="password"
+                  autocomplete="current-password"
+                  :disable="isSubmitting"
+                  :error="fieldErrors.senha"
+                  :aria-invalid="fieldErrors.senha ? 'true' : undefined"
+                  @update:model-value="clearFieldError('senha')"
+                />
+              </div>
+
+              <q-checkbox
+                v-model="rememberMe"
+                class="login-page__remember"
+                dense
                 :disable="isSubmitting"
-                :error="fieldErrors.usuario"
-                :aria-invalid="fieldErrors.usuario ? 'true' : undefined"
-                @update:model-value="clearFieldError('usuario')"
+                :label="$t('layout.auth.rememberMe')"
               />
-            </div>
 
-            <div class="login-page__field">
-              <label class="login-page__label" for="login-senha">
-                {{ $t("layout.auth.figma.passwordLabel") }}
-              </label>
-              <DsInput
-                id="login-senha"
-                v-model="senha"
-                class="login-page__input"
-                variant="filled"
-                type="password"
-                autocomplete="current-password"
-                :disable="isSubmitting"
-                :error="fieldErrors.senha"
-                :aria-invalid="fieldErrors.senha ? 'true' : undefined"
-                @update:model-value="clearFieldError('senha')"
-              />
-            </div>
+              <DsButton
+                type="submit"
+                variant="primary"
+                class="login-page__submit full-width"
+                size="lg"
+                :loading="isSubmitting"
+                :disable="isSubmitDisabled"
+              >
+                {{ $t("layout.auth.figma.submit") }}
+              </DsButton>
 
-            <q-checkbox
-              v-model="rememberMe"
-              class="login-page__remember"
-              dense
-              :disable="isSubmitting"
-              :label="$t('layout.auth.rememberMe')"
-            />
-
-            <DsButton
-              type="submit"
-              variant="primary"
-              class="login-page__submit full-width"
-              size="lg"
-              :loading="isSubmitting"
-              :disable="isSubmitDisabled"
-            >
-              {{ $t("layout.auth.figma.submit") }}
-            </DsButton>
-
-            <p
-              v-if="fieldErrors.senha && !bannerMessage"
-              class="login-page__hint"
-              role="alert"
-            >
-              {{ fieldErrors.senha }}
-            </p>
-          </form>
-        </div>
-      </section>
+              <p
+                v-if="fieldErrors.senha && !bannerMessage"
+                class="login-page__hint"
+                role="alert"
+              >
+                {{ fieldErrors.senha }}
+              </p>
+            </form>
+          </div>
+        </section>
       </div>
 
       <aside class="login-page__hero" aria-hidden="true">

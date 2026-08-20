@@ -1,6 +1,7 @@
 package br.com.unimedceara.portalcomunicacao.infrastructure.security.config;
 
 import br.com.unimedceara.portalcomunicacao.configuration.properties.SecurityProperties;
+import br.com.unimedceara.portalcomunicacao.infrastructure.security.entrypoint.RestAccessDeniedHandler;
 import br.com.unimedceara.portalcomunicacao.infrastructure.security.entrypoint.RestAuthenticationEntryPoint;
 import br.com.unimedceara.portalcomunicacao.infrastructure.security.filter.JwtAuthenticationFilter;
 import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
@@ -27,6 +28,7 @@ public class SecurityConfiguration {
      *
      * @param http configuração HTTP security
      * @param entryPoint ponto de entrada para erros 401
+     * @param accessDeniedHandler ponto de entrada para erros 403
      * @param jwtAuthenticationFilter filtro JWT esqueleto
      * @param securityProperties propriedades de segurança
      * @param csrfTokenRepository repositório CSRF
@@ -38,6 +40,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             RestAuthenticationEntryPoint entryPoint,
+            RestAccessDeniedHandler accessDeniedHandler,
             JwtAuthenticationFilter jwtAuthenticationFilter,
             SecurityProperties securityProperties,
             CsrfTokenRepository csrfTokenRepository,
@@ -46,10 +49,15 @@ public class SecurityConfiguration {
                 .csrf(csrf -> configureCsrf(csrf, securityProperties, csrfTokenRepository))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(entryPoint)
+                        .accessDeniedHandler(accessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(SecurityConstants.PUBLIC_ENDPOINT_PATTERNS).permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers(SecurityConstants.AUTH_ME_ENDPOINT).authenticated()
+                        .requestMatchers(SecurityConstants.PRIMEIRO_ACESSO_ENDPOINT_PATTERNS)
+                                .hasAuthority(SecurityConstants.AUTHORITY_PRIMEIRO_ACESSO)
+                        .anyRequest().hasAuthority(SecurityConstants.AUTHORITY_OPERATIONAL))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

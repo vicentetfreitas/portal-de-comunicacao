@@ -1,9 +1,11 @@
 import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import { parseAuthErrorCode } from "@/auth";
 import { useAuth } from "@/composables/useAuth";
+import { ROUTE_PATHS } from "@/constants/routes";
+import { useSessionStore } from "@/stores/session.store";
 import { normalizeApiError, type ApiError } from "@/types/api";
 
 export interface LoginFieldErrors {
@@ -14,7 +16,9 @@ export interface LoginFieldErrors {
 export function useLoginPage() {
   const { t } = useI18n();
   const route = useRoute();
-  const { login } = useAuth();
+  const router = useRouter();
+  const sessionStore = useSessionStore();
+  const { login, hydrateSession } = useAuth();
 
   const usuario = ref("");
   const senha = ref("");
@@ -109,10 +113,22 @@ export function useLoginPage() {
       }
 
       await login(credentials);
+      await hydrateSession({ force: true });
+
+      if (sessionStore.needsPrimeiroAcesso || sessionStore.isBlocked) {
+        await router.replace(ROUTE_PATHS.PRIMEIRO_ACESSO);
+      } else {
+        const redirect =
+          typeof route.query.redirect === "string"
+            ? route.query.redirect
+            : ROUTE_PATHS.APP;
+        await router.replace(redirect);
+      }
     } catch (error) {
       submitErrorMessage.value = resolveSubmitErrorMessage(
         normalizeApiError(error)
       );
+    } finally {
       isSubmitting.value = false;
     }
   }

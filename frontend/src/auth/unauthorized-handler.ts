@@ -1,7 +1,10 @@
 import { ROUTE_PATHS } from "@/constants/routes";
 import type { ApiError } from "@/types/api";
 
-import { buildAuthRouteWithError, isAuthApiRequestUrl } from "./session-redirect";
+import {
+  buildAuthRouteWithError,
+  isAuthApiRequestUrl
+} from "./session-redirect";
 
 export interface UnauthorizedHandlerContext {
   requestUrl?: string;
@@ -47,7 +50,10 @@ export function createUnauthorizedHandler(
 }
 
 export function handleSessionExpired(redirectPath?: string): void {
-  const target = new URL(buildAuthRouteWithError("unauthorized"), window.location.origin);
+  const target = new URL(
+    buildAuthRouteWithError("unauthorized"),
+    window.location.origin
+  );
   if (redirectPath && redirectPath !== ROUTE_PATHS.AUTH) {
     target.searchParams.set("redirect", redirectPath);
   }

@@ -1,6 +1,6 @@
 <template>
   <q-form class="equipe-form" @submit.prevent="emit('submit')">
-    <DsFormCard :title="title">
+    <DsCard :title="title">
       <EquipeBasicInfoSection
         :model="model"
         :errors="errors"
@@ -17,7 +17,7 @@
           {{ submitLabel }}
         </DsButton>
       </template>
-    </DsFormCard>
+    </DsCard>
   </q-form>
 </template>
 
@@ -25,7 +25,7 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { DsButton, DsFormCard, type DsSelectOption } from "@/components/ds";
+import { DsButton, DsCard, type DsSelectOption } from "@/components/ds";
 import type { EquipeFormModel } from "@/composables/organization/useEquipeForm";
 
 import EquipeBasicInfoSection, {

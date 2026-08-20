@@ -1,16 +1,26 @@
 package br.com.unimedceara.portalcomunicacao.accesscontrol.acceptance;
 
+import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.AuthenticationService;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.JwtTokenService;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.OAuthStateService;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.RefreshTokenService;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.application.service.SessionService;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.domain.model.JwtClaims;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.AuthSessaoEntity;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.ColaboradorEntity;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.repository.AuthSessaoRepository;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.repository.ColaboradorRepository;
+import br.com.unimedceara.portalcomunicacao.organization.domain.model.SingularStatus;
+import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.entity.SingularEntity;
+import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.repository.SingularRepository;
+import br.com.unimedceara.portalcomunicacao.support.fixture.builder.SingularTestBuilder;
 import br.com.unimedceara.portalcomunicacao.configuration.properties.AuthProperties;
 import br.com.unimedceara.portalcomunicacao.configuration.properties.SecurityProperties;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityProviderClient;
+import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationResult;
 import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
+import br.com.unimedceara.portalcomunicacao.shared.exception.UnauthorizedException;
+import br.com.unimedceara.portalcomunicacao.support.data.IntegrationTestUniqueData;
 import br.com.unimedceara.portalcomunicacao.support.annotation.IntegrationTest;
 import br.com.unimedceara.portalcomunicacao.support.base.AbstractTransactionalMockMvcIntegrationTest;
 import br.com.unimedceara.portalcomunicacao.support.fixture.builder.ColaboradorTestBuilder;
@@ -20,13 +30,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -62,6 +76,9 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
     private ColaboradorRepository colaboradorRepository;
 
     @Autowired
+    private SingularRepository singularRepository;
+
+    @Autowired
     private SessionService sessionService;
 
     @Autowired
@@ -72,6 +89,12 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
 
     @Autowired
     private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private JwtTokenService jwtTokenService;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @Autowired
     private JsonMapper jsonMapper;
@@ -111,6 +134,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
 
     @Test
     void shouldAuthenticateWithCredentialsViaPostLogin() throws Exception {
+        ensureColaboradorExists();
         MvcResult result = mockMvc.perform(
                         post("/api/v1/auth/login")
                                 .with(csrf())
@@ -118,7 +142,8 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
                                 .param("email", "colaborador@unimedceara.com.br")
                                 .param("password", "secret")
                                 .param("remember_me", "false"))
-                .andExpect(status().isFound())
+                .andExpect(status().isOk())
+                .andExpect(header().doesNotExist("Location"))
                 .andReturn();
 
         Cookie accessCookie = findCookie(result, SecurityConstants.ACCESS_TOKEN_COOKIE);
@@ -127,6 +152,43 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
         mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.email").value("colaborador@unimedceara.com.br"));
+    }
+
+    @Test
+    void shouldAuthenticatePrimeiroAcessoViaPostLogin() throws Exception {
+        long sessionsBefore = authSessaoRepository.count();
+
+        MvcResult result = mockMvc.perform(
+                        post("/api/v1/auth/login")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                                .param("email", "novo@sem-mapeamento.test")
+                                .param("password", "secret")
+                                .param("remember_me", "false"))
+                .andExpect(status().isOk())
+                .andExpect(header().doesNotExist("Location"))
+                .andReturn();
+
+        Cookie accessCookie = findCookie(result, SecurityConstants.ACCESS_TOKEN_COOKIE);
+        Cookie refreshCookie = findCookie(result, SecurityConstants.REFRESH_TOKEN_COOKIE);
+        assertThat(accessCookie).isNotNull();
+        assertThat(accessCookie.getValue()).isNotBlank();
+        assertThat(refreshCookie == null || refreshCookie.getValue() == null || refreshCookie.getValue().isBlank())
+                .as("Primeiro Acesso não emite refresh operacional")
+                .isTrue();
+        assertThat(authSessaoRepository.count()).isEqualTo(sessionsBefore);
+        assertThat(colaboradorRepository.findByEmailIgnoreCase("novo@sem-mapeamento.test")).isEmpty();
+
+        Optional<JwtClaims> claims = jwtTokenService.validateAndParse(accessCookie.getValue());
+        assertThat(claims).isPresent();
+        assertThat(claims.get().primeiroAcesso()).isTrue();
+
+        mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.email").value("novo@sem-mapeamento.test"))
+                .andExpect(jsonPath("$.data.primeiroAcesso").value(true))
+                .andExpect(jsonPath("$.data.primeiroAcessoBlockCode")
+                        .value(SecurityConstants.PA_DOMAIN_NO_SINGULAR));
     }
 
     @Test
@@ -293,6 +355,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
                 .andExpect(jsonPath("$.data.name").value("Colaborador Teste"))
                 .andExpect(jsonPath("$.data.permissions").isArray())
                 .andExpect(jsonPath("$.data.sessionId").isNotEmpty())
+                .andExpect(jsonPath("$.data.primeiroAcesso").value(false))
                 .andExpect(jsonPath("$.data.password").doesNotExist());
     }
 
@@ -410,6 +473,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
     @Test
     @AcceptanceCriterion(value = "AC-AUTH-013", type = AcceptanceCriterion.TestType.API)
     void acAuth013_shouldExtendRefreshTokenTtlWithRememberMe() throws Exception {
+        ensureColaboradorExists();
         String state = oAuthStateService.createState(true);
 
         MvcResult callbackResult = mockMvc.perform(get("/api/v1/auth/callback")
@@ -447,7 +511,172 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
         assertThat(authSessaoRepository.count()).isEqualTo(sessionsBefore);
     }
 
+    @Test
+    void shouldIssuePrimeiroAcessoCredentialWhenColaboradorIsMissing() throws Exception {
+        testIdentityProviderClient().setValidationBehavior(token -> {
+            if (TestIdentityProviderClient.VALID_TOKEN.equals(token)) {
+                return new IdentityValidationResult(
+                        "novo@sem-mapeamento.test", "Novo Usuario", "zimbra-pa-unknown");
+            }
+            throw new UnauthorizedException("Autenticação não realizada");
+        });
+
+        long sessionsBefore = authSessaoRepository.count();
+        String state = oAuthStateService.createState(false);
+
+        MvcResult callbackResult = mockMvc.perform(get("/api/v1/auth/callback")
+                        .param("token", TestIdentityProviderClient.VALID_TOKEN)
+                        .param("state", state))
+                .andExpect(status().isFound())
+                .andReturn();
+
+        Cookie accessCookie = findCookie(callbackResult, SecurityConstants.ACCESS_TOKEN_COOKIE);
+        Cookie refreshCookie = findCookie(callbackResult, SecurityConstants.REFRESH_TOKEN_COOKIE);
+        assertThat(accessCookie).isNotNull();
+        assertThat(accessCookie.getValue()).isNotBlank();
+        assertThat(refreshCookie == null || refreshCookie.getValue() == null || refreshCookie.getValue().isBlank())
+                .as("Primeiro Acesso não emite refresh operacional")
+                .isTrue();
+        assertThat(authSessaoRepository.count()).isEqualTo(sessionsBefore);
+        assertThat(colaboradorRepository.findByEmailIgnoreCase("novo@sem-mapeamento.test")).isEmpty();
+
+        mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.email").value("novo@sem-mapeamento.test"))
+                .andExpect(jsonPath("$.data.id").doesNotExist())
+                .andExpect(jsonPath("$.data.sessionId").doesNotExist())
+                .andExpect(jsonPath("$.data.organizationalLinks").doesNotExist())
+                .andExpect(jsonPath("$.data.primeiroAcesso").value(true))
+                .andExpect(jsonPath("$.data.resolvedOrganization").doesNotExist())
+                .andExpect(jsonPath("$.data.primeiroAcessoBlockCode")
+                        .value(SecurityConstants.PA_DOMAIN_NO_SINGULAR));
+
+        mockMvc.perform(get("/api/v1/federacoes").cookie(accessCookie))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("FORBIDDEN"));
+    }
+
+    @Test
+    void shouldPromotePrimeiroAcessoCredentialToOperationalSession() throws Exception {
+        String state = oAuthStateService.createState(false);
+        MvcResult paResult = mockMvc.perform(get("/api/v1/auth/callback")
+                        .param("token", TestIdentityProviderClient.VALID_TOKEN)
+                        .param("state", state)
+                        .header("User-Agent", "pa-agent"))
+                .andExpect(status().isFound())
+                .andReturn();
+
+        Cookie paAccess = findCookie(paResult, SecurityConstants.ACCESS_TOKEN_COOKIE);
+        assertThat(paAccess).isNotNull();
+
+        ColaboradorEntity colaborador = ensureColaboradorExists();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("User-Agent", "pa-agent");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        authenticationService.promoteToOperationalSession(colaborador, false, request, response);
+
+        Cookie operationalAccess = cookieFromSetCookieHeaders(response, SecurityConstants.ACCESS_TOKEN_COOKIE);
+        Cookie operationalRefresh = cookieFromSetCookieHeaders(response, SecurityConstants.REFRESH_TOKEN_COOKIE);
+        assertThat(operationalAccess).isNotNull();
+        assertThat(operationalRefresh).isNotNull();
+        assertThat(authSessaoRepository.count()).isEqualTo(1);
+
+        mockMvc.perform(get("/api/v1/auth/me").cookie(operationalAccess))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(colaborador.getId().intValue()))
+                .andExpect(jsonPath("$.data.primeiroAcesso").value(false))
+                .andExpect(jsonPath("$.data.sessionId").isNotEmpty());
+    }
+
+    @Test
+    void shouldResolveSingularFromAuthenticatedEmailDomain() throws Exception {
+        String domain = "pa-known-" + IntegrationTestUniqueData.singularSigla("dm").toLowerCase() + ".test";
+        SingularEntity singular = SingularTestBuilder.forFederation(authProperties.defaultFederationId())
+                .dominioEmail(domain)
+                .persist(singularRepository);
+        String email = "User@" + domain;
+        Cookie accessCookie = primeiroAcessoCookieForEmail(email);
+
+        mockMvc.perform(get("/api/v1/auth/me")
+                        .param("domain", "outro.dominio.test")
+                        .param("singularId", "999999")
+                        .cookie(accessCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.email").value(email))
+                .andExpect(jsonPath("$.data.primeiroAcesso").value(true))
+                .andExpect(jsonPath("$.data.primeiroAcessoBlockCode").doesNotExist())
+                .andExpect(jsonPath("$.data.resolvedOrganization.singularId").value(singular.getId().intValue()))
+                .andExpect(jsonPath("$.data.resolvedOrganization.federationId")
+                        .value(singular.getFederacaoId().intValue()))
+                .andExpect(jsonPath("$.data.organizationalLinks").doesNotExist());
+    }
+
+    @Test
+    void shouldBlockPrimeiroAcessoWhenEmailDomainHasNoSingular() throws Exception {
+        Cookie accessCookie = primeiroAcessoCookieForEmail("user@dominio-inexistente.test");
+
+        mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.primeiroAcesso").value(true))
+                .andExpect(jsonPath("$.data.resolvedOrganization").doesNotExist())
+                .andExpect(jsonPath("$.data.primeiroAcessoBlockCode")
+                        .value(SecurityConstants.PA_DOMAIN_NO_SINGULAR));
+    }
+
+    @Test
+    void shouldBlockPrimeiroAcessoWhenSingularForDomainIsInactive() throws Exception {
+        String domain = "pa-inactive-" + IntegrationTestUniqueData.singularSigla("dm").toLowerCase() + ".test";
+        SingularEntity singular = SingularTestBuilder.forFederation(authProperties.defaultFederationId())
+                .dominioEmail(domain)
+                .persist(singularRepository);
+        singular.setAtivo(SingularStatus.INACTIVE.toFlag());
+        singularRepository.save(singular);
+
+        Cookie accessCookie = primeiroAcessoCookieForEmail("user@" + domain);
+
+        mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.primeiroAcesso").value(true))
+                .andExpect(jsonPath("$.data.resolvedOrganization").doesNotExist())
+                .andExpect(jsonPath("$.data.primeiroAcessoBlockCode")
+                        .value(SecurityConstants.PA_DOMAIN_NO_SINGULAR));
+    }
+
+    @Test
+    void shouldRejectDuplicateSingularEmailDomain() {
+        String domain = "pa-dup-" + IntegrationTestUniqueData.singularSigla("dm").toLowerCase() + ".test";
+        SingularTestBuilder.forFederation(authProperties.defaultFederationId())
+                .dominioEmail(domain)
+                .persist(singularRepository);
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(() ->
+                        SingularTestBuilder.forFederation(authProperties.defaultFederationId())
+                                .dominioEmail(domain)
+                                .persist(singularRepository))
+                .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
+    }
+
+    private Cookie primeiroAcessoCookieForEmail(String email) throws Exception {
+        testIdentityProviderClient().setValidationBehavior(token -> {
+            if (TestIdentityProviderClient.VALID_TOKEN.equals(token)) {
+                return new IdentityValidationResult(email, "Usuario PA", "zimbra-pa-" + email);
+            }
+            throw new UnauthorizedException("Autenticação não realizada");
+        });
+        String state = oAuthStateService.createState(false);
+        MvcResult callbackResult = mockMvc.perform(get("/api/v1/auth/callback")
+                        .param("token", TestIdentityProviderClient.VALID_TOKEN)
+                        .param("state", state))
+                .andExpect(status().isFound())
+                .andReturn();
+        Cookie accessCookie = findCookie(callbackResult, SecurityConstants.ACCESS_TOKEN_COOKIE);
+        assertThat(accessCookie).isNotNull();
+        return accessCookie;
+    }
+
     private MvcResult performSuccessfulCallback(boolean rememberMe) throws Exception {
+        ensureColaboradorExists();
         String state = oAuthStateService.createState(rememberMe);
         return mockMvc.perform(get("/api/v1/auth/callback")
                         .param("token", TestIdentityProviderClient.VALID_TOKEN)
@@ -490,14 +719,26 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
 
     private Cookie findCookie(MvcResult result, String name) {
         if (result.getResponse().getCookies() == null) {
-            return null;
+            return cookieFromSetCookieHeaders(result.getResponse(), name);
         }
         for (Cookie cookie : result.getResponse().getCookies()) {
             if (name.equals(cookie.getName())) {
                 return cookie;
             }
         }
-        return null;
+        return cookieFromSetCookieHeaders(result.getResponse(), name);
+    }
+
+    private Cookie cookieFromSetCookieHeaders(jakarta.servlet.http.HttpServletResponse response, String cookieName) {
+        Collection<String> setCookies = response.getHeaders("Set-Cookie");
+        return setCookies.stream()
+                .filter(header -> header.startsWith(cookieName + "="))
+                .map(header -> {
+                    String value = header.substring(cookieName.length() + 1).split(";", 2)[0];
+                    return new Cookie(cookieName, value);
+                })
+                .findFirst()
+                .orElse(null);
     }
 
     private String findSetCookieHeader(MvcResult result, String cookieName) {

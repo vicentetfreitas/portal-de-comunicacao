@@ -8,8 +8,11 @@
 | Status | Reconciliado — stack oficial DEC-004 |
 | Especificação prevalecente | `00-frontend-foundation.md` |
 | Artefatos operacionais | `construction/frontend/` |
+| Escopo de reconstrução | [`docs/architecture/decisions/DS-RECONSTRUCTION-SCOPE-01.md`](../../architecture/decisions/DS-RECONSTRUCTION-SCOPE-01.md) |
 
 > Guia complementar de design system. Ícones: MDI via Quasar (`mdi-v7`).
+>
+> Para o **alvo da reconstrução** (Quasar + Figma + Claude), prevalece `DS-RECONSTRUCTION-SCOPE-01`. Este guia permanece referência histórica da Sprint 0.
 
 ---
 

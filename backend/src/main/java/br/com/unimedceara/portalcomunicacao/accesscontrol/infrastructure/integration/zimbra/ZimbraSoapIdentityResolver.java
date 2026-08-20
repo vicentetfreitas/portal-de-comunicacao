@@ -5,11 +5,14 @@ import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.Id
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.exception.IntegrationUnavailableException;
 import br.com.unimedceara.portalcomunicacao.shared.exception.UnauthorizedException;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.executor.IntegrationHttpExecutor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.net.URI;
 import java.util.regex.Matcher;
@@ -28,6 +31,12 @@ public class ZimbraSoapIdentityResolver {
             Pattern.compile("<cn>([^<]+)</cn>", Pattern.CASE_INSENSITIVE);
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("name=\"([^\"]+@[^\"]+)\"", Pattern.CASE_INSENSITIVE);
+    /**
+     * Código SOAP Zimbra de rejeição de autenticação, no elemento {@code <Code>} do Fault.
+     */
+    private static final Pattern SOAP_AUTH_FAILED_CODE_PATTERN = Pattern.compile(
+            "<(?:[A-Za-z_][\\w.-]*:)?Code\\s*>\\s*account\\.AUTH_FAILED\\s*</(?:[A-Za-z_][\\w.-]*:)?Code\\s*>",
+            Pattern.CASE_INSENSITIVE);
 
     private final RestClient restClient;
     private final ZimbraProperties zimbraProperties;
@@ -103,6 +112,8 @@ public class ZimbraSoapIdentityResolver {
             ZimbraIntegrationDiagnostic.logAttemptEnd(
                     context, durationMs, ZimbraIntegrationDiagnostic.AttemptOutcome.SUCCESS);
             return result;
+        } catch (UnauthorizedException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             long durationMs = elapsedMs(startedAt);
             ZimbraIntegrationDiagnostic.logException(context, durationMs, ex);
@@ -140,6 +151,8 @@ public class ZimbraSoapIdentityResolver {
             ZimbraIntegrationDiagnostic.logAttemptEnd(
                     context, durationMs, ZimbraIntegrationDiagnostic.AttemptOutcome.SUCCESS);
             return result;
+        } catch (UnauthorizedException ex) {
+            throw ex;
         } catch (RuntimeException ex) {
             long durationMs = elapsedMs(startedAt);
             ZimbraIntegrationDiagnostic.logException(context, durationMs, ex);
@@ -158,19 +171,64 @@ public class ZimbraSoapIdentityResolver {
                     .body(envelope)
                     .retrieve()
                     .body(String.class);
-
-            if (body == null || body.isBlank()) {
-                throw new ZimbraIntegrationException("Resposta SOAP vazia do Zimbra", null);
-            }
-            if (body.contains("authError") || body.contains("INVALID_CREDENTIALS")) {
-                long durationMs = elapsedMs(startedAt);
-                ZimbraIntegrationDiagnostic.logAuthFailure(context, durationMs, "SOAP authError in response body");
-                throw new UnauthorizedException("Autenticação não realizada");
-            }
-            return body;
+            return requireSuccessfulSoapBody(body, context, startedAt);
+        } catch (RestClientResponseException ex) {
+            throw mapSoapHttpError(ex, context, startedAt);
         } catch (RestClientException ex) {
             throw new IntegrationUnavailableException("Zimbra SOAP indisponível", ex);
         }
+    }
+
+    private String requireSuccessfulSoapBody(
+            String body,
+            ZimbraIntegrationDiagnostic.AttemptContext context,
+            long startedAt) {
+        if (body == null || body.isBlank()) {
+            throw new ZimbraIntegrationException("Resposta SOAP vazia do Zimbra", null);
+        }
+        if (isSoapAuthRejected(body)) {
+            throw soapAuthRejected(context, startedAt);
+        }
+        return body;
+    }
+
+    private RuntimeException mapSoapHttpError(
+            RestClientResponseException ex,
+            ZimbraIntegrationDiagnostic.AttemptContext context,
+            long startedAt) {
+        if (isRemoteUnavailable(ex.getStatusCode())) {
+            return new IntegrationUnavailableException("Zimbra SOAP indisponível", ex);
+        }
+        if (isSoapAuthRejected(ex.getResponseBodyAsString())) {
+            return soapAuthRejected(context, startedAt);
+        }
+        return new IntegrationUnavailableException("Zimbra SOAP indisponível", ex);
+    }
+
+    private static UnauthorizedException soapAuthRejected(
+            ZimbraIntegrationDiagnostic.AttemptContext context, long startedAt) {
+        long durationMs = elapsedMs(startedAt);
+        ZimbraIntegrationDiagnostic.logAuthFailure(
+                context, durationMs, "SOAP authentication rejected");
+        return new UnauthorizedException("Autenticação não realizada");
+    }
+
+    /**
+     * Reconhece rejeição de autenticação pelo elemento {@code <Code>account.AUTH_FAILED</Code>}
+     * do SOAP Fault Zimbra, sem classificar ocorrências soltas do texto {@code AUTH_FAILED}.
+     */
+    static boolean isSoapAuthRejected(String soapBody) {
+        if (soapBody == null || soapBody.isBlank()) {
+            return false;
+        }
+        if (SOAP_AUTH_FAILED_CODE_PATTERN.matcher(soapBody).find()) {
+            return true;
+        }
+        return soapBody.contains("authError") || soapBody.contains("INVALID_CREDENTIALS");
+    }
+
+    private static boolean isRemoteUnavailable(HttpStatusCode statusCode) {
+        return statusCode.value() == HttpStatus.SERVICE_UNAVAILABLE.value();
     }
 
     private ZimbraIntegrationDiagnostic.AttemptContext buildSoapContext(

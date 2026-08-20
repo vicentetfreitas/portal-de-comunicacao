@@ -1,8 +1,5 @@
 <template>
-  <article
-    class="ds-service-card"
-    :class="{ 'ds-service-card--clickable': clickable }"
-  >
+  <article class="ds-service-card">
     <div class="ds-service-card__icon">
       <DsIcon :name="icon" size="lg" />
     </div>
@@ -23,15 +20,9 @@
 <script setup lang="ts">
 import DsIcon from "../atoms/DsIcon.vue";
 
-withDefaults(
-  defineProps<{
-    title: string;
-    description?: string;
-    icon: string;
-    clickable?: boolean;
-  }>(),
-  {
-    clickable: true
-  }
-);
+defineProps<{
+  title: string;
+  description?: string;
+  icon: string;
+}>();
 </script>

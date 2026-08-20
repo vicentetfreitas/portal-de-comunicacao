@@ -9,6 +9,8 @@ import br.com.unimedceara.portalcomunicacao.shared.exception.ResourceNotFoundExc
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * Regras de domínio da singular (unicidade, inativação).
  */
@@ -53,5 +55,29 @@ public class SingularDomainService {
     public SingularEntity loadSingularOrThrow(Long id) {
         return singularRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Singular não encontrada"));
+    }
+
+    /**
+     * Resolve Singular ativa pelo domínio do e-mail autenticado (DEC-ORG-003, DH-PA-02).
+     */
+    public Optional<SingularEntity> findActiveByAuthenticatedEmail(String email) {
+        String domain = emailDomain(email);
+        if (domain == null) {
+            return Optional.empty();
+        }
+        return singularRepository.findByDominioEmailIgnoreCaseAndAtivo(domain, SingularStatus.ACTIVE.toFlag());
+    }
+
+    static String emailDomain(String email) {
+        if (email == null) {
+            return null;
+        }
+        String normalized = email.trim().toLowerCase();
+        int at = normalized.indexOf('@');
+        if (at <= 0 || at != normalized.lastIndexOf('@') || at == normalized.length() - 1) {
+            return null;
+        }
+        String domain = normalized.substring(at + 1).trim();
+        return domain.isEmpty() ? null : domain;
     }
 }

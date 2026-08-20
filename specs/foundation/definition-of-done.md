@@ -8,6 +8,10 @@ Seu objetivo é garantir que todas as Features entregues pelo Portal de Comunica
 
 A Definition of Done aplica-se a todas as Features descritas em `specs/features/`.
 
+DoD é **critério**, não estado. A transição `IMPLEMENTING` → `DONE` em `feature.yaml` exige este documento, **Gate 3** (Review de PR) e **Gate 6** (verificação formal do DoD), além de validação realizada e evidências disponíveis.
+
+Validate produz evidência; não altera `status`. Git, CI, logs e `tasks.md` não são SSOT de estado.
+
 ---
 
 # Critérios Obrigatórios
@@ -153,20 +157,22 @@ Uma Feature não pode ser considerada concluída quando existir qualquer uma das
 
 # Checklist de Validação
 
-Antes de encerrar a Feature, confirme:
+Antes de transitar `status` para `DONE`, confirme:
 
 * Implementação concluída.
 * Critérios de aceite atendidos.
 * Regras de negócio implementadas.
-* Testes executados.
+* Testes executados (evidência de Validate/CI).
 * Qualidade do código validada.
+* Review de PR realizada (Gate 3 PASS).
 * Banco de dados atualizado quando aplicável.
 * APIs atualizadas quando aplicável.
 * Segurança validada quando aplicável.
 * Documentação atualizada.
 * Tarefas concluídas.
+* Gate 6 PASS.
 
-Caso qualquer item obrigatório não seja atendido, a Feature não deve ser considerada concluída.
+Caso qualquer item obrigatório não seja atendido, `status` permanece `IMPLEMENTING`.
 
 ---
 
@@ -190,9 +196,11 @@ Responsável por validar que a Feature atende às necessidades do negócio e aos
 
 ---
 
-# Construction — Workstream Frontend (referência)
+# Construction — Workstream Frontend (referência histórica)
 
-Durante a **construção** (não substitui critérios de aceite em `specs/`), o template CRUD frontend adota:
+Não substitui o DoD deste documento nem o `status` em `feature.yaml`. Aplica-se apenas a workstreams construction v4.1 em transição. E2E no closure da Feature permanece evidência (Validate), não estado.
+
+Durante a **construção** histórica, o template CRUD frontend adotava:
 
 | Fase | Critério |
 |------|----------|

@@ -9,7 +9,14 @@
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">{{ title }}</div>
         <q-space />
-        <q-btn v-close-popup icon="mdi-close" flat round dense />
+        <q-btn
+          v-close-popup
+          icon="mdi-close"
+          flat
+          round
+          dense
+          :aria-label="$t('common.close')"
+        />
       </q-card-section>
 
       <q-card-section v-if="subtitle" class="q-pt-sm">

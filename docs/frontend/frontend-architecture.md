@@ -4,7 +4,7 @@
 **Sprint:** Frontend Foundation  
 **Objetivo:** Definir a arquitetura base do frontend do Portal de Comunicação, estabelecendo responsabilidades, organização dos módulos e padrões de desenvolvimento.
 
-**Documentos relacionados:** `frontend-structure.md` (estrutura física e SSOT das stores) · `frontend-flow.md` (fluxo de inicialização)
+**Documentos relacionados:** `frontend-structure.md` (estrutura física e SSOT das stores) · `frontend-flow.md` (fluxo de inicialização) · [`docs/architecture/decisions/DS-RECONSTRUCTION-SCOPE-01.md`](../architecture/decisions/DS-RECONSTRUCTION-SCOPE-01.md) (escopo da reconstrução do Design System)
 
 ---
 

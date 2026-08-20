@@ -1,6 +1,7 @@
 package br.com.unimedceara.portalcomunicacao.infrastructure.integration.config;
 
 import br.com.unimedceara.portalcomunicacao.configuration.properties.IntegrationProperties;
+import br.com.unimedceara.portalcomunicacao.shared.exception.UnauthorizedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.core.IntervalFunction;
@@ -45,6 +46,7 @@ public class ResilienceConfiguration {
                 .slidingWindowType(CircuitBreakerConfig.SlidingWindowType.COUNT_BASED)
                 .slidingWindowSize(10)
                 .minimumNumberOfCalls(5)
+                .ignoreExceptions(UnauthorizedException.class)
                 .build();
         return CircuitBreaker.of(INTEGRATION_CIRCUIT_BREAKER, config);
     }

@@ -14,6 +14,7 @@ public final class SingularTestBuilder {
     private String sigla = IntegrationTestUniqueData.singularSigla("SN");
     private int codigoUnimed = IntegrationTestUniqueData.singularUnimedCode();
     private String registroAns;
+    private String dominioEmail;
 
     private SingularTestBuilder() {}
 
@@ -33,6 +34,11 @@ public final class SingularTestBuilder {
         return this;
     }
 
+    public SingularTestBuilder dominioEmail(String dominioEmail) {
+        this.dominioEmail = dominioEmail;
+        return this;
+    }
+
     public SingularTestBuilder codigoUnimed(int codigoUnimed) {
         this.codigoUnimed = codigoUnimed;
         this.registroAns = IntegrationTestUniqueData.registroAnsForUnimedCode(codigoUnimed);
@@ -47,6 +53,7 @@ public final class SingularTestBuilder {
         singular.setCodigoUnimed(codigoUnimed);
         singular.setRegistroAns(
                 registroAns != null ? registroAns : IntegrationTestUniqueData.registroAnsForUnimedCode(codigoUnimed));
+        singular.setDominioEmail(dominioEmail);
         singular.setAtivo(SingularStatus.ACTIVE.toFlag());
         singular.setDataCadastro(Instant.now());
         return singular;

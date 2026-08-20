@@ -6,6 +6,9 @@ import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persist
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.ColaboradorEntity;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest.dto.AuthenticatedUserResponse;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest.dto.ColaboradorOrganizationalLinksResponse;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest.dto.ResolvedPrimeiroAcessoOrganization;
+import br.com.unimedceara.portalcomunicacao.organization.application.service.SingularDomainService;
+import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
 import br.com.unimedceara.portalcomunicacao.configuration.properties.AuthProperties;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityProviderClient;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationResult;
@@ -24,6 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Orquestração dos fluxos de autenticação FT-AUTH.
@@ -40,6 +44,7 @@ public class AuthenticationService {
     private final IdentityProviderClient identityProviderClient;
     private final IdentityCredentialValidator identityCredentialValidator;
     private final ColaboradorService colaboradorService;
+    private final SingularDomainService singularDomainService;
     private final SessionService sessionService;
     private final JwtTokenService jwtTokenService;
     private final AuthCookieService authCookieService;
@@ -51,6 +56,7 @@ public class AuthenticationService {
             IdentityProviderClient identityProviderClient,
             IdentityCredentialValidator identityCredentialValidator,
             ColaboradorService colaboradorService,
+            SingularDomainService singularDomainService,
             SessionService sessionService,
             JwtTokenService jwtTokenService,
             AuthCookieService authCookieService,
@@ -60,6 +66,7 @@ public class AuthenticationService {
         this.identityProviderClient = identityProviderClient;
         this.identityCredentialValidator = identityCredentialValidator;
         this.colaboradorService = colaboradorService;
+        this.singularDomainService = singularDomainService;
         this.sessionService = sessionService;
         this.jwtTokenService = jwtTokenService;
         this.authCookieService = authCookieService;
@@ -156,12 +163,75 @@ public class AuthenticationService {
             boolean rememberMe,
             HttpServletRequest request,
             HttpServletResponse response) {
-        ColaboradorEntity colaborador = colaboradorService.locateOrCreate(identity);
+        Optional<ColaboradorEntity> existing = colaboradorService.findByIdentity(identity);
+        if (existing.isEmpty()) {
+            return finalizePrimeiroAcesso(identity, response);
+        }
+
+        ColaboradorEntity colaborador = existing.get();
         if (!colaborador.isAtivo()) {
             authAuditService.logLoginFailure("colaborador_inativo");
             throw new ForbiddenException(FORBIDDEN_MESSAGE);
         }
 
+        return promoteToOperationalSession(colaborador, rememberMe, request, response);
+    }
+
+    private URI finalizePrimeiroAcesso(IdentityValidationResult identity, HttpServletResponse response) {
+        String accessToken = jwtTokenService.issuePrimeiroAcessoToken(
+                identity.email(),
+                identity.displayName(),
+                identity.zimbraId());
+        authCookieService.setAccessTokenCookie(response, accessToken);
+        authCookieService.clearRefreshTokenCookie(response);
+        authAuditService.logPrimeiroAcessoLogin(identity.email());
+        return URI.create(authProperties.frontendRedirectUrl());
+    }
+
+    /**
+     * Promove identidade de Primeiro Acesso a sessão operacional após criação do COLABORADOR.
+     */
+    @Transactional
+    public URI promoteToOperationalSession(
+            ColaboradorEntity colaborador,
+            boolean rememberMe,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        promoteToOperationalUser(colaborador, rememberMe, request, response);
+        return URI.create(authProperties.frontendRedirectUrl());
+    }
+
+    /**
+     * Promove a sessão operacional e devolve a identidade equivalente a {@code GET /auth/me}.
+     */
+    @Transactional
+    public AuthenticatedUserResponse promoteToOperationalUser(
+            ColaboradorEntity colaborador,
+            boolean rememberMe,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        if (!colaborador.isAtivo()) {
+            throw new ForbiddenException(FORBIDDEN_MESSAGE);
+        }
+        SessionService.SessionCreationResult session = issueOperationalSession(
+                colaborador, rememberMe, request, response);
+        return new AuthenticatedUserResponse(
+                colaborador.getId(),
+                colaborador.getEmail(),
+                colaborador.getNome(),
+                loadPermissions(colaborador.getId()),
+                session.sessionId(),
+                organizationalLinksFrom(colaborador),
+                false,
+                null,
+                null);
+    }
+
+    private SessionService.SessionCreationResult issueOperationalSession(
+            ColaboradorEntity colaborador,
+            boolean rememberMe,
+            HttpServletRequest request,
+            HttpServletResponse response) {
         String dispositivo = request.getHeader("User-Agent");
         SessionService.SessionCreationResult session = sessionService.createSession(colaborador, rememberMe, dispositivo);
 
@@ -171,7 +241,7 @@ public class AuthenticationService {
         authCookieService.setRefreshTokenCookie(response, session.rawRefreshToken(), session.rememberMe());
         authAuditService.logLoginSuccess(colaborador.getId(), session.sessionId());
 
-        return URI.create(authProperties.frontendRedirectUrl());
+        return session;
     }
 
     /**
@@ -224,6 +294,14 @@ public class AuthenticationService {
      */
     @Transactional(readOnly = true)
     public AuthenticatedUserResponse getAuthenticatedUser(JwtAuthenticatedPrincipal principal) {
+        if (principal.primeiroAcesso()) {
+            return primeiroAcessoUser(principal);
+        }
+
+        if (principal.colaboradorId() == null) {
+            throw new ForbiddenException(FORBIDDEN_MESSAGE);
+        }
+
         ColaboradorEntity colaborador = colaboradorService.findById(principal.colaboradorId());
         if (!colaborador.isAtivo()) {
             throw new ForbiddenException(FORBIDDEN_MESSAGE);
@@ -236,7 +314,34 @@ public class AuthenticationService {
                 colaborador.getNome(),
                 permissions,
                 principal.sessionId(),
-                organizationalLinksFrom(colaborador));
+                organizationalLinksFrom(colaborador),
+                false,
+                null,
+                null);
+    }
+
+    private AuthenticatedUserResponse primeiroAcessoUser(JwtAuthenticatedPrincipal principal) {
+        return singularDomainService.findActiveByAuthenticatedEmail(principal.email())
+                .map(singular -> new AuthenticatedUserResponse(
+                        null,
+                        principal.email(),
+                        principal.name(),
+                        Collections.emptyList(),
+                        null,
+                        null,
+                        true,
+                        new ResolvedPrimeiroAcessoOrganization(singular.getId(), singular.getFederacaoId()),
+                        null))
+                .orElseGet(() -> new AuthenticatedUserResponse(
+                        null,
+                        principal.email(),
+                        principal.name(),
+                        Collections.emptyList(),
+                        null,
+                        null,
+                        true,
+                        null,
+                        SecurityConstants.PA_DOMAIN_NO_SINGULAR));
     }
 
     private String issueAccessToken(ColaboradorEntity colaborador, String sessionId) {

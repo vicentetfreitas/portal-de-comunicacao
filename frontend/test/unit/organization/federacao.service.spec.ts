@@ -87,11 +87,15 @@ describe("FederacaoApiService", () => {
       ansRegistration: "32195-8"
     });
 
-    expect(postMock).toHaveBeenCalledWith(FEDERACAO_API_PATHS.base, {
-      name: "Unimed Federação",
-      acronym: "UNMFED",
-      unimedCode: 979,
-      ansRegistration: "32195-8"
-    }, undefined);
+    expect(postMock).toHaveBeenCalledWith(
+      FEDERACAO_API_PATHS.base,
+      {
+        name: "Unimed Federação",
+        acronym: "UNMFED",
+        unimedCode: 979,
+        ansRegistration: "32195-8"
+      },
+      undefined
+    );
   });
 });

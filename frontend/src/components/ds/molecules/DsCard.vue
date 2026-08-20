@@ -33,7 +33,7 @@ import type { DsCardVariant } from "../types";
 
 withDefaults(
   defineProps<{
-    title?: string;
+    title?: string | undefined;
     subtitle?: string;
     variant?: DsCardVariant;
   }>(),

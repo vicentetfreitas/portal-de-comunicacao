@@ -1021,7 +1021,7 @@ COLABORADOR
 | GAP-028-01 | `locateOrCreate` / `finalizeLogin` AS-IS ainda cria COLABORADOR no login |
 | GAP-028-02 | DDL: `COD_SINGULAR`/`COD_AREA` ainda nullable |
 | GAP-028-03 | Credencial temporária de Primeiro Acesso — **DH-PA-01 aprovada** (2026-08-15); implementação técnica pendente (delegada à engenharia) |
-| GAP-028-04 | Mapeamento domínio → Singular — **DH-PA-02 aprovada** (2026-08-15); decisão de negócio encerrada; implementação técnica pendente (delegada à engenharia) |
+| GAP-028-04 | Mapeamento domínio → Singular — **DH-PA-02 aprovada** (2026-08-15); decisão de negócio encerrada; artefatos no repositório (DDL, V008, DML); execução DBA no Oracle pendente |
 | GAP-028-05 | FT-PRIMEIRO-ACESSO — evolução para fluxo de criação de vínculo |
 | GAP-028-06 | Política de CARGO na criação — **DH-CARGO-01 aprovada** (2026-08-17); reconciliação DEC-DB-027 **encerrada**; implementação física delegada (sem obrigatoriedade na criação) |
 

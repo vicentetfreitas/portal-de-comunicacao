@@ -41,6 +41,14 @@ export const useAuthStore = defineStore("auth", () => {
     const sessionStore = useSessionStore();
     const force = options?.force === true;
 
+    if (
+      !force &&
+      (sessionStore.needsPrimeiroAcesso || sessionStore.isBlocked) &&
+      status.value === "authenticated"
+    ) {
+      return;
+    }
+
     if (!force && sessionStore.isReady && status.value === "authenticated") {
       return;
     }
@@ -49,7 +57,11 @@ export const useAuthStore = defineStore("auth", () => {
       setLoading();
       try {
         await sessionStore.hydrate(options);
-        if (sessionStore.isReady) {
+        if (
+          sessionStore.isReady ||
+          sessionStore.needsPrimeiroAcesso ||
+          sessionStore.isBlocked
+        ) {
           markAuthenticated();
           return;
         }
@@ -103,7 +115,11 @@ export const useAuthStore = defineStore("auth", () => {
 
     try {
       await sessionStore.hydrate({ force: true });
-      if (sessionStore.isReady) {
+      if (
+        sessionStore.isReady ||
+        sessionStore.needsPrimeiroAcesso ||
+        sessionStore.isBlocked
+      ) {
         markAuthenticated();
         return true;
       }

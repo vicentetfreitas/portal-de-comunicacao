@@ -4,7 +4,8 @@ export default {
   },
   common: {
     loading: "Carregando...",
-    notFound: "Página não encontrada"
+    notFound: "Página não encontrada",
+    close: "Fechar"
   },
   layout: {
     nav: {
@@ -68,15 +69,13 @@ export default {
         forbidden: "Você não possui permissão para executar esta ação.",
         portalAccessDenied:
           "Seu cadastro não está autorizado a acessar o Portal. Entre em contato com o administrador.",
-        unavailable:
-          "O serviço encontra-se temporariamente indisponível.",
+        unavailable: "O serviço encontra-se temporariamente indisponível.",
         unknown:
           "Ocorreu um erro inesperado. Tente novamente em alguns instantes."
       },
       context: {
         title: "Contexto organizacional",
-        subtitle:
-          "Selecione o contexto em que você atuará nesta sessão.",
+        subtitle: "Selecione o contexto em que você atuará nesta sessão.",
         optionLabel:
           "Federação {federation} · Singular {singular} · Área {area} · Equipe {team}"
       }
@@ -101,6 +100,22 @@ export default {
       subtitle: "Você não possui permissão para acessar este recurso.",
       message:
         "Se você acredita que deveria ter acesso, entre em contato com o administrador do portal."
+    },
+    primeiroAcesso: {
+      title: "Primeiro acesso",
+      subtitle: "Complete seu vínculo organizacional para usar o Portal.",
+      message:
+        "Sua identidade foi autenticada. Selecione a Área da sua Singular para concluir o cadastro.",
+      blockedTitle: "Primeiro acesso bloqueado",
+      blockedSubtitle: "Não foi possível determinar sua Singular.",
+      blockedMessage:
+        "Não foi possível determinar a Singular a partir do domínio autenticado.",
+      areaLabel: "Área",
+      areaPlaceholder: "Selecione sua área",
+      confirm: "Confirmar",
+      areaRequired: "Selecione uma área para continuar.",
+      emptyAreas: "Nenhuma área ativa está disponível para a sua Singular.",
+      completeSuccess: "Primeiro acesso concluído."
     },
     notFound: {
       goHome: "Voltar ao início"
@@ -386,11 +401,36 @@ export default {
     },
     detail: {
       title: "Detalhe do colaborador",
-      subtitle: "Identificador: {id}"
+      subtitle: "Identificador: {id}",
+      notFoundTitle: "Colaborador não encontrado",
+      notFoundDescription:
+        "Não foi possível localizar um colaborador com este identificador.",
+      backToList: "Voltar para listagem",
+      editAction: "Editar colaborador",
+      fields: {
+        id: "Identificador",
+        email: "E-mail",
+        zimbraId: "Identificador Zimbra",
+        singularId: "Singular",
+        areaId: "Área",
+        teamId: "Equipe",
+        managerId: "Gestor",
+        biography: "Biografia",
+        birthDate: "Data de nascimento",
+        hireDate: "Data de admissão",
+        lastAccessAt: "Último acesso",
+        createdAt: "Criado em",
+        updatedAt: "Atualizado em",
+        notAvailable: "Não informado"
+      }
     },
     edit: {
       title: "Editar colaborador",
       subtitle: "Identificador: {id}"
+    },
+    status: {
+      ACTIVE: "Ativo",
+      INACTIVE: "Inativo"
     },
     stub: {
       placeholder: "Placeholder — implementação visual em PKG-FE-02 em diante."

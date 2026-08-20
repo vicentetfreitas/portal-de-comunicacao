@@ -37,6 +37,39 @@ public final class SecurityConstants {
     public static final String CSRF_HEADER = "X-XSRF-TOKEN";
 
     /**
+     * Authority de sessão operacional (COLABORADOR persistido).
+     */
+    public static final String AUTHORITY_OPERATIONAL = "OPERATIONAL";
+
+    /**
+     * Authority de credencial temporária de Primeiro Acesso (DH-PA-01).
+     */
+    public static final String AUTHORITY_PRIMEIRO_ACESSO = "PRIMEIRO_ACESSO";
+
+    /**
+     * Claim {@code typ} do Access Token de Primeiro Acesso.
+     */
+    public static final String JWT_TYP_PRIMEIRO_ACESSO = "pa";
+
+    /**
+     * Bloqueio de Primeiro Acesso quando o domínio autenticado não determina Singular (BR-044).
+     */
+    public static final String PA_DOMAIN_NO_SINGULAR = "PA_DOMAIN_NO_SINGULAR";
+
+    /**
+     * Endpoint de hidratação de identidade (FT-SESSION / PA-API-005).
+     */
+    public static final String AUTH_ME_ENDPOINT = "/api/v1/auth/me";
+
+    /**
+     * Endpoints de onboarding de Primeiro Acesso (PA-API-006 / PA-API-007).
+     */
+    public static final String[] PRIMEIRO_ACESSO_ENDPOINT_PATTERNS = {
+            "/api/v1/auth/primeiro-acesso",
+            "/api/v1/auth/primeiro-acesso/**"
+    };
+
+    /**
      * Padrões de endpoints públicos (whitelist) da fundação de segurança.
      */
     public static final String[] PUBLIC_ENDPOINT_PATTERNS = {

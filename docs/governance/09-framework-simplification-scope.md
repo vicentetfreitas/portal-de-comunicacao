@@ -13,6 +13,12 @@ Registrar o escopo aprovado da simplificação do Engineering Framework (Etapa 2
 ## Fluxo diário (preferencial)
 
 ```text
+DRAFT → READY_FOR_REVIEW → APPROVED → IMPLEMENTING → DONE
+```
+
+Estado: `specs/features/<slug>/feature.yaml`. Plano: `tasks.md`. Evidência: CI / PR.
+
+```text
 specs/features/<slug>/ → tasks.md → código → CI → PR review
 ```
 
@@ -24,18 +30,19 @@ specs/features/<slug>/ → tasks.md → código → CI → PR review
 | `execution-plan.md` | `specs/features/*/tasks.md` |
 | `session.md` | specs direto |
 | `pkg-XX/status.md` | CI logs / PR |
-| `registry.status` | `construction-state.yaml` ou estado derivado (git/CI) |
+| `registry.status` | `feature.yaml` (estado); git/CI (evidência) |
 | Orchestrator `Execute PKG-XX` | tasks TK-* sequenciais |
 
 ## O que permanece (transição)
 
 - `construction/registry.yaml` — índice de paths (status indicativo)
-- `construction-state.yaml` — estado por workstream
+- `construction-state.yaml` — espelho por workstream (não SSOT de estado)
 - `construction/11-14`, golden-template — Archive para Features históricas
 
 ## O que não é SSOT
 
-- `feature-manifest.status`, `session.md`, `pkg-XX/status.md`
+- `feature-manifest.status`, `session.md`, `pkg-XX/status.md`, `construction/registry.yaml` status
+- git/CI/`tasks.md` como substituto de `feature.yaml`
 
 ## Referências
 

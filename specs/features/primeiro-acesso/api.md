@@ -8,7 +8,7 @@
 | Prefixo | `/api/v1` |
 | Padrões | `docs/implementation/07-api-standards.md` |
 
-> **Contrato normativo TO-BE** — endpoints de onboarding e Home ainda **não implementados** no backend homologado. Detalhe técnico de rotas de onboarding **pendente de implementação** (não inventar nesta etapa).
+> **Contrato normativo TO-BE** — onboarding (PA-API-006 / PA-API-007) definido abaixo. `GET /session/home` (PA-API-004) permanece proposto.
 
 Autenticação: cookie `access_token` (FT-AUTH) ou credencial temporária PA (DH-PA-01 — mecanismo delegado à engenharia). CSRF nas mutações conforme padrão corporativo.
 
@@ -23,7 +23,8 @@ Autenticação: cookie `access_token` (FT-AUTH) ou credencial temporária PA (DH
 | PA-API-003 | PUT | `/api/v1/session/context` | ~~Selecionar/persistir Contexto Ativo~~ | **SUPERSEDED** — vínculo em `COLABORADOR` |
 | PA-API-004 | GET | `/api/v1/session/home` | Obter Home dinâmica | **Vigente** (proposto) |
 | PA-API-005 | GET | `/api/v1/auth/me` | Identidade + vínculo único | **Existente** |
-| PA-API-006 | — | *onboarding* | Completar PA / criar COLABORADOR | **Pendente implementação** — sem contrato fixado |
+| PA-API-006 | GET | `/api/v1/auth/primeiro-acesso/areas` | Listar áreas ativas da Singular resolvida | **Vigente** |
+| PA-API-007 | POST | `/api/v1/auth/primeiro-acesso` | Concluir PA: criar COLABORADOR e promover sessão | **Vigente** |
 
 ---
 
@@ -100,19 +101,85 @@ UC-PA-001, 002, 008
 
 ---
 
-# PA-API-006 — Onboarding (pendente)
+# PA-API-006 — Listar áreas do Primeiro Acesso
 
-### Status
+### Endpoint
 
-**Pendência de implementação.** O TO-BE exige endpoints para conduzir o wizard e criar `COLABORADOR` ao final (DH-03, DH-PA-02). Forma física (rotas, payloads, credencial temporária) **não** está decidida nesta etapa — delegada à engenharia na implementação.
+`GET /api/v1/auth/primeiro-acesso/areas`
 
-### Requisitos normativos (sem inventar contrato)
+### Objetivo
 
-- Resolver domínio → Singular (backend — DEC-ORG-003, DH-PA-02)
-- Permitir seleção de Área (+ Equipe opcional) dentro da Singular
-- Criar COLABORADOR somente com vínculo completo (DH-03, DH-04)
-- Não exigir CARGO (DH-CARGO-01)
-- Não emitir `AUTH_SESSAO` operacional antes da conclusão (DH-PA-01)
+Listar áreas **ativas** da Singular determinada pelo domínio do e-mail autenticado (BR-043, DEC-ORG-003, DH-PA-02). O cliente **não** envia `singularId`.
+
+### Autorização
+
+JWT `typ=pa` (`PRIMEIRO_ACESSO`). Sessão operacional recebe 403. Sem cookie: 401.
+
+### Response 200
+
+```json
+{
+  "success": true,
+  "data": [
+    { "id": 20, "name": "Tecnologia da Informação", "acronym": "TI" }
+  ]
+}
+```
+
+### Erros
+
+| HTTP | Situação |
+|------|----------|
+| 401 | Não autenticado |
+| 403 | JWT operacional ou sem `PRIMEIRO_ACESSO` |
+| 422 | Domínio sem Singular (`PA_DOMAIN_NO_SINGULAR`) |
+
+---
+
+# PA-API-007 — Concluir Primeiro Acesso
+
+### Endpoint
+
+`POST /api/v1/auth/primeiro-acesso`
+
+### Objetivo
+
+Criar `COLABORADOR` com vínculo completo (Federação + Singular resolvida + Área) e promover a credencial PA a sessão operacional (DH-03, DH-PA-01). Identidade sai do JWT (`email`, `zid`); o payload **não** aceita `codColaborador` nem `singularId`.
+
+### Autorização
+
+JWT `typ=pa`. CSRF nas mutações. Sessão operacional: 403.
+
+### Request
+
+```json
+{
+  "areaId": 20,
+  "teamId": null
+}
+```
+
+`areaId` obrigatório. `teamId` opcional (Equipe dentro da Área — DH-04).
+
+### Response 200
+
+`Set-Cookie` substitui `access_token` (JWT operacional) e define `refresh_token`. Corpo: identidade operacional (`primeiroAcesso: false`), mesmo contrato de `GET /auth/me`.
+
+### Erros
+
+| HTTP | Situação |
+|------|----------|
+| 400 | `areaId` ausente |
+| 401 | Não autenticado |
+| 403 | JWT operacional |
+| 409 | COLABORADOR já existe para a identidade |
+| 422 | Área inexistente, inativa, de outra Singular, ou domínio sem Singular |
+
+### Efeitos
+
+- Persiste `COLABORADOR` (`COD_FEDERACAO`, `COD_SINGULAR`, `COD_AREA`, `COD_EQUIPE` opcional)
+- Cria `AUTH_SESSAO` operacional
+- Substitui cookies; `/auth/me` passa a `primeiroAcesso=false`
 
 ---
 
@@ -141,8 +208,9 @@ FT-AUTH login (ou credencial temporária PA)
     ↓
 Verificar COLABORADOR (/auth/me ou equivalente)
     ↓
-├─ ausente → Onboarding API (PA-API-006 — pendente)
-│              → criar COLABORADOR
+├─ ausente → GET /auth/primeiro-acesso/areas (PA-API-006)
+│              → POST /auth/primeiro-acesso (PA-API-007)
+│              → criar COLABORADOR + cookies operacionais
 └─ presente → derivar Contexto Ativo de organizationalLinks
     ↓
 GET /session/home (PA-API-004)

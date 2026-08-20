@@ -43,6 +43,7 @@ const sampleUser = {
   name: "User",
   permissions: [],
   sessionId: "s",
+  primeiroAcesso: false,
   organizationalLinks: {
     federationId: 1,
     singularId: 2,
@@ -134,6 +135,81 @@ describe("createAuthGuard", () => {
 
     await guard(
       createRoute({ guestOnly: true }, ROUTE_PATHS.AUTH),
+      {} as RouteLocationNormalized,
+      next
+    );
+
+    expect(next).toHaveBeenCalledWith(ROUTE_PATHS.APP);
+  });
+
+  it("redirects primeiro acesso users from operational routes", async () => {
+    fetchCurrentUser.mockResolvedValue({
+      id: null,
+      email: "novo@unimedceara.com.br",
+      name: "Novo",
+      permissions: [],
+      sessionId: null,
+      primeiroAcesso: true,
+      organizationalLinks: null,
+      primeiroAcessoBlockCode: "PA_DOMAIN_NO_SINGULAR"
+    });
+
+    const store = useAuthStore();
+    await store.hydrateSession();
+
+    const next = createNextMock();
+    const guard = createAuthGuard();
+
+    await guard(
+      createRoute({ requiresAuth: true }, "/app"),
+      {} as RouteLocationNormalized,
+      next
+    );
+
+    expect(next).toHaveBeenCalledWith(ROUTE_PATHS.PRIMEIRO_ACESSO);
+  });
+
+  it("redirects primeiro acesso users away from guest-only routes to onboarding", async () => {
+    fetchCurrentUser.mockResolvedValue({
+      id: null,
+      email: "novo@unimedceara.com.br",
+      name: "Novo",
+      permissions: [],
+      sessionId: null,
+      primeiroAcesso: true,
+      organizationalLinks: null,
+      primeiroAcessoBlockCode: "PA_DOMAIN_NO_SINGULAR"
+    });
+
+    const store = useAuthStore();
+    await store.hydrateSession();
+
+    const next = createNextMock();
+    const guard = createAuthGuard();
+
+    await guard(
+      createRoute({ guestOnly: true }, ROUTE_PATHS.AUTH),
+      {} as RouteLocationNormalized,
+      next
+    );
+
+    expect(next).toHaveBeenCalledWith(ROUTE_PATHS.PRIMEIRO_ACESSO);
+  });
+
+  it("redirects from primeiro-acesso to app when session becomes ready", async () => {
+    fetchCurrentUser.mockResolvedValue(sampleUser);
+
+    const store = useAuthStore();
+    await store.hydrateSession();
+
+    const next = createNextMock();
+    const guard = createAuthGuard();
+
+    await guard(
+      createRoute(
+        { requiresAuth: true, allowsPrimeiroAcesso: true },
+        ROUTE_PATHS.PRIMEIRO_ACESSO
+      ),
       {} as RouteLocationNormalized,
       next
     );

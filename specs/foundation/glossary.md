@@ -2,11 +2,9 @@
 
 ## Objetivo
 
-Este documento estabelece o vocabulário oficial utilizado nas especificações do Portal de Comunicação.
+Este documento é o SSOT da **terminologia de engenharia e framework** (SDD, estados da Feature, DoR, Gates, Review, DoD).
 
-Seu objetivo é garantir que desenvolvedores, analistas, arquitetos e agentes de IA utilizem os mesmos termos com o mesmo significado durante todo o ciclo de desenvolvimento.
-
-Caso exista divergência entre documentos, este glossário define a terminologia adotada pelas especificações (`specs/`).
+Conceitos de **negócio** têm SSOT em `docs/domain/02-business-glossary.md` (linguagem ubíqua em `03-ubiquitous-language.md`). Em divergência de termo de negócio, prevalece o glossário de domínio. Em divergência de termo de processo/framework, prevalece este documento.
 
 ---
 
@@ -152,19 +150,53 @@ Uma tarefa pode envolver desenvolvimento, testes, documentação, infraestrutura
 
 ---
 
+# Termos do Framework (ciclo da Feature)
+
+## status (feature.yaml)
+
+SSOT do estado da Feature. Valores persistentes: `DRAFT`, `READY_FOR_REVIEW`, `APPROVED`, `IMPLEMENTING`, `DONE`. Contrato: `feature-yaml.md`.
+
+`REWORK` não é estado persistente. Retrabalho de spec: `READY_FOR_REVIEW` → `DRAFT`.
+
+## DoR-Spec
+
+Contexto da Definition of Ready que autoriza `DRAFT` → `READY_FOR_REVIEW`.
+
+## DoR-Implementation
+
+Contexto da Definition of Ready que autoriza `APPROVED` → `IMPLEMENTING`.
+
+## Gate
+
+Verificação formal de critérios. Não é estado. No fluxo mínimo: Gate 1, 3 e 6 obrigatórios; 2, 4 e 5 condicionais.
+
+## Review de Spec
+
+Revisão da especificação em `READY_FOR_REVIEW`. Resultado: `APPROVED` ou retorno a `DRAFT`.
+
+## Review de PR
+
+Revisão de aderência spec/código/testes durante `IMPLEMENTING` (Gate 3). Não substitui Validate. Não altera `status` automaticamente.
+
+## Validate
+
+Atividade de evidência (testes/CI). Não é estado. Não altera `feature.yaml`.
+
+---
+
 # Convenções
 
-* Todos os documentos de `specs/` devem utilizar os termos definidos neste glossário.
-* Novos termos somente devem ser adicionados quando representarem conceitos recorrentes no projeto.
-* Este documento define a terminologia oficial utilizada pelas especificações.
-* Alterações neste glossário devem ser avaliadas quanto ao impacto nas especificações existentes.
+* Termos de **framework** (estados, DoR, Gates, Review, DoD): este glossário.
+* Termos de **negócio**: `docs/domain/02-business-glossary.md`.
+* Novos termos de framework somente quando recorrentes.
+* Alterações neste glossário devem ser avaliadas quanto ao impacto no processo SDD.
 
 ---
 
 # Referências
 
-* `docs/domain/02-business-glossary.md`
+* `docs/domain/02-business-glossary.md` — SSOT de conceitos de negócio
 * `docs/domain/03-ubiquitous-language.md`
-* `docs/domain/04-domain-concepts.md`
+* `specs/foundation/feature-yaml.md`
 * `specs/foundation/conventions.md`
 * `specs/foundation/principles.md`

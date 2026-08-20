@@ -376,6 +376,7 @@ Manter cadastro das cooperativas singulares e sua associação com a Federação
 | SIG_SINGULAR    | VARCHAR2(30)  | Sim         | -            | UK         |
 | COD_UNIMED      | NUMBER(3)     | Sim         | -            | UK         |
 | NUM_REGISTRO_ANS | VARCHAR2(20) | Sim         | -            | -          |
+| DES_DOMINIO_EMAIL | VARCHAR2(255) | Não       | NULL         | UK         |
 | FLG_ATIVO       | CHAR(1)       | Sim         | 'S'          | CK         |
 | DAT_CADASTRO    | TIMESTAMP(6)  | Sim         | SYSTIMESTAMP | -          |
 | DAT_ATUALIZACAO | TIMESTAMP(6)  | Não         | NULL         | -          |
@@ -386,6 +387,7 @@ Manter cadastro das cooperativas singulares e sua associação com a Federação
 - FK_SINGULAR_FEDERACAO
 - UK_SINGULAR_SIGLA
 - UK_SINGULAR_COD_UNIMED
+- UK_SINGULAR_DOMINIO_EMAIL
 - CK_SINGULAR_ATIVO
 
 #### Índices

@@ -20,6 +20,7 @@ const sampleUser = {
   name: "João",
   permissions: ["DOCUMENT_READ"],
   sessionId: "abc",
+  primeiroAcesso: false,
   roles: ["EDITOR"],
   organizationalLinks: {
     federationId: 1,
@@ -156,5 +157,51 @@ describe("useSessionStore", () => {
     expect(store.availableContext).toBeNull();
     expect(store.activeContext).toBeNull();
     expect(store.isReady).toBe(false);
+  });
+
+  it("marks primeiro acesso when Singular is resolved", async () => {
+    fetchCurrentUser.mockResolvedValue({
+      id: null,
+      email: "novo@unimedceara.com.br",
+      name: "Novo",
+      permissions: [],
+      sessionId: null,
+      primeiroAcesso: true,
+      organizationalLinks: null,
+      resolvedOrganization: { singularId: 10, federationId: 1 }
+    });
+
+    const store = useSessionStore();
+    await store.hydrate();
+
+    expect(store.status).toBe("primeiroAcesso");
+    expect(store.needsPrimeiroAcesso).toBe(true);
+    expect(store.isBlocked).toBe(false);
+    expect(store.isReady).toBe(false);
+    expect(store.isHydrated).toBe(true);
+    expect(store.user?.email).toBe("novo@unimedceara.com.br");
+    expect(store.activeContext).toBeNull();
+  });
+
+  it("marks blocked when domain has no Singular", async () => {
+    fetchCurrentUser.mockResolvedValue({
+      id: null,
+      email: "novo@desconhecido.test",
+      name: "Novo",
+      permissions: [],
+      sessionId: null,
+      primeiroAcesso: true,
+      organizationalLinks: null,
+      primeiroAcessoBlockCode: "PA_DOMAIN_NO_SINGULAR"
+    });
+
+    const store = useSessionStore();
+    await store.hydrate();
+
+    expect(store.status).toBe("blocked");
+    expect(store.isBlocked).toBe(true);
+    expect(store.needsPrimeiroAcesso).toBe(false);
+    expect(store.isReady).toBe(false);
+    expect(store.isHydrated).toBe(true);
   });
 });

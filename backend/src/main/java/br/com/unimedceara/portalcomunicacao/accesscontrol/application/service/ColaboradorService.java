@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Optional;
 
 /**
  * Localização e criação automática de colaboradores após autenticação Zimbra.
@@ -26,14 +27,21 @@ public class ColaboradorService {
     }
 
     /**
+     * Localiza colaborador por e-mail ou Zimbra ID, sincronizando identidade quando encontrado.
+     */
+    @Transactional
+    public Optional<ColaboradorEntity> findByIdentity(IdentityValidationResult identity) {
+        return colaboradorRepository.findByEmailIgnoreCase(identity.email())
+                .or(() -> colaboradorRepository.findByZimbraId(identity.zimbraId()))
+                .map(existing -> syncIdentity(existing, identity));
+    }
+
+    /**
      * Localiza colaborador por e-mail ou Zimbra ID; cria automaticamente se inexistente.
      */
     @Transactional
     public ColaboradorEntity locateOrCreate(IdentityValidationResult identity) {
-        return colaboradorRepository.findByEmailIgnoreCase(identity.email())
-                .or(() -> colaboradorRepository.findByZimbraId(identity.zimbraId()))
-                .map(existing -> syncIdentity(existing, identity))
-                .orElseGet(() -> createColaborador(identity));
+        return findByIdentity(identity).orElseGet(() -> createColaborador(identity));
     }
 
     /**

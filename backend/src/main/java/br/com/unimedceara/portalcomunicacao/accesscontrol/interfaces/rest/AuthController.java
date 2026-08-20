@@ -49,7 +49,7 @@ public class AuthController {
     }
 
     /**
-     * Valida credenciais no Zimbra e conclui login (cookies + redirect).
+     * Valida credenciais no Zimbra e conclui login (cookies de sessão).
      */
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @Operation(summary = "Login com credenciais", description = "Valida e-mail e senha no Zimbra e emite cookies de sessão")
@@ -60,9 +60,9 @@ public class AuthController {
             @RequestParam(name = "state", required = false) String state,
             HttpServletRequest request,
             HttpServletResponse response) {
-        URI redirectUrl = authenticationService.authenticateWithCredentials(
+        authenticationService.authenticateWithCredentials(
                 email, password, rememberMe, state, request, response);
-        return ResponseEntity.status(HttpStatus.FOUND).location(redirectUrl).build();
+        return ResponseEntity.ok().build();
     }
 
     /**

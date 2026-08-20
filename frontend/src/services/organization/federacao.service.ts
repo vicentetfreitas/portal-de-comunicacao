@@ -65,7 +65,10 @@ export class FederacaoApiService extends BaseApiClient {
     });
   }
 
-  update(id: number, request: UpdateFederacaoRequest): Promise<FederacaoResponse> {
+  update(
+    id: number,
+    request: UpdateFederacaoRequest
+  ): Promise<FederacaoResponse> {
     return this.put<FederacaoResponse>(
       `${FEDERACAO_API_PATHS.base}/${id}`,
       request

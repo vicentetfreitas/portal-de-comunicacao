@@ -2,6 +2,7 @@ package br.com.unimedceara.portalcomunicacao.infrastructure.integration.executor
 
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.exception.IntegrationException;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.exception.IntegrationUnavailableException;
+import br.com.unimedceara.portalcomunicacao.shared.exception.UnauthorizedException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.retry.Retry;
@@ -44,6 +45,8 @@ public class IntegrationHttpExecutor {
         decorated = Retry.decorateSupplier(retry, decorated);
         try {
             return decorated.get();
+        } catch (UnauthorizedException ex) {
+            throw ex;
         } catch (CallNotPermittedException ex) {
             throw new IntegrationUnavailableException(UNAVAILABLE_MESSAGE, ex);
         } catch (IntegrationException ex) {

@@ -387,4 +387,6 @@ Operacional
 
 **Reconciliação documental:** concluída em 2026-08-17 (`construction/review/baseline-saneamento.md`). Artefatos PA alinhados ao TO-BE; implementação de código permanece pendente.
 
-**GAPs de implementação (não resolvidos nesta etapa):** GAP-028-01 (`locateOrCreate`), GAP-028-03 (credencial temporária), GAP-028-04 (mapeamento domínio→Singular), GAP-028-02 (NOT NULL em DDL).
+**GAPs de implementação (não resolvidos nesta etapa):** GAP-028-01 (`locateOrCreate`), GAP-028-03 (credencial temporária), GAP-028-02 (NOT NULL em DDL).
+
+**GAP-028-04** (mapeamento domínio→Singular): persistência preparada no repositório (`SINGULAR.DES_DOMINIO_EMAIL`, `UK_SINGULAR_DOMINIO_EMAIL`, `migrations/V008__singular_email_domain.sql`, `dml/002-singulares.sql`). Aplicação da V008 no Oracle permanece com o DBA.

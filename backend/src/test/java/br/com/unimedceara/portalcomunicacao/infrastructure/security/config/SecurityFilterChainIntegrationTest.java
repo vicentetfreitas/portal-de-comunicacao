@@ -90,6 +90,16 @@ class SecurityFilterChainIntegrationTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void shouldRejectProtectedEndpointWithPrimeiroAcessoJwt() throws Exception {
+        String token = jwtTokenService.issuePrimeiroAcessoToken("user@test.com", "User Test", "zimbra-test");
+        Cookie accessToken = new Cookie(SecurityConstants.ACCESS_TOKEN_COOKIE, token);
+
+        mockMvc.perform(get(PROTECTED_PATH).cookie(accessToken))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("FORBIDDEN"));
+    }
+
     @TestConfiguration
     static class SecurityTestConfiguration {
 
