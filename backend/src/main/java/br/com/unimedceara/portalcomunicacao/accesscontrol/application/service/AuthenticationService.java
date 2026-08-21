@@ -2,10 +2,13 @@ package br.com.unimedceara.portalcomunicacao.accesscontrol.application.service;
 
 import br.com.unimedceara.portalcomunicacao.accesscontrol.application.port.IdentityCredentialValidator;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.domain.model.JwtAuthenticatedPrincipal;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.domain.model.JwtClaims;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.AuthSessaoEntity;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.ColaboradorEntity;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity.PapelAtribuicaoEntity;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest.dto.AuthenticatedUserResponse;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest.dto.ColaboradorOrganizationalLinksResponse;
+import br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest.dto.PapelAtribuicaoResponse;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.interfaces.rest.dto.ResolvedPrimeiroAcessoOrganization;
 import br.com.unimedceara.portalcomunicacao.organization.application.service.SingularDomainService;
 import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
@@ -39,6 +42,7 @@ public class AuthenticationService {
     private static final String UNAUTHORIZED_MESSAGE = "Autenticação não realizada";
     private static final String FORBIDDEN_MESSAGE = "Colaborador sem autorização para acessar o Portal";
     private static final String REFRESH_EXPIRED_MESSAGE = "Refresh token expirado";
+    private static final String INVALID_ASSIGNMENT_MESSAGE = "Atribuição inválida para o colaborador";
 
     private final OAuthStateService oAuthStateService;
     private final IdentityProviderClient identityProviderClient;
@@ -46,6 +50,7 @@ public class AuthenticationService {
     private final ColaboradorService colaboradorService;
     private final SingularDomainService singularDomainService;
     private final SessionService sessionService;
+    private final PapelAtribuicaoService papelAtribuicaoService;
     private final JwtTokenService jwtTokenService;
     private final AuthCookieService authCookieService;
     private final AuthAuditService authAuditService;
@@ -58,6 +63,7 @@ public class AuthenticationService {
             ColaboradorService colaboradorService,
             SingularDomainService singularDomainService,
             SessionService sessionService,
+            PapelAtribuicaoService papelAtribuicaoService,
             JwtTokenService jwtTokenService,
             AuthCookieService authCookieService,
             AuthAuditService authAuditService,
@@ -68,6 +74,7 @@ public class AuthenticationService {
         this.colaboradorService = colaboradorService;
         this.singularDomainService = singularDomainService;
         this.sessionService = sessionService;
+        this.papelAtribuicaoService = papelAtribuicaoService;
         this.jwtTokenService = jwtTokenService;
         this.authCookieService = authCookieService;
         this.authAuditService = authAuditService;
@@ -213,8 +220,9 @@ public class AuthenticationService {
         if (!colaborador.isAtivo()) {
             throw new ForbiddenException(FORBIDDEN_MESSAGE);
         }
+        Optional<PapelAtribuicaoEntity> activeAssignment = papelAtribuicaoService.resolveAutomatica(colaborador.getId());
         SessionService.SessionCreationResult session = issueOperationalSession(
-                colaborador, rememberMe, request, response);
+                colaborador, rememberMe, request, response, activeAssignment.map(PapelAtribuicaoEntity::getId).orElse(null));
         return new AuthenticatedUserResponse(
                 colaborador.getId(),
                 colaborador.getEmail(),
@@ -224,18 +232,21 @@ public class AuthenticationService {
                 organizationalLinksFrom(colaborador),
                 false,
                 null,
-                null);
+                null,
+                eligibleAssignmentsFrom(colaborador.getId()),
+                activeAssignment.map(AuthenticationService::assignmentResponseFrom).orElse(null));
     }
 
     private SessionService.SessionCreationResult issueOperationalSession(
             ColaboradorEntity colaborador,
             boolean rememberMe,
             HttpServletRequest request,
-            HttpServletResponse response) {
+            HttpServletResponse response,
+            Long papelAtribuicaoId) {
         String dispositivo = request.getHeader("User-Agent");
         SessionService.SessionCreationResult session = sessionService.createSession(colaborador, rememberMe, dispositivo);
 
-        String accessToken = issueAccessToken(colaborador, session.sessionId());
+        String accessToken = issueAccessToken(colaborador, session.sessionId(), papelAtribuicaoId);
 
         authCookieService.setAccessTokenCookie(response, accessToken);
         authCookieService.setRefreshTokenCookie(response, session.rawRefreshToken(), session.rememberMe());
@@ -245,7 +256,11 @@ public class AuthenticationService {
     }
 
     /**
-     * Renova Access Token a partir do Refresh Token do cookie.
+     * Renova Access Token a partir do Refresh Token do cookie, preservando a atribuição de
+     * papel (PAPEL_ATRIBUICAO) ativa enquanto ela continuar elegível (pertencente ao
+     * colaborador, ativa e vigente). Se a atribuição anterior deixou de ser elegível, a
+     * mesma regra de seleção automática do login é reaplicada (1 elegível → seleciona;
+     * 0 ou mais de 1 → sem atribuição ativa, exige seleção explícita).
      */
     @Transactional
     public void refreshAccessToken(Cookie[] cookies, HttpServletResponse response) {
@@ -268,10 +283,31 @@ public class AuthenticationService {
             throw new ForbiddenException(FORBIDDEN_MESSAGE);
         }
 
-        String accessToken = issueAccessToken(colaborador, sessao.getSessionId());
+        Long previousAssignmentId = extractPreviousAssignmentId(cookies, colaborador.getId());
+        Optional<PapelAtribuicaoEntity> activeAssignment = papelAtribuicaoService
+                .resolveParaRefresh(colaborador.getId(), previousAssignmentId);
+
+        String accessToken = issueAccessToken(
+                colaborador, sessao.getSessionId(), activeAssignment.map(PapelAtribuicaoEntity::getId).orElse(null));
 
         authCookieService.setAccessTokenCookie(response, accessToken);
         authAuditService.logRefresh(colaborador.getId(), sessao.getSessionId());
+    }
+
+    /**
+     * Recupera, sem validar autenticação/expiração, a atribuição ativa reivindicada pelo
+     * Access Token anterior (se presente) — apenas como candidata; a elegibilidade é
+     * sempre revalidada contra o banco em {@link PapelAtribuicaoService}.
+     */
+    private Long extractPreviousAssignmentId(Cookie[] cookies, Long colaboradorId) {
+        String previousAccessToken = authCookieService.extractAccessToken(cookies);
+        if (previousAccessToken == null) {
+            return null;
+        }
+        return jwtTokenService.parseIgnoringExpiration(previousAccessToken)
+                .filter(claims -> colaboradorId.equals(claims.colaboradorId()))
+                .map(JwtClaims::papelAtribuicaoId)
+                .orElse(null);
     }
 
     /**
@@ -290,7 +326,9 @@ public class AuthenticationService {
     }
 
     /**
-     * Retorna identidade do colaborador autenticado com permissões do banco.
+     * Retorna identidade do colaborador autenticado com permissões do banco e o contexto
+     * operacional atual: atribuições elegíveis e qual delas está ativa. A atribuição ativa
+     * reivindicada pelo token é sempre revalidada contra o banco antes de ser exposta.
      */
     @Transactional(readOnly = true)
     public AuthenticatedUserResponse getAuthenticatedUser(JwtAuthenticatedPrincipal principal) {
@@ -308,6 +346,13 @@ public class AuthenticationService {
         }
 
         List<String> permissions = loadPermissions(colaborador.getId());
+        // RN-SESSION-007 é uma regra de estado (não apenas de login/refresh): se o token não
+        // carrega atribuição ativa válida, reaplica a seleção automática (1 elegível) aqui,
+        // sem reemitir cookie — a próxima renovação alinha o Access Token a este resultado.
+        PapelAtribuicaoResponse activeAssignment = papelAtribuicaoService
+                .resolveParaRefresh(colaborador.getId(), principal.papelAtribuicaoId())
+                .map(AuthenticationService::assignmentResponseFrom)
+                .orElse(null);
         return new AuthenticatedUserResponse(
                 colaborador.getId(),
                 colaborador.getEmail(),
@@ -317,7 +362,50 @@ public class AuthenticationService {
                 organizationalLinksFrom(colaborador),
                 false,
                 null,
-                null);
+                null,
+                eligibleAssignmentsFrom(colaborador.getId()),
+                activeAssignment);
+    }
+
+    /**
+     * Ativa (seleciona) uma atribuição de papel do colaborador como contexto operacional,
+     * emitindo novo Access Token sem afetar sessão (Refresh Token) nem exigir novo login.
+     * A atribuição informada é sempre revalidada contra o banco — pertencimento ao
+     * colaborador autenticado, status ativo e vigência — nunca aceita apenas pelo
+     * identificador recebido.
+     */
+    @Transactional
+    public AuthenticatedUserResponse selectAtribuicao(
+            JwtAuthenticatedPrincipal principal, Long papelAtribuicaoId, HttpServletResponse response) {
+        if (principal.primeiroAcesso() || principal.colaboradorId() == null) {
+            throw new ForbiddenException(FORBIDDEN_MESSAGE);
+        }
+
+        ColaboradorEntity colaborador = colaboradorService.findById(principal.colaboradorId());
+        if (!colaborador.isAtivo()) {
+            throw new ForbiddenException(FORBIDDEN_MESSAGE);
+        }
+
+        PapelAtribuicaoEntity atribuicao = papelAtribuicaoService
+                .findElegivel(colaborador.getId(), papelAtribuicaoId)
+                .orElseThrow(() -> new ForbiddenException(INVALID_ASSIGNMENT_MESSAGE));
+
+        String accessToken = issueAccessToken(colaborador, principal.sessionId(), atribuicao.getId());
+        authCookieService.setAccessTokenCookie(response, accessToken);
+        authAuditService.logRefresh(colaborador.getId(), principal.sessionId());
+
+        return new AuthenticatedUserResponse(
+                colaborador.getId(),
+                colaborador.getEmail(),
+                colaborador.getNome(),
+                loadPermissions(colaborador.getId()),
+                principal.sessionId(),
+                organizationalLinksFrom(colaborador),
+                false,
+                null,
+                null,
+                eligibleAssignmentsFrom(colaborador.getId()),
+                assignmentResponseFrom(atribuicao));
     }
 
     private AuthenticatedUserResponse primeiroAcessoUser(JwtAuthenticatedPrincipal principal) {
@@ -331,6 +419,8 @@ public class AuthenticationService {
                         null,
                         true,
                         new ResolvedPrimeiroAcessoOrganization(singular.getId(), singular.getFederacaoId()),
+                        null,
+                        Collections.emptyList(),
                         null))
                 .orElseGet(() -> new AuthenticatedUserResponse(
                         null,
@@ -341,10 +431,12 @@ public class AuthenticationService {
                         null,
                         true,
                         null,
-                        SecurityConstants.PA_DOMAIN_NO_SINGULAR));
+                        SecurityConstants.PA_DOMAIN_NO_SINGULAR,
+                        Collections.emptyList(),
+                        null));
     }
 
-    private String issueAccessToken(ColaboradorEntity colaborador, String sessionId) {
+    private String issueAccessToken(ColaboradorEntity colaborador, String sessionId, Long papelAtribuicaoId) {
         return jwtTokenService.issueToken(
                 colaborador.getId(),
                 sessionId,
@@ -353,7 +445,8 @@ public class AuthenticationService {
                 colaborador.getFederacaoId(),
                 colaborador.getSingularId(),
                 colaborador.getAreaId(),
-                colaborador.getEquipeId());
+                colaborador.getEquipeId(),
+                papelAtribuicaoId);
     }
 
     static ColaboradorOrganizationalLinksResponse organizationalLinksFrom(ColaboradorEntity colaborador) {
@@ -367,6 +460,22 @@ public class AuthenticationService {
     private List<String> loadPermissions(long colaboradorId) {
         // Permissões serão carregadas de tabelas dedicadas em Features futuras.
         return Collections.emptyList();
+    }
+
+    private List<PapelAtribuicaoResponse> eligibleAssignmentsFrom(Long colaboradorId) {
+        return papelAtribuicaoService.listElegiveis(colaboradorId).stream()
+                .map(AuthenticationService::assignmentResponseFrom)
+                .toList();
+    }
+
+    private static PapelAtribuicaoResponse assignmentResponseFrom(PapelAtribuicaoEntity atribuicao) {
+        return new PapelAtribuicaoResponse(
+                atribuicao.getId(),
+                atribuicao.getPapel().getNome(),
+                atribuicao.getFederacaoId(),
+                atribuicao.getSingularId(),
+                atribuicao.getAreaId(),
+                atribuicao.getEquipeId());
     }
 
     private String buildCallbackUrl(HttpServletRequest request) {

@@ -4,13 +4,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useSessionStore } from "@/stores/session.store";
 import { ApiError } from "@/types/api";
 
-const { fetchCurrentUser } = vi.hoisted(() => ({
-  fetchCurrentUser: vi.fn()
+const { fetchCurrentUser, selectAssignment } = vi.hoisted(() => ({
+  fetchCurrentUser: vi.fn(),
+  selectAssignment: vi.fn()
 }));
 
 vi.mock("@/services/auth/auth.service", () => ({
   authService: {
-    fetchCurrentUser
+    fetchCurrentUser,
+    selectAssignment
   }
 }));
 
@@ -181,6 +183,76 @@ describe("useSessionStore", () => {
     expect(store.isHydrated).toBe(true);
     expect(store.user?.email).toBe("novo@unimedceara.com.br");
     expect(store.activeContext).toBeNull();
+  });
+
+  it("exposes a single eligible assignment as already active", async () => {
+    fetchCurrentUser.mockResolvedValue({
+      ...sampleUser,
+      eligibleAssignments: [
+        { id: 1, papel: "COLABORADOR", federacaoId: 1, singularId: 2, areaId: 3, equipeId: null }
+      ],
+      activeAssignment: {
+        id: 1,
+        papel: "COLABORADOR",
+        federacaoId: 1,
+        singularId: 2,
+        areaId: 3,
+        equipeId: null
+      }
+    });
+
+    const store = useSessionStore();
+    await store.hydrate();
+
+    expect(store.eligibleAssignments).toHaveLength(1);
+    expect(store.activeAssignment?.id).toBe(1);
+    expect(store.needsAssignmentSelection).toBe(false);
+  });
+
+  it("signals that selection is needed when multiple assignments and none active", async () => {
+    fetchCurrentUser.mockResolvedValue({
+      ...sampleUser,
+      eligibleAssignments: [
+        { id: 1, papel: "COLABORADOR", federacaoId: 1, singularId: 2, areaId: 3, equipeId: null },
+        { id: 2, papel: "ADMINISTRADOR", federacaoId: 1, singularId: 2, areaId: 3, equipeId: null }
+      ],
+      activeAssignment: null
+    });
+
+    const store = useSessionStore();
+    await store.hydrate();
+
+    expect(store.eligibleAssignments).toHaveLength(2);
+    expect(store.activeAssignment).toBeNull();
+    expect(store.needsAssignmentSelection).toBe(true);
+  });
+
+  it("selects an assignment without a new login and updates active context", async () => {
+    fetchCurrentUser.mockResolvedValue({
+      ...sampleUser,
+      eligibleAssignments: [
+        { id: 1, papel: "COLABORADOR", federacaoId: 1, singularId: 2, areaId: 3, equipeId: null },
+        { id: 2, papel: "ADMINISTRADOR", federacaoId: 1, singularId: 2, areaId: 3, equipeId: null }
+      ],
+      activeAssignment: null
+    });
+    selectAssignment.mockResolvedValue({
+      ...sampleUser,
+      eligibleAssignments: [
+        { id: 1, papel: "COLABORADOR", federacaoId: 1, singularId: 2, areaId: 3, equipeId: null },
+        { id: 2, papel: "ADMINISTRADOR", federacaoId: 1, singularId: 2, areaId: 3, equipeId: null }
+      ],
+      activeAssignment: { id: 2, papel: "ADMINISTRADOR", federacaoId: 1, singularId: 2, areaId: 3, equipeId: null }
+    });
+
+    const store = useSessionStore();
+    await store.hydrate();
+    await store.selectAssignment(2);
+
+    expect(selectAssignment).toHaveBeenCalledWith(2);
+    expect(store.activeAssignment?.id).toBe(2);
+    expect(store.needsAssignmentSelection).toBe(false);
+    expect(fetchCurrentUser).toHaveBeenCalledTimes(1);
   });
 
   it("marks blocked when domain has no Singular", async () => {

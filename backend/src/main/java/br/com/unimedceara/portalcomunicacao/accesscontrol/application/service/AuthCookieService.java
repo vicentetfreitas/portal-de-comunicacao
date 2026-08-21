@@ -76,11 +76,24 @@ public class AuthCookieService {
      * Extrai o Refresh Token do array de cookies da requisição.
      */
     public String extractRefreshToken(Cookie[] cookies) {
+        return extractCookieValue(cookies, SecurityConstants.REFRESH_TOKEN_COOKIE);
+    }
+
+    /**
+     * Extrai o Access Token (possivelmente expirado) do array de cookies da requisição.
+     * Uso restrito a continuidade de contexto operacional durante o refresh — nunca para
+     * autenticação (essa responsabilidade é exclusiva do {@code JwtAuthenticationFilter}).
+     */
+    public String extractAccessToken(Cookie[] cookies) {
+        return extractCookieValue(cookies, SecurityConstants.ACCESS_TOKEN_COOKIE);
+    }
+
+    private String extractCookieValue(Cookie[] cookies, String name) {
         if (cookies == null) {
             return null;
         }
         for (Cookie cookie : cookies) {
-            if (SecurityConstants.REFRESH_TOKEN_COOKIE.equals(cookie.getName())) {
+            if (name.equals(cookie.getName())) {
                 String value = cookie.getValue();
                 return value == null || value.isBlank() ? null : value;
             }

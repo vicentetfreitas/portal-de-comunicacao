@@ -32,6 +32,21 @@ public final class AuthTestTokens {
             String sessionId,
             String email,
             String name) {
+        return expiredAccessToken(properties, jsonMapper, colaboradorId, sessionId, email, name, null);
+    }
+
+    /**
+     * Emite JWT já expirado, com atribuição de papel ativa (claim {@code atribId}) — usado para
+     * validar recuperação de contexto operacional durante refresh (FT-SESSION).
+     */
+    public static String expiredAccessToken(
+            SecurityProperties properties,
+            JsonMapper jsonMapper,
+            long colaboradorId,
+            String sessionId,
+            String email,
+            String name,
+            Long papelAtribuicaoId) {
         Instant now = Instant.now();
         Instant issuedAt = now.minusSeconds(3600);
         Instant expiration = now.minusSeconds(60);
@@ -41,6 +56,9 @@ public final class AuthTestTokens {
         payload.put("sid", sessionId);
         payload.put("email", email);
         payload.put("name", name);
+        if (papelAtribuicaoId != null) {
+            payload.put("atribId", papelAtribuicaoId);
+        }
         payload.put("iat", issuedAt.getEpochSecond());
         payload.put("exp", expiration.getEpochSecond());
         payload.put("iss", properties.jwtIssuer());

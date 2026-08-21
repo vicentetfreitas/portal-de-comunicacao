@@ -15,7 +15,8 @@ public record JwtAuthenticatedPrincipal(
         Long federationId,
         Long singularId,
         Long areaId,
-        Long teamId) implements Principal {
+        Long teamId,
+        Long papelAtribuicaoId) implements Principal {
 
     @Override
     public String getName() {

@@ -3,7 +3,8 @@ import { computed, ref } from "vue";
 
 import type {
   AuthenticatedUser,
-  ColaboradorOrganizationalLinks
+  ColaboradorOrganizationalLinks,
+  PapelAtribuicaoSummary
 } from "@/auth/types";
 import { authService } from "@/services/auth/auth.service";
 import { normalizeApiError } from "@/types/api";
@@ -64,6 +65,24 @@ export const useSessionStore = defineStore("session", () => {
     () => user.value?.organizationalLinks ?? null
   );
 
+  /** FT-SESSION — atribuições de papel elegíveis do colaborador. */
+  const eligibleAssignments = computed<PapelAtribuicaoSummary[]>(
+    () => user.value?.eligibleAssignments ?? []
+  );
+
+  /** FT-SESSION — atribuição de papel ativa (contexto operacional); null se nenhuma selecionada. */
+  const activeAssignment = computed<PapelAtribuicaoSummary | null>(
+    () => user.value?.activeAssignment ?? null
+  );
+
+  /** FT-SESSION — colaborador possui mais de uma atribuição elegível e precisa selecionar. */
+  const needsAssignmentSelection = computed(
+    () =>
+      isReady.value &&
+      activeAssignment.value === null &&
+      eligibleAssignments.value.length > 1
+  );
+
   function hasRole(role: string): boolean {
     return roles.value.includes(role);
   }
@@ -119,6 +138,15 @@ export const useSessionStore = defineStore("session", () => {
     activeContext.value = null;
     status.value = "idle";
     hydrationPromise = null;
+  }
+
+  /**
+   * FT-SESSION — activates (selects) a role assignment as the operational context.
+   * Reuses the auth cycle's user shape; does not trigger a new login.
+   */
+  async function selectAssignment(papelAtribuicaoId: number): Promise<void> {
+    const sessionUser = await authService.selectAssignment(papelAtribuicaoId);
+    applyAuthenticatedUser(sessionUser);
   }
 
   /**
@@ -180,11 +208,15 @@ export const useSessionStore = defineStore("session", () => {
     permissions,
     roles,
     organizationalLinks,
+    eligibleAssignments,
+    activeAssignment,
+    needsAssignmentSelection,
     hasRole,
     hasAnyRole,
     hasCapability,
     hasAnyCapability,
     applyAuthenticatedUser,
+    selectAssignment,
     clear,
     reset,
     hydrate

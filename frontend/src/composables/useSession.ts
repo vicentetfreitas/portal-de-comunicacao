@@ -18,7 +18,10 @@ export function useSession() {
     isBlocked,
     permissions,
     roles,
-    organizationalLinks
+    organizationalLinks,
+    eligibleAssignments,
+    activeAssignment,
+    needsAssignmentSelection
   } = storeToRefs(store);
 
   return {
@@ -33,11 +36,15 @@ export function useSession() {
     permissions,
     roles,
     organizationalLinks,
+    eligibleAssignments,
+    activeAssignment,
+    needsAssignmentSelection,
     hasRole: store.hasRole,
     hasAnyRole: store.hasAnyRole,
     hasCapability: store.hasCapability,
     hasAnyCapability: store.hasAnyCapability,
     hydrate: store.hydrate,
+    selectAssignment: store.selectAssignment,
     clear: store.clear
   };
 }

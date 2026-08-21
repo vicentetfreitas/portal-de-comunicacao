@@ -13,6 +13,13 @@ export const AUTH_API_PATHS = {
 } as const;
 
 /**
+ * FT-SESSION — ativa uma atribuição de papel (PAPEL_ATRIBUICAO) como contexto operacional.
+ */
+export function atribuicaoAtivarPath(papelAtribuicaoId: number): string {
+  return `/auth/atribuicoes/${papelAtribuicaoId}/ativar`;
+}
+
+/**
  * Cookie names — HttpOnly session cookies are not readable by JavaScript (RN-AUTH-007).
  * Only CSRF cookie is accessed client-side.
  */

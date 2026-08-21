@@ -1,4 +1,4 @@
-import { AUTH_API_PATHS } from "@/config/auth";
+import { atribuicaoAtivarPath, AUTH_API_PATHS } from "@/config/auth";
 import { env } from "@/config/env";
 import { httpConfig } from "@/config/http";
 import type {
@@ -181,6 +181,21 @@ export class AuthApiService {
       }
       throw error;
     }
+  }
+
+  /**
+   * FT-SESSION — ativa (seleciona) uma atribuição de papel do colaborador como contexto
+   * operacional. Troca o Access Token sem exigir novo login. O backend revalida a
+   * atribuição (pertencimento, status, vigência); o frontend nunca decide sozinho.
+   */
+  async selectAssignment(
+    papelAtribuicaoId: number
+  ): Promise<AuthenticatedUser> {
+    const client = getHttpClient();
+    const response = await client.post<AuthMeApiResponse>(
+      atribuicaoAtivarPath(papelAtribuicaoId)
+    );
+    return unwrapMeResponse(response.data);
   }
 }
 

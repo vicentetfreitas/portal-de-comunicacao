@@ -3,14 +3,16 @@
 | Item | Valor |
 |------|-------|
 | Feature | FT-SESSION |
-| Status | APPROVED (evolução documental 2026-07-24; reconciliado 2026-08-17) |
-| Decisões | DEC-FA-002, DEC-FA-003, DEC-ORG-001, DH-02; REF-DB-CTX-01 |
+| Status | APPROVED (evolução documental 2026-07-24; reconciliado 2026-08-17; evolução PAPEL_ATRIBUICAO 2026-08-20) |
+| Decisões | DEC-FA-002, DEC-FA-003, DEC-ORG-001, DEC-DB-020, DH-02; REF-DB-CTX-01 |
 
 ## Objetivo
 
-Após autenticação FT-AUTH, expor e manter o **estado de sessão** do colaborador — vínculo organizacional e **Contexto Ativo** (projeção derivada) — para consumo do Portal.
+Após autenticação FT-AUTH, expor e manter o **estado de sessão** do colaborador — vínculo organizacional (Contexto Ativo, projeção derivada) e **contexto operacional** (atribuição de papel ativa, `PAPEL_ATRIBUICAO`) — para consumo do Portal.
 
 A **condução do Primeiro Acesso** e o **encerramento do onboarding** pertencem a **FT-PRIMEIRO-ACESSO**.
+
+**Nota de rastreabilidade (2026-08-20):** a seção "Contexto operacional por atribuição de papel" abaixo documenta uma evolução implementada diretamente nesta especificação de Feature, sem novo `DEC-XXX`/`DH-XXX` dedicado — apenas `DEC-DB-020` (`PAPEL_ATRIBUICAO` ortogonal ao vínculo) já aprovado é referenciado. Se este projeto exigir formalização de decisão para mudanças de comportamento de sessão, isso permanece pendente de registro em `docs/governance/03-open-decisions.md`.
 
 ## Hierarquia organizacional (DEC-ORG-001)
 
@@ -62,14 +64,36 @@ Contexto Ativo = projeção derivada para sessão/UI/navegação
 
 Fonte: `docs/governance/03-open-decisions.md` — DEC-FA-003 § Supersession parcial.
 
+## Contexto operacional por atribuição de papel (PAPEL_ATRIBUICAO)
+
+Um COLABORADOR pode possuir múltiplas `PAPEL_ATRIBUICAO` (autorização), **ortogonais** ao vínculo cadastral único (DEC-DB-020): o vínculo (Federação/Singular/Área/Equipe) permanece 1:1 (DH-02); as atribuições de papel são 1:N, cada uma com escopo organizacional próprio.
+
+```text
+COLABORADOR
+    ├── vínculo cadastral único (DH-02) — Contexto Ativo (federação/singular/área)
+    └── N PAPEL_ATRIBUICAO (DEC-DB-020) — contexto operacional (papel ativo)
+```
+
+- **RN-SESSION-006:** Somente atribuições pertencentes ao colaborador autenticado, com `FLG_ATIVO = 'S'` e dentro da vigência (`DAT_INICIO_VIGENCIA` ≤ agora < `DAT_FIM_VIGENCIA` ou `DAT_FIM_VIGENCIA` nula) são elegíveis como contexto operacional.
+- **RN-SESSION-007:** Com exatamente 1 atribuição elegível, o Portal seleciona automaticamente essa atribuição como contexto operacional ativo — sem ação do colaborador.
+- **RN-SESSION-008:** Com mais de 1 atribuição elegível (ou 0), o Portal **não** seleciona automaticamente; o colaborador seleciona explicitamente via `POST /api/v1/auth/atribuicoes/{papelAtribuicaoId}/ativar`. A unidade selecionável é a atribuição (`PAPEL_ATRIBUICAO`), nunca o vínculo cadastral.
+- **RN-SESSION-009:** A ativação/troca de atribuição é sempre revalidada no backend (pertencimento ao colaborador, `FLG_ATIVO`, vigência) — nunca aceita apenas pelo identificador enviado pelo cliente. Trocar de atribuição substitui o Access Token (contexto operacional) sem afetar a sessão (Refresh Token / `AUTH_SESSAO`) e sem exigir novo login.
+- **RN-SESSION-010:** O Access Token representa a atribuição ativa pelo identificador estável de `PAPEL_ATRIBUICAO` (claim `atribId`) — nunca reutiliza os claims de vínculo (`fid`, `singularId`, `areaId`, `teamId`) para esse fim. Renovação (`/auth/refresh`) preserva a atribuição ativa enquanto ela permanecer elegível; caso contrário, reaplica RN-SESSION-007/008. Permissões nunca são incluídas no Access Token.
+
+`GET /api/v1/auth/me` reflete esse contexto: `eligibleAssignments` (todas as atribuições elegíveis) e `activeAssignment` (a atribuição ativa revalidada contra o banco a cada chamada; ausente/nula quando nenhuma foi selecionada).
+
+**Não coberto por esta evolução** (fora de escopo — ver `docs/domain/10-open-questions.md` OQ-020): matriz de permissões por papel; criação/edição/revogação de `PAPEL_ATRIBUICAO` (gestão de atribuições permanece Feature futura de administração).
+
 ## Non-goals
 
 - Login/logout/refresh (FT-AUTH).
 - Wizard de onboarding e criação de COLABORADOR (FT-PRIMEIRO-ACESSO).
-- UI de seleção entre N vínculos (superseded).
+- UI de seleção entre N vínculos cadastrais (superseded — RN-SESSION-003). Distinto da seleção de atribuição de papel (RN-SESSION-008), que é a unidade selecionável.
 - CMS / permissões editoriais.
-- Persistência de contexto em `AUTH_SESSAO`.
+- Persistência de contexto de vínculo em `AUTH_SESSAO`.
 - Persistência separada de Contexto Ativo além das FKs de `COLABORADOR`.
+- Criação, edição ou revogação de `PAPEL_ATRIBUICAO` (gestão de atribuições — Feature futura).
+- Matriz de permissões por papel; cálculo de `permissions` em `/auth/me` (permanece Feature futura, conforme FT-AUTH).
 
 ## Relação com primeiro acesso
 

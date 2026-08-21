@@ -61,7 +61,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 jwtClaims.federationId(),
                 jwtClaims.singularId(),
                 jwtClaims.areaId(),
-                jwtClaims.teamId());
+                jwtClaims.teamId(),
+                jwtClaims.papelAtribuicaoId());
 
         String authority = jwtClaims.primeiroAcesso()
                 ? SecurityConstants.AUTHORITY_PRIMEIRO_ACESSO

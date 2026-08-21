@@ -202,6 +202,8 @@ O Portal **não utiliza HTTP Session** (Servlet Session). A sessão é represent
 
 Claims opcionais de vínculos organizacionais do colaborador (`fid`, `singularId`, `areaId`, `teamId`) refletem `COLABORADOR` na emissão do token — não são persistidos em `AUTH_SESSAO`.
 
+Claim opcional `atribId` (FT-SESSION, 2026-08-20): identificador estável (`COD_PAPEL_ATRIBUICAO`) da atribuição de papel ativa como contexto operacional — **ortogonal** aos claims de vínculo acima (DEC-DB-020), nunca reaproveita `fid`/`singularId`/`areaId`/`teamId`. Ausente quando o colaborador não possui atribuição ativa. Detalhes: `specs/features/session/specification.md` § "Contexto operacional por atribuição de papel".
+
 **O Access Token não contém permissões.** Permissões são carregadas do banco a cada requisição que exige autorização.
 
 ## Estrutura do Refresh Token

@@ -41,4 +41,13 @@ public final class IntegrationTestUniqueData {
         String prefix = localPartPrefix == null || localPartPrefix.isBlank() ? "user" : localPartPrefix;
         return prefix + "-" + SEQUENCE.incrementAndGet() + "@unimedceara.com.br";
     }
+
+    /**
+     * Identificador numérico único para entidades sem sequence Oracle homologada
+     * (ex.: {@code PAPEL}, {@code PAPEL_ATRIBUICAO} — ver {@code database/model/03-physical-model.md}).
+     * Válido apenas dentro do escopo de um teste com rollback ({@code @IntegrationTest}).
+     */
+    public static long uniqueId() {
+        return SEQUENCE.incrementAndGet();
+    }
 }

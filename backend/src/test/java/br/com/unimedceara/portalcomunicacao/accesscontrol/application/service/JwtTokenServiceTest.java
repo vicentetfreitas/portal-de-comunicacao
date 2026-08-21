@@ -75,6 +75,86 @@ class JwtTokenServiceTest {
     }
 
     @Test
+    void shouldIssueAndValidateTokenWithActiveAssignmentClaim() {
+        String token = jwtTokenService.issueToken(
+                42L, "session-uuid", "user@unimedceara.com.br", "João Silva", 1L, 2L, 3L, 4L, 777L);
+
+        Optional<JwtClaims> claims = jwtTokenService.validateAndParse(token);
+
+        assertThat(claims).isPresent();
+        assertThat(claims.get().papelAtribuicaoId()).isEqualTo(777L);
+        assertThat(claims.get().federationId()).isEqualTo(1L);
+        assertThat(claims.get().singularId()).isEqualTo(2L);
+        assertThat(claims.get().areaId()).isEqualTo(3L);
+        assertThat(claims.get().teamId()).isEqualTo(4L);
+    }
+
+    @Test
+    void shouldOmitActiveAssignmentClaimWhenNull() {
+        String token = jwtTokenService.issueToken(
+                42L, "session-uuid", "user@unimedceara.com.br", "João Silva", null, null, null, null, null);
+
+        Optional<JwtClaims> claims = jwtTokenService.validateAndParse(token);
+
+        assertThat(claims).isPresent();
+        assertThat(claims.get().papelAtribuicaoId()).isNull();
+    }
+
+    @Test
+    void shouldNotParseExpiredTokenViaValidateAndParse() {
+        String expiredToken = br.com.unimedceara.portalcomunicacao.accesscontrol.acceptance.AuthTestTokens
+                .expiredAccessToken(
+                        securityProperties(),
+                        tools.jackson.databind.json.JsonMapper.builder().build(),
+                        42L,
+                        "session-uuid",
+                        "user@unimedceara.com.br",
+                        "João Silva",
+                        777L);
+
+        assertThat(jwtTokenService.validateAndParse(expiredToken)).isEmpty();
+    }
+
+    @Test
+    void shouldRecoverActiveAssignmentFromExpiredTokenViaParseIgnoringExpiration() {
+        String expiredToken = br.com.unimedceara.portalcomunicacao.accesscontrol.acceptance.AuthTestTokens
+                .expiredAccessToken(
+                        securityProperties(),
+                        tools.jackson.databind.json.JsonMapper.builder().build(),
+                        42L,
+                        "session-uuid",
+                        "user@unimedceara.com.br",
+                        "João Silva",
+                        777L);
+
+        Optional<JwtClaims> claims = jwtTokenService.parseIgnoringExpiration(expiredToken);
+
+        assertThat(claims).isPresent();
+        assertThat(claims.get().colaboradorId()).isEqualTo(42L);
+        assertThat(claims.get().papelAtribuicaoId()).isEqualTo(777L);
+    }
+
+    @Test
+    void shouldRejectTamperedTokenViaParseIgnoringExpiration() {
+        String token = jwtTokenService.issueToken(1L, "sid", "a@b.com", "A");
+        String tampered = token.substring(0, token.length() - 2) + "xx";
+
+        assertThat(jwtTokenService.parseIgnoringExpiration(tampered)).isEmpty();
+    }
+
+    private SecurityProperties securityProperties() {
+        return new SecurityProperties(
+                "portal-comunicacao",
+                "test-jwt-secret-32-characters-minimum",
+                15,
+                8,
+                30,
+                3,
+                true,
+                List.of("http://localhost:4200"));
+    }
+
+    @Test
     void shouldRejectTamperedToken() {
         String token = jwtTokenService.issueToken(1L, "sid", "a@b.com", "A");
         String tampered = token.substring(0, token.length() - 2) + "xx";

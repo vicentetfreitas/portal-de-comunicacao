@@ -334,4 +334,44 @@ describe("AuthApiService", () => {
     await authService.logout();
     expect(postMock).toHaveBeenCalledWith(AUTH_API_PATHS.logout);
   });
+
+  it("activates a role assignment without sending a body", async () => {
+    postMock.mockResolvedValue({
+      data: {
+        success: true,
+        data: {
+          id: 9,
+          email: "user@unimedceara.com.br",
+          name: "Maria",
+          permissions: [],
+          sessionId: "s-op",
+          primeiroAcesso: false,
+          organizationalLinks: {
+            federationId: 1,
+            singularId: 2,
+            areaId: 20,
+            teamId: null
+          },
+          eligibleAssignments: [
+            { id: 5, papel: "COLABORADOR", federacaoId: 1, singularId: 2, areaId: 20, equipeId: null },
+            { id: 6, papel: "ADMINISTRADOR", federacaoId: 1, singularId: 2, areaId: 20, equipeId: null }
+          ],
+          activeAssignment: {
+            id: 6,
+            papel: "ADMINISTRADOR",
+            federacaoId: 1,
+            singularId: 2,
+            areaId: 20,
+            equipeId: null
+          }
+        }
+      }
+    });
+
+    const user = await authService.selectAssignment(6);
+
+    expect(postMock).toHaveBeenCalledWith("/auth/atribuicoes/6/ativar");
+    expect(user.activeAssignment?.id).toBe(6);
+    expect(user.eligibleAssignments).toHaveLength(2);
+  });
 });

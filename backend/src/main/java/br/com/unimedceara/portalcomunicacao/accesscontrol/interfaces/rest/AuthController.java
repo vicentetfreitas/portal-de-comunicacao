@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -96,6 +97,22 @@ public class AuthController {
     public ApiResponse<Void> refresh(HttpServletRequest request, HttpServletResponse response) {
         authenticationService.refreshAccessToken(request.getCookies(), response);
         return ApiResponse.success("Access token renovado", null);
+    }
+
+    /**
+     * Ativa (seleciona) uma atribuição de papel do colaborador como contexto operacional.
+     */
+    @PostMapping("/atribuicoes/{papelAtribuicaoId}/ativar")
+    @Operation(
+            summary = "Ativar atribuição de papel",
+            description = "Troca o contexto operacional ativo (PAPEL_ATRIBUICAO) sem exigir novo login; "
+                    + "somente atribuições do próprio colaborador, ativas e vigentes podem ser selecionadas")
+    public ApiResponse<AuthenticatedUserResponse> selecionarAtribuicao(
+            @PathVariable Long papelAtribuicaoId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal,
+            HttpServletResponse response) {
+        return ApiResponse.success(
+                authenticationService.selectAtribuicao(principal, papelAtribuicaoId, response));
     }
 
     /**

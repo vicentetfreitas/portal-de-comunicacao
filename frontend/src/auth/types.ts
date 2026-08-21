@@ -15,6 +15,19 @@ export interface ColaboradorOrganizationalLinks {
   teamId: number | null;
 }
 
+/**
+ * FT-SESSION — atribuição de papel (PAPEL_ATRIBUICAO) elegível ou ativa como contexto
+ * operacional. Ortogonal ao vínculo cadastral (`ColaboradorOrganizationalLinks`).
+ */
+export interface PapelAtribuicaoSummary {
+  id: number;
+  papel: string;
+  federacaoId: number | null;
+  singularId: number | null;
+  areaId: number | null;
+  equipeId: number | null;
+}
+
 export interface ResolvedPrimeiroAcessoOrganization {
   singularId: number;
   federationId: number;
@@ -42,6 +55,10 @@ export interface AuthenticatedUser {
   resolvedOrganization?: ResolvedPrimeiroAcessoOrganization | null;
   primeiroAcessoBlockCode?: string | null;
   roles?: string[];
+  /** FT-SESSION — atribuições de papel elegíveis do colaborador. */
+  eligibleAssignments?: PapelAtribuicaoSummary[];
+  /** FT-SESSION — atribuição de papel ativa (contexto operacional); ausente quando nenhuma foi selecionada. */
+  activeAssignment?: PapelAtribuicaoSummary | null;
 }
 
 /**

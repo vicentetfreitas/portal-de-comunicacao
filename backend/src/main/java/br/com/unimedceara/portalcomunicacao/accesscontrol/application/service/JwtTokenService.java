@@ -40,12 +40,16 @@ public class JwtTokenService {
      * Emite um Access Token JWT com os claims obrigatórios da Feature FT-AUTH.
      */
     public String issueToken(long colaboradorId, String sessionId, String email, String name) {
-        return issueToken(colaboradorId, sessionId, email, name, null, null, null, null);
+        return issueToken(colaboradorId, sessionId, email, name, null, null, null, null, null);
     }
 
     /**
      * Emite Access Token com vínculos organizacionais do colaborador (claims opcionais).
+     *
+     * @deprecated use {@link #issueToken(long, String, String, String, Long, Long, Long, Long, Long)}
+     *         para incluir a atribuição de papel ativa (FT-SESSION).
      */
+    @Deprecated
     public String issueToken(
             long colaboradorId,
             String sessionId,
@@ -55,6 +59,27 @@ public class JwtTokenService {
             Long singularId,
             Long areaId,
             Long teamId) {
+        return issueToken(colaboradorId, sessionId, email, name, federationId, singularId, areaId, teamId, null);
+    }
+
+    /**
+     * Emite Access Token com vínculos organizacionais do colaborador (claims opcionais) e a
+     * atribuição de papel (PAPEL_ATRIBUICAO) ativa como contexto operacional (claim {@code atribId}).
+     * <p>
+     * {@code federationId}/{@code singularId}/{@code areaId}/{@code teamId} preservam a semântica de
+     * vínculo cadastral existente — não são reutilizados para representar a atribuição ativa.
+     * Permissões nunca são incluídas no token.
+     */
+    public String issueToken(
+            long colaboradorId,
+            String sessionId,
+            String email,
+            String name,
+            Long federationId,
+            Long singularId,
+            Long areaId,
+            Long teamId,
+            Long papelAtribuicaoId) {
         Instant now = Instant.now();
         Instant expiration = now.plusSeconds(securityProperties.jwtAccessTtlMinutes() * 60L);
 
@@ -74,6 +99,9 @@ public class JwtTokenService {
         }
         if (teamId != null) {
             payload.put("teamId", teamId);
+        }
+        if (papelAtribuicaoId != null) {
+            payload.put("atribId", papelAtribuicaoId);
         }
         payload.put("iat", now.getEpochSecond());
         payload.put("exp", expiration.getEpochSecond());
@@ -106,6 +134,24 @@ public class JwtTokenService {
      * Valida assinatura, expiração e estrutura do JWT, retornando os claims quando válido.
      */
     public Optional<JwtClaims> validateAndParse(String token) {
+        return parse(token, true);
+    }
+
+    /**
+     * Extrai claims de um Access Token válido (assinatura/estrutura/issuer) sem exigir
+     * que ainda esteja dentro do prazo de expiração.
+     * <p>
+     * Uso restrito: recuperação da atribuição de papel (PAPEL_ATRIBUICAO) ativa anterior
+     * durante o fluxo de {@code /auth/refresh}, nunca para decisão de autenticação/autorização
+     * (essa decisão permanece exclusivamente em {@link #validateAndParse(String)}, usado pelo
+     * filtro de autenticação). O valor recuperado é sempre revalidado contra o banco antes de
+     * ser reutilizado — nunca é aceito apenas por estar presente no token.
+     */
+    Optional<JwtClaims> parseIgnoringExpiration(String token) {
+        return parse(token, false);
+    }
+
+    private Optional<JwtClaims> parse(String token, boolean enforceExpiration) {
         if (token == null || token.isBlank()) {
             return Optional.empty();
         }
@@ -132,7 +178,7 @@ public class JwtTokenService {
             }
 
             long expiration = payload.get("exp").asLong();
-            if (Instant.now().getEpochSecond() >= expiration) {
+            if (enforceExpiration && Instant.now().getEpochSecond() >= expiration) {
                 return Optional.empty();
             }
 
@@ -160,6 +206,7 @@ public class JwtTokenService {
                         null,
                         null,
                         null,
+                        null,
                         null));
             }
 
@@ -172,6 +219,7 @@ public class JwtTokenService {
             Long singularId = readLong(payload, "singularId");
             Long areaId = readLong(payload, "areaId");
             Long teamId = readLong(payload, "teamId");
+            Long papelAtribuicaoId = readLong(payload, "atribId");
 
             return Optional.of(new JwtClaims(
                     Long.parseLong(subject),
@@ -183,7 +231,8 @@ public class JwtTokenService {
                     federationId,
                     singularId,
                     areaId,
-                    teamId));
+                    teamId,
+                    papelAtribuicaoId));
         } catch (Exception ex) {
             return Optional.empty();
         }
