@@ -25,7 +25,7 @@
           :description="$t('areaColaborador.hub.equipeDescription')"
           icon="mdi-account-group"
           variant="outline"
-          disabled
+          @click="goToEquipe"
         />
         <DsActionCard
           :label="$t('areaColaborador.hub.arquivosAction')"
@@ -40,12 +40,20 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
+
 import AppEmptyState from "@/components/shared/AppEmptyState.vue";
 import AppLoadingSkeleton from "@/components/shared/AppLoadingSkeleton.vue";
 import { DsActionCard, DsCard, DsPageHeader } from "@/components/ds";
 import { useAreaColaboradorDetail } from "@/composables/area-colaborador/useAreaColaboradorDetail";
+import { ROUTE_PATHS } from "@/constants/routes";
 
 const { area, loading, notFound } = useAreaColaboradorDetail();
+const router = useRouter();
+
+function goToEquipe(): void {
+  void router.push(ROUTE_PATHS.AREA_COLABORADOR_EQUIPE);
+}
 </script>
 
 <style scoped lang="scss">

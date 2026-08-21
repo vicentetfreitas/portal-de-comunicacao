@@ -26,7 +26,8 @@ export const ROUTE_PATHS = {
   COLABORADOR_CREATE: "/app/administrador/colaboradores/novo",
   COLABORADOR_DETAIL: "/app/administrador/colaboradores/:id",
   COLABORADOR_EDIT: "/app/administrador/colaboradores/:id/editar",
-  AREA_COLABORADOR_HUB: "/app/area"
+  AREA_COLABORADOR_HUB: "/app/area",
+  AREA_COLABORADOR_EQUIPE: "/app/area/equipe"
 } as const;
 
 export const ROUTE_NAMES = {
@@ -53,7 +54,8 @@ export const ROUTE_NAMES = {
   COLABORADOR_CREATE: "colaborador-create",
   COLABORADOR_DETAIL: "colaborador-detail",
   COLABORADOR_EDIT: "colaborador-edit",
-  AREA_COLABORADOR_HUB: "area-colaborador-hub"
+  AREA_COLABORADOR_HUB: "area-colaborador-hub",
+  AREA_COLABORADOR_EQUIPE: "area-colaborador-equipe"
 } as const;
 
 export type RoutePath = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];

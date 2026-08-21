@@ -448,6 +448,12 @@ export default {
       equipeDescription: "Consulte as equipes vinculadas à sua área",
       arquivosAction: "Arquivos e Documentos",
       arquivosDescription: "Acesse os arquivos e documentos da sua área"
+    },
+    equipe: {
+      title: "Equipe",
+      subtitle: "Equipes vinculadas à área do seu contexto ativo",
+      emptyTitle: "Nenhuma equipe vinculada",
+      emptyDescription: "Sua área ainda não possui equipes cadastradas."
     }
   }
 };

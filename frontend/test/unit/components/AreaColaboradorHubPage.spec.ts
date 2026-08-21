@@ -4,10 +4,12 @@ import { createI18n } from "vue-i18n";
 
 import AreaColaboradorHubPage from "@/pages/area-colaborador/AreaColaboradorHubPage.vue";
 import ptBR from "@/i18n/pt-BR";
+import { ROUTE_PATHS } from "@/constants/routes";
 
-const { getByIdMock, activeContext } = vi.hoisted(() => ({
+const { getByIdMock, activeContext, pushMock } = vi.hoisted(() => ({
   getByIdMock: vi.fn(),
-  activeContext: { value: { areaId: 7 } as { areaId: number | null } | null }
+  activeContext: { value: { areaId: 7 } as { areaId: number | null } | null },
+  pushMock: vi.fn()
 }));
 
 vi.mock("@/composables/useSession", () => ({
@@ -20,6 +22,12 @@ vi.mock("@/services/organization", () => ({
   areaService: {
     getById: getByIdMock
   }
+}));
+
+vi.mock("vue-router", () => ({
+  useRouter: () => ({
+    push: pushMock
+  })
 }));
 
 function mountPage() {
@@ -53,14 +61,23 @@ describe("AreaColaboradorHubPage", () => {
     expect(wrapper.text()).toContain("Arquivos e Documentos");
   });
 
-  it("mantém os atalhos desabilitados enquanto as sub-seções não estão implementadas", () => {
+  it("mantém 'Arquivos e Documentos' desabilitado (FT-DOCUMENTO ainda não existe)", () => {
     const wrapper = mountPage();
 
     const actionButtons = wrapper.findAll(".ds-action-card");
     expect(actionButtons).toHaveLength(2);
-    for (const button of actionButtons) {
-      expect(button.attributes("disabled")).toBeDefined();
-    }
+    expect(actionButtons[1]?.attributes("disabled")).toBeDefined();
+  });
+
+  it("habilita o atalho 'Equipe' e navega para a rota de equipes (TK-AREA-COLAB-003)", async () => {
+    const wrapper = mountPage();
+
+    const actionButtons = wrapper.findAll(".ds-action-card");
+    expect(actionButtons[0]?.attributes("disabled")).toBeUndefined();
+
+    await actionButtons[0]?.trigger("click");
+
+    expect(pushMock).toHaveBeenCalledWith(ROUTE_PATHS.AREA_COLABORADOR_EQUIPE);
   });
 
   it("exibe o skeleton de carregamento enquanto a Área é lida", () => {

@@ -4,12 +4,18 @@ import { ROUTE_NAMES, ROUTE_PATHS } from "@/constants/routes";
 import { areaColaboradorRoutes } from "@/router/routes/area-colaborador.routes";
 
 describe("area-colaborador routes", () => {
-  it("registers the hub route", () => {
+  it("registers the hub and equipe routes", () => {
     const names = areaColaboradorRoutes.map(route => route.name);
     const paths = areaColaboradorRoutes.map(route => route.path);
 
-    expect(names).toEqual([ROUTE_NAMES.AREA_COLABORADOR_HUB]);
-    expect(paths).toEqual([ROUTE_PATHS.AREA_COLABORADOR_HUB]);
+    expect(names).toEqual([
+      ROUTE_NAMES.AREA_COLABORADOR_HUB,
+      ROUTE_NAMES.AREA_COLABORADOR_EQUIPE
+    ]);
+    expect(paths).toEqual([
+      ROUTE_PATHS.AREA_COLABORADOR_HUB,
+      ROUTE_PATHS.AREA_COLABORADOR_EQUIPE
+    ]);
   });
 
   it("requires an authenticated session, with no role restriction (self-service)", () => {
