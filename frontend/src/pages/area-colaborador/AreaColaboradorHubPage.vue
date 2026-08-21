@@ -5,6 +5,19 @@
       :subtitle="$t('areaColaborador.hub.subtitle')"
     />
 
+    <AppLoadingSkeleton v-if="loading" />
+
+    <AppEmptyState
+      v-else-if="notFound"
+      :title="$t('areaColaborador.hub.notFoundTitle')"
+      :description="$t('areaColaborador.hub.notFoundDescription')"
+      icon="mdi-alert-circle-outline"
+    />
+
+    <DsCard v-else-if="area" :title="area.name">
+      <p v-if="area.description">{{ area.description }}</p>
+    </DsCard>
+
     <DsCard :title="$t('areaColaborador.hub.cardTitle')">
       <div class="area-colaborador-hub-page__grid">
         <DsActionCard
@@ -27,7 +40,12 @@
 </template>
 
 <script setup lang="ts">
+import AppEmptyState from "@/components/shared/AppEmptyState.vue";
+import AppLoadingSkeleton from "@/components/shared/AppLoadingSkeleton.vue";
 import { DsActionCard, DsCard, DsPageHeader } from "@/components/ds";
+import { useAreaColaboradorDetail } from "@/composables/area-colaborador/useAreaColaboradorDetail";
+
+const { area, loading, notFound } = useAreaColaboradorDetail();
 </script>
 
 <style scoped lang="scss">

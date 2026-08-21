@@ -440,6 +440,9 @@ export default {
     hub: {
       title: "Área",
       subtitle: "Visão geral da área do seu contexto ativo",
+      notFoundTitle: "Área não encontrada",
+      notFoundDescription:
+        "Não foi possível localizar os dados da sua área. As demais seções continuam disponíveis.",
       cardTitle: "Seções",
       equipeAction: "Equipe",
       equipeDescription: "Consulte as equipes vinculadas à sua área",
