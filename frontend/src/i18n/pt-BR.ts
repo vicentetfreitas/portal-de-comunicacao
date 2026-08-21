@@ -435,5 +435,16 @@ export default {
     stub: {
       placeholder: "Placeholder — implementação visual em PKG-FE-02 em diante."
     }
+  },
+  areaColaborador: {
+    hub: {
+      title: "Área",
+      subtitle: "Visão geral da área do seu contexto ativo",
+      cardTitle: "Seções",
+      equipeAction: "Equipe",
+      equipeDescription: "Consulte as equipes vinculadas à sua área",
+      arquivosAction: "Arquivos e Documentos",
+      arquivosDescription: "Acesse os arquivos e documentos da sua área"
+    }
   }
 };
