@@ -51,7 +51,7 @@ TK
 
 | RF | RN | UC | API | AT | TK | Status |
 |----|----|----|-----|----|----|--------|
-| RF-AREA-COLAB-001 | — (herdado de `FT-AUTH`/`FT-SESSION`) | UC-AREA-COLAB-001 | — (composição de rota, sem chamada de API própria) | AT-AREA-COLAB-001, AT-AREA-COLAB-002 | TK-AREA-COLAB-001 | COMPLETE |
+| RF-AREA-COLAB-001 | — (herdado de `FT-AUTH`/`FT-SESSION`) | UC-AREA-COLAB-001 | — (composição de rota, sem chamada de API própria) | AT-AREA-COLAB-001, AT-AREA-COLAB-002 | TK-AREA-COLAB-001, TK-AREA-COLAB-004 | COMPLETE |
 | RF-AREA-COLAB-002 | — (herdado de `FT-AREA`) | UC-AREA-COLAB-002 | GET /api/v1/areas/{id} (`FT-AREA`, APPROVED) | AT-AREA-COLAB-003, AT-AREA-COLAB-004 | TK-AREA-COLAB-002 | COMPLETE |
 | RF-AREA-COLAB-003 | — (herdado de `FT-EQUIPE`) | UC-AREA-COLAB-003 | GET /api/v1/equipes (`FT-EQUIPE`, APPROVED) | AT-AREA-COLAB-005, AT-AREA-COLAB-006, AT-AREA-COLAB-007 | TK-AREA-COLAB-003 | COMPLETE |
 
@@ -68,7 +68,7 @@ Coluna **Status** `COMPLETE`: matriz validada, incluindo `tasks.md` (criado para
 | Casos de Uso | 3 | 3 | 0 |
 | Endpoints (externos, reutilizados) | 2 | 2 | 0 |
 | Acceptance Tests | 7 | 7 | 0 |
-| Tasks | 3 | 3 | 0 |
+| Tasks | 4 | 4 | 0 |
 
 ---
 
@@ -100,3 +100,4 @@ A rastreabilidade será considerada **COMPLETE** quando:
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-20 | Engineering Framework | Criação — fechamento documental DoR-Spec |
+| 1.1 | 2026-08-25 | Gate 3 REVIEW (pendência NECESSÁRIO_PARA_CONCLUIR) | Inclusão de TK-AREA-COLAB-004 na matriz (RF-AREA-COLAB-001) e na Cobertura — sincronização com `tasks.md` v1.1 |
