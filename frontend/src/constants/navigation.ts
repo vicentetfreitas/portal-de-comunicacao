@@ -16,6 +16,12 @@ export const MAIN_NAV_ITEMS: AppNavItem[] = [
     labelKey: "layout.nav.showcase",
     to: ROUTE_PATHS.SHOWCASE,
     icon: "mdi-palette"
+  },
+  {
+    labelKey: "areaColaborador.hub.title",
+    to: ROUTE_PATHS.AREA_COLABORADOR_HUB,
+    icon: "mdi-domain",
+    placement: "trailing"
   }
 ];
 
