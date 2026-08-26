@@ -434,6 +434,9 @@ export default {
         "Não foi possível localizar um colaborador com este identificador.",
       backToList: "Voltar para listagem",
       editAction: "Editar colaborador",
+      activateAction: "Ativar",
+      deactivateAction: "Inativar",
+      changeStatusAction: "Alterar status",
       fields: {
         id: "Identificador",
         email: "E-mail",
@@ -477,8 +480,24 @@ export default {
       ACTIVE: "Ativo",
       INACTIVE: "Inativo"
     },
-    stub: {
-      placeholder: "Placeholder — implementação visual em PKG-FE-02 em diante."
+    statusDialog: {
+      cancel: "Cancelar",
+      successActivate: "Colaborador ativado com sucesso.",
+      successDeactivate: "Colaborador inativado com sucesso.",
+      activate: {
+        title: "Ativar colaborador",
+        subtitle: "Confirme a reativação de {name}",
+        message:
+          "O colaborador voltará ao status ativo e poderá ser utilizado normalmente.",
+        confirm: "Ativar colaborador"
+      },
+      deactivate: {
+        title: "Inativar colaborador",
+        subtitle: "Confirme a inativação de {name}",
+        message:
+          "O colaborador será marcado como inativo. A operação falhará se existirem subordinados ativos vinculados a ele.",
+        confirm: "Inativar colaborador"
+      }
     }
   },
   perfil: {
