@@ -1,0 +1,18 @@
+# CMS CI — placeholder mínimo.
+#
+# Este repositório ainda é scaffold WordPress/MySQL stock, sem tema/plugin customizado
+# (DEC-015 Ponto em Aberto 5, docs/technology/04-decision-log.md no monorepo de governança).
+# Por isso o pipeline hoje só valida a sintaxe do docker-compose.yml. Substituir por um
+# pipeline real (lint de tema/plugin PHP, build de assets) quando houver customização.
+
+stages:
+  - validate
+
+validate_compose:
+  stage: validate
+  image: docker:24-cli
+  script:
+    - docker compose config
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "development" || $CI_COMMIT_BRANCH == "stage" || $CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'

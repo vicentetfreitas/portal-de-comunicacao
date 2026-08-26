@@ -1,0 +1,50 @@
+# Backend CI — Opção B (D6, 2026-08-20; portado de .github/workflows/backend.yml do monorepo original).
+#
+# Roda build + testes que não exigem Oracle real. Os testes anotados com @IntegrationTest
+# (perfil "test", application-test.yaml) exigem SPRING_DATASOURCE_URL apontando para um Oracle
+# já provisionado com o baseline DDL — inexistente neste pipeline. São excluídos explicitamente
+# abaixo, junto com ApplicationUserConnectionIntegrationTest (mesma exigência, sem guarda de skip).
+# Testes "slice" (@PlatformFoundationSliceTest, H2 em modo Oracle) e unitários continuam rodando.
+#
+# Pipeline completo com Oracle provisionado em CI (Opção A) permanece decisão futura, não
+# implementada aqui — ver GAP-DEC-003.
+#
+# Não há Dockerfile neste repositório ainda (gap pré-existente, documentado em DEC-015 —
+# docs/technology/04-decision-log.md no monorepo de governança). Por isso não há stage de
+# build/push de imagem Docker neste pipeline.
+
+stages:
+  - build
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+build_and_test:
+  stage: build
+  image: eclipse-temurin:25-jdk
+  cache:
+    key: maven-repo
+    paths:
+      - .m2/repository
+  script:
+    - >-
+      ./mvnw clean verify
+      "-Dtest=!OracleHibernateCompatibilityIntegrationTest,
+      !PrimeiroAcessoAcceptanceIntegrationTest,
+      !ColaboradorAcceptanceIntegrationTest,
+      !AuthAcceptanceIntegrationTest,
+      !EquipeAcceptanceIntegrationTest,
+      !OrgCrossFeatureIntegrationTest,
+      !SingularAcceptanceIntegrationTest,
+      !AreaAcceptanceIntegrationTest,
+      !FederacaoAcceptanceIntegrationTest,
+      !AuthFlowIntegrationTest,
+      !ApplicationUserConnectionIntegrationTest"
+  artifacts:
+    when: always
+    paths:
+      - runtime/reports/surefire/
+    expire_in: 1 week
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "development" || $CI_COMMIT_BRANCH == "stage" || $CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'

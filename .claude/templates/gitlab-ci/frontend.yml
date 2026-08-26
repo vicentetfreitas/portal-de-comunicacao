@@ -1,0 +1,48 @@
+# Frontend CI — usa os scripts já existentes em package.json.
+#
+# Job padrão roda lint/typecheck/testes unitários em toda push para development/stage/main e
+# em pipelines de merge request. E2E (Playwright) fica manual por enquanto: exige navegador
+# instalado e é mais pesado — não deve bloquear o pipeline padrão ainda.
+
+stages:
+  - quality
+
+variables:
+  YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn-cache"
+
+.default_rules: &default_rules
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "development" || $CI_COMMIT_BRANCH == "stage" || $CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+lint_typecheck_test:
+  stage: quality
+  image: node:22
+  cache:
+    key: yarn-cache
+    paths:
+      - .yarn-cache
+      - node_modules
+  before_script:
+    - corepack enable
+    - yarn install --frozen-lockfile --cache-folder .yarn-cache
+  script:
+    - yarn lint:check
+    - yarn typecheck
+    - yarn test:unit
+  <<: *default_rules
+
+e2e:
+  stage: quality
+  image: mcr.microsoft.com/playwright:v1.55.0-jammy
+  before_script:
+    - corepack enable
+    - yarn install --frozen-lockfile --cache-folder .yarn-cache
+  script:
+    - yarn test:e2e
+  allow_failure: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "development" || $CI_COMMIT_BRANCH == "stage" || $CI_COMMIT_BRANCH == "main"'
+      when: manual
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
