@@ -1,7 +1,7 @@
 <template>
   <div class="area-colaborador-equipe-page">
     <DsPageHeader
-      :title="$t('areaColaborador.equipe.title')"
+      :title="area?.name ?? $t('areaColaborador.equipe.title')"
       :subtitle="$t('areaColaborador.equipe.subtitle')"
     />
 
@@ -29,8 +29,10 @@
 import AppEmptyState from "@/components/shared/AppEmptyState.vue";
 import AppLoadingSkeleton from "@/components/shared/AppLoadingSkeleton.vue";
 import { DsContentCard, DsPageHeader } from "@/components/ds";
+import { useAreaColaboradorDetail } from "@/composables/area-colaborador/useAreaColaboradorDetail";
 import { useAreaColaboradorEquipes } from "@/composables/area-colaborador/useAreaColaboradorEquipes";
 
+const { area } = useAreaColaboradorDetail();
 const { equipes, loading, isEmpty } = useAreaColaboradorEquipes();
 </script>
 
@@ -42,11 +44,9 @@ const { equipes, loading, isEmpty } = useAreaColaboradorEquipes();
 
   &__grid {
     display: grid;
+    // Same responsive pattern as SingularHubPage.vue/EquipeHubPage.vue.
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: var(--spacing-md, 16px);
-
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 }
 </style>

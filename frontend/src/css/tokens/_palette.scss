@@ -53,3 +53,9 @@ $color-info-500: #1565c0;
 $color-surface-hover: $color-gray-50;
 $color-surface-active: $color-primary-50;
 $color-surface-muted: $color-gray-100;
+
+// Figma variables "Gelo" (#edede6, header/footer band on authenticated
+// screens) and the sidebar card fill (#f6f6f6) — exact values from the
+// Figma file (Portal de Comunicação), not approximated from the gray scale.
+$color-gelo: #edede6;
+$color-surface-sidebar: #f6f6f6;

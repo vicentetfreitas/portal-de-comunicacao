@@ -1,9 +1,6 @@
 <template>
   <div class="area-colaborador-hub-page">
-    <DsPageHeader
-      :title="$t('areaColaborador.hub.title')"
-      :subtitle="$t('areaColaborador.hub.subtitle')"
-    />
+    <DsPageHeader :title="area?.name ?? $t('areaColaborador.hub.title')" />
 
     <AppLoadingSkeleton v-if="loading" />
 
@@ -14,28 +11,25 @@
       icon="mdi-alert-circle-outline"
     />
 
-    <DsCard v-else-if="area" :title="area.name">
+    <DsCard v-else-if="area">
       <p v-if="area.description">{{ area.description }}</p>
     </DsCard>
 
-    <DsCard :title="$t('areaColaborador.hub.cardTitle')">
-      <div class="area-colaborador-hub-page__grid">
-        <DsActionCard
-          :label="$t('areaColaborador.hub.equipeAction')"
-          :description="$t('areaColaborador.hub.equipeDescription')"
-          icon="mdi-account-group"
-          variant="outline"
-          @click="goToEquipe"
-        />
-        <DsActionCard
-          :label="$t('areaColaborador.hub.arquivosAction')"
-          :description="$t('areaColaborador.hub.arquivosDescription')"
-          icon="mdi-folder-multiple"
-          variant="outline"
-          disabled
-        />
-      </div>
-    </DsCard>
+    <div class="area-colaborador-hub-page__grid">
+      <DsActionCard
+        :label="$t('areaColaborador.hub.equipeAction')"
+        :description="$t('areaColaborador.hub.equipeDescription')"
+        icon="mdi-account-group"
+        variant="outline"
+        @click="goToEquipe"
+      />
+      <DsActionCard
+        :label="$t('areaColaborador.hub.arquivosAction')"
+        :description="$t('areaColaborador.hub.arquivosDescription')"
+        icon="mdi-folder-multiple"
+        variant="outline"
+      />
+    </div>
   </div>
 </template>
 
@@ -64,11 +58,9 @@ function goToEquipe(): void {
 
   &__grid {
     display: grid;
+    // Same responsive pattern as SingularHubPage.vue/EquipeHubPage.vue.
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: var(--spacing-md, 16px);
-
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 }
 </style>

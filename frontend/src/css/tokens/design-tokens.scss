@@ -59,6 +59,8 @@
   --color-surface-hover: #{palette.$color-surface-hover};
   --color-surface-active: #{palette.$color-surface-active};
   --color-surface-muted: #{palette.$color-surface-muted};
+  --color-gelo: #{palette.$color-gelo};
+  --color-surface-sidebar: #{palette.$color-surface-sidebar};
   --color-border: #{palette.$color-gray-200};
   --color-text-primary: #{palette.$color-gray-900};
   --color-text-secondary: #{palette.$color-gray-600};
@@ -168,10 +170,22 @@
   --elevation-dropdown: #{shadows.$elevation-dropdown};
 
   // Layout
+  // "Contain-fit" reference against the Figma frame's own 1920×1080 aspect
+  // ratio (1920/1080 = 1.7778, so 177.78vh is "100vw-equivalent if height
+  // were the constraint") — every fluid layout token below scales off this
+  // single value instead of `100vw` alone. A `100vw`-only version scaled
+  // correctly for a *narrow* window but not a *short, still-wide* one: a
+  // ~1920px-wide/~891px-tall window (measured from a real screenshot) has
+  // `100vw` near its 1920px max, so nothing shrank, even though the header
+  // was still eating a disproportionate share of that shorter height.
+  // `min()` picks whichever dimension is actually the tighter constraint.
+  --layout-figma-viewport: min(100vw, 177.7778vh);
   --layout-header-height: #{layout.$layout-header-height};
   --layout-footer-height: #{layout.$layout-footer-height};
   --layout-sidebar-width: #{layout.$layout-sidebar-width};
-  --layout-sidebar-mini-width: #{layout.$layout-sidebar-mini-width};
+  --layout-sidebar-inset: #{layout.$layout-sidebar-inset};
+  --layout-content-gutter: #{layout.$layout-content-gutter};
+  --layout-content-top-offset: #{layout.$layout-content-top-offset};
 
   // Breakpoints (for reference in JS/CSS)
   --breakpoint-sm: #{breakpoints.$breakpoint-sm};
@@ -197,6 +211,8 @@
   --color-surface-hover: #2a2a2a;
   --color-surface-active: #{palette.$color-primary-900};
   --color-surface-muted: #252525;
+  --color-gelo: #2a2a2a;
+  --color-surface-sidebar: #222222;
   --color-border: #{palette.$color-gray-700};
   --color-text-primary: #{palette.$color-gray-50};
   --color-text-secondary: #{palette.$color-gray-400};

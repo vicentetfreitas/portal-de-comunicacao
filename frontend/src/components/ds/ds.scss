@@ -502,6 +502,16 @@
 .ds-page-header {
   margin-bottom: var(--spacing-lg);
 
+  &__heading {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+
+  &__back {
+    flex-shrink: 0;
+  }
+
   &__title {
     color: var(--color-text-primary);
     font-size: var(--text-page-title-size);

@@ -27,7 +27,11 @@ export const ROUTE_PATHS = {
   COLABORADOR_DETAIL: "/app/administrador/colaboradores/:id",
   COLABORADOR_EDIT: "/app/administrador/colaboradores/:id/editar",
   AREA_COLABORADOR_HUB: "/app/area",
-  AREA_COLABORADOR_EQUIPE: "/app/area/equipe"
+  AREA_COLABORADOR_EQUIPE: "/app/area/equipe",
+  FEDERACAO_AREA_DETAIL: "/app/federacao/areas/:id",
+  FEDERACAO_AREA_EQUIPE: "/app/federacao/areas/:id/equipe",
+  FEDERACAO_SINGULAR_DETAIL: "/app/federacao/singulares/:id",
+  PERFIL: "/app/perfil"
 } as const;
 
 export const ROUTE_NAMES = {
@@ -55,7 +59,11 @@ export const ROUTE_NAMES = {
   COLABORADOR_DETAIL: "colaborador-detail",
   COLABORADOR_EDIT: "colaborador-edit",
   AREA_COLABORADOR_HUB: "area-colaborador-hub",
-  AREA_COLABORADOR_EQUIPE: "area-colaborador-equipe"
+  AREA_COLABORADOR_EQUIPE: "area-colaborador-equipe",
+  FEDERACAO_AREA_DETAIL: "federacao-area-detail",
+  FEDERACAO_AREA_EQUIPE: "federacao-area-equipe",
+  FEDERACAO_SINGULAR_DETAIL: "federacao-singular-detail",
+  PERFIL: "perfil"
 } as const;
 
 export type RoutePath = (typeof ROUTE_PATHS)[keyof typeof ROUTE_PATHS];
@@ -84,4 +92,16 @@ export function colaboradorDetailPath(id: string | number): string {
 
 export function colaboradorEditPath(id: string | number): string {
   return `/app/administrador/colaboradores/${id}/editar`;
+}
+
+export function federacaoAreaPath(id: string | number): string {
+  return `/app/federacao/areas/${id}`;
+}
+
+export function federacaoAreaEquipePath(id: string | number): string {
+  return `/app/federacao/areas/${id}/equipe`;
+}
+
+export function federacaoSingularPath(id: string | number): string {
+  return `/app/federacao/singulares/${id}`;
 }

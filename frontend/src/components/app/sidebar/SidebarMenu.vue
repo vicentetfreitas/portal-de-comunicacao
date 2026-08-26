@@ -8,6 +8,7 @@
       :to="item.to"
       :mini="mini"
       :active="isActive(item.to)"
+      v-bind="itemAttrs(item)"
     />
   </SidebarSection>
 </template>
@@ -36,5 +37,9 @@ const sectionAttrs = computed(() => ({
 
 function isActive(path: string): boolean {
   return route.path === path;
+}
+
+function itemAttrs(item: AppNavItem): Record<string, boolean> {
+  return item.disabled !== undefined ? { disabled: item.disabled } : {};
 }
 </script>
