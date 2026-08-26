@@ -80,6 +80,7 @@ Permitir que o colaborador autenticado visualize, liste e baixe arquivos/documen
 |--------|--------|
 | Identificador | RF-DOCUMENTO-003 |
 | Descrição | O sistema deve retornar, na listagem e no download, apenas pastas/arquivos vinculados à Área do Contexto Ativo do colaborador. Requisição para arquivo de outra Área deve ser negada (403), nunca filtrada silenciosamente. |
+| Regra de Negócio | `BR-012` (`docs/domain/09-business-rules.md`) — Contexto Ativo orienta escopo documental e autorização |
 
 ---
 

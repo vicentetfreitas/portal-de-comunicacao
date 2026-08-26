@@ -159,6 +159,10 @@ Acesso negado e registrado (auditoria padrão da plataforma).
 
 - RF-DOCUMENTO-003
 
+### Regras de Negócio Relacionadas
+
+- `BR-012` (`docs/domain/09-business-rules.md`) — Contexto Ativo orienta escopo documental e autorização
+
 ### Critérios de Aceitação Relacionados
 
 - AT-DOCUMENTO-003

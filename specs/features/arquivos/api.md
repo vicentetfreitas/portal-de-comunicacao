@@ -78,6 +78,8 @@ Stream binário + `Content-Disposition: attachment` (padrão HTTP, não DTO JSON
 
 Todo `PASTA`/`DOCUMENTO` retornado ou baixado deve pertencer à Área do Contexto Ativo do colaborador. Recurso de Área diferente → `403` explícito (`ErrorResponse` padrão), nunca omissão silenciosa (404 disfarçado) nem filtragem que mascare a existência do recurso para outra Área.
 
+Fundamento de domínio: `BR-012` (`docs/domain/09-business-rules.md`) — Contexto Ativo orienta escopo documental e autorização.
+
 ---
 
 # DTOs da Feature
