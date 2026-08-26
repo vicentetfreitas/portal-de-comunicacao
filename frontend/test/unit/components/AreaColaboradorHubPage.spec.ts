@@ -61,12 +61,18 @@ describe("AreaColaboradorHubPage", () => {
     expect(wrapper.text()).toContain("Arquivos e Documentos");
   });
 
-  it("mantém 'Arquivos e Documentos' desabilitado (FT-DOCUMENTO ainda não existe)", () => {
+  it("habilita o atalho 'Arquivos e Documentos' e navega para a rota de arquivos (TK-DOCUMENTO-003)", async () => {
     const wrapper = mountPage();
 
     const actionButtons = wrapper.findAll(".ds-action-card");
     expect(actionButtons).toHaveLength(2);
-    expect(actionButtons[1]?.attributes("disabled")).toBeDefined();
+    expect(actionButtons[1]?.attributes("disabled")).toBeUndefined();
+
+    await actionButtons[1]?.trigger("click");
+
+    expect(pushMock).toHaveBeenCalledWith(
+      ROUTE_PATHS.AREA_COLABORADOR_ARQUIVOS
+    );
   });
 
   it("habilita o atalho 'Equipe' e navega para a rota de equipes (TK-AREA-COLAB-003)", async () => {

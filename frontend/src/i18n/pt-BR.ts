@@ -535,6 +535,15 @@ export default {
       subtitle: "Equipes vinculadas à área do seu contexto ativo",
       emptyTitle: "Nenhuma equipe vinculada",
       emptyDescription: "Sua área ainda não possui equipes cadastradas."
+    },
+    arquivos: {
+      title: "Arquivos e Documentos",
+      subtitle:
+        "Pastas e documentos com permissão de acesso para o seu contexto",
+      emptyTitle: "Nenhum arquivo disponível",
+      emptyDescription:
+        "Não há pastas com permissão para o seu contexto ativo.",
+      downloadLabel: "Baixar arquivo"
     }
   },
   federacao: {

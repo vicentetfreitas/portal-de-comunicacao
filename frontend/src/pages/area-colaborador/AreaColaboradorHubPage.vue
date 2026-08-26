@@ -28,6 +28,7 @@
         :description="$t('areaColaborador.hub.arquivosDescription')"
         icon="mdi-folder-multiple"
         variant="outline"
+        @click="goToArquivos"
       />
     </div>
   </div>
@@ -47,6 +48,10 @@ const router = useRouter();
 
 function goToEquipe(): void {
   void router.push(ROUTE_PATHS.AREA_COLABORADOR_EQUIPE);
+}
+
+function goToArquivos(): void {
+  void router.push(ROUTE_PATHS.AREA_COLABORADOR_ARQUIVOS);
 }
 </script>
 

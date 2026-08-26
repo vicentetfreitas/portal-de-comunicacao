@@ -4,7 +4,10 @@ import { ROUTE_NAMES, ROUTE_PATHS } from "@/constants/routes";
 
 export const areaColaboradorLazyPages = {
   hub: () => import("@/pages/area-colaborador/AreaColaboradorHubPage.vue"),
-  equipe: () => import("@/pages/area-colaborador/AreaColaboradorEquipePage.vue")
+  equipe: () =>
+    import("@/pages/area-colaborador/AreaColaboradorEquipePage.vue"),
+  arquivos: () =>
+    import("@/pages/area-colaborador/AreaColaboradorArquivosPage.vue")
 } as const;
 
 export const areaColaboradorRoutes: RouteRecordRaw[] = [
@@ -40,6 +43,29 @@ export const areaColaboradorRoutes: RouteRecordRaw[] = [
           icon: "mdi-domain"
         },
         { labelKey: "areaColaborador.equipe.title", icon: "mdi-account-group" }
+      ]
+    }
+  },
+  {
+    path: ROUTE_PATHS.AREA_COLABORADOR_ARQUIVOS,
+    name: ROUTE_NAMES.AREA_COLABORADOR_ARQUIVOS,
+    component: areaColaboradorLazyPages.arquivos,
+    meta: {
+      layout: "main",
+      requiresAuth: true,
+      pageTitleKey: "areaColaborador.arquivos.title",
+      showBreadcrumbs: true,
+      breadcrumbs: [
+        { labelKey: "layout.nav.home", to: ROUTE_PATHS.HOME, icon: "mdi-home" },
+        {
+          labelKey: "areaColaborador.hub.title",
+          to: ROUTE_PATHS.AREA_COLABORADOR_HUB,
+          icon: "mdi-domain"
+        },
+        {
+          labelKey: "areaColaborador.arquivos.title",
+          icon: "mdi-folder-multiple"
+        }
       ]
     }
   }

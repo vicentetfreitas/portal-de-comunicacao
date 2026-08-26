@@ -4,17 +4,19 @@ import { ROUTE_NAMES, ROUTE_PATHS } from "@/constants/routes";
 import { areaColaboradorRoutes } from "@/router/routes/area-colaborador.routes";
 
 describe("area-colaborador routes", () => {
-  it("registers the hub and equipe routes", () => {
+  it("registers the hub, equipe and arquivos routes", () => {
     const names = areaColaboradorRoutes.map(route => route.name);
     const paths = areaColaboradorRoutes.map(route => route.path);
 
     expect(names).toEqual([
       ROUTE_NAMES.AREA_COLABORADOR_HUB,
-      ROUTE_NAMES.AREA_COLABORADOR_EQUIPE
+      ROUTE_NAMES.AREA_COLABORADOR_EQUIPE,
+      ROUTE_NAMES.AREA_COLABORADOR_ARQUIVOS
     ]);
     expect(paths).toEqual([
       ROUTE_PATHS.AREA_COLABORADOR_HUB,
-      ROUTE_PATHS.AREA_COLABORADOR_EQUIPE
+      ROUTE_PATHS.AREA_COLABORADOR_EQUIPE,
+      ROUTE_PATHS.AREA_COLABORADOR_ARQUIVOS
     ]);
   });
 
