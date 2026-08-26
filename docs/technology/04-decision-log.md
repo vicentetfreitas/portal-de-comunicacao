@@ -651,7 +651,7 @@ Bloqueiam a **execução** da migração — não bloqueiam o registro desta dec
 
 1. Nomes e organização/conta dos três novos repositórios.
 2. Onde vivem `specs/`, `docs/` e `construction/` após a divisão — repositório de governança próprio vs. um dos três repositórios como "primário" referenciado pelos demais.
-3. Estratégia de orquestração local pós-divisão para subir os três serviços juntos (compose "meta"/infra próprio, git submodules, ou scripts).
+3. ~~Estratégia de orquestração local pós-divisão para subir os três serviços juntos (compose "meta"/infra próprio, git submodules, ou scripts).~~ **RESOLVIDO (2026-08-26)** — decisão humana: nenhuma orquestração combinada. Cada repositório sobe sozinho (backend via `mvnw`, frontend via `yarn dev`, CMS quando existir); integração entre serviços é validada por contrato de API, não por ambiente local combinado. `docker-compose.yml` do monorepo original deixa de ser o mecanismo de referência pós-divisão completa.
 4. Preservação (ou não) do histórico Git de `backend/` e `frontend/` na separação (ex.: `git subtree split` / `git filter-repo`) vs. repositórios novos a partir do zero.
 5. CMS: hospedagem, tema/plugins customizados vs. WordPress stock.
 6. Redesenho de `.github/workflows/` (hoje pensado para um único repositório) por repositório.

@@ -584,7 +584,7 @@ A simplificação será considerada bem-sucedida quando o mecanismo de automaç�
 
 ## 20. Status
 
-**Estado:** APROVADA CONCEITUALMENTE
+**Estado:** CONCLUÍDA (todas as 5 fases executadas, 2026-08-26)
 
 **Decisões humanas:** D1–D5 aprovadas
 
@@ -609,4 +609,6 @@ A simplificação será considerada bem-sucedida quando o mecanismo de automaç�
 
 **Resultado:** 5 PASS, 3 N/A, 1 FAIL (V04), 1 PARTIAL (V10). Mecanismo opera corretamente quanto a SSOT/precedência/registry/validação/review; gap real em disciplina de leitura incremental (princípio 5) — corrigir em sessões futuras: consultar `path-conventions.md` antes de exploração ad-hoc e preferir leitura incremental/skills a arquivos inteiros.
 
-**Próximo passo:** Fase 5 (destino do `.cursor/`) permanece decisão humana — não executada. Não executar limpeza de `.cursor/` neste ciclo sem essa decisão.
+**Fase 5 — Pós-validação (2026-08-26):** decisão humana obtida — Cursor deve sair do projeto; foco exclusivo em Claude Code. `.cursor/` (44 arquivos: `agents/`, `orchestrator/`, `prompts/`, `rules/`, `archive/`, `settings.json`) removido do repositório neste commit. Histórico integral recuperável via `git log -- .cursor/` até este ponto; nenhum `legacy/` genérico criado — a remoção segue o critério de não-regressão da Seção 15 ("nenhum `legacy/` genérico for criado").
+
+**Migração concluída.** Todas as 5 fases (Decisão, Preparação, Implementação, Validação, Pós-validação) executadas.
