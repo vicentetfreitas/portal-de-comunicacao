@@ -682,6 +682,7 @@ Bloqueiam a **execução** da migração — não bloqueiam o registro desta dec
 | Data | Marco |
 |------|-------|
 | 2026-08-26 | Fase 2 (parcial) — snapshot inicial do `frontend/` extraído para repositório local próprio (`/home/projects/portal-de-comunicacao-frontend`, fora do monorepo), `git init` sem histórico preservado (Ponto em Aberto 4 resolvido: sem preservação), 1 commit. **Sem remote configurado** — repositório remoto ainda não criado, nada foi publicado fora da máquina local. `specs/`, `docs/` e `construction/` **não** foram duplicados — permanecem exclusivamente neste monorepo (resolve parcialmente o Ponto em Aberto 2: SSOT continua aqui). Ponto em Aberto 1 (nome/organização definitiva do repositório) **não decidido** — fica para quando o repositório remoto for criado. Pontos 3 (orquestração local), 5 (CMS) e 6 (CI por repositório) seguem em aberto. |
+| 2026-08-26 | Fase 1 (parcial) — mesmo tratamento aplicado ao `backend/`: snapshot extraído para `/home/projects/portal-de-comunicacao-backend`, sem histórico, sem remote. `database/` (DDL/baseline Oracle, DEC-DB-019) confirmado **fora** do escopo de migração — é SSOT administrado pelo DBA, sem acoplamento de runtime com `backend/` (sem Flyway/Liquibase; schema não gerenciado pela aplicação), fica junto de `specs/`/`docs/`/`construction/` no monorepo. Gaps pré-existentes documentados no novo repositório: `docker-compose.yml` referencia `backend/Dockerfile`, que nunca existiu; nenhuma orquestração local própria (Ponto 3 segue em aberto). |
 
 ---
 
