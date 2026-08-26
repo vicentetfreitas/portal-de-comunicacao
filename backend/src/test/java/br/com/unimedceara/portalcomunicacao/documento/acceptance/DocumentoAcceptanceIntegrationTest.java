@@ -13,8 +13,12 @@ import br.com.unimedceara.portalcomunicacao.documento.infrastructure.persistence
 import br.com.unimedceara.portalcomunicacao.documento.infrastructure.persistence.repository.DocumentoVersaoRepository;
 import br.com.unimedceara.portalcomunicacao.documento.infrastructure.persistence.repository.PastaRepository;
 import br.com.unimedceara.portalcomunicacao.documento.infrastructure.persistence.repository.PermissaoPastaRepository;
+import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.entity.SingularEntity;
+import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.repository.AreaRepository;
+import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.repository.SingularRepository;
 import br.com.unimedceara.portalcomunicacao.support.annotation.IntegrationTest;
 import br.com.unimedceara.portalcomunicacao.support.base.AbstractMockMvcIntegrationTest;
+import br.com.unimedceara.portalcomunicacao.support.fixture.builder.AreaTestBuilder;
 import br.com.unimedceara.portalcomunicacao.support.fixture.builder.ArquivoBinarioTestBuilder;
 import br.com.unimedceara.portalcomunicacao.support.fixture.builder.CategoriaDocumentalTestBuilder;
 import br.com.unimedceara.portalcomunicacao.support.fixture.builder.ColaboradorTestBuilder;
@@ -22,8 +26,11 @@ import br.com.unimedceara.portalcomunicacao.support.fixture.builder.DocumentoTes
 import br.com.unimedceara.portalcomunicacao.support.fixture.builder.DocumentoVersaoTestBuilder;
 import br.com.unimedceara.portalcomunicacao.support.fixture.builder.PastaTestBuilder;
 import br.com.unimedceara.portalcomunicacao.support.fixture.builder.PermissaoPastaTestBuilder;
+import br.com.unimedceara.portalcomunicacao.support.fixture.builder.SingularTestBuilder;
+import br.com.unimedceara.portalcomunicacao.support.data.IntegrationTestUniqueData;
 import br.com.unimedceara.portalcomunicacao.support.security.TestSecurityContextFactory;
 import jakarta.servlet.http.Cookie;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +54,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("integration.mutating")
 class DocumentoAcceptanceIntegrationTest extends AbstractMockMvcIntegrationTest {
 
-    private static final long FEDERATION_A = 6001L;
-    private static final long SINGULAR_A = 6002L;
-    private static final long AREA_A = 6003L;
-    private static final long AREA_B = 6004L;
+    @Autowired
+    private SingularRepository singularRepository;
+
+    @Autowired
+    private AreaRepository areaRepository;
 
     @Autowired
     private PastaRepository pastaRepository;
@@ -73,17 +81,31 @@ class DocumentoAcceptanceIntegrationTest extends AbstractMockMvcIntegrationTest 
     @MockitoBean
     private ObjectStorageClient objectStorageClient;
 
+    private long federacaoId;
+    private long singularId;
+    private long areaAId;
+    private long areaBId;
+
+    @BeforeEach
+    void seedOrganizationHierarchy() {
+        federacaoId = authProperties.defaultFederationId();
+        SingularEntity singular = SingularTestBuilder.forFederation(federacaoId).persist(singularRepository);
+        singularId = singular.getId();
+        areaAId = AreaTestBuilder.forSingular(singularId).nome("Área A").persist(areaRepository).getId();
+        areaBId = AreaTestBuilder.forSingular(singularId).nome("Área B").persist(areaRepository).getId();
+    }
+
     @Test
     @AcceptanceCriterion(value = "AT-DOCUMENTO-002", type = AcceptanceCriterion.TestType.API)
     void atDocumento002_shouldDownloadDocumentSuccessfully() throws Exception {
         when(objectStorageClient.download(anyString()))
                 .thenReturn(new ByteArrayInputStream("conteudo-teste".getBytes()));
 
-        PastaEntity pasta = pastaComPermissao(AREA_A, PermissaoPastaEntity.ACESSO_DOWNLOAD);
+        PastaEntity pasta = pastaComPermissao(areaAId, PermissaoPastaEntity.ACESSO_DOWNLOAD);
         DocumentoEntity documento = seedDocumentoCompleto(pasta.getId(), DocumentoEntity.STATUS_ATIVO, "relatorio.pdf");
 
         mockMvc.perform(get("/api/v1/documentos/" + documento.getId() + "/download")
-                        .cookie(cookieParaArea(AREA_A)))
+                        .cookie(cookieParaArea(areaAId)))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Disposition", "attachment; filename=\"relatorio.pdf\""));
     }
@@ -91,29 +113,29 @@ class DocumentoAcceptanceIntegrationTest extends AbstractMockMvcIntegrationTest 
     @Test
     @AcceptanceCriterion(value = "AT-DOCUMENTO-002", type = AcceptanceCriterion.TestType.API)
     void atDocumento002_shouldReturn404WhenDocumentDoesNotExist() throws Exception {
-        mockMvc.perform(get("/api/v1/documentos/999999/download").cookie(cookieParaArea(AREA_A)))
+        mockMvc.perform(get("/api/v1/documentos/999999/download").cookie(cookieParaArea(areaAId)))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @AcceptanceCriterion(value = "AT-DOCUMENTO-003", type = AcceptanceCriterion.TestType.API)
     void atDocumento003_shouldDenyDownloadWithoutMatchingGrant() throws Exception {
-        PastaEntity pasta = pastaComPermissao(AREA_B, PermissaoPastaEntity.ACESSO_DOWNLOAD);
+        PastaEntity pasta = pastaComPermissao(areaBId, PermissaoPastaEntity.ACESSO_DOWNLOAD);
         DocumentoEntity documento = seedDocumentoCompleto(pasta.getId(), DocumentoEntity.STATUS_ATIVO, "confidencial.pdf");
 
         mockMvc.perform(get("/api/v1/documentos/" + documento.getId() + "/download")
-                        .cookie(cookieParaArea(AREA_A)))
+                        .cookie(cookieParaArea(areaAId)))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     @AcceptanceCriterion(value = "AT-DOCUMENTO-004", type = AcceptanceCriterion.TestType.API)
     void atDocumento004_shouldReturn404WhenDocumentExpired() throws Exception {
-        PastaEntity pasta = pastaComPermissao(AREA_A, PermissaoPastaEntity.ACESSO_DOWNLOAD);
+        PastaEntity pasta = pastaComPermissao(areaAId, PermissaoPastaEntity.ACESSO_DOWNLOAD);
         DocumentoEntity documento = seedDocumentoCompleto(pasta.getId(), DocumentoEntity.STATUS_EXPIRADO, "vencido.pdf");
 
         mockMvc.perform(get("/api/v1/documentos/" + documento.getId() + "/download")
-                        .cookie(cookieParaArea(AREA_A)))
+                        .cookie(cookieParaArea(areaAId)))
                 .andExpect(status().isNotFound());
     }
 
@@ -123,11 +145,11 @@ class DocumentoAcceptanceIntegrationTest extends AbstractMockMvcIntegrationTest 
         when(objectStorageClient.download(anyString()))
                 .thenReturn(new ByteArrayInputStream("conteudo-teste".getBytes()));
 
-        PastaEntity pasta = pastaComPermissao(AREA_A, PermissaoPastaEntity.ACESSO_DOWNLOAD);
+        PastaEntity pasta = pastaComPermissao(areaAId, PermissaoPastaEntity.ACESSO_DOWNLOAD);
         DocumentoEntity documento = seedDocumentoCompleto(pasta.getId(), DocumentoEntity.STATUS_ARQUIVADO, "historico.pdf");
 
         mockMvc.perform(get("/api/v1/documentos/" + documento.getId() + "/download")
-                        .cookie(cookieParaArea(AREA_A)))
+                        .cookie(cookieParaArea(areaAId)))
                 .andExpect(status().isOk());
     }
 
@@ -141,13 +163,17 @@ class DocumentoAcceptanceIntegrationTest extends AbstractMockMvcIntegrationTest 
     }
 
     private Cookie cookieParaArea(long areaId) {
-        ColaboradorEntity colaborador = ColaboradorTestBuilder.forFederation(FEDERATION_A).persist(colaboradorRepository);
+        ColaboradorEntity colaborador = ColaboradorTestBuilder.forFederation(federacaoId)
+                .zimbraId("zimbra-" + IntegrationTestUniqueData.uniqueId())
+                .persist(colaboradorRepository);
         return TestSecurityContextFactory.jwtCookieWithContext(
-                jwtTokenService, colaborador.getId(), FEDERATION_A, SINGULAR_A, areaId, null);
+                jwtTokenService, colaborador.getId(), federacaoId, singularId, areaId, null);
     }
 
     private DocumentoEntity seedDocumentoCompleto(long pastaId, String status, String nomeArquivo) {
-        ColaboradorEntity autor = ColaboradorTestBuilder.forFederation(FEDERATION_A).persist(colaboradorRepository);
+        ColaboradorEntity autor = ColaboradorTestBuilder.forFederation(federacaoId)
+                .zimbraId("zimbra-" + IntegrationTestUniqueData.uniqueId())
+                .persist(colaboradorRepository);
         CategoriaDocumentalEntity categoria = CategoriaDocumentalTestBuilder.nova().persist(categoriaDocumentalRepository);
         DocumentoEntity documento = DocumentoTestBuilder.paraPasta(pastaId, categoria.getId(), autor.getId())
                 .status(status)

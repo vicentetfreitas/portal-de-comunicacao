@@ -18,7 +18,7 @@ public interface PastaRepository extends JpaRepository<PastaEntity, Long> {
      * {@code teamId} é opcional.
      */
     @Query("""
-            SELECT DISTINCT p FROM PastaEntity p
+            SELECT p FROM PastaEntity p
             WHERE p.ativo = 'S'
               AND EXISTS (
                   SELECT 1 FROM PermissaoPastaEntity pp

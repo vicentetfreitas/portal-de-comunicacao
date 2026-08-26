@@ -20,12 +20,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(
         basePackages = {
             "br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.entity",
-            "br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.entity"
+            "br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.entity",
+            "br.com.unimedceara.portalcomunicacao.documento.infrastructure.persistence.entity"
         })
 @EnableJpaRepositories(
         basePackages = {
             "br.com.unimedceara.portalcomunicacao.accesscontrol.infrastructure.persistence.repository",
-            "br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.repository"
+            "br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.repository",
+            "br.com.unimedceara.portalcomunicacao.documento.infrastructure.persistence.repository"
         })
 public class JpaPersistenceConfiguration {
 
