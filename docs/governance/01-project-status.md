@@ -39,6 +39,7 @@ Este documento é o **índice central do estado atual** do projeto. Ele não é 
 | Decisões (organizacional/negócio) | `docs/governance/03-open-decisions.md` |
 | Decisões (arquitetura) | `docs/architecture/08-decision-records.md` |
 | Decisões (tecnologia) | `docs/technology/04-decision-log.md` (**catálogo duplicado com colisão de ID conhecida — ver Pendências**) |
+| Separação em repositórios independentes (backend/frontend/CMS) | `docs/technology/04-decision-log.md` — **DEC-015** (Approved, 2026-08-26; supersede DEC-010 Monorepo) |
 | Escopo MVP | `docs/backlog/04-mvp-scope.md` |
 | Roadmap arquitetural (Etapas 1–6) | `docs/solution-design/10-delivery-roadmap.md` |
 | Roadmap executivo | `docs/governance/05-roadmap.md` (**desatualizado desde 2026-07-08 — ver Pendências**) |
@@ -59,6 +60,8 @@ O projeto concluiu a **Sprint 0 do backend**, múltiplas features de **Etapa 2**
 SSOT operacional: `specs/foundation/minimal-ssot.md`
 SSOT normativo documental: `docs/governance/07-documentation-architecture.md` v2.0
 Estado de implementação: evidência direta em código/testes do repositório (git log, `backend/src`, `frontend/src`) — **não** `construction/registry.yaml`
+
+**Separação em repositórios (DEC-015, 2026-08-26):** o projeto deixou de ser monorepo único. `backend/` e `frontend/` já foram extraídos para repositórios próprios e publicados no GitLab corporativo (`portal-comunicacao-api`, `portal-comunicacao-app`, branch `chore/repo-split-import`, `main` ainda sem merge); um terceiro repositório (`portal-comunicacao-cms`) recebeu o scaffold inicial do WordPress. `specs/`, `docs/`, `construction/` e `database/` **permanecem** neste monorepo (SSOT compartilhada) — a divisão ainda não define onde essa fonte única de verdade deve viver de forma definitiva (Ponto em Aberto 2 de DEC-015). CI (`.github/workflows/`) e estratégia de deploy por repositório também seguem em aberto (Pontos 5 e 6 de DEC-015). Ver registro completo em `docs/technology/04-decision-log.md` § DEC-015.
 
 **Progresso de construção (evidência: `feature.yaml` de cada feature + presença/execução de código e testes; ver detalhe na tabela de features abaixo):**
 
@@ -342,6 +345,8 @@ Registradas aqui por escopo desta reconciliação (não corrigidas — correçã
 | 5 | Três catálogos de decisão com colisão de ID (`docs/governance/03-open-decisions.md`, `docs/architecture/08-decision-records.md`, `docs/technology/04-decision-log.md`) — D7/GAP-DEC-006, não implementada | catálogos de decisão | Baixa (sem bloqueio operacional) |
 | 6 | `docs/audit/12-...` e `structural-simplification-plan-w2.md` contêm 2 achados já defasados (D4 storage e D5 docker-compose) — já mapeado em `docs/audit/14-...` | não requer nova auditoria; já registrado | Baixa |
 | 7 | FT-PRIMEIRO-ACESSO: `traceability.md` sem AT formal dedicado à conclusão do wizard (RF-PA-011) e sem `tasks.md` — dívidas aceitas no fechamento, não bloqueiam DoD | `specs/features/primeiro-acesso/` — trabalho de `/specify` se e quando priorizado | Baixa |
+| 8 | DEC-015 (separação em repositórios) aprovada 2026-08-26. Ponto em Aberto 6 (CI por repositório) **resolvido** para backend/frontend (`.gitlab-ci.yml` próprio, branches `development`/`stage` publicadas nos 3 repos, 2026-08-26). Seguem abertos: #2 (onde vivem `specs/`/`docs/`/`construction/` pós-divisão), #5 (hospedagem/tema do CMS — CI ali é só placeholder). Proteção de branch no GitLab (`stage`/`main`) não configurada — fora do alcance de CLI, ação manual pendente do usuário na UI do GitLab | `docs/technology/04-decision-log.md` § DEC-015 | Média — bloqueia execução completa da migração de repositórios, não bloqueia trabalho de feature no monorepo atual |
+| 9 | `docs/solution-design/11-platform-decomposition.md` descreve Frontend em **Next.js** e banco **PostgreSQL** — contradiz a stack aprovada (Vue 3/Quasar, DEC-007 Oracle) e o `docker-compose.yml` atual (só Oracle, sem Postgres). Mesmo padrão do documento já arquivado em `docs/governance/history/11-target-repository-structure.md`. Já registrado como GAP-DEC-004 (`docs/audit/13-decision-inventory.md`), ainda **Aberto** | `docs/solution-design/11-platform-decomposition.md` — reclassificar (Archive) ou corrigir | Média |
 
 ## Resolvidas em 2026-08-26
 
