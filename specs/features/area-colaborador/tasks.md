@@ -35,6 +35,7 @@ Não representa planejamento da construção, cronograma ou organização dos PK
 TK-AREA-COLAB-001
 TK-AREA-COLAB-002
 TK-AREA-COLAB-003
+TK-AREA-COLAB-004
 ```
 
 Cada tarefa possui rastreabilidade completa com Requisitos Funcionais (RF), Casos de Uso (UC) e Critérios de Aceitação (AT).
@@ -163,6 +164,43 @@ Página de leitura das equipes vinculadas à Área do Contexto Ativo (nome, desc
 
 ---
 
+## TK-AREA-COLAB-004 — Adicionar entrada de navegação para a Área
+
+### Objetivo
+
+Incluir item de navegação principal apontando para `/app/area`, tornando o hub alcançável pela UI para o colaborador autenticado comum.
+
+### Requisitos Funcionais Relacionados
+
+- RF-AREA-COLAB-001
+
+### Casos de Uso Relacionados
+
+- UC-AREA-COLAB-001
+
+### Critérios de Aceitação Relacionados
+
+- AT-AREA-COLAB-001
+
+### Dependências
+
+- `MAIN_NAV_ITEMS` (`frontend/src/constants/navigation.ts`), consumido por `MainLayout.vue` — mesmo mecanismo já usado por `ADMIN_NAV_ITEMS` para singular/equipe/colaborador; nenhum componente novo.
+
+### Componentes Esperados
+
+- Item em `MAIN_NAV_ITEMS`
+- Strings de i18n
+- Testes (rota/navegação)
+
+### Critérios de Conclusão
+
+- Item visível e navegável no `MainLayout`.
+- RF-AREA-COLAB-001 alcançável sem digitar a URL.
+- Testes aprovados.
+- Rastreabilidade íntegra.
+
+---
+
 # Matriz de Rastreabilidade
 
 | Task | RF | UC | AT |
@@ -170,6 +208,7 @@ Página de leitura das equipes vinculadas à Área do Contexto Ativo (nome, desc
 | TK-AREA-COLAB-001 | RF-AREA-COLAB-001 | UC-AREA-COLAB-001 | AT-AREA-COLAB-001, AT-AREA-COLAB-002 |
 | TK-AREA-COLAB-002 | RF-AREA-COLAB-002 | UC-AREA-COLAB-002 | AT-AREA-COLAB-003, AT-AREA-COLAB-004, AT-AREA-COLAB-007 |
 | TK-AREA-COLAB-003 | RF-AREA-COLAB-003 | UC-AREA-COLAB-003 | AT-AREA-COLAB-005, AT-AREA-COLAB-006, AT-AREA-COLAB-007 |
+| TK-AREA-COLAB-004 | RF-AREA-COLAB-001 | UC-AREA-COLAB-001 | AT-AREA-COLAB-001 |
 
 ---
 
@@ -202,3 +241,4 @@ Define **como**, **quando**, **por quem** e **em qual ordem** — fora do escopo
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-20 | Engineering Framework | Criação — decomposição para DoR-Implementation |
+| 1.1 | 2026-08-21 | REVIEW (PENDING → Task, aprovado) | Adicionada TK-AREA-COLAB-004 — entrada de navegação para a Área, originada de PENDING classificado NECESSÁRIO_PARA_CONCLUIR |

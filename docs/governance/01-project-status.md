@@ -1,17 +1,17 @@
-# Project Status
+# Project Status — State Index
 
 ## Objetivo
 
-Consolidar o estado atual do projeto em um único local.
-
-Este documento fornece uma visão executiva sobre:
+Este documento é o **índice central do estado atual** do projeto. Ele não é fonte normativa de requisitos, decisões, arquitetura ou schema — cada um desses continua vivendo no seu próprio SSOT (`specs/`, `docs/domain/`, `docs/architecture/`, `docs/technology/`, `database/`). Aqui só se consolida, com apontamento para a fonte:
 
 * progresso das camadas documentais;
-* prontidão para construção;
-* status dos artefatos;
+* status por feature (com evidência de código, não só de spec);
 * marcos alcançados;
-* próximos passos;
-* impedimentos conhecidos.
+* checkpoint mais recente e sua evidência;
+* pendências/divergências conhecidas (registradas aqui, corrigidas na fonte);
+* critério para revalidação completa vs. validação incremental.
+
+**Não tratar como SSOT:** `construction/registry.yaml`, `session.md`, `pkg-XX/status.md` (mecanismos Construction v4.1 — ver `CLAUDE.md`). Onde este documento cita evidência de implementação, a evidência é o próprio código/teste no repositório, não esses artefatos.
 
 ---
 
@@ -22,9 +22,31 @@ Este documento fornece uma visão executiva sobre:
 | Projeto                | Portal de Comunicação                      |
 | Status Geral           | Baseline documental **APROVADA COM RESSALVAS** (Exit Gate 2026-07-24) |
 | Versão da Documentação | 2.0 (Exit Gate)                                |
-| Última Atualização     | 2026-08-14                                 |
+| Última Atualização     | 2026-08-26                                 |
 | Responsável            | Project Manager / Arquitetura              |
 | Próxima Revisão        | Etapa 5 — infraestrutura local (Oracle)    |
+
+---
+
+# SSOTs referenciados por este índice
+
+| Necessidade | SSOT |
+| ----------- | ---- |
+| Modelo de organização e execução do projeto (camadas, Package/Task, ciclo operacional) | `docs/governance/10-project-organization.md` |
+| Precedência / fluxo diário | `specs/foundation/minimal-ssot.md`, `specs/foundation/development-workflow.md` |
+| Foundation (aplicação) — infra transversal (shell, router, sessão, design system) | código em `frontend/`, `backend/` + `docs/implementation/` |
+| Especificação por feature | `specs/features/<slug>/` (`feature.yaml` = status oficial da spec) |
+| Decisões (organizacional/negócio) | `docs/governance/03-open-decisions.md` |
+| Decisões (arquitetura) | `docs/architecture/08-decision-records.md` |
+| Decisões (tecnologia) | `docs/technology/04-decision-log.md` (**catálogo duplicado com colisão de ID conhecida — ver Pendências**) |
+| Escopo MVP | `docs/backlog/04-mvp-scope.md` |
+| Roadmap arquitetural (Etapas 1–6) | `docs/solution-design/10-delivery-roadmap.md` |
+| Roadmap executivo | `docs/governance/05-roadmap.md` (**desatualizado desde 2026-07-08 — ver Pendências**) |
+| Arquitetura documental / classificação SSOT-Evidence-Working-Archive | `docs/governance/07-documentation-architecture.md` |
+| Auditoria estrutural mais recente | `docs/audit/12-structural-simplification-audit-w0-w1.md` + `docs/governance/structural-simplification-plan-w2.md` (D1–D9) |
+| Inventário de decisões (DEC/GAP-DEC) | `docs/audit/13-decision-inventory.md` |
+| Levantamento factual de status de auditorias/decisões | `docs/audit/14-governance-audit-inventory-status.md` (2026-08-20 — mais atual sobre o que já foi aplicado de D1–D9) |
+| Levantamento de artefatos para próxima onda de migração | `docs/audit/15-migration-planning-inventory.md` |
 
 ---
 
@@ -32,24 +54,26 @@ Este documento fornece uma visão executiva sobre:
 
 ## Situação Atual
 
-O projeto concluiu a **Sprint 0 do backend**, múltiplas features de **Etapa 2** (org + auth/sessão) e a **revalidação SSOT (Etapa 3)** em 2026-08-14.
+O projeto concluiu a **Sprint 0 do backend**, múltiplas features de **Etapa 2** (org + auth/sessão) e a **revalidação SSOT (Etapa 3)** em 2026-08-14. Desde então, spec de **FT-PRIMEIRO-ACESSO** foi consolidada e sua implementação (BE + FE) avançou além do que este documento registrava; **FT-AREA-COLABORADOR** (nova feature, leitura sobre `FT-AREA`/`FT-EQUIPE`) teve a spec aprovada em 2026-08-20/21, foi implementada e encerrada formalmente (`DONE`) em 2026-08-26. **FT-COLABORADOR** também encerrou formalmente (`DONE`) em 2026-08-26, incluindo o E2E Playwright (`AT-FE-COLABORADOR-001..005`) que faltava no checkpoint anterior.
 
-SSOT operacional: `specs/foundation/minimal-ssot.md`  
-SSOT normativo documental: `docs/governance/07-documentation-architecture.md` v2.0  
-Estado de implementação: `construction/registry.yaml` + git/CI
+SSOT operacional: `specs/foundation/minimal-ssot.md`
+SSOT normativo documental: `docs/governance/07-documentation-architecture.md` v2.0
+Estado de implementação: evidência direta em código/testes do repositório (git log, `backend/src`, `frontend/src`) — **não** `construction/registry.yaml`
 
-**Progresso de construção (indicativo):**
+**Progresso de construção (evidência: `feature.yaml` de cada feature + presença/execução de código e testes; ver detalhe na tabela de features abaixo):**
 
 * FT-AUTH, FT-AREA, FT-SINGULAR, FT-EQUIPE, FT-SESSION — **closed**
-* FT-COLABORADOR — BE closed, FE em execução
-* FT-PRIMEIRO-ACESSO — spec **APPROVED**; BE not_started, FE em execução
+* FT-COLABORADOR — **DONE** (`feature.yaml`, commit `a7be2ca`, 2026-08-26). BE closed (Controller/Service/Repository/Entity + testes verdes); FE implementado (5 rotas, service, composable, testes unitários); **E2E Playwright presente** (`frontend/test/e2e/colaborador/colaborador.spec.ts`, cobre `AT-FE-COLABORADOR-001..005`, commit `d00358e`) — corrige registro anterior deste documento, que dava a E2E como não localizada
+* FT-PRIMEIRO-ACESSO — spec **APPROVED** (consolidada em 5 artefatos, 2026-08-17); **BE implementado e testado** (`PrimeiroAcessoController`, `PrimeiroAcessoApplicationService`, 9 testes de aceitação verdes) e **FE implementado** (`usePrimeiroAcessoPage.ts` + página, rota registrada) — corrige registro anterior deste documento, que descrevia BE como `not_started`; fechamento formal não confirmado
+* FT-AREA-COLABORADOR — **DONE** (`feature.yaml`, commit `2a9c953`, 2026-08-26). Spec passou de `DRAFT` para `APPROVED` (2026-08-20/21) e as 4 tasks (`tasks.md` v1.1) foram implementadas: hub, dados da Área, equipes da Área — TK-AREA-COLAB-004 (item de nav dedicado) foi **superseded** por decisão explícita de produto (2026-08-26): a entrada "Áreas" foi removida do menu principal a favor de "Federação", que cobre o mesmo escopo (ver `docs/architecture/decisions/AUDITORIA-DS-FIGMA-01.md`); rota `/app/area` permanece funcional — corrige registro anterior deste documento, que dava a implementação como não iniciada
 * Integration sprint-03-org-backend — **APPROVED** (2026-07-14)
 
 ---
 
 ## Objetivos da Fase Atual
 
-* Concluir **FT-COLABORADOR** (FE) e implementar **FT-PRIMEIRO-ACESSO** (BE + FE).
+* Confirmar fechamento formal de **FT-PRIMEIRO-ACESSO** (BE+FE) — código e testes já presentes; falta checkpoint explícito. (FT-COLABORADOR e FT-AREA-COLABORADOR já confirmadas `DONE` em 2026-08-26.)
+* Consolidar no git o trabalho já presente no working tree (`docker-compose.yml` → Oracle, `.github/workflows/backend.yml`).
 * Validar ambiente local Oracle (Etapa 5).
 * Manter aderência entre `specs/`, `docs/` e código.
 * Evoluir Etapas 3–5 do MVP conforme `docs/backlog/04-mvp-scope.md`.
@@ -134,16 +158,16 @@ Resultado Atual:
 
 | Item            | Status                                              |
 | --------------- | --------------------------------------------------- |
-| Backend         | 🟩 Etapa 2 parcial — org + auth/sessão implementados |
-| Frontend        | 🟩 Foundation + org CRUD (Singular, Equipe); Colaborador e Primeiro Acesso em execução |
+| Backend         | 🟩 Etapa 2 avançada — org + auth/sessão + Colaborador + Primeiro Acesso implementados e testados; atribuição de papel (role) adicionada em 2026-08-20 (`PapelAtribuicaoService`, ainda não vinculada formalmente a nenhum `feature.yaml` — ver Pendências) |
+| Frontend        | 🟩 Foundation + org CRUD (Singular, Equipe, Colaborador) + Primeiro Acesso + FT-AREA-COLABORADOR (`DONE`, 2026-08-26) implementados |
 | Banco de Dados  | 🟩 Oracle — baseline homologado; 6 entidades JPA alinhadas (Etapa 4) |
-| Testes          | 🟩 Unit + integração Oracle (features org/auth) |
+| Testes          | 🟩 Unit + integração Oracle (features org/auth/colaborador/primeiro-acesso); E2E Playwright cobre `colaborador`, `equipe`, `singular`, `federacao`, `app-shell` (FT-COLABORADOR confirmado, `AT-FE-COLABORADOR-001..005`) |
 | Observabilidade | 🟨 Parcial — Correlation ID + Actuator              |
 
 Resultado Atual:
 
 ```text
-🟨 Em andamento — Etapa 2 parcial; Etapas 3–5 pendentes
+🟨 Em andamento — Etapa 2 avançada; Etapas 3–5 pendentes
 ```
 
 ---
@@ -153,14 +177,14 @@ Resultado Atual:
 | Item            | Status                                              |
 | --------------- | --------------------------------------------------- |
 | Ambiente Local  | 🟨 Backend + FE dev operáveis; Oracle externo obrigatório |
-| Docker          | 🟨 Compose na raiz — Postgres legado; alinhar na Etapa 5 |
-| CI/CD           | ⬜ Não iniciado                                      |
+| Docker          | 🟨 `docker-compose.yml` já alterado para `gvenzl/oracle-free` no working tree — **ainda não commitado** (D5 de `structural-simplification-plan-w2.md`) |
+| CI/CD           | 🟨 `.github/workflows/backend.yml` presente no working tree, **ainda não commitado**; cobre `mvn clean verify` excluindo testes de integração dependentes de Oracle ("Opção B" — D6/GAP-DEC-003 em `docs/audit/14-...`) |
 | Observabilidade | 🟨 Parcial — logging e Correlation ID implementados |
 
 Resultado Atual:
 
 ```text
-🟨 Em andamento — bootstrap backend concluído
+🟨 Em andamento — bootstrap backend concluído; Docker/CI corrigidos localmente, pendente de commit
 ```
 
 ---
@@ -215,6 +239,11 @@ Resultado Atual:
 | M9    | Integration sprint-03-org-backend APPROVED | 2026-07-14 |
 | M10   | FT-AUTH, FT-SINGULAR (BE+FE), FT-EQUIPE, FT-SESSION closed | 2026-08 |
 | M11   | Revalidação SSOT Etapa 3 + auditoria JPA Etapa 4 | 2026-08-14 |
+| M12   | FT-PRIMEIRO-ACESSO — spec consolidada (5 artefatos) | 2026-08-17 |
+| M13   | Auditoria estrutural W0–W1 + Plano W2 (D1–D9) | 2026-08-20 |
+| M14   | FT-COLABORADOR (BE+FE) e FT-PRIMEIRO-ACESSO (BE+FE) — código e testes presentes no repositório (evidência de código; fechamento formal pendente de checkpoint — ver Pendências) | 2026-08-20/21 |
+| M15   | FT-COLABORADOR — fechamento formal (`DONE`), E2E Playwright (`AT-FE-COLABORADOR-001..005`) confirmado | 2026-08-26 |
+| M16   | FT-AREA-COLABORADOR — spec `APPROVED` → implementada → fechamento formal (`DONE`) | 2026-08-26 |
 
 ---
 
@@ -222,8 +251,8 @@ Resultado Atual:
 
 | Marco | Descrição                              | Status          |
 | ----- | -------------------------------------- | --------------- |
-| M12   | FT-COLABORADOR (FE) + FT-PRIMEIRO-ACESSO | Em execução   |
-| M13   | Etapa 5 — infraestrutura local Oracle  | Planejado       |
+| M17   | Confirmação formal de fechamento de FT-PRIMEIRO-ACESSO | A confirmar     |
+| M18   | Etapa 5 — infraestrutura local Oracle  | Planejado       |
 
 ---
 
@@ -254,7 +283,7 @@ Resultado Atual:
 
 ## Impedimentos Atuais
 
-Nenhum impedimento bloqueando FT-COLABORADOR (FE) ou FT-PRIMEIRO-ACESSO. Ambiente local requer Oracle acessível (`UNMPORTCOM_APP`).
+Nenhum impedimento bloqueando FT-PRIMEIRO-ACESSO. Ambiente local requer Oracle acessível (`UNMPORTCOM_APP`). Nenhum dos itens da seção Pendências abaixo é bloqueante — todos são de registro/reclassificação, não de capacidade técnica.
 
 ---
 
@@ -262,9 +291,84 @@ Nenhum impedimento bloqueando FT-COLABORADOR (FE) ou FT-PRIMEIRO-ACESSO. Ambient
 
 ## Curto Prazo
 
-1. Concluir FT-COLABORADOR (FE) e implementar FT-PRIMEIRO-ACESSO (BE + FE).
-2. Etapa 5 — alinhar `docker-compose.yml` e docs de infra ao Oracle.
-3. Manter aderência ao fluxo simplificado (`specs/foundation/development-workflow.md`).
+1. Confirmar fechamento formal de FT-PRIMEIRO-ACESSO (BE+FE) — código e testes já presentes.
+2. Commitar o que já está pronto no working tree: `docker-compose.yml` (Oracle), `.github/workflows/backend.yml`.
+3. Commitar `specs/features/area-colaborador/tasks.md` v1.1 (adiciona TK-AREA-COLAB-004, já presente no working tree, ainda não commitada).
+4. Etapa 5 — validar ambiente local Oracle de ponta a ponta com o `docker-compose.yml` já corrigido.
+5. Manter aderência ao fluxo simplificado (`specs/foundation/development-workflow.md`).
+
+---
+
+# Checkpoint — 2026-08-26 (Reconciliação de Estado)
+
+**Natureza:** reconciliação do State Index contra evidência de código (`feature.yaml`, rotas/páginas/composables, testes E2E) para FT-COLABORADOR e FT-AREA-COLABORADOR. Nenhum SSOT, código, spec ou decisão foi alterado nesta reconciliação — apenas este documento.
+
+**Evidência consultada:**
+
+* `specs/features/{colaborador,area-colaborador}/feature.yaml` — ambos `status: DONE`.
+* `git log` — commit `a7be2ca` (encerramento FT-COLABORADOR), commit `d00358e` (E2E `AT-FE-COLABORADOR-001..005`), commit `2a9c953` (encerramento FT-AREA-COLABORADOR).
+* `frontend/test/e2e/colaborador/colaborador.spec.ts` — confirma as 5 suítes E2E (`AT-FE-COLABORADOR-001..005`) que o checkpoint anterior dava como não localizadas.
+* `frontend/src/pages/area-colaborador/*`, `frontend/src/composables/area-colaborador/*`, `frontend/src/router/routes/area-colaborador.routes.ts` — confirmam TK-AREA-COLAB-001..003 implementadas.
+* `frontend/src/constants/navigation.ts` (working tree) — comentário registra a decisão de produto de 2026-08-26 que supersede TK-AREA-COLAB-004 (item de nav dedicado removido a favor de "Federação"); `docs/architecture/decisions/AUDITORIA-DS-FIGMA-01.md`.
+
+**Resultado:** este documento estava desatualizado em relação a FT-COLABORADOR (E2E dado como ausente, quando já existe) e a FT-AREA-COLABORADOR (implementação dada como não iniciada, quando a feature já está `DONE`). Corrigido nas seções acima; Pendências #1–#3 do checkpoint anterior (2026-08-21) resolvidas — ver seção Pendências.
+
+---
+
+# Checkpoint — 2026-08-21 (Reconciliação de Estado)
+
+**Natureza:** reconciliação do State Index contra evidência de código e artefatos de auditoria já existentes. Nenhum SSOT, código, spec ou decisão foi alterado nesta reconciliação — apenas este documento.
+
+**Evidência consultada:**
+
+* `git log` (commits `e94a23e`…`9306f94`, 2026-08-17 a 2026-08-20) e `git status`/`git diff` do working tree.
+* Código e testes de backend: `PrimeiroAcessoController`, `PrimeiroAcessoApplicationService` (9 testes de aceitação verdes), `ColaboradorController`/`ColaboradorApplicationService` (6 testes de aceitação verdes), `PapelAtribuicaoService` (novo, 2026-08-20).
+* Código de frontend: rotas/páginas de `colaborador` (Hub/Lista/Cadastro/Detalhe/Edição, registradas em `router/routes/index.ts`) e de `primeiro-acesso` (`usePrimeiroAcessoPage.ts` + página, registrada em `foundation.routes.ts`).
+* `specs/features/{colaborador,primeiro-acesso,area-colaborador}/feature.yaml` e `specification*.md`.
+* `docs/audit/12-structural-simplification-audit-w0-w1.md`, `docs/governance/structural-simplification-plan-w2.md`, `docs/audit/13-decision-inventory.md`, `docs/audit/14-governance-audit-inventory-status.md`, `docs/audit/15-migration-planning-inventory.md` (todos 2026-08-20, já existentes — não refeitos aqui).
+
+**Resultado:** este documento estava desatualizado em relação a FT-PRIMEIRO-ACESSO (BE registrado como `not_started`, quando há controller/service/testes) e omitia FT-AREA-COLABORADOR (feature nova desde o último checkpoint). Corrigido nas seções acima.
+
+---
+
+# Pendências / Divergências Registradas
+
+Registradas aqui por escopo desta reconciliação (não corrigidas — correção pertence a cada fonte):
+
+| # | Pendência | Onde corrigir | Severidade |
+|---|---|---|---|
+| 1 | Fechamento formal de FT-PRIMEIRO-ACESSO (BE+FE) não confirmado por nenhum checkpoint/registry — só há evidência de código/teste | Processo de fechamento de feature (`specs/foundation/development-workflow.md`) | Média |
+| 2 | `docker-compose.yml` já corrigido para Oracle no working tree, mas não commitado (D5) | commit + `docs/governance/03-open-decisions.md` | Baixa |
+| 3 | `.github/workflows/backend.yml` (CI, "Opção B") não commitado; "Opção A" (CI com Oracle real) permanece sem decisão (D6/GAP-DEC-003) | `docs/governance/03-open-decisions.md` | Baixa |
+| 4 | `PapelAtribuicaoService`/entidades de papel (commit `9306f94`) implementadas sem `feature.yaml`/spec associada nesta reconciliação | classificar contra spec existente (`session`/`authentication`) ou abrir nova feature | Média |
+| 5 | `docs/governance/05-roadmap.md` desatualizado desde 2026-07-08 (ainda descreve FT-AUTH como "EM PREPARAÇÃO") — contradiz este documento | `docs/governance/05-roadmap.md` | Média |
+| 6 | Três catálogos de decisão com colisão de ID (`docs/governance/03-open-decisions.md`, `docs/architecture/08-decision-records.md`, `docs/technology/04-decision-log.md`) — D7/GAP-DEC-006, não implementada | catálogos de decisão | Baixa (sem bloqueio operacional) |
+| 7 | `docs/audit/12-...` e `structural-simplification-plan-w2.md` contêm 2 achados já defasados (D4 storage e D5 docker-compose) — já mapeado em `docs/audit/14-...` | não requer nova auditoria; já registrado | Baixa |
+| 8 | `specs/features/area-colaborador/tasks.md` v1.1 (TK-AREA-COLAB-004) presente no working tree, ainda não commitada | commit pelo responsável do repositório | Baixa |
+
+## Resolvidas em 2026-08-26
+
+| # (checkpoint 2026-08-21) | Pendência | Resolução |
+|---|---|---|
+| 1 | Fechamento formal de FT-COLABORADOR e FT-PRIMEIRO-ACESSO não confirmado | FT-COLABORADOR confirmado `DONE` (`feature.yaml`, commit `a7be2ca`). FT-PRIMEIRO-ACESSO permanece pendente — ver item 1 acima. |
+| 2 | E2E Playwright de FT-COLABORADOR não localizado | Localizado: `frontend/test/e2e/colaborador/colaborador.spec.ts` (commit `d00358e`), cobre `AT-FE-COLABORADOR-001..005`. |
+| 3 | `specs/features/area-colaborador/*` e commits recentes não commitados | Commitados (`fec69f2`…`2a9c953`); feature `DONE`. Resta só a v1.1 do `tasks.md` — ver item 8 acima. |
+
+---
+
+# Critério de Revalidação
+
+**Validação incremental** (basta checar a feature/SSOT tocada + rodar a camada de validação correspondente, `mvn clean verify` / lint-typecheck-unit conforme `CLAUDE.md`) quando:
+
+* uma única feature avança de fase (spec → DoR → implementação → fechamento) sem alterar decisão arquitetural, de stack ou de schema já aprovada;
+* checkpoint de rotina entre sessões — confirmar o que mudou desde o último checkpoint deste documento e atualizar só as linhas afetadas.
+
+**Revalidação completa** (reler SSOTs de todas as camadas, não só a feature em questão) é necessária quando:
+
+* uma decisão arquitetural/tecnológica aprovada muda (stack, banco, storage, mensageria, deploy — catálogos de `docs/governance/03`, `docs/architecture/08`, `docs/technology/04`);
+* antes de qualquer novo Exit Gate ou fechamento formal de Etapa do MVP (`docs/backlog/04-mvp-scope.md`);
+* uma auditoria estrutural (como `docs/audit/12-...`) aponta divergência ainda não resolvida entre dois SSOTs;
+* mais de duas features mudam de status desde o checkpoint anterior sem que este documento tenha sido atualizado nesse meio-tempo (caso deste checkpoint: FT-PRIMEIRO-ACESSO + FT-AREA-COLABORADOR).
 
 ---
 
@@ -276,3 +380,6 @@ Nenhum impedimento bloqueando FT-COLABORADOR (FE) ou FT-PRIMEIRO-ACESSO. Ambient
 | 2026-06-22 | Reconciliação   | Atualização pós-consolidação MVP                       |
 | 2026-07-08 | Governança      | Encerramento oficial da Sprint 0 — baseline congelada  |
 | 2026-08-14 | Revalidação     | Etapa 3 SSOT aprovada com ressalvas; Etapa 4 JPA audit |
+| 2026-08-21 | Reconciliação (State Index) | Documento reposicionado como índice central; corrigido status de FT-PRIMEIRO-ACESSO (BE implementado, não `not_started`); adicionada FT-AREA-COLABORADOR; registradas 9 pendências; adicionados critérios de revalidação completa vs. incremental |
+| 2026-08-21 | Baseline (implantação do modelo) | Adicionadas ao mapa de SSOTs as referências a `docs/governance/10-project-organization.md` (modelo de organização) e a Foundation (aplicação); demais seções já representavam o modelo formalizado — sem outras alterações |
+| 2026-08-26 | Reconciliação (State Index) | FT-COLABORADOR e FT-AREA-COLABORADOR confirmadas `DONE` contra evidência de código; E2E de FT-COLABORADOR localizado; pendências #1–#3 do checkpoint 2026-08-21 resolvidas; Marcos M15/M16 concluídos |
