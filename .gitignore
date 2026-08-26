@@ -33,7 +33,6 @@ ehthumbs.db
 .vscode/
 *.swp
 *.swo
-.cursor/settings.json
 
 ## Eclipse / Spring Tool Suite
 .apt_generated/
