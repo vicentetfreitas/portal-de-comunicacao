@@ -4,7 +4,7 @@
 |--------|--------|
 | Template | CRUD Feature (adaptado — gestão de binários, não entidade de domínio tradicional) |
 | Versão | 1.1 |
-| Status | DRAFT |
+| Status | READY_FOR_REVIEW |
 | Owner | Engineering Framework |
 
 ---
@@ -17,7 +17,7 @@
 | Feature | Arquivos e Documentos |
 | Domínio | DOCUMENTO |
 | Tipo | Nova capacidade — sem Feature backend existente |
-| Status | DRAFT |
+| Status | READY_FOR_REVIEW |
 
 ---
 

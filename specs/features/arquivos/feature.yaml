@@ -6,4 +6,4 @@ template:
   name: crud-feature
   version: "1.1"
 
-status: DRAFT
+status: READY_FOR_REVIEW
