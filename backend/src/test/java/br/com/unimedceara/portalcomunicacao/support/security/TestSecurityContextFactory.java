@@ -52,4 +52,22 @@ public final class TestSecurityContextFactory {
     public static Cookie jwtCookie(JwtTokenService jwtTokenService, long colaboradorId) {
         return new Cookie(SecurityConstants.ACCESS_TOKEN_COOKIE, buildJwtToken(jwtTokenService, colaboradorId));
     }
+
+    /**
+     * Cria cookie de access token com Contexto Ativo explícito (federação/singular/área/equipe)
+     * — necessário para testar autorização por {@code PERMISSAO_PASTA} (FT-DOCUMENTO), que não
+     * é exercitada pelos fixtures padrão de {@link #jwtCookie(JwtTokenService, long)}.
+     */
+    public static Cookie jwtCookieWithContext(
+            JwtTokenService jwtTokenService,
+            long colaboradorId,
+            Long federationId,
+            Long singularId,
+            Long areaId,
+            Long teamId) {
+        String token = jwtTokenService.issueToken(
+                colaboradorId, "test-session", "user@test.com", "Test User",
+                federationId, singularId, areaId, teamId, null);
+        return new Cookie(SecurityConstants.ACCESS_TOKEN_COOKIE, token);
+    }
 }
