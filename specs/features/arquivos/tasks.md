@@ -31,42 +31,45 @@ Decomposição funcional de FT-DOCUMENTO em unidades de implementação. Não re
 
 ### Objetivo
 
-Endpoint `GET /api/v1/pastas` retornando as pastas (com documentos aninhados) vinculadas à Área do Contexto Ativo do colaborador autenticado.
+Endpoint `GET /api/v1/pastas` retornando as pastas (com documentos `ATIVO`/`ARQUIVADO` aninhados) para as quais existe `PERMISSAO_PASTA` (`TIP_ACESSO=LEITURA`) compatível com o Contexto Ativo do colaborador autenticado.
 
 ### Requisitos Funcionais Relacionados
 
 - RF-DOCUMENTO-001
-- RF-DOCUMENTO-003 (parte de listagem — filtro por Área aplicado na query, não em memória)
+- RF-DOCUMENTO-003 (filtro de permissão aplicado na query, não em memória)
+- RF-DOCUMENTO-004 (filtro `STA_DOCUMENTO != EXPIRADO` aplicado na query)
 
 ### Casos de Uso Relacionados
 
 - UC-DOCUMENTO-001
 - UC-DOCUMENTO-003
+- UC-DOCUMENTO-004
 
 ### Critérios de Aceitação Relacionados
 
 - AT-DOCUMENTO-001
-- AT-DOCUMENTO-003 (cenário "listagem não vaza outras Áreas")
+- AT-DOCUMENTO-003 (cenários de permissão multi-nível)
+- AT-DOCUMENTO-004 (cenário "expirado não aparece na listagem")
 
 ### Dependências
 
-- Modelo de dados `PASTA`/`DOCUMENTO` proposto em `specification.md` § Modelo de Dados Proposto — **requer revisão de arquitetura/DBA antes do DDL** (mesmo padrão de `DEC-DB-027`); não é decisão desta Feature, é execução técnica pendente.
-- `AREA` (entidade já existente, `FT-AREA`) para FK e resolução do Contexto Ativo (`FT-SESSION`).
+- **Tabelas já instaladas** (`database/ddl/003-create-tables.sql`, baseline DBA — DEC-DB-019): `PASTA`, `DOCUMENTO`, `DOCUMENTO_VERSAO`, `ARQUIVO_BINARIO`, `PERMISSAO_PASTA`. Nenhuma migration nova necessária para esta task.
+- `JwtAuthenticatedPrincipal` (`federationId`/`singularId`/`areaId`/`teamId`) já existente (`accesscontrol/domain/model/`) para resolução do Contexto Ativo.
 
 ### Componentes Esperados
 
-- Entity (`Pasta`, `Documento`)
-- Repository (filtro por `COD_AREA` do Contexto Ativo)
+- Entity (`Pasta`, `Documento`, `DocumentoVersao`, `ArquivoBinario`, `PermissaoPasta`)
+- Repository (query de `PASTA` com `EXISTS` em `PERMISSAO_PASTA` filtrando por `TIP_DESTINATARIO`/`COD_DESTINATARIO` compatível com o Contexto Ativo e `TIP_ACESSO=LEITURA`; documentos filtrados por `STA_DOCUMENTO != EXPIRADO`)
 - Application Service
 - DTO (`PastaResponse`, `DocumentoResponse` — `api.md`)
-- Mapper
+- Mapper (inclui resolução do `ARQUIVO_BINARIO` da versão atual para `formato`/`tamanhoBytes`)
 - Controller (`GET /api/v1/pastas`)
-- Testes (unit + aceitação; cenário de coleção vazia; cenário de não-vazamento entre Áreas)
+- Testes (unit + aceitação; coleção vazia; grant por Federação/Singular/Área/Equipe; expirado oculto)
 
 ### Critérios de Conclusão
 
 - RF-DOCUMENTO-001 implementado.
-- AT-DOCUMENTO-001 e a parte aplicável de AT-DOCUMENTO-003 atendidos.
+- AT-DOCUMENTO-001 e as partes aplicáveis de AT-DOCUMENTO-003/004 atendidos.
 - Testes aprovados.
 - Rastreabilidade íntegra.
 
@@ -76,39 +79,42 @@ Endpoint `GET /api/v1/pastas` retornando as pastas (com documentos aninhados) vi
 
 ### Objetivo
 
-Endpoint `GET /api/v1/documentos/{id}/download` retornando o binário via Object Storage (DEC-013), negando acesso a documento fora da Área do Contexto Ativo.
+Endpoint `GET /api/v1/documentos/{id}/download` retornando o binário da versão atual via Object Storage (DEC-013), negando acesso quando não há `PERMISSAO_PASTA` (`TIP_ACESSO=DOWNLOAD`) compatível com o Contexto Ativo, e ocultando documentos `EXPIRADO`.
 
 ### Requisitos Funcionais Relacionados
 
 - RF-DOCUMENTO-002
-- RF-DOCUMENTO-003 (parte de download)
+- RF-DOCUMENTO-003 (permissão de download)
+- RF-DOCUMENTO-004 (404 para `EXPIRADO`)
 
 ### Casos de Uso Relacionados
 
 - UC-DOCUMENTO-002
 - UC-DOCUMENTO-003
+- UC-DOCUMENTO-004
 
 ### Critérios de Aceitação Relacionados
 
 - AT-DOCUMENTO-002
 - AT-DOCUMENTO-003 (cenário "download negado")
+- AT-DOCUMENTO-004 (cenários "download de expirado" e "arquivado permanece visível")
 
 ### Dependências
 
-- **Bloqueante de execução (não de spec):** provisionamento do Object Storage S3-compatible no ambiente (DEC-013 aprovada, execução pendente — ver `docs/governance/01-project-status.md`).
-- `CHV_OBJETO_STORAGE` de `Documento` (TK-DOCUMENTO-001).
+- **Bloqueante de execução (não de spec):** provisionamento do Object Storage S3-compatível no ambiente (DEC-013 aprovada, execução pendente — ver `docs/governance/01-project-status.md`) **e** adição de cliente S3/MinIO ao `backend/pom.xml` (ausente hoje — confirmado por exploração de convenções; AWS SDK v2 é compatível com MinIO, não requer SDK proprietário).
+- `TK-DOCUMENTO-001` para as entidades `DocumentoVersao`/`ArquivoBinario`/`PermissaoPasta`.
 
 ### Componentes Esperados
 
-- Application Service (client do Object Storage — nunca expõe URL direta ao cliente, ADR-004)
+- Application Service (client do Object Storage via `ARQUIVO_BINARIO.URL_ARQUIVO` da versão com `FLG_VERSAO_ATUAL='S'` — nunca expõe a URL diretamente ao cliente, ADR-004)
 - Controller (`GET /api/v1/documentos/{id}/download`, stream + `Content-Disposition`)
-- Validação de Área antes do fetch ao storage (403 explícito — nunca 404 disfarçado)
-- Testes (unit + aceitação; documento inexistente → 404; documento de outra Área → 403)
+- Validação de `PERMISSAO_PASTA` (`TIP_ACESSO=DOWNLOAD`) e de `STA_DOCUMENTO != EXPIRADO` antes do fetch ao storage (403/404 explícitos — nunca disfarçados)
+- Testes (unit + aceitação; documento inexistente → 404; expirado → 404; sem grant compatível → 403)
 
 ### Critérios de Conclusão
 
 - RF-DOCUMENTO-002 implementado.
-- AT-DOCUMENTO-002 e a parte aplicável de AT-DOCUMENTO-003 atendidos.
+- AT-DOCUMENTO-002 e as partes aplicáveis de AT-DOCUMENTO-003/004 atendidos.
 - Testes aprovados.
 - Rastreabilidade íntegra.
 
@@ -162,8 +168,8 @@ Página consumindo os dois endpoints acima: lista pastas/arquivos da Área e per
 
 | Task | RF | UC | AT |
 |------|----|----|----|
-| TK-DOCUMENTO-001 | RF-DOCUMENTO-001, RF-DOCUMENTO-003 | UC-DOCUMENTO-001, UC-DOCUMENTO-003 | AT-DOCUMENTO-001, AT-DOCUMENTO-003 |
-| TK-DOCUMENTO-002 | RF-DOCUMENTO-002, RF-DOCUMENTO-003 | UC-DOCUMENTO-002, UC-DOCUMENTO-003 | AT-DOCUMENTO-002, AT-DOCUMENTO-003 |
+| TK-DOCUMENTO-001 | RF-DOCUMENTO-001, RF-DOCUMENTO-003, RF-DOCUMENTO-004 | UC-DOCUMENTO-001, UC-DOCUMENTO-003, UC-DOCUMENTO-004 | AT-DOCUMENTO-001, AT-DOCUMENTO-003, AT-DOCUMENTO-004 |
+| TK-DOCUMENTO-002 | RF-DOCUMENTO-002, RF-DOCUMENTO-003, RF-DOCUMENTO-004 | UC-DOCUMENTO-002, UC-DOCUMENTO-003, UC-DOCUMENTO-004 | AT-DOCUMENTO-002, AT-DOCUMENTO-003, AT-DOCUMENTO-004 |
 | TK-DOCUMENTO-003 | RF-DOCUMENTO-001, RF-DOCUMENTO-002 | UC-DOCUMENTO-001, UC-DOCUMENTO-002 | AT-DOCUMENTO-001, AT-DOCUMENTO-002 |
 
 ---
@@ -195,3 +201,4 @@ Define **como**, **quando**, **por quem** e **em qual ordem** — fora do escopo
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.1 | 2026-08-26 | Claude Code (Specify) | Criação — 3 tasks (2 backend, 1 frontend) para DoR-Implementation |
+| 1.2 | 2026-08-26 | Claude Code (Specify) | Reconciliação com schema físico real (PERMISSAO_PASTA multi-nível, DOCUMENTO_VERSAO/ARQUIVO_BINARIO, filtro STA_DOCUMENTO); dependência de cliente S3/MinIO explicitada em TK-002 |

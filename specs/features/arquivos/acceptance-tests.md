@@ -41,13 +41,13 @@ Happy Path / Boundary
 
 ### Cenário — sucesso
 
-**Given** colaborador autenticado com Contexto Ativo resolvido e Área com pastas cadastradas
+**Given** colaborador autenticado com Contexto Ativo resolvido e ao menos uma `PERMISSAO_PASTA` (`TIP_ACESSO=LEITURA`) para algum nível do seu Contexto Ativo
 **When** solicita `GET /api/v1/pastas`
-**Then** recebe a lista de pastas da própria Área, cada uma com seus documentos (nome, formato)
+**Then** recebe a lista de pastas com permissão, cada uma com seus documentos `ATIVO`/`ARQUIVADO` (nome, formato)
 
 ### Cenário — coleção vazia
 
-**Given** colaborador autenticado cuja Área não possui pastas cadastradas
+**Given** colaborador autenticado sem nenhuma `PERMISSAO_PASTA` compatível com seu Contexto Ativo
 **When** solicita `GET /api/v1/pastas`
 **Then** recebe lista vazia (200), não erro
 
@@ -69,9 +69,9 @@ Happy Path / Negative
 
 ### Cenário — sucesso
 
-**Given** documento existente vinculado à Área do Contexto Ativo do colaborador
+**Given** documento `ATIVO` ou `ARQUIVADO` cuja pasta tem `PERMISSAO_PASTA` (`TIP_ACESSO=DOWNLOAD`) para algum nível do Contexto Ativo do colaborador
 **When** solicita `GET /api/v1/documentos/{id}/download`
-**Then** recebe o binário do arquivo via Object Storage (DEC-013)
+**Then** recebe o binário da versão atual (`FLG_VERSAO_ATUAL='S'`) via Object Storage (DEC-013)
 
 ### Cenário — documento inexistente
 
@@ -81,7 +81,7 @@ Happy Path / Negative
 
 ---
 
-## AT-DOCUMENTO-003 — Negar acesso fora da Área
+## AT-DOCUMENTO-003 — Negar acesso sem permissão de pasta
 
 ### Tipo
 
@@ -95,17 +95,57 @@ Authorization
 
 - UC-DOCUMENTO-003
 
-### Cenário — listagem não vaza outras Áreas
+### Cenário — listagem não vaza pastas sem permissão
 
-**Given** colaborador autenticado com Contexto Ativo na Área A, e existem pastas cadastradas na Área B
+**Given** colaborador autenticado com Contexto Ativo (federação F, singular S, área A, equipe E), e existe uma pasta com `PERMISSAO_PASTA` apenas para outra Área (B)
 **When** solicita `GET /api/v1/pastas`
-**Then** a resposta não contém nenhuma pasta/documento da Área B
+**Then** a resposta não contém a pasta restrita à Área B
+
+### Cenário — listagem inclui grant de nível superior
+
+**Given** pasta com `PERMISSAO_PASTA` (`TIP_DESTINATARIO=FEDERACAO`, `COD_DESTINATARIO=F`, `TIP_ACESSO=LEITURA`), colaborador com Contexto Ativo na federação F (área/singular quaisquer dentro dela)
+**When** solicita `GET /api/v1/pastas`
+**Then** a pasta aparece na listagem — grant de Federação vale para todo colaborador da federação, não só de uma Área específica
 
 ### Cenário — download negado
 
-**Given** documento vinculado à Área B, colaborador autenticado com Contexto Ativo na Área A
-**When** solicita `GET /api/v1/documentos/{id}/download` para o documento da Área B
+**Given** documento cuja pasta só tem `PERMISSAO_PASTA` para uma Área diferente da do Contexto Ativo do colaborador
+**When** solicita `GET /api/v1/documentos/{id}/download`
 **Then** recebe `403` explícito — nunca `404` disfarçado nem filtragem silenciosa
+
+---
+
+## AT-DOCUMENTO-004 — Ocultar documentos expirados
+
+### Tipo
+
+Boundary / Business Rule
+
+### Requisitos Funcionais Relacionados
+
+- RF-DOCUMENTO-004
+
+### Casos de Uso Relacionados
+
+- UC-DOCUMENTO-004
+
+### Cenário — expirado não aparece na listagem
+
+**Given** pasta com permissão válida contendo um documento `ATIVO` e um `EXPIRADO`
+**When** solicita `GET /api/v1/pastas`
+**Then** a resposta contém o documento `ATIVO`, não contém o `EXPIRADO`
+
+### Cenário — download de expirado
+
+**Given** documento `EXPIRADO` cuja pasta tem permissão válida
+**When** solicita `GET /api/v1/documentos/{id}/download`
+**Then** recebe `404` (mesmo com permissão de pasta válida)
+
+### Cenário — arquivado permanece visível
+
+**Given** documento `ARQUIVADO` cuja pasta tem permissão válida
+**When** solicita `GET /api/v1/pastas` e `GET /api/v1/documentos/{id}/download`
+**Then** o documento aparece na listagem e o download é bem-sucedido
 
 ---
 
@@ -123,6 +163,7 @@ Authorization
 | AT-DOCUMENTO-001 | RF-DOCUMENTO-001 | UC-DOCUMENTO-001 |
 | AT-DOCUMENTO-002 | RF-DOCUMENTO-002 | UC-DOCUMENTO-002 |
 | AT-DOCUMENTO-003 | RF-DOCUMENTO-003 | UC-DOCUMENTO-003 |
+| AT-DOCUMENTO-004 | RF-DOCUMENTO-004 | UC-DOCUMENTO-004 |
 
 ---
 
@@ -131,3 +172,4 @@ Authorization
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.1 | 2026-08-26 | Claude Code (Specify) | Criação — 3 ATs cobrindo os 3 RFs (somente leitura) |
+| 1.2 | 2026-08-26 | Claude Code (Specify) | Reconciliação com schema físico: AT-003 revisado (permissão multi-nível, cenário de grant por Federação), AT-004 novo (ocultar EXPIRADO, cenário ARQUIVADO permanece visível) |
