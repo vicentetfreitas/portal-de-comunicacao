@@ -1,0 +1,9 @@
+feature:
+  id: FT-DOCUMENTO-NAVEGACAO
+  name: Navegação de Pastas e Documentos
+
+template:
+  name: crud-feature
+  version: "1.1"
+
+status: DRAFT
