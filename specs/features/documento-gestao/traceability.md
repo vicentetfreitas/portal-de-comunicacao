@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — Atualizar / Alterar Status / Mover) |
-| Versão | 1.0 |
-| Status | DRAFT |
+| Versão | 1.1 |
+| Status | APPROVED |
 | Owner | Engineering Framework |
 
 ---
@@ -30,16 +30,19 @@ Consolida a rastreabilidade entre `specification.md`, `use-cases.md`, `api.md`,
 
 | RF | RN | UC | API | AT | TK |
 |----|----|----|-----|----|----|
-| RF-DOC-GESTAO-001 | BR-016, BR-017 | UC-DOC-GESTAO-001 | POST /api/v1/pastas/{id}/subpastas | AT-DOC-GESTAO-001 | TK-DOC-GESTAO-001, TK-DOC-GESTAO-002 |
-| RF-DOC-GESTAO-002 | — (DC-4) | UC-DOC-GESTAO-002 | PATCH /api/v1/pastas/{id} | AT-DOC-GESTAO-002 | TK-DOC-GESTAO-002 |
-| RF-DOC-GESTAO-003 | BR-016, BR-017 | UC-DOC-GESTAO-003 | PATCH /api/v1/pastas/{id} | AT-DOC-GESTAO-003 | TK-DOC-GESTAO-002 |
-| RF-DOC-GESTAO-004 | — (DC-4) | UC-DOC-GESTAO-004 | DELETE /api/v1/pastas/{id} | AT-DOC-GESTAO-004 | TK-DOC-GESTAO-002 |
-| RF-DOC-GESTAO-005 | — (DC-4) | UC-DOC-GESTAO-005 | POST /api/v1/documentos/{id}/versoes | AT-DOC-GESTAO-005 | TK-DOC-GESTAO-003 |
-| RF-DOC-GESTAO-006 | — (DC-4) | UC-DOC-GESTAO-006 | PATCH /api/v1/documentos/{id} | AT-DOC-GESTAO-006 | TK-DOC-GESTAO-003 |
-| RF-DOC-GESTAO-007 | BR-018 | UC-DOC-GESTAO-007 | DELETE /api/v1/documentos/{id} | AT-DOC-GESTAO-007 | TK-DOC-GESTAO-003 |
-| RF-DOC-GESTAO-008 | BR-015, BR-016 | UC-DOC-GESTAO-008 | PATCH /api/v1/documentos/{id} | AT-DOC-GESTAO-008 | TK-DOC-GESTAO-003 |
+| RF-DOC-GESTAO-001 | BR-016, BR-017 | UC-DOC-GESTAO-001 | POST /api/v1/pastas/{id}/subpastas | AT-DOC-GESTAO-001 | TK-DOC-GESTAO-001, TK-DOC-GESTAO-002, TK-DOC-GESTAO-004 |
+| RF-DOC-GESTAO-002 | — (DC-4) | UC-DOC-GESTAO-002 | PATCH /api/v1/pastas/{id} | AT-DOC-GESTAO-002 | TK-DOC-GESTAO-002, TK-DOC-GESTAO-004 |
+| RF-DOC-GESTAO-003 | BR-016, BR-017 | UC-DOC-GESTAO-003 | PATCH /api/v1/pastas/{id} | AT-DOC-GESTAO-003 | TK-DOC-GESTAO-002, TK-DOC-GESTAO-004 |
+| RF-DOC-GESTAO-004 | — (DC-4) | UC-DOC-GESTAO-004 | DELETE /api/v1/pastas/{id} | AT-DOC-GESTAO-004 | TK-DOC-GESTAO-002, TK-DOC-GESTAO-004 |
+| RF-DOC-GESTAO-005 | — (DC-4) | UC-DOC-GESTAO-005 | POST /api/v1/documentos/{id}/versoes | AT-DOC-GESTAO-005 | TK-DOC-GESTAO-003, TK-DOC-GESTAO-004 |
+| RF-DOC-GESTAO-006 | — (DC-4) | UC-DOC-GESTAO-006 | PATCH /api/v1/documentos/{id} | AT-DOC-GESTAO-006 | TK-DOC-GESTAO-003, TK-DOC-GESTAO-004 |
+| RF-DOC-GESTAO-007 | BR-018 | UC-DOC-GESTAO-007 | DELETE /api/v1/documentos/{id} | AT-DOC-GESTAO-007 | TK-DOC-GESTAO-003, TK-DOC-GESTAO-004 |
+| RF-DOC-GESTAO-008 | BR-015, BR-016 | UC-DOC-GESTAO-008 | PATCH /api/v1/documentos/{id} | AT-DOC-GESTAO-008 | TK-DOC-GESTAO-003, TK-DOC-GESTAO-004 |
 | RF-DOC-GESTAO-009 | BR-012 | UC-DOC-GESTAO-009 | (transversal) | AT-DOC-GESTAO-009 | TK-DOC-GESTAO-002, TK-DOC-GESTAO-003 |
 | RF-DOC-GESTAO-010 | — (DC-2) | UC-DOC-GESTAO-010 | (transversal) | AT-DOC-GESTAO-010 | TK-DOC-GESTAO-002, TK-DOC-GESTAO-003 |
+
+`TK-DOC-GESTAO-004` (ações na página de Arquivos — frontend) consome RF-001..008 na
+UI; as operações transversais (RF-009/010) são backend puro.
 
 **RN `—` (DC-4):** operações puramente estruturais ou de ciclo de vida (renomear
 pasta, arquivar pasta, nova versão, editar metadados) não têm Regra de Negócio
@@ -77,7 +80,7 @@ tem UC, API e AT. Governança pode catalogar uma BR posteriormente (ver
 | Casos de Uso | 10 | 10 | 0 |
 | Endpoints | 6 + 2 transversais | 8 | 0 |
 | Acceptance Tests | 10 | 10 | 0 |
-| Tasks | 3 | 3 | 0 |
+| Tasks | 4 | 4 | 0 |
 
 ---
 
@@ -128,3 +131,4 @@ tem UC, API e AT. Governança pode catalogar uma BR posteriormente (ver
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — matriz RF/UC/API/AT/TK-DOC-GESTAO-001..010; rastreabilidade de D-01..D-08 + DC-1..DC-4; bloqueante `SQ_PASTA`/`SQ_PERMISSAO_PASTA` (`V010`) |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | Correção NC-A do Review de Spec: cobertura de Tasks 3→4; `TK-DOC-GESTAO-004` (frontend) incluída na matriz consolidada (RF-001..008). Mantém `APPROVED`. |
