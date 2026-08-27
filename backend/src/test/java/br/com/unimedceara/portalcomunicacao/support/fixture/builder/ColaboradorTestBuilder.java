@@ -9,7 +9,12 @@ import java.time.Instant;
 
 public final class ColaboradorTestBuilder {
 
-    public static final String SESSION_ADMINISTRATOR_EMAIL = "colaborador@unimedceara.com.br";
+    /**
+     * Identidade do administrador de sessão nos testes. Deve permanecer igual à entrada de
+     * {@code application.auth.session-administrator-emails} em {@code application-test.yaml} —
+     * é o gate de autorização das operações administrativas e de CRUD organizacional.
+     */
+    public static final String SESSION_ADMINISTRATOR_EMAIL = "vicentefreitas@unimedceara.com.br";
 
     private long federacaoId;
     private Long singularId;
@@ -32,7 +37,7 @@ public final class ColaboradorTestBuilder {
         return forFederation(federacaoId)
                 .email(SESSION_ADMINISTRATOR_EMAIL)
                 .nome("Admin Teste")
-                .zimbraId("zimbra-admin");
+                .zimbraId("zimbra-" + SESSION_ADMINISTRATOR_EMAIL);
     }
 
     public ColaboradorTestBuilder singularId(Long singularId) {
@@ -86,5 +91,14 @@ public final class ColaboradorTestBuilder {
 
     public ColaboradorEntity persist(ColaboradorRepository repository) {
         return repository.save(build());
+    }
+
+    /**
+     * Retorna o colaborador já existente com este e-mail (schema compartilhado, sem limpeza —
+     * DEC-DB-023) ou cria um novo. Evita violação de {@code UK_COLABORADOR_EMAIL} para
+     * identidades fixas reutilizadas entre testes/execuções.
+     */
+    public ColaboradorEntity persistOrGet(ColaboradorRepository repository) {
+        return repository.findByEmailIgnoreCase(email).orElseGet(() -> repository.save(build()));
     }
 }

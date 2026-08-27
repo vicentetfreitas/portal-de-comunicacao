@@ -13,6 +13,7 @@ import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.Id
 import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
 import br.com.unimedceara.portalcomunicacao.support.annotation.IntegrationTest;
 import br.com.unimedceara.portalcomunicacao.support.base.AbstractTransactionalMockMvcIntegrationTest;
+import br.com.unimedceara.portalcomunicacao.support.data.IntegrationTestUniqueData;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,12 +52,16 @@ class AuthFlowIntegrationTest extends AbstractTransactionalMockMvcIntegrationTes
     @Autowired
     private AuthProperties authProperties;
 
+    /** Identidade válida do fluxo — única por execução, sem depender de dados pré-existentes. */
+    private static String flowUserEmail;
+
     @Test
     void shouldCompleteLoginCallbackMeRefreshAndLogoutFlow() throws Exception {
+        flowUserEmail = IntegrationTestUniqueData.colaboradorEmail("flow");
         ColaboradorTestBuilder.forFederation(authProperties.defaultFederationId())
-                .email("colaborador@unimedceara.com.br")
+                .email(flowUserEmail)
                 .nome("Colaborador Teste")
-                .zimbraId("zimbra-id-test")
+                .zimbraId("zimbra-" + flowUserEmail)
                 .persist(colaboradorRepository);
 
         String state = oAuthStateService.createState(false);
@@ -76,7 +81,7 @@ class AuthFlowIntegrationTest extends AbstractTransactionalMockMvcIntegrationTes
         mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.email").value("colaborador@unimedceara.com.br"))
+                .andExpect(jsonPath("$.data.email").value(flowUserEmail))
                 .andExpect(jsonPath("$.data.name").value("Colaborador Teste"))
                 .andExpect(jsonPath("$.data.sessionId").isNotEmpty());
 
@@ -135,9 +140,9 @@ class AuthFlowIntegrationTest extends AbstractTransactionalMockMvcIntegrationTes
                 public IdentityValidationResult validateOpaqueToken(String opaqueToken) {
                     if ("valid-callback-token".equals(opaqueToken)) {
                         return new IdentityValidationResult(
-                                "colaborador@unimedceara.com.br",
+                                flowUserEmail,
                                 "Colaborador Teste",
-                                "zimbra-id-test");
+                                "zimbra-" + flowUserEmail);
                     }
                     throw new IllegalStateException("Invalid token");
                 }
