@@ -202,11 +202,19 @@ Endpoints de escrita sobre `DOCUMENTO` existente, autorizados por papel
 - `GlobalExceptionHandler`: documento não-`ATIVO` alvo de escrita → `409`.
 - Testes (unit + aceitação): AT-DOC-GESTAO-005..008, -009, -010.
 
-### Critérios de Conclusão
+### Critérios de Conclusão — ✅ ATENDIDA (2026-08-27, `portal-comunicacao-api` `561683e`, branch `development`)
 
-- RF-DOC-GESTAO-005..008 (+ transversais) implementados; ATs correspondentes atendidos.
-- `./mvnw clean verify` verde.
-- Rastreabilidade íntegra.
+- ✅ RF-DOC-GESTAO-005..008 + transversais 009/010 implementados; ATs atendidos.
+- ✅ `DocumentoBinarioFactory` (novo) — criação de `ARQUIVO_BINARIO` a partir do multipart
+  + resolução de categoria, comum ao upload e à nova versão; `PastaApplicationService.uploadDocumento`
+  refatorado p/ usá-la. `DocumentoGestaoApplicationService` (`criarNovaVersao` rebaixa a atual
+  + re-deriva categoria + storage por último; `atualizarDocumento` metadados/mover;
+  `arquivarDocumento`). `DocumentoController` `POST /{id}/versoes`, `PATCH /{id}`, `DELETE /{id}`.
+  `AtualizarDocumentoRequest` (`@Valid`+`@AssertTrue` → `400`). Documento não-`ATIVO` → `409` via
+  `ConflictException`; pasta do documento inativa → `404`.
+- ✅ `DocumentoGestaoApplicationServiceTest` (15 unit), `DocumentoGestaoAcceptanceIntegrationTest`
+  (13, Oracle — adicionado ao `!` do `.gitlab-ci.yml`). `./mvnw clean verify` = **399 testes, 0 falhas**.
+- Não pushed no `origin` (decisão do usuário, como os anteriores).
 
 ---
 
@@ -285,3 +293,4 @@ e `traceability.md`.
 | 1.2 | 2026-08-27 | Claude Code (Implement) | TK-DOC-GESTAO-001: `V010__pasta_permissao_pasta_sequences.sql` + `VAL-DB-04` + linha no README produzidos. Falta o usuário executar `V010` na IDE do banco e a validação JDBC pós-execução. |
 | 1.3 | 2026-08-27 | Claude Code (Implement) | TK-DOC-GESTAO-002: código completo + 18 testes unit verdes no repo `portal-comunicacao-api` (não commitado). `mvn clean verify` bloqueado por `missing sequence [SQ_PASTA]` até `V010` rodar. |
 | 1.4 | 2026-08-27 | Claude Code (Implement) | **TK-DOC-GESTAO-001 concluída** — `V010` executado pelo usuário e validado via JDBC. **TK-DOC-GESTAO-002 concluída** — `portal-comunicacao-api` `0446e13`; `PastaGestaoAcceptanceIntegrationTest` (12) + `.gitlab-ci.yml` atualizado; `mvn clean verify` 371/0. |
+| 1.5 | 2026-08-27 | Claude Code (Implement) | **TK-DOC-GESTAO-003 concluída** — `portal-comunicacao-api` `561683e`; `DocumentoBinarioFactory` extraído (comum upload/nova versão); `DocumentoGestaoApplicationServiceTest` (15) + `DocumentoGestaoAcceptanceIntegrationTest` (13); `mvn clean verify` 399/0. Restam: TK-DOC-GESTAO-004 (frontend). |

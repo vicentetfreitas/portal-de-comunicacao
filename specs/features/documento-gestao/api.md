@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — POST/PATCH/DELETE sobre pastas e documentos) |
-| Versão | 1.0 |
-| Status | DRAFT |
+| Versão | 1.1 |
+| Status | APPROVED |
 | Owner | Engineering Framework |
 
 ---
@@ -44,8 +44,10 @@ Regras transversais a **todos** os endpoints:
 - `COD_COLABORADOR` (autor de versão) sempre da sessão, nunca do request.
 - Teto de tamanho de arquivo: `spring.servlet.multipart.max-file-size` = `25MB`
   (override `DOCUMENTO_MAX_FILE_SIZE`, herdado de `FT-DOCUMENTO-UPLOAD`); acima → `413`.
-- `PATCH` é atualização parcial (semântica merge): campo ausente = "não alterar";
-  `descricao: null` explícito = limpar (`DSC_*` para `NULL`).
+- `PATCH` é atualização parcial: campo ausente **ou `null`** = "não alterar";
+  **`descricao: ""` (string vazia) = limpar** (`DSC_*` para `NULL`). Implementação
+  (2026-08-27): sem dependência de `JsonNullable`, `null` explícito não é distinguível
+  de ausente — a limpeza usa string vazia. `nome`/`titulo` enviados em branco → `400`.
 - `DELETE` de pasta e de documento são **soft** (nunca `DELETE` físico de linha).
 
 ---
@@ -315,3 +317,4 @@ escopo desta Feature) — alternativa: o frontend recarrega a listagem.
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — 6 endpoints (POST subpastas, PATCH/DELETE pastas, POST versoes, PATCH/DELETE documentos) + 2 RFs transversais; extraído da proposta "Fase 2" de `FT-DOCUMENTO-UPLOAD` |
+| 1.1 | 2026-08-27 | Claude Code (Implement) | Clarificação de implementação: `PATCH` sem `JsonNullable` — `descricao` limpa via string vazia (`""`), não `null` explícito. Header → APPROVED (Review de Spec + IMPLEMENTING). |

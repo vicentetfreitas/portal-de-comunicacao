@@ -4,7 +4,7 @@
 |--------|--------|
 | Template | CRUD Feature (adaptado — Atualizar / Alterar Status / Mover; cria `PASTA` e `DOCUMENTO_VERSAO`) |
 | Versão | 1.0 |
-| Status | DRAFT |
+| Status | APPROVED |
 | Owner | Engineering Framework |
 
 ---

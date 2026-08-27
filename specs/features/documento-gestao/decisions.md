@@ -5,7 +5,7 @@
 | Feature ID | FT-DOCUMENTO-GESTAO |
 | Feature | Gestão de Pastas e Documentos |
 | Domínio | DOCUMENTO |
-| Status | DRAFT |
+| Status | APPROVED |
 
 ---
 
