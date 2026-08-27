@@ -256,11 +256,29 @@ desabilitadas — mesma regra de `FT-DOCUMENTO-UPLOAD`):
 - Testes (unit): visibilidade por papel; cada ação bem-sucedida; erros tratados
   (incl. `409`).
 
-### Critérios de Conclusão
+### Critérios de Conclusão — ✅ ATENDIDA (2026-08-27, `portal-comunicacao-app` `92b7fff`, branch `development`)
 
-- RF-DOC-GESTAO-001..008 consumidos na UI, restritos a `ADMINISTRADOR`.
-- `yarn typecheck` + `yarn test:unit` verdes.
-- Rastreabilidade íntegra.
+- ✅ RF-DOC-GESTAO-001..008 consumidos na UI, restritos a `activeAssignment.papel === 'ADMINISTRADOR'`
+  (menus kebab escondidos, não desabilitados).
+- ✅ `services/documento` + `config`: 6 métodos novos + paths. `useAreaColaboradorArquivos`:
+  `canManage`, `pastasOptions`, `processando`, e as 6 ações (`executarGestao` recarrega a
+  lista em sucesso; erros via toast, retorno `boolean`). Componentes: `PastaFormDialog`
+  (nova subpasta / renomear), `MoverRecursoDialog` (pasta e documento), `NovaVersaoDialog`,
+  `DocumentoEditDialog`, `ConfirmarAcaoDialog`. `AreaColaboradorArquivosPage`: menu por pasta
+  e por documento. i18n `areaColaborador.arquivos.gestao`.
+- ✅ Testes unit: `useAreaColaboradorArquivos` (+7), `AreaColaboradorArquivosPage` (+2).
+  `yarn typecheck` limpo; `yarn test:unit` **209 verdes**.
+- Não pushed no `origin` (decisão do usuário).
+
+---
+
+# Estado da Feature
+
+**Todas as 4 tasks concluídas** (2026-08-27). Código não pushed:
+`portal-comunicacao-api` `561683e` (backend), `portal-comunicacao-app` `92b7fff` (frontend),
+`database/migrations/V010` (executado) + `V011` (homologação — execução pendente).
+`feature.yaml` permanece `IMPLEMENTING`: falta `DONE` exigir DoD / Gate 3 / Gate 6 /
+Review de PR / evidências — e as pendências de homologação (V011, Object Storage/MinIO).
 
 ---
 
@@ -294,3 +312,4 @@ e `traceability.md`.
 | 1.3 | 2026-08-27 | Claude Code (Implement) | TK-DOC-GESTAO-002: código completo + 18 testes unit verdes no repo `portal-comunicacao-api` (não commitado). `mvn clean verify` bloqueado por `missing sequence [SQ_PASTA]` até `V010` rodar. |
 | 1.4 | 2026-08-27 | Claude Code (Implement) | **TK-DOC-GESTAO-001 concluída** — `V010` executado pelo usuário e validado via JDBC. **TK-DOC-GESTAO-002 concluída** — `portal-comunicacao-api` `0446e13`; `PastaGestaoAcceptanceIntegrationTest` (12) + `.gitlab-ci.yml` atualizado; `mvn clean verify` 371/0. |
 | 1.5 | 2026-08-27 | Claude Code (Implement) | **TK-DOC-GESTAO-003 concluída** — `portal-comunicacao-api` `561683e`; `DocumentoBinarioFactory` extraído (comum upload/nova versão); `DocumentoGestaoApplicationServiceTest` (15) + `DocumentoGestaoAcceptanceIntegrationTest` (13); `mvn clean verify` 399/0. Restam: TK-DOC-GESTAO-004 (frontend). |
+| 1.6 | 2026-08-27 | Claude Code (Implement) | **TK-DOC-GESTAO-004 concluída** — `portal-comunicacao-app` `92b7fff`; menus de gestão na página de Arquivos (5 diálogos), `yarn test:unit` 209/0. **Todas as tasks concluídas.** `V011` (homologação: vicentefreitas admin da Área TI) produzido — execução pendente. |
