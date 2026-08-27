@@ -1,5 +1,12 @@
 # Visão Geral do Domínio
 
+| Campo | Valor |
+|------|-------|
+| Categoria documental | Archive |
+| Status | Obsoleto — modela Conteúdo como Aggregate Root a ser implementado no backend do Portal; responsabilidade transferida ao WordPress (`DEC-CMS-001`, aprovada) |
+| Motivo | Zero consumidores confirmados (`Content Service`, `Publication Service`, `ConteudoCriado` etc. sem uso fora desta pasta); decisão D3, Plano W2, 2026-08-20 |
+| Origem | Movido de `specs/domain/00-domain-overview.md` em 2026-08-20 |
+
 | Item | Valor |
 |------|-------|
 | Projeto | Portal de Comunicação |

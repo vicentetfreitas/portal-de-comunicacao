@@ -1,5 +1,12 @@
 # Modelo de Permissões e Visibilidade
 
+| Campo | Valor |
+|------|-------|
+| Categoria documental | Archive |
+| Status | Obsoleto — modelo de permissões dependente do domínio de conteúdo (01–04), hoje transferido ao WordPress (`DEC-CMS-001`) |
+| Motivo | Princípios PR-015–018 já cobertos, com mais detalhe, por `docs/domain/09-business-rules.md` (BR-018, BR-019, BR-024) e `docs/architecture/06-security-architecture.md`; decisão D3, Plano W2, 2026-08-20 |
+| Origem | Movido de `specs/domain/05-permission-model.md` em 2026-08-20 |
+
 | Item | Valor |
 |------|-------|
 | Projeto | Portal de Comunicação |

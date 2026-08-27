@@ -3,7 +3,7 @@
 | Campo | Valor |
 |-------|--------|
 | **ID** | DS-RECONSTRUCTION-SCOPE-01 |
-| **Status** | `RECONSTRUCTION_SCOPE_DEFINED_WITH_PENDING_DECISIONS` |
+| **Status** | `CATALOG_TECHNICALLY_CLOSED` (§68, 2026-08-20) |
 | **Data** | 2026-08-19 |
 | **Categoria documental** | SSOT (escopo de reconstrução; não é ADR aprovado nem Feature) |
 | **Camada dona** | Frontend Foundation (não é Feature de negócio) |
@@ -17,9 +17,15 @@ Este documento é o contrato de escopo da reconstrução. Não autoriza implemen
 
 ## Status
 
-`RECONSTRUCTION_SCOPE_DEFINED_WITH_PENDING_DECISIONS`
+`CATALOG_TECHNICALLY_CLOSED` — atualizado por `§68` (2026-08-20), que encerra o ciclo de auditoria/reconstrução do catálogo de 21 itens do `DS-RECONSTRUCTION-INVENTORY-01` iniciado em `§17`.
 
-O alvo está definido nos três níveis (implementação, sistema, workflow). Não é refatoração dos `Ds*` atuais. Ainda faltam catálogo-alvo item a item, SSOT definitivo de design/tokens e estratégia de compatibilidade. Isso impede começar código; não impede a próxima etapa de definição (inventário).
+O alvo está definido nos três níveis (implementação, sistema, workflow). Não é refatoração dos `Ds*` atuais. O catálogo-alvo item a item foi produzido e encerrado tecnicamente (`§22`–`§68`): 20 itens `CONFORME`/`PRESERVE`, 1 retirado (`DsFormCard`, fundido em `DsCard`), nenhum `RECONSIDER` arquitetural aberto.
+
+Este status cobre exclusivamente o encerramento técnico do catálogo de componentes. **Não muda** de aberto para fechado nesta atualização:
+
+- As 8 pendências da seção 15 (papel do Figma como SSOT, taxonomia final além do já ratificado em `§19`, estratégia de compatibilidade/migração como política geral, critérios de promoção Feature→DS, ferramenta de catálogo/regressão visual, persistência do ADR de identidade `DS-01`–`DS-10`) — permanecem trabalho de fundação de mais longo prazo, não bloqueante do encerramento técnico (ver `§68`).
+- A pendência externa única identificada em `§68`: destino de catálogo de `DsContentCard`, `DsContentCardCompact` e `DsSectionHeader`, dependente de decisão de roadmap de produto (implementação de Home/Notícia/Serviços) — fora do controle da Frontend Foundation.
+- Este documento continua **não sendo um ADR aprovado** (ver Categoria documental, acima) — o encerramento técnico registrado em `§68` não substitui a persistência do ADR de identidade `DS-01`–`DS-10` (item 8, seção 15).
 
 ---
 

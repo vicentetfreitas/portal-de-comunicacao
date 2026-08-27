@@ -605,6 +605,47 @@ OQ-028.
 
 ---
 
+## DEC-FA-005 — Tema claro/escuro e referência visual da Home
+
+### Título
+
+Seleção explícita e persistência de tema; frame Figma `Home` (node `7:3`) como referência visual oficial da Home desktop.
+
+### Categoria
+
+Produto/UX + Frontend Foundation.
+
+### Criticidade
+
+Média.
+
+### Status
+
+**Aprovada** (2026-08-25).
+
+### Contexto
+
+Infraestrutura de tema (`useTheme` composable, tokens `data-theme` claro/escuro) já existe desde os pacotes legados de Frontend Foundation (`PKG-FE-S0-02`/`PKG-FE-S0-08`, Construction v4.1), mas toggle de UI e persistência nunca foram entregues por nenhum dos dois pacotes. Não havia decisão formal registrada sobre o comportamento esperado de tema, nem sobre qual frame Figma é a referência oficial da Home desktop. Ambas as lacunas foram identificadas em investigação de reconciliação Figma × implementação desta sessão.
+
+### Decisão
+
+1. O usuário deve poder selecionar explicitamente o tema da aplicação entre **Claro** e **Escuro** — a aplicação não deve depender exclusivamente da preferência do navegador/sistema operacional (`prefers-color-scheme`).
+2. A preferência de tema selecionada deve ser **persistida** e permanecer após recarregar a aplicação.
+3. O frame Figma **Home** (arquivo `WHDHRAMXXslmxOIzK2dbJG`, node **`7:3`**) é a referência visual oficial para a reconciliação da Home desktop do colaborador.
+4. O **tema claro** é a referência visual atualmente disponível no Figma para essa validação — o arquivo Figma não possui frame em tema escuro.
+5. Medições/análise de código (comentários citando valores extraídos do Figma, comparação programática de propriedades CSS) **não substituem** validação visual formal contra o Figma. A conformidade visual deve ser verificada separadamente antes de qualquer item ser considerado definitivamente conforme.
+
+### Não incluído (implementação futura)
+
+- Implementação do toggle de UI, mecanismo de persistência e qualquer alteração em `useTheme.ts`, `boot/theme.ts`, tokens CSS, ou componentes de shell (`AppHeader`/`AppSidebar`/`AppFooter`/`AppShell`) — não fazem parte desta decisão; ficam para implementação e revisão separadas.
+- Esta DEC **não autoriza retroativamente** nenhuma alteração já presente no working tree relacionada a Home/AppShell — essas mudanças serão avaliadas em revisão separada.
+
+### Registro definitivo
+
+A definir na implementação — provável `docs/frontend/frontend-flow.md` (comportamento de tema) e `docs/architecture/decisions/AUDITORIA-DS-FIGMA-01.md` (referência de frame para reconciliação da Home). Não é uma Feature.
+
+---
+
 ## DEC-ORG-001 — Hierarquia organizacional oficial
 
 ### Título
@@ -1281,3 +1322,4 @@ Uma decisão somente pode ser encerrada quando:
 | 2026-08-17 | Governança      | **DH-PA-03** aprovada — CARGO não é requisito para criação nem operação no Primeiro Acesso; reconciliação com DEC-DB-027 registrada como pendente (PONTO DE RECONCILIAÇÃO) |
 | 2026-08-17 | Governança      | **DH-CARGO-01** aprovada — CARGO não obrigatório na criação de qualquer COLABORADOR; supersession parcial DEC-DB-027; reconciliação DEC-DB-027 × DH-PA-03 encerrada; R1 decidida (escopo geral) |
 | 2026-08-17 | Engenharia      | **GAP-028-04** — artefatos de persistência no repositório (`DES_DOMINIO_EMAIL`, `UK_SINGULAR_DOMINIO_EMAIL`, V008, DML); execução DBA no Oracle pendente |
+| 2026-08-25 | Governança      | **DEC-FA-005** aprovada — tema claro/escuro (seleção explícita + persistência) e frame Figma `Home` (node `7:3`) como referência visual oficial da Home desktop |

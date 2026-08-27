@@ -1,5 +1,14 @@
 # Target Repository Structure
 
+| Campo | Valor |
+|------|-------|
+| Categoria documental | Archive |
+| Status | Obsoleto — não representa a arquitetura vigente (decisão D2, Plano W2, 2026-08-20) |
+| Motivo | Descreve Next.js, PostgreSQL e CMS/WordPress em retirada — contradiz `docs/technology/01-technology-stack.md` (stack vigente: Vue 3 + Quasar, Java + Spring Boot, Oracle, WordPress permanente como CMS) |
+| Origem | Movido de `docs/architecture/11-target-repository-structure.md` em 2026-08-20 — nunca esteve listado em `docs/architecture/00-architecture-index.md` |
+
+---
+
 ## Objetivo
 
 Definir a estrutura alvo do repositório do Portal de Comunicação.

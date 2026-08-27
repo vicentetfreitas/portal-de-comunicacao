@@ -1,5 +1,12 @@
 # Glossário do Domínio de Conteúdo
 
+| Campo | Valor |
+|------|-------|
+| Categoria documental | Archive |
+| Status | Obsoleto — linguagem ubíqua do domínio de conteúdo editorial, hoje responsabilidade do WordPress (`DEC-CMS-001`) |
+| Motivo | Nenhum termo confirmado em uso fora desta pasta; decisão D3, Plano W2, 2026-08-20 |
+| Origem | Movido de `specs/domain/06-content-glossary.md` em 2026-08-20 |
+
 | Item | Valor |
 |------|-------|
 | Projeto | Portal de Comunicação |

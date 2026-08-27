@@ -1,5 +1,12 @@
 # Modelo de Publicação
 
+| Campo | Valor |
+|------|-------|
+| Categoria documental | Archive |
+| Status | Obsoleto — canais/vigência de publicação de conteúdo editorial, nativo do WordPress (`DEC-CMS-001`, aprovada) |
+| Motivo | Zero consumidores confirmados; decisão D3, Plano W2, 2026-08-20 |
+| Origem | Movido de `specs/domain/04-publication-model.md` em 2026-08-20 |
+
 | Item | Valor |
 |------|-------|
 | Projeto | Portal de Comunicação |

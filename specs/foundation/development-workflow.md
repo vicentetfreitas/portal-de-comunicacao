@@ -4,7 +4,7 @@
 |--------|--------|
 | Artefato | development-workflow.md |
 | Camada | Foundation |
-| Versão | 1.1 |
+| Versão | 1.2 |
 | Status | Approved — Etapa 2/3 2026-08-13 |
 | Categoria documental | SSOT |
 
@@ -105,4 +105,5 @@ Opcional no closure: `closure-report.md` em `construction/features/<CODE>/` (evi
 - [`minimal-ssot.md`](minimal-ssot.md) — mapa de precedência
 - [`workflow.md`](workflow.md) — ciclo SDD geral
 - [`docs/governance/09-framework-simplification-scope.md`](../../docs/governance/09-framework-simplification-scope.md) — escopo Etapa 2
+- [`docs/governance/10-project-organization.md`](../../docs/governance/10-project-organization.md) — organização e execução do projeto (camadas, package, State Index)
 - [`construction/README.md`](../../construction/README.md) — framework legado v4.1
