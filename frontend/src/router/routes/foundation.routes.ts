@@ -63,12 +63,9 @@ export const foundationRoutes: RouteRecordRaw[] = [
     meta: {
       layout: "main",
       requiresAuth: true,
-      pageTitleKey: "layout.app.title",
-      showBreadcrumbs: true,
-      breadcrumbs: [
-        { labelKey: "layout.nav.home", to: ROUTE_PATHS.HOME, icon: "mdi-home" },
-        { labelKey: "layout.app.title", icon: "mdi-view-dashboard" }
-      ]
+      pageTitleKey: "layout.app.title"
+      // Sem breadcrumbs: o frame `Home` do Figma (node 7:3) não tem trilha
+      // de navegação — o conteúdo começa direto em "Fique por dentro".
     }
   },
   {

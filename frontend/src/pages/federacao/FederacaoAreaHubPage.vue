@@ -26,11 +26,12 @@
           <span>{{ $t("federacao.area.equipeAction") }}</span>
         </DsButton>
         <!--
-          FT-DOCUMENTO (Arquivos e Documentos) is DRAFT — no approved spec or
-          API. Kept as a disabled shortcut (same non-navigable pattern
-          already established for "Serviços" in AppSidebar.vue) rather than
-          a fabricated file browser — explicit product decision, see
-          docs/architecture/decisions/AUDITORIA-DS-FIGMA-01.md.
+          FT-DOCUMENTO (Arquivos e Documentos) is IMPLEMENTING (spec approved,
+          AreaColaboradorArquivosPage.vue consumes it) — but that endpoint is scoped to
+          the collaborator's own Contexto Ativo, not an arbitrary area by :id as this
+          hub browses. Kept disabled here until/unless an explicit-area query is decided
+          (out of scope per specification.md § Escopo) — enabling it would silently show
+          the viewer's own files instead of this area's.
         -->
         <DsButton variant="secondary" size="lg" disable>
           <DsIcon name="mdi-folder-multiple" size="md" />
