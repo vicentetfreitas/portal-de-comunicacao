@@ -141,6 +141,22 @@ Endpoints de escrita de `PASTA`, autorizados por papel `ADMINISTRADOR` + grant
 - `./mvnw clean verify` verde.
 - Rastreabilidade íntegra.
 
+### Progresso — 2026-08-27 (repo `portal-comunicacao-api`, branch `development`, **não commitado**)
+
+- ✅ Código completo: `PastaEntity`/`PermissaoPastaEntity` com `@GeneratedValue(SQ_PASTA` /
+  `SQ_PERMISSAO_PASTA)`; `PermissaoPastaDomainService.ensureUploadGrant` → `ensureEdicaoGrant`
+  (caller e teste atualizados); `PastaGestaoApplicationService` (`criarSubpasta` c/ cópia de
+  grants, `atualizarPasta` renomear/mover c/ anti-ciclo BFS, `arquivarPasta` c/ guarda de
+  não-vazia + já-arquivada); `CriarSubpastaRequest`/`AtualizarPastaRequest` (`@Valid` → `400`);
+  `PastaController` `POST /{id}/subpastas`, `PATCH /{id}`, `DELETE /{id}`;
+  `GlobalExceptionHandler` + `HttpMessageNotReadableException` → `400`.
+- ✅ `PastaGestaoApplicationServiceTest` — 18 testes unit (AT-DOC-GESTAO-001..004, 009, 010), verdes.
+- ⏳ **`./mvnw clean verify` bloqueado:** `Schema validation: missing sequence [SQ_PASTA]` —
+  `application-test.yaml` usa `ddl-auto: validate` contra o Oracle TST. Destrava assim que
+  **TK-DOC-GESTAO-001 (`V010`) for executado** — mesmo gate do `V009` para TK-DOC-UPLOAD-002.
+- ⏳ Teste de aceitação Oracle (`PastaGestaoAcceptanceIntegrationTest`, análogo ao de upload,
+  excluído do CI) — a escrever após `V010`.
+
 ---
 
 ## TK-DOC-GESTAO-003 — Gestão de documentos já enviados (backend)
@@ -274,3 +290,4 @@ e `traceability.md`.
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — TK-DOC-GESTAO-001 (`V010`), -002 (pastas BE), -003 (documentos BE), -004 (frontend); extraído da proposta "Fase 2" de `FT-DOCUMENTO-UPLOAD` |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | TK-DOC-GESTAO-001: pré-check JDBC executado no Oracle TST — `SQ_PASTA`/`SQ_PERMISSAO_PASTA` confirmadas ausentes; tabelas existem com DML já concedido e **0 linhas** → `V010` usa `START WITH 1`. Mantém `APPROVED`. |
 | 1.2 | 2026-08-27 | Claude Code (Implement) | TK-DOC-GESTAO-001: `V010__pasta_permissao_pasta_sequences.sql` + `VAL-DB-04` + linha no README produzidos. Falta o usuário executar `V010` na IDE do banco e a validação JDBC pós-execução. |
+| 1.3 | 2026-08-27 | Claude Code (Implement) | TK-DOC-GESTAO-002: código completo + 18 testes unit verdes no repo `portal-comunicacao-api` (não commitado). `mvn clean verify` bloqueado por `missing sequence [SQ_PASTA]` até `V010` rodar. |
