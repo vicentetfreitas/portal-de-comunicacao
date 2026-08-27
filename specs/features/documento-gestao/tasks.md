@@ -76,11 +76,12 @@ Flyway) criando as sequences que faltam para a **escrita de pastas**:
 - **[feito — 2026-08-27]** `database/migrations/README.md`: linha `V010` + reconciliação
   greenfield (12 → 16 sequences).
 
-### Critérios de Conclusão
+### Critérios de Conclusão — ✅ ATENDIDA (2026-08-27)
 
-- **[pendente]** `V010` executado pelo usuário na IDE do banco.
-- **[pendente]** Validado via consulta read-only (JDBC): `SQ_PASTA` e
-  `SQ_PERMISSAO_PASTA` criadas, ambas com `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`.
+- ✅ `V010` executado pelo usuário na IDE do banco (`VAL-DB-04` conferido antes).
+- ✅ Validado via JDBC (Claude): `SQ_PASTA` e `SQ_PERMISSAO_PASTA` criadas (cache 20),
+  ambas com `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`; `NEXTVAL` funciona como
+  `UNMPORTCOM_APP`.
 
 ---
 
@@ -135,27 +136,19 @@ Endpoints de escrita de `PASTA`, autorizados por papel `ADMINISTRADOR` + grant
   arquivada → `409`; pasta inativa alvo de escrita → `404`.
 - Testes (unit + aceitação): AT-DOC-GESTAO-001..004, -009, -010.
 
-### Critérios de Conclusão
+### Critérios de Conclusão — ✅ ATENDIDA (2026-08-27, `portal-comunicacao-api` `0446e13`, branch `development`)
 
-- RF-DOC-GESTAO-001..004 (+ transversais) implementados; ATs correspondentes atendidos.
-- `./mvnw clean verify` verde.
-- Rastreabilidade íntegra.
-
-### Progresso — 2026-08-27 (repo `portal-comunicacao-api`, branch `development`, **não commitado**)
-
-- ✅ Código completo: `PastaEntity`/`PermissaoPastaEntity` com `@GeneratedValue(SQ_PASTA` /
-  `SQ_PERMISSAO_PASTA)`; `PermissaoPastaDomainService.ensureUploadGrant` → `ensureEdicaoGrant`
-  (caller e teste atualizados); `PastaGestaoApplicationService` (`criarSubpasta` c/ cópia de
-  grants, `atualizarPasta` renomear/mover c/ anti-ciclo BFS, `arquivarPasta` c/ guarda de
-  não-vazia + já-arquivada); `CriarSubpastaRequest`/`AtualizarPastaRequest` (`@Valid` → `400`);
-  `PastaController` `POST /{id}/subpastas`, `PATCH /{id}`, `DELETE /{id}`;
-  `GlobalExceptionHandler` + `HttpMessageNotReadableException` → `400`.
-- ✅ `PastaGestaoApplicationServiceTest` — 18 testes unit (AT-DOC-GESTAO-001..004, 009, 010), verdes.
-- ⏳ **`./mvnw clean verify` bloqueado:** `Schema validation: missing sequence [SQ_PASTA]` —
-  `application-test.yaml` usa `ddl-auto: validate` contra o Oracle TST. Destrava assim que
-  **TK-DOC-GESTAO-001 (`V010`) for executado** — mesmo gate do `V009` para TK-DOC-UPLOAD-002.
-- ⏳ Teste de aceitação Oracle (`PastaGestaoAcceptanceIntegrationTest`, análogo ao de upload,
-  excluído do CI) — a escrever após `V010`.
+- ✅ RF-DOC-GESTAO-001..004 + transversais 009/010 implementados; ATs atendidos.
+- ✅ `PastaEntity`/`PermissaoPastaEntity` com `@GeneratedValue(SQ_PASTA`/`SQ_PERMISSAO_PASTA)`;
+  `ensureUploadGrant` → `ensureEdicaoGrant`; `PastaGestaoApplicationService` (`criarSubpasta`
+  + cópia snapshot de grants, `atualizarPasta` renomear/mover c/ anti-ciclo BFS, `arquivarPasta`
+  c/ guarda de não-vazia + já-arquivada); `CriarSubpastaRequest`/`AtualizarPastaRequest`
+  (`@Valid`+`@AssertTrue` → `400`); `PastaController` `POST /{id}/subpastas`, `PATCH /{id}`,
+  `DELETE /{id}`; `GlobalExceptionHandler` + `HttpMessageNotReadableException` → `400`;
+  `PastaTestBuilder`/`PermissaoPastaTestBuilder` sem id explícito (sequence real).
+- ✅ `PastaGestaoApplicationServiceTest` (18 unit), `PastaGestaoAcceptanceIntegrationTest`
+  (12, Oracle — adicionado ao `!` do `.gitlab-ci.yml`). `./mvnw clean verify` = **371 testes, 0 falhas**.
+- Não commitado no `origin` (push fica p/ decisão do usuário, como o `57c22d9`).
 
 ---
 
@@ -291,3 +284,4 @@ e `traceability.md`.
 | 1.1 | 2026-08-27 | Claude Code (Specify) | TK-DOC-GESTAO-001: pré-check JDBC executado no Oracle TST — `SQ_PASTA`/`SQ_PERMISSAO_PASTA` confirmadas ausentes; tabelas existem com DML já concedido e **0 linhas** → `V010` usa `START WITH 1`. Mantém `APPROVED`. |
 | 1.2 | 2026-08-27 | Claude Code (Implement) | TK-DOC-GESTAO-001: `V010__pasta_permissao_pasta_sequences.sql` + `VAL-DB-04` + linha no README produzidos. Falta o usuário executar `V010` na IDE do banco e a validação JDBC pós-execução. |
 | 1.3 | 2026-08-27 | Claude Code (Implement) | TK-DOC-GESTAO-002: código completo + 18 testes unit verdes no repo `portal-comunicacao-api` (não commitado). `mvn clean verify` bloqueado por `missing sequence [SQ_PASTA]` até `V010` rodar. |
+| 1.4 | 2026-08-27 | Claude Code (Implement) | **TK-DOC-GESTAO-001 concluída** — `V010` executado pelo usuário e validado via JDBC. **TK-DOC-GESTAO-002 concluída** — `portal-comunicacao-api` `0446e13`; `PastaGestaoAcceptanceIntegrationTest` (12) + `.gitlab-ci.yml` atualizado; `mvn clean verify` 371/0. |
