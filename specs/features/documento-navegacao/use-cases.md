@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — somente navegação/leitura) |
-| Versão | 1.0 |
+| Versão | 1.1 |
 | Status | DRAFT |
 | Owner | Engineering Framework |
 
@@ -228,8 +228,8 @@ Toda listagem (explorador, árvore, busca, breadcrumb) filtra por `PERMISSAO_PAS
 
 Criar/renomear/mover/arquivar pasta ou documento (`FT-DOCUMENTO-GESTAO`);
 upload/download/nova versão (`FT-DOCUMENTO` / `FT-DOCUMENTO-UPLOAD` /
-`FT-DOCUMENTO-GESTAO`); navegar pastas de outras Áreas via Federação (decisão pendente
-D-03).
+`FT-DOCUMENTO-GESTAO`); navegar pastas de outras Áreas via Federação (fora do escopo por
+`decisions.md` D-03 — iteração futura).
 
 ---
 
@@ -252,3 +252,4 @@ D-03).
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — UC-DOC-NAV-001..007 |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | Decisões fechadas (`decisions.md` v1.1) — removida a menção "decisão pendente D-03" dos casos fora do escopo; conteúdo dos UC inalterado |

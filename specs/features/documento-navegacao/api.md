@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — leitura; estende o contrato de `FT-DOCUMENTO`) |
-| Versão | 1.0 |
+| Versão | 1.1 |
 | Status | DRAFT |
 | Owner | Engineering Framework |
 
@@ -28,8 +28,8 @@ Contrato funcional da navegação hierárquica. Herda `docs/implementation/07-ap
 leitura de `specs/features/arquivos/api.md`. Este documento descreve **só a extensão**
 necessária para montar a hierarquia no cliente.
 
-**Depende da decisão D-01 (`decisions.md`).** O contrato abaixo assume a **opção (a)** —
-estender `PastaResponse`. Se o Review escolher (b) ou (c), este documento é reescrito.
+**D-01 decidida (`decisions.md` v1.1) = opção (a):** estender `PastaResponse` com
+`pastaPaiId` e `dataAtualizacao`. Nenhum endpoint novo.
 
 ---
 
@@ -88,13 +88,13 @@ Nenhum DTO expõe `URL_ARQUIVO` (ADR-004).
 
 # Regras Específicas da API
 
-- Nenhum endpoint novo no MVP (opção D-01(a)). O explorador, a árvore, o `breadcrumb`
-  e a busca são montados no cliente a partir de `GET /api/v1/pastas`.
+- Nenhum endpoint novo. O explorador, a árvore, o `breadcrumb` e a busca são montados
+  no cliente a partir de `GET /api/v1/pastas`.
 - A extensão de `PastaResponse` é **aditiva** — clientes de `FT-DOCUMENTO` que ignoram
   os campos novos continuam funcionando.
-- Busca (D-04): no MVP é client-side; **não** há endpoint de busca nesta versão.
-- Se D-01 evoluir para (c) (lazy por nível): `GET /api/v1/pastas?pastaPaiId={id}`
-  (ausente = raízes) — contrato a detalhar nessa iteração.
+- Busca (`decisions.md` D-04): client-side; **não** há endpoint de busca nesta Feature.
+- Evolução futura (fora desta Feature), se o volume por Área crescer: lazy por nível
+  `GET /api/v1/pastas?pastaPaiId={id}` (ausente = raízes) + busca server-side.
 
 ---
 
@@ -113,3 +113,4 @@ Nenhum DTO expõe `URL_ARQUIVO` (ADR-004).
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — assume D-01(a): `PastaResponse` + `pastaPaiId`/`dataAtualizacao`, sem endpoint novo. A revisar se D-01 mudar. |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | D-01 confirmada = (a); removidos os hedges "a revisar". `descricao` no DTO fica opcional (só se a UI exibir). |

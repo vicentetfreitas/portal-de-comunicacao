@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — somente navegação/leitura; estende `FT-DOCUMENTO`) |
-| Versão | 1.0 |
+| Versão | 1.1 |
 | Status | DRAFT |
 | Owner | Engineering Framework |
 
@@ -54,7 +54,7 @@ mesmo padrão de `FT-DOCUMENTO-UPLOAD` e `FT-DOCUMENTO-GESTAO` (Features irmãs 
 
 # Escopo
 
-## Incluído — a decidir no Review (proposta)
+## Incluído — decidido (2026-08-27, ver `decisions.md`)
 
 - **Explorador de pastas** — a partir das **raízes visíveis** (ver § Raízes), o
   colaborador entra numa pasta e vê: as subpastas ativas daquele nível + os documentos
@@ -66,11 +66,11 @@ mesmo padrão de `FT-DOCUMENTO-UPLOAD` e `FT-DOCUMENTO-GESTAO` (Features irmãs 
 - **Busca** — por trecho do nome de pasta ou documento, **dentro do escopo visível**
   ao Contexto Ativo. MVP: busca no cliente sobre o conjunto já carregado.
 - **Alternância grade / lista** — mesma informação, dois layouts.
-- **Deep-link** — a pasta atual e o modo (explorador/árvore, grade/lista) refletidos
-  na URL (query param), de modo que recarregar ou compartilhar o link reabra o mesmo
-  ponto.
-- **Contagem/indicadores no card** — nome, data de atualização (`DAT_ATUALIZACAO` da
-  pasta), e opcionalmente contagem de itens.
+- **Deep-link** — a pasta atual (`?pasta=<COD_PASTA>`, `decisions.md` D-06) e o modo
+  (explorador/árvore, grade/lista) refletidos na URL, de modo que recarregar ou
+  compartilhar o link reabra o mesmo ponto.
+- **Card da pasta** — nome, data de atualização (`DAT_ATUALIZACAO`), e opcionalmente
+  contagem de itens. **Sem** rótulo "Público/Privado" (`decisions.md` D-05).
 
 ## Fora do Escopo
 
@@ -79,17 +79,16 @@ mesmo padrão de `FT-DOCUMENTO-UPLOAD` e `FT-DOCUMENTO-GESTAO` (Features irmãs 
   aparecendo para `ADMINISTRADOR` nos nós do explorador/árvore.
 - **Upload / download / nova versão** — `FT-DOCUMENTO` / `FT-DOCUMENTO-UPLOAD` /
   `FT-DOCUMENTO-GESTAO`.
-- **Navegar pastas de outras Áreas via Federação** — o app novo abre a navegação na
-  **Área do Contexto Ativo** (`/app/area/arquivos`). O modelo legado navega
-  `/app/federacao/:area/...`; reconciliar com `FT-FEDERACAO-COLABORADOR` é decisão de
-  produto para uma iteração futura (ver § Decisão pendente).
-- **Rótulo "Público" / "Privado"** como campo — não existe. A tela legada rotula pastas
-  por `PERMISSAO_PASTA` (decisão de `FT-DOCUMENTO`, 2026-08-26: "público" = grant também
-  em `FEDERACAO`/`SINGULAR`; "privado" = grant só no nível `AREA`). Se a UI exibir esse
-  rótulo, ele é **derivado** dos grants, nunca um novo campo.
-- **Filtro avançado** (por tipo de mídia, data, categoria) — o mock mostra um controle
-  de filtro; o **conteúdo** do filtro fica para decisão de produto (ver § Decisão
-  pendente). MVP pode entregar só o toggle grade/lista.
+- **Navegar pastas de outras Áreas via Federação** (`decisions.md` D-03) — o app novo
+  abre a navegação na **Área do Contexto Ativo** (`/app/area/arquivos`). O modelo legado
+  navega `/app/federacao/:area/...`; reconciliar com `FT-FEDERACAO-COLABORADOR` fica para
+  uma iteração futura.
+- **Filtro** (`decisions.md` D-02) — o mock mostra um controle de filtro; **fora do
+  MVP**. MVP entrega busca + toggle grade/lista. O filtro (e seu critério) fica para
+  iteração futura.
+- **Rótulo "Público" / "Privado"** no card (`decisions.md` D-05) — **omitido no MVP**.
+  Não existe campo (decisão de `FT-DOCUMENTO`, 2026-08-26: a diferença é quais níveis
+  têm `PERMISSAO_PASTA`, não um booleano) e a API não expõe os destinatários dos grants.
 - **Grant individual por colaborador** e **herança viva de permissão** — fora, como em
   `FT-DOCUMENTO` (`OQ-012`).
 - **Paginação de documentos dentro de uma pasta** — mantém a premissa de `FT-DOCUMENTO`
@@ -149,7 +148,7 @@ sem grant).
 | Campo | Valor |
 |--------|--------|
 | Identificador | RF-DOC-NAV-004 |
-| Descrição | O sistema deve permitir buscar por trecho do nome de pasta ou documento e apresentar os resultados **restritos ao escopo visível** ao Contexto Ativo, indicando em que pasta cada resultado está. MVP: busca no cliente sobre o conjunto carregado; endpoint de busca dedicado fica para iteração futura se o volume exigir. |
+| Descrição | O sistema deve permitir buscar por trecho do nome de pasta ou documento (`contains`, case-insensitive) e apresentar os resultados **restritos ao escopo visível** ao Contexto Ativo, indicando em que pasta cada resultado está. A busca é feita no cliente sobre o conjunto retornado por `GET /api/v1/pastas` (`decisions.md` D-04) — sem endpoint de busca nesta versão. |
 
 ## RF-DOC-NAV-005 — Alternar grade / lista
 
@@ -175,27 +174,23 @@ sem grant).
 
 ---
 
-# Contrato de API — lacuna a resolver
+# Contrato de API — decidido (D-01 = opção (a))
 
-`GET /api/v1/pastas` hoje devolve `PageResponse<PastaResponse>` com **todas** as pastas
-visíveis ao Contexto Ativo, em lista plana. `PastaResponse` expõe apenas `id`, `nome`,
-`documentos[]` — **não** há `COD_PASTA_PAI` nem `DAT_ATUALIZACAO`, então o cliente não
-consegue montar a hierarquia nem exibir a data do card.
+`GET /api/v1/pastas` **não muda de comportamento** — continua devolvendo
+`PageResponse<PastaResponse>` com **todas** as pastas ativas visíveis ao Contexto Ativo
+(`RF-DOCUMENTO-001/003`). O `PastaResponse` ganha dois campos (aditivo, retrocompatível):
 
-Opções (ver `decisions.md` D-01):
+| Campo novo | Fonte | Uso |
+|---|---|---|
+| `pastaPaiId` (`Long \| null`) | `PASTA.COD_PASTA_PAI` | montar a hierarquia (explorador, árvore, breadcrumb) no cliente |
+| `dataAtualizacao` (`Instant \| null`) | `PASTA.DAT_ATUALIZACAO` | data exibida no card |
 
-| Opção | Descrição | Trade-off |
-|-------|-----------|-----------|
-| **(a)** Estender `PastaResponse` com `pastaPaiId` e `dataAtualizacao` | `GET /api/v1/pastas` continua devolvendo todas as visíveis; o cliente monta árvore e explorador. Aditivo e retrocompatível. | Simples; volume "baixo" (premissa de `FT-DOCUMENTO`) mantém-se aceitável para montar a árvore inteira de uma vez. |
-| **(b)** Endpoint dedicado `GET /api/v1/pastas/arvore` | Devolve estrutura aninhada pronta. | Um endpoint a mais; duplica a lógica de visibilidade. |
-| **(c)** Navegação lazy por nível — `GET /api/v1/pastas?pastaPaiId={id}` (ausente = raízes) | Carrega só o nível pedido. | Escala melhor; mais chamadas; a árvore precisa de N chamadas para expandir. |
-
-**Proposta:** **(a)** para o MVP (menor superfície, retrocompatível). Se o volume por
-Área crescer, evoluir para **(c)** numa iteração — sem quebrar a UI.
+O cliente monta explorador, árvore, breadcrumb e busca a partir dessa lista única. Sem
+endpoint novo. Detalhe em `api.md`.
 
 Esta Feature **não cria tabelas** e **não altera o modelo de dados** — só lê
 `PASTA.COD_PASTA_PAI` e `PASTA.DAT_ATUALIZACAO`, colunas já existentes
-(`database/ddl/003-create-tables.sql`).
+(`database/ddl/003-create-tables.sql`), já mapeadas na `PastaEntity`.
 
 ---
 
@@ -212,20 +207,13 @@ Esta Feature **não cria tabelas** e **não altera o modelo de dados** — só l
 
 # Decisão de produto/arquitetura pendente
 
-Ver `decisions.md`. Resumo dos pontos que bloqueiam `READY_FOR_REVIEW`:
+Nenhuma. As 7 decisões (`decisions.md` D-01..D-07) foram fechadas em 2026-08-27:
+D-01=(a) estender `PastaResponse`; D-02 filtro fora do MVP; D-03 só a Área do Contexto
+Ativo; D-04 busca no cliente; D-05 omitir rótulo Público/Privado; D-06 id numérico na
+URL; D-07 preferência grade/lista via `DEC-FA-005`.
 
-1. **Contrato de API** — opção (a), (b) ou (c). Proposta: (a).
-2. **Filtro** — o mock mostra um controle de filtro. O que ele filtra (tipo de mídia?
-   data? categoria?) é decisão de produto. Alternativa: cortar o filtro do MVP e
-   entregar só busca + toggle grade/lista.
-3. **Contexto de navegação** — só a Área do Contexto Ativo (`/app/area/arquivos`), ou
-   também navegar pastas de outras Áreas a partir da Federação (modelo legado
-   `/app/federacao/:area/...`)? Impacta `FT-FEDERACAO-COLABORADOR`.
-4. **Busca** — client-side sobre o conjunto carregado (MVP) vs. endpoint de busca
-   server-side (necessário se a opção (c) de API for escolhida, ou se o volume crescer).
-5. **Rótulo "Público/Privado"** no card — exibir (derivado dos grants) ou omitir.
-6. **Formato do identificador de pasta na URL** — `?pasta=<COD_PASTA>` (simples) vs.
-   `?folder_path=/marketing/publico` (legível, como o legado; exige resolver caminho→id).
+Sem pendência de execução — nenhuma migration, nenhum dado institucional (a Feature só
+lê o que `FT-DOCUMENTO` já expõe, com 2 campos a mais no DTO).
 
 ---
 
@@ -268,3 +256,4 @@ Visibilidade: `PERMISSAO_PASTA` multi-nível (`FEDERACAO`/`SINGULAR`/`AREA`/`EQU
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — DRAFT. Navegação hierárquica (explorador + árvore + busca + grade/lista + deep-link) como Feature irmã de `FT-DOCUMENTO`; RF-DOC-NAV-001..007; lacuna de contrato de API (`pastaPaiId`/`dataAtualizacao`) e 6 decisões pendentes registradas |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | Decisões fechadas (`decisions.md` v1.1): D-01=(a) estender `PastaResponse`; filtro fora do MVP; só Área do Contexto Ativo; busca no cliente; sem rótulo Público/Privado; id numérico na URL. § Contrato de API e § Decisão pendente reescritas. Pronta para DoR-Spec. |

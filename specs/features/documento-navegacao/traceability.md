@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — navegação/leitura) |
-| Versão | 1.0 |
+| Versão | 1.1 |
 | Status | DRAFT |
 | Owner | Engineering Framework |
 
@@ -46,15 +46,17 @@ Regra de Negócio dedicada em `docs/domain/09-business-rules.md` — não são r
 
 # Rastreabilidade das Decisões
 
-| Decisão | Estado | Afeta |
-|---------|--------|-------|
-| D-01 contrato de API | 🔶 ABERTA (proposta: (a)) | RF-001/003/006, `api.md` inteiro, TK-DOC-NAV-001 |
-| D-02 filtro | 🔶 ABERTA (pode sair do MVP) | RF-004 / possível RF novo |
-| D-03 contexto (Área ativa vs. Federação) | 🔶 ABERTA | § Escopo, `FT-FEDERACAO-COLABORADOR` |
-| D-04 busca cliente vs. servidor | 🔶 ABERTA (depende de D-01) | RF-004, TK-DOC-NAV-004 |
-| D-05 rótulo Público/Privado | 🔶 ABERTA | card do explorador |
-| D-06 formato do id na URL | 🔶 ABERTA (proposta: id numérico) | RF-006, TK-DOC-NAV-002/003 |
-| D-07 persistência grade/lista | ✅ proposta (DEC-FA-005) | RF-005, TK-DOC-NAV-004 |
+Todas fechadas em 2026-08-27 (`decisions.md` v1.1):
+
+| Decisão | Resolução | Afeta |
+|---------|-----------|-------|
+| D-01 contrato de API | ✅ **(a)** — estender `PastaResponse` (`pastaPaiId`, `dataAtualizacao`) | RF-001/003/006, `api.md`, TK-DOC-NAV-001 |
+| D-02 filtro | ✅ **fora do MVP** | § Escopo (removido) |
+| D-03 contexto | ✅ **só a Área do Contexto Ativo** | § Escopo, `FT-FEDERACAO-COLABORADOR` (não tocada) |
+| D-04 busca | ✅ **client-side** | RF-004, TK-DOC-NAV-004 |
+| D-05 rótulo Público/Privado | ✅ **omitir no MVP** | card do explorador |
+| D-06 id na URL | ✅ **id numérico** (`?pasta=<COD_PASTA>`) | RF-006, TK-DOC-NAV-002/003 |
+| D-07 persistência grade/lista | ✅ **DEC-FA-005** | RF-005, TK-DOC-NAV-004 |
 
 ---
 
@@ -73,19 +75,18 @@ Regra de Negócio dedicada em `docs/domain/09-business-rules.md` — não são r
 
 # Dívidas / Bloqueios
 
-## Bloqueiam `READY_FOR_REVIEW` (decisões de produto)
+## Bloqueiam `READY_FOR_REVIEW`
 
-- D-01 (contrato de API), D-02 (filtro), D-03 (contexto), D-04 (busca), D-05 (rótulo),
-  D-06 (id na URL) — ver `decisions.md`.
+Nenhum — as 7 decisões de produto foram fechadas (`decisions.md` v1.1).
 
-## Dívidas aceitas (se as propostas forem adotadas)
+## Dívidas aceitas
 
 - Busca e árvore montadas client-side sobre `GET /api/v1/pastas` — assume volume "baixo"
-  por Área (premissa herdada de `FT-DOCUMENTO`). Se crescer → opção D-01(c) + busca
-  server-side numa iteração.
+  por Área (premissa herdada de `FT-DOCUMENTO`). Se crescer → lazy por nível + busca
+  server-side numa iteração futura (fora desta Feature).
 - `PastaResponse` estendido é propriedade desta Feature, não reabre `FT-DOCUMENTO`
   (`DONE`) — mudança aditiva/retrocompatível.
-- Rótulo "Público/Privado" e filtro avançado provavelmente ficam para iteração futura.
+- Rótulo "Público/Privado", filtro e navegação por Federação ficam para iteração futura.
 
 ---
 
@@ -95,7 +96,7 @@ Regra de Negócio dedicada em `docs/domain/09-business-rules.md` — não são r
 - [x] Todos os AT possuem RF associado
 - [x] Todas as TK possuem RF associado
 - [x] Nenhum endpoint sem justificativa funcional
-- [ ] Decisões de produto fechadas — **pendente** (D-01..D-06)
+- [x] Decisões de produto fechadas (`decisions.md` v1.1 — D-01..D-07)
 - [x] Matriz consistente com os demais artefatos
 
 ---
@@ -105,3 +106,4 @@ Regra de Negócio dedicada em `docs/domain/09-business-rules.md` — não são r
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — RF/UC/API/AT/TK-DOC-NAV-001..007; 6 decisões abertas registradas como bloqueio de `READY_FOR_REVIEW` |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | Decisões D-01..D-07 fechadas; nenhum bloqueio de `READY_FOR_REVIEW` restante; checklist de validação completo |

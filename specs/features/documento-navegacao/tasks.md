@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — navegação/leitura; estende `FT-DOCUMENTO`) |
-| Versão | 1.0 |
+| Versão | 1.1 |
 | Status | DRAFT — não iniciar antes de Review de Spec (`APPROVED`) e DoR-Implementation |
 | Owner | Engineering Framework |
 
@@ -21,9 +21,10 @@
 
 # Objetivo
 
-Decomposição preliminar. **Depende das decisões abertas** (`decisions.md` D-01..D-06) —
-as tasks abaixo assumem a proposta do `/specify` (D-01(a), busca client-side, só Área
-do Contexto Ativo, sem filtro no MVP). Se o Review decidir diferente, revisar.
+Decomposição funcional. As 7 decisões estão fechadas (`decisions.md` v1.1): D-01=(a)
+estender `PastaResponse`; busca client-side; só Área do Contexto Ativo; sem filtro nem
+rótulo Público/Privado no MVP; id numérico na URL; preferência grade/lista via
+`DEC-FA-005`.
 
 ---
 
@@ -151,8 +152,7 @@ com preferência persistida (`RF-DOC-NAV-004`, `RF-DOC-NAV-005`).
 
 Conforme quando: todas as tasks têm ≥1 RF; não representa cronograma; consistente com
 `specification.md`, `use-cases.md`, `api.md`, `acceptance-tests.md`, `decisions.md`,
-`traceability.md`. **As tasks pressupõem D-01..D-06 fechadas** — reabrir se o Review
-mudar as decisões.
+`traceability.md`.
 
 ---
 
@@ -161,3 +161,4 @@ mudar as decisões.
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — TK-DOC-NAV-001 (BE — `PastaResponse` + `pastaPaiId`), -002 (explorador FE), -003 (árvore FE), -004 (busca + grade/lista FE). Preliminares — dependem das decisões abertas. |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | Decisões fechadas — removido o caveat "depende das decisões abertas"; tasks consolidadas. |
