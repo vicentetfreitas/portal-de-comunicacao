@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- Projeto : Portal de Comunicação
 -- Arquivo : V011__homologacao_admin_area_e_pasta_teste.sql
--- Versão  : 1.0
+-- Versão  : 1.1  (literal da pasta sem em-dash — corrompido por cliente SQL ao colar)
 --
 -- Objetivo
 --   Provisionar dados institucionais MÍNIMOS para exercitar o fluxo de Gestão
@@ -77,9 +77,11 @@ VALUES (
 
 -- 3. Pasta-raiz da Área 1 + grants (LEITURA / DOWNLOAD / EDICAO) --------------
 
+-- Sem em-dash / travessão no literal: caracteres multibyte de 3 bytes (U+2014) são
+-- corrompidos por clientes SQL com NLS/charset mal configurado ao colar o script.
 INSERT INTO UNMPORTCOM.PASTA (COD_PASTA, COD_PASTA_PAI, NOM_PASTA, DSC_PASTA, FLG_HERDA_PERMISSAO, FLG_ATIVO, DAT_CADASTRO)
-VALUES (SQ_PASTA.NEXTVAL, NULL, 'Documentos — Tecnologia da Informação',
-        'Pasta institucional da Área de TI (homologação).', 'S', 'S', SYSTIMESTAMP);
+VALUES (SQ_PASTA.NEXTVAL, NULL, 'Documentos - Tecnologia da Informacao',
+        'Pasta institucional da Area de TI (homologacao).', 'S', 'S', SYSTIMESTAMP);
 
 INSERT INTO UNMPORTCOM.PERMISSAO_PASTA (COD_PERMISSAO_PASTA, COD_PASTA, TIP_DESTINATARIO, COD_DESTINATARIO, TIP_ACESSO, DAT_CADASTRO)
 VALUES (SQ_PERMISSAO_PASTA.NEXTVAL, SQ_PASTA.CURRVAL, 'AREA', 1, 'LEITURA', SYSTIMESTAMP);
@@ -109,6 +111,11 @@ VALUES (SQ_DOCUMENTO_VERSAO.NEXTVAL, SQ_DOCUMENTO_COD_DOCUMENTO.CURRVAL, SQ_ARQU
         1, 'Versão inicial (homologação).', 'S', SYSTIMESTAMP);
 
 COMMIT;
+
+
+-- Se um run anterior gravou o nome corrompido ("Documentos ¿ ..."), corrigir:
+--   UPDATE UNMPORTCOM.PASTA SET NOM_PASTA = 'Documentos - Tecnologia da Informacao'
+--    WHERE NOM_PASTA LIKE 'Documentos %Tecnologia%'; COMMIT;
 
 
 -- 5. Conferência (rodar depois de aplicar) --------------------------------
