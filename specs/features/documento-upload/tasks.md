@@ -27,18 +27,19 @@ Decomposição funcional de `FT-DOCUMENTO-UPLOAD` em unidades de implementação
 
 ---
 
-## TK-DOC-UPLOAD-001 — Propor migration de sequences + DML de categorias (banco)
+## TK-DOC-UPLOAD-001 — Script de banco: sequences + categorias de mídia
 
 ### Objetivo
 
-Documentar, para revisão e execução do DBA, a migration Flyway que cria as sequences ausentes e o DML das categorias de mídia. **A aplicação não executa DDL/DML institucional** (`DEC-DB-019`) — esta task produz o script proposto em `database/migrations/` (+ `database/dml/` se for o padrão), não o aplica.
+Produzir o script SQL (execução **manual** na IDE do banco — `DEC-DB-019`, sem Flyway) que cria o que falta para a escrita em Gestão Documental. A aplicação não executa DDL/DML institucional.
 
-Ausências confirmadas em 2026-08-27 (`database/ddl/002-create-sequences.sql` só tem `SQ_DOCUMENTO_COD_DOCUMENTO`; `CATEGORIA_DOCUMENTAL` com 0 linhas no Oracle TST):
+Ausências confirmadas em 2026-08-27 (`ddl/002-create-sequences.sql` só tem `SQ_DOCUMENTO_COD_DOCUMENTO`; `CATEGORIA_DOCUMENTAL` e as tabelas de documento com 0 linhas no Oracle TST):
 
-- `SQ_ARQUIVO_BINARIO` (`ARQUIVO_BINARIO.COD_ARQUIVO_BINARIO`)
-- `SQ_DOCUMENTO_VERSAO` (`DOCUMENTO_VERSAO.COD_DOCUMENTO_VERSAO`)
-- `SQ_CAT_DOC_COD_CAT_DOC` — referenciada pelo seed `008-initial-data.sql` mas inexistente no DDL e no schema live
-- Linhas de `CATEGORIA_DOCUMENTAL`: `Documentos`, `Imagens`, `Vídeos`, `Outros` (`FLG_ATIVO='S'`)
+- `SQ_ARQUIVO_BINARIO` (`ARQUIVO_BINARIO.COD_ARQUIVO_BINARIO`) — bloqueio: backend insere via JPA `GenerationType.SEQUENCE`
+- `SQ_DOCUMENTO_VERSAO` (`DOCUMENTO_VERSAO.COD_DOCUMENTO_VERSAO`) — idem
+- 4 linhas em `CATEGORIA_DOCUMENTAL`: `Documentos`, `Imagens`, `Vídeos`, `Outros` (`FLG_ATIVO='S'`, ID explícito — a aplicação nunca insere categoria)
+
+`SQ_CAT_DOC_COD_CAT_DOC` (referenciada por `008-initial-data.sql`) **não** é necessária aqui — é item de reconciliação greenfield do baseline.
 
 ### Requisitos Funcionais Relacionados
 
@@ -50,15 +51,15 @@ Ausências confirmadas em 2026-08-27 (`database/ddl/002-create-sequences.sql` s�
 
 ### Componentes Esperados
 
-- **[proposto — 2026-08-27]** `database/migrations/V009__documento_upload_sequences_e_categorias.sql`: as 3 sequences (guardadas por `USER_SEQUENCES`) + `GRANT SELECT` p/ `UNMPORTCOM_APP_ROLE` (DEC-DB-024) + `MERGE` idempotente das 4 categorias de mídia + desativação da taxonomia histórica.
-- **[proposto — 2026-08-27]** `database/migrations/VAL-DB-03-verify-documento-upload-prereqs.sql`: verificação read-only pré-V009.
-- **[feito — 2026-08-27]** `database/migrations/README.md` atualizado (linha V009 + seção "Reconciliação greenfield pendente").
+- **[proposto — 2026-08-27]** `database/migrations/V009__documento_upload_sequences_e_categorias.sql` (SQL simples): 2× `CREATE SEQUENCE` + 2× `GRANT SELECT` p/ `UNMPORTCOM_APP_ROLE` (DEC-DB-024) + 4× `INSERT` em `CATEGORIA_DOCUMENTAL` (ID 1–4) + `COMMIT` + seção de conferência.
+- **[proposto — 2026-08-27]** `database/migrations/VAL-DB-03-verify-documento-upload-prereqs.sql`: conferência read-only pré-V009.
+- **[feito — 2026-08-27]** `database/migrations/README.md`: linha V009 + seção "O que é esta pasta (não é Flyway)" + "Reconciliação greenfield pendente".
 
 ### Critérios de Conclusão
 
-- Script `V009` revisado e **executado pelo DBA** no ambiente (pendente).
-- Sequences criadas e `CATEGORIA_DOCUMENTAL` populada (`Documentos`/`Imagens`/`Vídeos`/`Outros`) antes de `TK-DOC-UPLOAD-002`.
-- Reconciliação greenfield do baseline (`002`/`007`/`008`/`V902`) — ver `database/migrations/README.md` — encaminhada ao DBA.
+- `V009` **executado** no ambiente (usuário/DBA na IDE) e validado (Claude confere via consulta read-only).
+- Sequences criadas + grants + 4 categorias ativas antes de `TK-DOC-UPLOAD-002`.
+- Reconciliação greenfield do baseline (`002`/`007`/`008`/`V902`) — ver `README.md` — registrada para o DBA.
 
 ---
 
@@ -177,4 +178,4 @@ Define **como**, **quando**, **por quem** e **em qual ordem** — fora do escopo
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — 3 tasks (1 migration/DBA, 1 backend, 1 frontend) |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review: TK-DOC-UPLOAD-001 passa a cobrir `SQ_CAT_DOC_COD_CAT_DOC` + DML das 4 categorias de mídia; TK-DOC-UPLOAD-002 detalha resolução de categoria por `TIP_MIME`, `COD_COLABORADOR` da sessão, teto `413` e `400` |
-| 1.2 | 2026-08-27 | Claude Code | TK-DOC-UPLOAD-001: script `V009` + `VAL-DB-03` propostos (`database/migrations/`), README atualizado; execução DBA pendente |
+| 1.2 | 2026-08-27 | Claude Code | TK-DOC-UPLOAD-001: script `V009` (SQL simples, 2 sequences + grants + 4 `INSERT` de categoria) + `VAL-DB-03` propostos; README explica a pasta (não é Flyway); `SQ_CAT_DOC_COD_CAT_DOC` sai do escopo (app não insere categoria) |

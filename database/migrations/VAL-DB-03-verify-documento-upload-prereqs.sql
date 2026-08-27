@@ -1,71 +1,39 @@
 --------------------------------------------------------------------------------
 -- Projeto : Portal de Comunicação
 -- Arquivo : VAL-DB-03-verify-documento-upload-prereqs.sql
--- Versão  : 1.0
+-- Versão  : 2.0
 --
 -- Objetivo
---   Verificação read-only ANTES de aplicar V009 (FT-DOCUMENTO-UPLOAD /
---   TK-DOC-UPLOAD-001). Não altera nada.
---
--- Executar como
---   UNMPORTCOM
+--   Conferência read-only ANTES de aplicar V009 (FT-DOCUMENTO-UPLOAD).
+--   Não altera nada. Executar como UNMPORTCOM.
 --------------------------------------------------------------------------------
 
-SET SERVEROUTPUT ON
-COLUMN item          FORMAT A45
-COLUMN situacao      FORMAT A50
-
-PROMPT ==========================================================
-PROMPT VAL-DB-03 — Pré-condições de V009
-PROMPT ==========================================================
-
-PROMPT.
-PROMPT 1. Tabelas alvo devem existir (esperado: 4):
-PROMPT.
+-- 1. Tabelas alvo (esperado: ARQUIVO_BINARIO, DOCUMENTO_VERSAO, DOCUMENTO, CATEGORIA_DOCUMENTAL)
 SELECT table_name
   FROM user_tables
  WHERE table_name IN ('ARQUIVO_BINARIO', 'DOCUMENTO_VERSAO', 'DOCUMENTO', 'CATEGORIA_DOCUMENTAL')
  ORDER BY table_name;
 
-PROMPT.
-PROMPT 2. Sequences que V009 vai criar (esperado antes de V009: 0 linhas):
-PROMPT.
+-- 2. Sequences que V009 vai criar (esperado ANTES de V009: 0 linhas)
 SELECT sequence_name
   FROM user_sequences
- WHERE sequence_name IN ('SQ_ARQUIVO_BINARIO', 'SQ_DOCUMENTO_VERSAO', 'SQ_CAT_DOC_COD_CAT_DOC')
- ORDER BY sequence_name;
+ WHERE sequence_name IN ('SQ_ARQUIVO_BINARIO', 'SQ_DOCUMENTO_VERSAO');
 
-PROMPT.
-PROMPT 3. Conteúdo atual de CATEGORIA_DOCUMENTAL:
-PROMPT.
-SELECT nom_categoria, flg_ativo
+-- 3. Conteúdo atual de CATEGORIA_DOCUMENTAL (esperado: vazio)
+SELECT cod_categoria_documental, nom_categoria, flg_ativo
   FROM CATEGORIA_DOCUMENTAL
- ORDER BY flg_ativo DESC, nom_categoria;
+ ORDER BY cod_categoria_documental;
 
-PROMPT.
-PROMPT 4. Role da aplicação (DEC-DB-024) deve existir:
-PROMPT.
-SELECT role
-  FROM dba_roles
- WHERE role = 'UNMPORTCOM_APP_ROLE'
- UNION ALL
- SELECT granted_role
-  FROM user_role_privs
- WHERE granted_role = 'UNMPORTCOM_APP_ROLE';
+-- 4. Volume das tabelas de documento (esperado: 0 em todas)
+SELECT 'DOCUMENTO'        AS tabela, COUNT(*) AS linhas FROM DOCUMENTO
+UNION ALL SELECT 'DOCUMENTO_VERSAO', COUNT(*) FROM DOCUMENTO_VERSAO
+UNION ALL SELECT 'ARQUIVO_BINARIO',  COUNT(*) FROM ARQUIVO_BINARIO;
 
-PROMPT.
-PROMPT 5. FK DOCUMENTO -> CATEGORIA_DOCUMENTAL e coluna NOT NULL (contexto):
-PROMPT.
+-- 5. Coluna FK obrigatória (esperado: COD_CATEGORIA_DOCUMENTAL nullable = N)
 SELECT column_name, nullable
   FROM user_tab_columns
  WHERE table_name = 'DOCUMENTO'
    AND column_name = 'COD_CATEGORIA_DOCUMENTAL';
 
-PROMPT.
-PROMPT Interpretacao:
-PROMPT  - (1) 4 tabelas: OK para prosseguir.
-PROMPT  - (2) 0 linhas: V009 criara as 3 sequences. Se ja existirem, V009 as mantem.
-PROMPT  - (3) vazia (ou so historicas): V009 insere Documentos/Imagens/Videos/Outros
-PROMPT        e desativa Normativos/Manuais/Politicas/Procedimentos/Comunicados.
-PROMPT  - (5) COD_CATEGORIA_DOCUMENTAL = N (NOT NULL): confirma a necessidade do DML.
-PROMPT ==========================================================
+-- 6. Role da aplicação existe? (esperado: 1 linha)
+SELECT role FROM dba_roles WHERE role = 'UNMPORTCOM_APP_ROLE';

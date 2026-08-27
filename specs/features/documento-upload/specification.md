@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — cria documento/versão/binário; sem CRUD de pasta) |
-| Versão | 1.1 |
+| Versão | 1.2 |
 | Status | APPROVED |
 | Owner | Engineering Framework |
 
@@ -126,8 +126,8 @@ Não conformidades do Review de Spec (`docs/…` — commit `7d643eb`), agora fe
 
 Nenhuma pendência de **spec**. As pendências abaixo são de **execução** — devem ser resolvidas antes do DoR-Implementation:
 
-1. **Sequences Oracle ausentes.** `database/ddl/002-create-sequences.sql` só tem `SQ_DOCUMENTO_COD_DOCUMENTO`. Faltam: `SQ_ARQUIVO_BINARIO` (`ARQUIVO_BINARIO.COD_ARQUIVO_BINARIO`), `SQ_DOCUMENTO_VERSAO` (`DOCUMENTO_VERSAO.COD_DOCUMENTO_VERSAO`) e `SQ_CAT_DOC_COD_CAT_DOC` (referenciada pelo seed `008-initial-data.sql` mas inexistente no DDL e no schema live — confirmado 2026-08-27). Banco é DBA-administrado (`DEC-DB-019`) — a aplicação não cria schema. **Ação:** `TK-DOC-UPLOAD-001` propõe a migration Flyway (`V009__...`, padrão `V003`-`V008`) com as três sequences.
-2. **`CATEGORIA_DOCUMENTAL` sem dados.** Verificado 2026-08-27: 0 linhas no Oracle TST; o seed histórico nunca foi aplicado. **Ação:** `TK-DOC-UPLOAD-001` propõe também o DML das 4 categorias de mídia (`Documentos`, `Imagens`, `Vídeos`, `Outros`) ao DBA. Sem essas linhas, nenhum upload funciona (FK `NOT NULL`).
+1. **Sequences Oracle ausentes.** `database/ddl/002-create-sequences.sql` só tem `SQ_DOCUMENTO_COD_DOCUMENTO`. Faltam `SQ_ARQUIVO_BINARIO` (`ARQUIVO_BINARIO.COD_ARQUIVO_BINARIO`) e `SQ_DOCUMENTO_VERSAO` (`DOCUMENTO_VERSAO.COD_DOCUMENTO_VERSAO`) — necessárias para o backend inserir via JPA (`GenerationType.SEQUENCE`). Banco é DBA-administrado (`DEC-DB-019`, sem Flyway) — a aplicação não cria schema. **Ação:** `TK-DOC-UPLOAD-001` produz o script `V009` (SQL simples) para execução manual. `SQ_DOCUMENTO_COD_DOCUMENTO` já existe. `SQ_CAT_DOC_COD_CAT_DOC` (referenciada por `008-initial-data.sql`) **não** é necessária aqui — a aplicação nunca insere categoria; é item de reconciliação greenfield do baseline.
+2. **`CATEGORIA_DOCUMENTAL` sem dados.** Verificado 2026-08-27: 0 linhas no Oracle TST; o seed histórico nunca foi aplicado. **Ação:** `V009` insere as 4 categorias de mídia (`Documentos`, `Imagens`, `Vídeos`, `Outros`) com ID explícito. Sem essas linhas nenhum upload funciona (FK `NOT NULL`).
 3. **Dados institucionais — grants `EDICAO` ausentes.** Upload só funciona em pastas com `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) para o nível da atribuição. Se o seed atual só tem `LEITURA`/`DOWNLOAD` (caso de `FT-DOCUMENTO`), é carga institucional (`database/dml/`) a confirmar/propor ao DBA — não uma tela desta Feature.
 4. **`ObjectStorageClient` só tem `download(referenciaObjeto)`.** Precisa de método de escrita (ex. `upload(referenciaObjeto, InputStream, tamanho, tipoMime)`) — contrato novo sobre o mesmo Object Storage S3-compatível (DEC-013), sem mudar de provedor.
 5. **Teto de tamanho de arquivo** — sem limite explícito definido. Backend deve aplicar um teto operacional razoável (a definir em `tasks.md`/implementação; retorna `413`) — decisão técnica mínima de segurança, não a quota de `BR-023` (fora de escopo).
@@ -173,7 +173,7 @@ ARQUIVO_BINARIO (INSERT novo — requer sequence nova, ver Decisão #1)
 | `Vídeos` | `video/*` |
 | `Outros` | qualquer outro `TIP_MIME` |
 
-- As 4 categorias são dado institucional (`database/dml/`), propostas ao DBA em `TK-DOC-UPLOAD-001` — não são criadas pela aplicação.
+- As 4 categorias são dado institucional criado pelo script `V009` — não são criadas pela aplicação.
 - Se a categoria resolvida não existir no banco → erro explícito de configuração (fail-fast), nunca `DOCUMENTO` sem categoria.
 - IDs (`COD_CATEGORIA_DOCUMENTAL`) não são determinísticos (sequence) — o backend **sempre** resolve por `NOM_CATEGORIA`, nunca por ID fixo.
 
@@ -186,8 +186,8 @@ ARQUIVO_BINARIO (INSERT novo — requer sequence nova, ver Decisão #1)
 | Dependência | Tipo | Observação |
 |---|---|---|
 | `FT-DOCUMENTO` (`DONE`) | Pré-requisito | Reaproveita entidades (`CategoriaDocumentalEntity`/`Repository` já existem), `PermissaoPastaDomainService` (estender, não duplicar) e o padrão de `PastaController`/`DocumentoController` |
-| Sequences `SQ_ARQUIVO_BINARIO`, `SQ_DOCUMENTO_VERSAO`, `SQ_CAT_DOC_COD_CAT_DOC` | Bloqueante (execução) | Não existem — propor migration Flyway para o DBA (ver Decisão #1). Aplicação não cria schema (`DEC-DB-019`) |
-| Linhas de `CATEGORIA_DOCUMENTAL` (`Documentos`/`Imagens`/`Vídeos`/`Outros`) | Bloqueante (execução) | Tabela vazia no banco — DML a propor ao DBA (ver Decisão #2) |
+| Sequences `SQ_ARQUIVO_BINARIO`, `SQ_DOCUMENTO_VERSAO` | Bloqueante (execução) | Não existem — script `V009` (SQL simples), execução manual (ver Decisão #1). Aplicação não cria schema (`DEC-DB-019`, sem Flyway) |
+| Linhas de `CATEGORIA_DOCUMENTAL` (`Documentos`/`Imagens`/`Vídeos`/`Outros`) | Bloqueante (execução) | Tabela vazia no banco — `INSERT` no `V009` (ver Decisão #2) |
 | Grants `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) para os níveis pretendidos | Bloqueante (execução) | Dado institucional (`database/dml/`), a confirmar com o DBA (ver Decisão #3) |
 | `ObjectStorageClient` — método de upload | Bloqueante (execução) | Contrato novo sobre a mesma decisão de storage (DEC-013) |
 | Provisionamento do Object Storage (DEC-013) | Bloqueante (execução) | Mesma pendência já registrada em `FT-DOCUMENTO`/`docs/governance/01-project-status.md` |
@@ -206,3 +206,4 @@ ARQUIVO_BINARIO (INSERT novo — requer sequence nova, ver Decisão #1)
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — decompõe o "Fora do Escopo" de `FT-DOCUMENTO` em Feature própria (upload apenas, sem CRUD de pasta/documento), conforme decisões de produto do usuário nesta sessão |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review de Spec (`7d643eb`): `COD_CATEGORIA_DOCUMENTAL` derivado do `TIP_MIME` (`Documentos`/`Imagens`/`Vídeos`/`Outros`), sem parâmetro nem config; `DOCUMENTO_VERSAO.COD_COLABORADOR` explicitado; `Comunicado` deixa de ser categoria (é publicação WordPress — OQ-004); `CATEGORIA_DOCUMENTAL` vazia + `SQ_CAT_DOC_COD_CAT_DOC` ausente adicionadas às pendências de execução; erros `400`/`413` do multipart explicitados |
+| 1.2 | 2026-08-27 | Claude Code | Ajuste após feedback: só `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` são bloqueio (app não insere categoria); `SQ_CAT_DOC_COD_CAT_DOC` vira item de reconciliação greenfield; remoção do termo "Flyway" (DEC-DB-019); categorias criadas por `INSERT` de ID explícito no `V009` |
