@@ -3,6 +3,7 @@ package br.com.unimedceara.portalcomunicacao.documento.domain.service;
 import br.com.unimedceara.portalcomunicacao.accesscontrol.domain.model.JwtAuthenticatedPrincipal;
 import br.com.unimedceara.portalcomunicacao.documento.infrastructure.persistence.repository.PermissaoPastaRepository;
 import br.com.unimedceara.portalcomunicacao.shared.exception.ForbiddenException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
  * {@code PERMISSAO_PASTA} compatível com algum nível do Contexto Ativo do colaborador.
  */
 @Service
+@ConditionalOnProperty(prefix = "application.persistence", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class PermissaoPastaDomainService {
 
     private static final String MENSAGEM_SEM_PERMISSAO = "Colaborador não possui permissão de acesso a este recurso.";
