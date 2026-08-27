@@ -2,9 +2,9 @@
 
 | Campo | Valor |
 |--------|--------|
-| Template | CRUD Feature (adaptado — só criação, backend estende `FT-DOCUMENTO`) |
-| Versão | 1.5 |
-| Status | APPROVED |
+| Template | CRUD Feature (adaptado — Fase 1: só criação; Fase 2: update/soft-delete/versão; backend estende `FT-DOCUMENTO`) |
+| Versão | 2.0 |
+| Status | Fase 1 concluída · Fase 2 DRAFT (aguarda Review de Spec + DoR-Implementation) |
 | Owner | Engineering Framework |
 
 ---
@@ -21,139 +21,255 @@
 
 # Objetivo
 
-Decomposição funcional de `FT-DOCUMENTO-UPLOAD` em unidades de implementação. Não representa planejamento de construção/cronograma. Feature em **`IMPLEMENTING`** (DoR-Implementation PASS, commit `cb90d28`).
+Decomposição funcional de `FT-DOCUMENTO-UPLOAD` em unidades de implementação. Não
+representa cronograma. Estende `FT-DOCUMENTO` (backend/frontend `DONE`) —
+reaproveita entidades, `PermissaoPastaDomainService`, `PastaController`/
+`DocumentoController`.
 
-**Natureza da Feature:** estende `FT-DOCUMENTO` (backend/frontend já existentes e `DONE`) — reaproveita entidades (`CategoriaDocumentalEntity`/`Repository` inclusive), `PermissaoPastaDomainService`, `PastaController`/`DocumentoController`.
-
-**Progresso:** TK-DOC-UPLOAD-001 ✅ (V009 aplicado) · TK-DOC-UPLOAD-002 ✅ (backend, `portal-comunicacao-api` `57c22d9`) · TK-DOC-UPLOAD-003 ✅ (frontend, `portal-comunicacao-app` `5f887f2`). Pendências de execução para homologação (não de código): grants `PERMISSAO_PASTA` `EDICAO` institucionais, provisionamento do Object Storage no ambiente.
+| Fase | Tasks | Estado |
+|------|-------|--------|
+| **Fase 1** — upload de um arquivo | TK-DOC-UPLOAD-001, -002, -003 | ✅ concluídas (2026-08-27) |
+| **Fase 2** — gestão de pastas e documentos | TK-DOC-UPLOAD-004, -005, -006, -007 | ⏳ DRAFT — não iniciar antes de Review de Spec (`specification.md` v2.0) **e** DoR-Implementation da Fase 2 |
 
 ---
 
-## TK-DOC-UPLOAD-001 — Script de banco: sequences + categorias de mídia
+## TK-DOC-UPLOAD-001 — Script de banco Fase 1: sequences + categorias — ✅ CONCLUÍDA (2026-08-27)
+
+`V009` executado e validado (JDBC): `SQ_ARQUIVO_BINARIO`, `SQ_DOCUMENTO_VERSAO`
+(cache 20) + `GRANT SELECT` p/ `UNMPORTCOM_APP_ROLE`; `CATEGORIA_DOCUMENTAL` com 4
+linhas ativas (`Documentos`/`Imagens`/`Vídeos`/`Outros`, IDs 1–4). RF: RF-DOC-UPLOAD-001.
+
+---
+
+## TK-DOC-UPLOAD-002 — Upload de documento (backend) — ✅ CONCLUÍDA (2026-08-27, `portal-comunicacao-api` `57c22d9`)
+
+`POST /api/v1/pastas/{id}/documentos`; `PastaApplicationService.uploadDocumento`;
+`@GeneratedValue` nas 3 entidades; `ObjectStorageClient.upload` + `S3ObjectStorageClient`;
+`PermissaoPastaDomainService.ensureUploadGrant` (papel `ADMINISTRADOR` + `EDICAO`);
+`MediaCategoryResolver`; `400`/`413`. `DocumentoUploadAcceptanceIntegrationTest`.
+`./mvnw clean verify` = 341 testes, 0 falhas. RF: RF-DOC-UPLOAD-001/002/003.
+
+---
+
+## TK-DOC-UPLOAD-003 — Upload na página de Arquivos (frontend) — ✅ CONCLUÍDA (2026-08-27, `portal-comunicacao-app` `5f887f2`)
+
+`AreaColaboradorUploadDialog.vue` + botão "Enviar arquivo" por pasta, visível só p/
+`activeAssignment.papel === 'ADMINISTRADOR'`; `PastaApiService.uploadDocumento`;
+`useAreaColaboradorArquivos` (`canUpload`, `enviarDocumento`, `uploadingPastaId`).
+`yarn typecheck` + `yarn test:unit` (200) verdes. RF: RF-DOC-UPLOAD-001.
+
+---
+
+## TK-DOC-UPLOAD-004 — Script de banco Fase 2: sequences de PASTA e PERMISSAO_PASTA
 
 ### Objetivo
 
-Produzir o script SQL (execução **manual** na IDE do banco — `DEC-DB-019`, sem Flyway) que cria o que falta para a escrita em Gestão Documental. A aplicação não executa DDL/DML institucional.
+Produzir `V010` (SQL simples, execução manual na IDE do banco — `DEC-DB-019`, sem
+Flyway) criando as sequences que faltam para a **escrita de pastas**:
 
-Ausências confirmadas em 2026-08-27 (`ddl/002-create-sequences.sql` só tem `SQ_DOCUMENTO_COD_DOCUMENTO`; `CATEGORIA_DOCUMENTAL` e as tabelas de documento com 0 linhas no Oracle TST):
+- `SQ_PASTA` (`PASTA.COD_PASTA`) — `RF-DOC-UPLOAD-004` insere via JPA
+  `GenerationType.SEQUENCE`.
+- `SQ_PERMISSAO_PASTA` (`PERMISSAO_PASTA.COD_PERMISSAO_PASTA`) — a cópia snapshot de
+  grants (`decisions.md` D-04) insere N linhas.
 
-- `SQ_ARQUIVO_BINARIO` (`ARQUIVO_BINARIO.COD_ARQUIVO_BINARIO`) — bloqueio: backend insere via JPA `GenerationType.SEQUENCE`
-- `SQ_DOCUMENTO_VERSAO` (`DOCUMENTO_VERSAO.COD_DOCUMENTO_VERSAO`) — idem
-- 4 linhas em `CATEGORIA_DOCUMENTAL`: `Documentos`, `Imagens`, `Vídeos`, `Outros` (`FLG_ATIVO='S'`, ID explícito — a aplicação nunca insere categoria)
-
-`SQ_CAT_DOC_COD_CAT_DOC` (referenciada por `008-initial-data.sql`) **não** é necessária aqui — é item de reconciliação greenfield do baseline.
+Confirmado em 2026-08-27: `database/ddl/002-create-sequences.sql` tem 12 sequences
+do baseline homologado e **nenhuma** é de `PASTA`/`PERMISSAO_PASTA`; as tabelas
+(`003-create-tables.sql`) não têm coluna `IDENTITY`.
 
 ### Requisitos Funcionais Relacionados
 
-- RF-DOC-UPLOAD-001 (bloqueante — sem sequence não há `INSERT`; sem categoria a FK `NOT NULL` não é satisfazível)
+- RF-DOC-UPLOAD-004 (bloqueante — sem sequence não há `INSERT` de pasta nem de grant)
 
 ### Dependências
 
-- Nenhuma — é o primeiro bloqueio a resolver.
+- Nenhuma — primeiro bloqueio da Fase 2. Pré-check: consulta read-only
+  (`USER_SEQUENCES`) confirmando a ausência antes de propor o script.
 
 ### Componentes Esperados
 
-- **[proposto — 2026-08-27]** `database/migrations/V009__documento_upload_sequences_e_categorias.sql` (SQL simples): 2× `CREATE SEQUENCE` + 2× `GRANT SELECT` p/ `UNMPORTCOM_APP_ROLE` (DEC-DB-024) + 4× `INSERT` em `CATEGORIA_DOCUMENTAL` (ID 1–4) + `COMMIT` + seção de conferência.
-- **[proposto — 2026-08-27]** `database/migrations/VAL-DB-03-verify-documento-upload-prereqs.sql`: conferência read-only pré-V009.
-- **[feito — 2026-08-27]** `database/migrations/README.md`: linha V009 + seção "O que é esta pasta (não é Flyway)" + "Reconciliação greenfield pendente".
+- `database/migrations/V010__pasta_permissao_pasta_sequences.sql` (análogo ao
+  `V009`): 2× `CREATE SEQUENCE ... START WITH <MAX(id)+1> INCREMENT BY 1 CACHE 20
+  NOCYCLE` + 2× `GRANT SELECT ... TO UNMPORTCOM_APP_ROLE` (DEC-DB-024) + seção de
+  conferência. `START WITH` calculado a partir do maior `COD_*` existente nas
+  tabelas (pastas de leitura de `FT-DOCUMENTO` já podem ter linhas).
+- `database/migrations/VAL-DB-04-verify-pasta-write-prereqs.sql`: conferência
+  read-only pré-`V010`.
+- `database/migrations/README.md`: linha `V010`.
 
-### Critérios de Conclusão — ✅ ATENDIDA (2026-08-27)
+### Critérios de Conclusão
 
-- ✅ `V009` **executado** pelo usuário na IDE do banco.
-- ✅ Validado via consulta read-only (JDBC, Claude): `SQ_ARQUIVO_BINARIO` e `SQ_DOCUMENTO_VERSAO` criadas (cache 20), ambas com `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`; `CATEGORIA_DOCUMENTAL` com 4 linhas ativas (IDs 1–4: Documentos/Imagens/Vídeos/Outros).
-- ✅ Reconciliação greenfield do baseline (`002`/`007`/`008`/`V902`) registrada em `database/migrations/README.md` para o DBA (sem urgência — conteúdo vem pelo frontend).
+- `V010` executado pelo usuário na IDE do banco.
+- Validado via consulta read-only: `SQ_PASTA` e `SQ_PERMISSAO_PASTA` criadas, ambas
+  com `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`, `START WITH` > maior id existente.
 
 ---
 
-## TK-DOC-UPLOAD-002 — Implementar upload de documento (backend)
+## TK-DOC-UPLOAD-005 — Gestão de pastas (backend)
 
 ### Objetivo
 
-Endpoint `POST /api/v1/pastas/{id}/documentos` (multipart) criando `DOCUMENTO`/`DOCUMENTO_VERSAO`/`ARQUIVO_BINARIO`, autorizado por papel `ADMINISTRADOR` + grant `EDICAO` (`specification.md` § Modelo de Autorização).
+Endpoints de escrita de `PASTA`, autorizados por papel `ADMINISTRADOR` + grant
+`EDICAO` (`specification.md` § Modelo de Autorização):
+
+- `POST /api/v1/pastas/{id}/subpastas` — criar subpasta + **copiar** as linhas de
+  `PERMISSAO_PASTA` da pasta-pai (mesma transação).
+- `PATCH /api/v1/pastas/{id}` — renomear (`nome`/`descricao`) e/ou mover
+  (`codPastaPai`), com prevenção de ciclo (destino ≠ pasta nem descendente → `409`)
+  e grant `EDICAO` também na pasta destino.
+- `DELETE /api/v1/pastas/{id}` — arquivar (`FLG_ATIVO='N'`); `409` se a pasta tiver
+  subpasta ativa ou documento `ATIVO`/`ARQUIVADO`.
 
 ### Requisitos Funcionais Relacionados
 
-- RF-DOC-UPLOAD-001, RF-DOC-UPLOAD-002, RF-DOC-UPLOAD-003
+- RF-DOC-UPLOAD-004, RF-DOC-UPLOAD-005, RF-DOC-UPLOAD-006, RF-DOC-UPLOAD-007,
+  RF-DOC-UPLOAD-002, RF-DOC-UPLOAD-003
 
 ### Casos de Uso Relacionados
 
-- UC-DOC-UPLOAD-001, UC-DOC-UPLOAD-002, UC-DOC-UPLOAD-003
+- UC-DOC-UPLOAD-004..007, UC-DOC-UPLOAD-002, UC-DOC-UPLOAD-003
 
 ### Critérios de Aceitação Relacionados
 
-- AT-DOC-UPLOAD-001, AT-DOC-UPLOAD-002, AT-DOC-UPLOAD-003
+- AT-DOC-UPLOAD-004..007, AT-DOC-UPLOAD-002, AT-DOC-UPLOAD-003
 
 ### Dependências
 
-- **TK-DOC-UPLOAD-001** (sequences executadas + `CATEGORIA_DOCUMENTAL` populada no ambiente).
-- `ObjectStorageClient` — adicionar método de escrita (`documento/application/port/`); `PermissaoPastaDomainService` — estender para checar `TIP_ACESSO='EDICAO'` e papel `ADMINISTRADOR` da atribuição ativa (não duplicar a checagem multi-nível já existente).
-- Grants `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) já provisionados nas pastas de teste/homologação (dado institucional, `database/dml/`).
+- **TK-DOC-UPLOAD-004** (`SQ_PASTA`, `SQ_PERMISSAO_PASTA` no ambiente).
+- `@GeneratedValue(SEQUENCE)` em `PastaEntity` e `PermissaoPastaEntity` (hoje só
+  lidas por `FT-DOCUMENTO`).
+- Generalizar `PermissaoPastaDomainService.ensureUploadGrant` → método genérico
+  `ensureEdicaoGrant(pasta, atribuiçãoAtiva)` reutilizável por todas as operações;
+  não duplicar a checagem multi-nível existente.
+- Consulta de subárvore para prevenção de ciclo (`RF-DOC-UPLOAD-006`) e para a
+  guarda de pasta não-vazia (`RF-DOC-UPLOAD-007`).
+- Grants `PERMISSAO_PASTA` (`EDICAO`) provisionados nas pastas de teste/homologação
+  (dado institucional).
 
 ### Componentes Esperados
 
-- Repository: `INSERT` em `DocumentoRepository`, `DocumentoVersaoRepository`, `ArquivoBinarioRepository` (já existem via `JpaRepository`, sem repositório novo); leitura via `CategoriaDocumentalRepository` (já existe — adicionar finder por `NOM_CATEGORIA` + `FLG_ATIVO`).
-- Resolução de categoria: mapear `TIP_MIME` → `NOM_CATEGORIA` (`Documentos`/`Imagens`/`Vídeos`/`Outros`) e buscar o `COD_CATEGORIA_DOCUMENTAL` — nunca ID fixo; falha explícita (fail-fast) se a categoria não existir. Definir a tabela `TIP_MIME` → categoria (base em `specification.md` § Categorização por tipo de mídia).
-- `COD_COLABORADOR` de `DOCUMENTO` e `DOCUMENTO_VERSAO`: do `JwtAuthenticatedPrincipal`, nunca do request.
-- Teto de tamanho de arquivo: aplicar limite operacional (`spring.servlet.multipart.max-file-size` + validação explícita → `413`); valor definido aqui.
-- Application Service: novo método (ex. `PastaApplicationService.uploadDocumento(...)` ou serviço dedicado) — orquestra checagem de papel/grant, resolução de categoria, gravação no storage e persistência atômica (rollback se o storage falhar).
-- Controller: novo método em `PastaController` (`POST /api/v1/pastas/{id}/documentos`); validação de `arquivo`/`titulo` → `400`.
-- Testes (unit + aceitação): sucesso multi-nível (Área/Federação); categoria derivada por `TIP_MIME` (pdf→`Documentos`, png→`Imagens`, mp4→`Vídeos`, zip→`Outros`); `COD_COLABORADOR` = autenticado; `403` sem papel `ADMINISTRADOR`; `403` sem grant `EDICAO`; `403` com grant só `LEITURA`; `404` pasta inexistente; `400` request inválido.
+- Application Service: métodos `criarSubpasta`, `atualizarPasta` (renomear/mover),
+  `arquivarPasta`. A cópia snapshot de grants roda na mesma transação do `INSERT`
+  da pasta.
+- Controller: novos métodos em `PastaController` (`POST .../subpastas`, `PATCH`,
+  `DELETE`).
+- Validação de request (`400`): `nome` em branco; payload `PATCH` vazio.
+- `GlobalExceptionHandler`: mapear conflito de ciclo e de pasta não-vazia → `409`.
+- Testes (unit + aceitação): cópia de grants na criação (AT-004); renomear (AT-005);
+  mover ok / ciclo / self (AT-006); arquivar vazio / com documento / com subpasta /
+  só com `EXPIRADO` (AT-007); `403` sem papel/grant, inclusive mover com grant só na
+  origem (AT-002); `404` pasta/pai/destino inexistente (AT-003).
 
-### Critérios de Conclusão — ✅ ATENDIDA (2026-08-27, commit `portal-comunicacao-api` `57c22d9`)
+### Critérios de Conclusão
 
-- ✅ RF-DOC-UPLOAD-001/002/003 implementados. `POST /api/v1/pastas/{id}/documentos` em `PastaController`; `PastaApplicationService.uploadDocumento`.
-- ✅ `@GeneratedValue` nas 3 entidades; `ObjectStorageClient.upload` + `S3ObjectStorageClient`; `PermissaoPastaDomainService.ensureUploadGrant` (papel `ADMINISTRADOR` + `EDICAO` no nível da atribuição); `MediaCategoryResolver` (`TIP_MIME` → `NOM_CATEGORIA`); `CategoriaDocumentalRepository.findByNomeIgnoreCaseAndAtivo`.
-- ✅ Storage gravado por último → falha reverte os INSERTs (mesma transação, FE-003).
-- ✅ `400` (arquivo/título ausentes/vazios) e `413` (`spring.servlet.multipart.max-file-size` = `25MB`, override por `DOCUMENTO_MAX_FILE_SIZE`) — novos handlers no `GlobalExceptionHandler`.
-- ✅ `DocumentoUploadAcceptanceIntegrationTest` (AT-DOC-UPLOAD-001/002/003 + multi-nível + derivação de categoria + `400`), `MediaCategoryResolverTest`, `PermissaoPastaDomainServiceTest` estendido. `./mvnw clean verify` = 341 testes, 0 falhas.
-- Restam **pendências de execução para homologação** (não de código): grants `PERMISSAO_PASTA` `EDICAO` institucionais nas pastas reais; provisionamento do Object Storage/MinIO no ambiente.
-
-### Critérios de Conclusão (original)
-
-- RF-DOC-UPLOAD-001/002/003 implementados.
-- AT-DOC-UPLOAD-001/002/003 atendidos.
-- Testes aprovados.
+- RF-DOC-UPLOAD-004..007 implementados; AT-DOC-UPLOAD-004..007 atendidos.
+- `./mvnw clean verify` verde.
 - Rastreabilidade íntegra.
 
 ---
 
-## TK-DOC-UPLOAD-003 — Implementar upload na página de Arquivos (frontend)
+## TK-DOC-UPLOAD-006 — Gestão de documentos já enviados (backend)
 
 ### Objetivo
 
-Botão de upload na página `AreaColaboradorArquivosPage.vue` (já existente, `FT-DOCUMENTO`), visível **apenas** quando a atribuição ativa do colaborador é `ADMINISTRADOR` — mesma fonte de verdade de papel já usada pela sessão (`useSession`/`activeAssignment`).
+Endpoints de escrita sobre `DOCUMENTO` existente, autorizados por papel
+`ADMINISTRADOR` + grant `EDICAO` na pasta do documento:
+
+- `POST /api/v1/documentos/{id}/versoes` — nova versão (`multipart`): novo
+  `ARQUIVO_BINARIO` + `DOCUMENTO_VERSAO` (`NUM_VERSAO`=atual+1,
+  `FLG_VERSAO_ATUAL='S'`, `COD_COLABORADOR` da sessão, `DSC_ALTERACAO` opcional);
+  rebaixa a versão anterior; **re-deriva** `COD_CATEGORIA_DOCUMENTAL` do novo
+  `TIP_MIME`; atômico, storage por último; `409` se documento não-`ATIVO`; `413`.
+- `PATCH /api/v1/documentos/{id}` — editar `titulo`/`descricao` e/ou mover
+  (`codPasta`, com grant `EDICAO` também na pasta destino ativa).
+- `DELETE /api/v1/documentos/{id}` — arquivar (`STA_DOCUMENTO='ARQUIVADO'`); `409`
+  se já não-`ATIVO`.
 
 ### Requisitos Funcionais Relacionados
 
-- RF-DOC-UPLOAD-001
+- RF-DOC-UPLOAD-008, RF-DOC-UPLOAD-009, RF-DOC-UPLOAD-010, RF-DOC-UPLOAD-011,
+  RF-DOC-UPLOAD-002, RF-DOC-UPLOAD-003
 
 ### Casos de Uso Relacionados
 
-- UC-DOC-UPLOAD-001
+- UC-DOC-UPLOAD-008..011, UC-DOC-UPLOAD-002, UC-DOC-UPLOAD-003
+
+### Critérios de Aceitação Relacionados
+
+- AT-DOC-UPLOAD-008..011, AT-DOC-UPLOAD-002, AT-DOC-UPLOAD-003
 
 ### Dependências
 
-- TK-DOC-UPLOAD-002 (endpoint deve existir antes do consumo).
+- `SQ_DOCUMENTO_VERSAO`, `SQ_ARQUIVO_BINARIO` (já criadas no `V009`).
+- `ensureEdicaoGrant` genérico (de TK-DOC-UPLOAD-005) — pode ser feito antes ou em
+  paralelo; consolidar num único ponto.
+- `MediaCategoryResolver` (Fase 1) reutilizado para a re-derivação (D-07).
+- `CK_DOCUMENTO_VERSAO_ATUAL` — rebaixar a versão anterior antes/na mesma transação
+  do `INSERT` da nova.
+- `ObjectStorageClient.upload` (Fase 1).
 
 ### Componentes Esperados
 
-- Extensão do service client `services/documento/` (novo método `upload` — `multipart/form-data` com `arquivo` + `titulo`; sem campo de categoria).
-- Extensão do composable `useAreaColaboradorArquivos.ts` (ação de upload, estado de progresso/erro).
-- Controle de visibilidade do botão por papel da atribuição ativa (esconder para não-`ADMINISTRADOR`, não apenas desabilitar — evita vazar a existência do recurso a quem não pode usá-lo).
-- Tratamento de erro (`400` — validação; `403` — mensagem, não crash; `404` — mensagem; `413` — arquivo grande demais).
-- Testes (unit): botão visível/oculto por papel; upload bem-sucedido; erros tratados sem crash.
+- Application Service: `criarNovaVersao`, `atualizarDocumento` (metadados/mover),
+  `arquivarDocumento`.
+- Controller: novos métodos em `DocumentoController`.
+- Validação (`400`): `arquivo` ausente/vazio na versão; payload `PATCH` vazio;
+  `titulo` em branco.
+- Testes (unit + aceitação): nova versão + rebaixamento + re-derivação de categoria
+  (AT-008); `409` documento arquivado; falha de storage sem persistência parcial;
+  editar metadados sem tocar versão/categoria (AT-009); arquivar + segue visível na
+  leitura (AT-010); mover com grant nas duas pastas / `403` sem grant no destino /
+  `404` destino inativo (AT-011).
 
-### Critérios de Conclusão — ✅ ATENDIDA (2026-08-27, commit `portal-comunicacao-app` `5f887f2`)
+### Critérios de Conclusão
 
-- ✅ RF-DOC-UPLOAD-001 consumido na UI: `AreaColaboradorUploadDialog.vue` (título + seletor de arquivo) + botão "Enviar arquivo" por pasta em `AreaColaboradorArquivosPage.vue`, **visível apenas** para `activeAssignment.papel === 'ADMINISTRADOR'` (escondido, não desabilitado).
-- ✅ `PastaApiService.uploadDocumento(pastaId, arquivo, titulo)` — `multipart/form-data`, só `arquivo` + `titulo`.
-- ✅ `useAreaColaboradorArquivos`: `canUpload`, `enviarDocumento` (recarrega a lista em sucesso; `400/403/404/413` via toast, sem crash), `uploadingPastaId`.
-- ✅ Testes unit: `useAreaColaboradorArquivos` (+5), `AreaColaboradorArquivosPage` (+2 visibilidade), `AreaColaboradorUploadDialog` (novo, 2). `yarn typecheck` + `yarn test:unit` (200) verdes.
+- RF-DOC-UPLOAD-008..011 implementados; AT-DOC-UPLOAD-008..011 atendidos.
+- `./mvnw clean verify` verde.
+- Rastreabilidade íntegra.
 
-### Critérios de Conclusão (original)
+---
 
-- RF-DOC-UPLOAD-001 consumido na UI, restrito a `ADMINISTRADOR`.
-- Testes aprovados.
+## TK-DOC-UPLOAD-007 — Ações de gestão na página de Arquivos (frontend)
+
+### Objetivo
+
+Expor as operações da Fase 2 em `AreaColaboradorArquivosPage.vue`, **visíveis apenas**
+quando `activeAssignment.papel === 'ADMINISTRADOR'` (escondidas, não desabilitadas —
+mesma regra da Fase 1):
+
+- Menu por pasta: **nova subpasta**, **renomear**, **mover**, **arquivar**.
+- Menu por documento: **nova versão**, **editar** (título/descrição), **mover**,
+  **arquivar** ("excluir").
+
+### Requisitos Funcionais Relacionados
+
+- RF-DOC-UPLOAD-004..011 (consumo na UI)
+
+### Casos de Uso Relacionados
+
+- UC-DOC-UPLOAD-004..011
+
+### Dependências
+
+- TK-DOC-UPLOAD-005 e TK-DOC-UPLOAD-006 (endpoints devem existir).
+
+### Componentes Esperados
+
+- Extensão de `services/documento/` (`PastaApiService`, `DocumentoApiService`):
+  `criarSubpasta`, `atualizarPasta`, `arquivarPasta`, `criarNovaVersao`,
+  `atualizarDocumento`, `arquivarDocumento`.
+- Extensão de `useAreaColaboradorArquivos.ts`: ações + estado de progresso/erro por
+  operação; recarregar a lista em sucesso.
+- Diálogos: novo/renomear pasta, mover (seletor de pasta destino), nova versão
+  (seletor de arquivo + nota), editar documento, confirmações de arquivar.
+- Tratamento de erro sem crash: `400` (validação), `403` (mensagem), `404`
+  (mensagem), `409` (ciclo / pasta não-vazia / documento não-`ATIVO`), `413`.
+- Testes (unit): visibilidade por papel; cada ação bem-sucedida; erros tratados
+  (incl. `409`).
+
+### Critérios de Conclusão
+
+- RF-DOC-UPLOAD-004..011 consumidos na UI, restritos a `ADMINISTRADOR`.
+- `yarn typecheck` + `yarn test:unit` verdes.
 - Rastreabilidade íntegra.
 
 ---
@@ -163,30 +279,20 @@ Botão de upload na página `AreaColaboradorArquivosPage.vue` (já existente, `F
 | Task | RF | UC | AT |
 |------|----|----|----|
 | TK-DOC-UPLOAD-001 | RF-DOC-UPLOAD-001 | — | — |
-| TK-DOC-UPLOAD-002 | RF-DOC-UPLOAD-001, RF-DOC-UPLOAD-002, RF-DOC-UPLOAD-003 | UC-DOC-UPLOAD-001, UC-DOC-UPLOAD-002, UC-DOC-UPLOAD-003 | AT-DOC-UPLOAD-001, AT-DOC-UPLOAD-002, AT-DOC-UPLOAD-003 |
+| TK-DOC-UPLOAD-002 | RF-DOC-UPLOAD-001/002/003 | UC-DOC-UPLOAD-001/002/003 | AT-DOC-UPLOAD-001/002/003 |
 | TK-DOC-UPLOAD-003 | RF-DOC-UPLOAD-001 | UC-DOC-UPLOAD-001 | AT-DOC-UPLOAD-001 |
+| TK-DOC-UPLOAD-004 | RF-DOC-UPLOAD-004 | — | — |
+| TK-DOC-UPLOAD-005 | RF-DOC-UPLOAD-002/003/004/005/006/007 | UC-DOC-UPLOAD-002/003/004/005/006/007 | AT-DOC-UPLOAD-002/003/004/005/006/007 |
+| TK-DOC-UPLOAD-006 | RF-DOC-UPLOAD-002/003/008/009/010/011 | UC-DOC-UPLOAD-002/003/008/009/010/011 | AT-DOC-UPLOAD-002/003/008/009/010/011 |
+| TK-DOC-UPLOAD-007 | RF-DOC-UPLOAD-004..011 | UC-DOC-UPLOAD-004..011 | AT-DOC-UPLOAD-004..011 |
 
 ---
 
 # Critérios de Conformidade
 
-Este documento é considerado conforme quando:
-
-- todas as tarefas estiverem associadas a pelo menos um requisito funcional;
-- não representar planejamento da construção;
-- manter consistência com `specification.md`, `use-cases.md`, `api.md`, `acceptance-tests.md` e `traceability.md`.
-
----
-
-# Responsabilidades
-
-## specs/
-
-Define **o que** deverá ser implementado.
-
-## construction/
-
-Define **como**, **quando**, **por quem** e **em qual ordem** — fora do escopo deste documento.
+Conforme quando: todas as tasks têm ≥1 RF (exceto -001/-004, bloqueios de banco);
+não representa cronograma; consistente com `specification.md`, `use-cases.md`,
+`api.md`, `acceptance-tests.md`, `decisions.md` e `traceability.md`.
 
 ---
 
@@ -194,9 +300,5 @@ Define **como**, **quando**, **por quem** e **em qual ordem** — fora do escopo
 
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
-| 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — 3 tasks (1 migration/DBA, 1 backend, 1 frontend) |
-| 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review: TK-DOC-UPLOAD-001 passa a cobrir `SQ_CAT_DOC_COD_CAT_DOC` + DML das 4 categorias de mídia; TK-DOC-UPLOAD-002 detalha resolução de categoria por `TIP_MIME`, `COD_COLABORADOR` da sessão, teto `413` e `400` |
-| 1.2 | 2026-08-27 | Claude Code | TK-DOC-UPLOAD-001: script `V009` (SQL simples, 2 sequences + grants + 4 `INSERT` de categoria) + `VAL-DB-03` propostos; README explica a pasta (não é Flyway); `SQ_CAT_DOC_COD_CAT_DOC` sai do escopo (app não insere categoria) |
-| 1.5 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-003 concluída** — upload na página de Arquivos (`portal-comunicacao-app` `5f887f2`); `test:unit` 200 |
-| 1.4 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-002 concluída** — endpoint de upload no backend (`portal-comunicacao-api` `57c22d9`), `mvn verify` 341/0 |
-| 1.3 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-001 concluída** — `V009` executado pelo usuário e validado via JDBC (2 sequences + grants + 4 categorias) |
+| 1.0–1.5 | 2026-08-27 | Claude Code | Fase 1 — 3 tasks; TK-001/002/003 concluídas |
+| 2.0 | 2026-08-27 | Claude Code (Specify) | Fase 2 (DRAFT): TK-004 (`V010` — sequences `SQ_PASTA`/`SQ_PERMISSAO_PASTA`), TK-005 (gestão de pastas — backend), TK-006 (gestão de documentos — backend), TK-007 (ações na página de Arquivos — frontend). Fase 1 condensada. |
