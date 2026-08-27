@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — só criação, backend estende `FT-DOCUMENTO`) |
-| Versão | 1.4 |
+| Versão | 1.5 |
 | Status | APPROVED |
 | Owner | Engineering Framework |
 
@@ -25,7 +25,7 @@ Decomposição funcional de `FT-DOCUMENTO-UPLOAD` em unidades de implementação
 
 **Natureza da Feature:** estende `FT-DOCUMENTO` (backend/frontend já existentes e `DONE`) — reaproveita entidades (`CategoriaDocumentalEntity`/`Repository` inclusive), `PermissaoPastaDomainService`, `PastaController`/`DocumentoController`.
 
-**Progresso:** TK-DOC-UPLOAD-001 ✅ (V009 aplicado) · TK-DOC-UPLOAD-002 ✅ (backend, `portal-comunicacao-api` `57c22d9`) · TK-DOC-UPLOAD-003 ⬜ (frontend, `portal-comunicacao-app`). Pendências de execução para homologação (não de código): grants `PERMISSAO_PASTA` `EDICAO` institucionais, provisionamento do Object Storage no ambiente.
+**Progresso:** TK-DOC-UPLOAD-001 ✅ (V009 aplicado) · TK-DOC-UPLOAD-002 ✅ (backend, `portal-comunicacao-api` `57c22d9`) · TK-DOC-UPLOAD-003 ✅ (frontend, `portal-comunicacao-app` `5f887f2`). Pendências de execução para homologação (não de código): grants `PERMISSAO_PASTA` `EDICAO` institucionais, provisionamento do Object Storage no ambiente.
 
 ---
 
@@ -143,7 +143,14 @@ Botão de upload na página `AreaColaboradorArquivosPage.vue` (já existente, `F
 - Tratamento de erro (`400` — validação; `403` — mensagem, não crash; `404` — mensagem; `413` — arquivo grande demais).
 - Testes (unit): botão visível/oculto por papel; upload bem-sucedido; erros tratados sem crash.
 
-### Critérios de Conclusão
+### Critérios de Conclusão — ✅ ATENDIDA (2026-08-27, commit `portal-comunicacao-app` `5f887f2`)
+
+- ✅ RF-DOC-UPLOAD-001 consumido na UI: `AreaColaboradorUploadDialog.vue` (título + seletor de arquivo) + botão "Enviar arquivo" por pasta em `AreaColaboradorArquivosPage.vue`, **visível apenas** para `activeAssignment.papel === 'ADMINISTRADOR'` (escondido, não desabilitado).
+- ✅ `PastaApiService.uploadDocumento(pastaId, arquivo, titulo)` — `multipart/form-data`, só `arquivo` + `titulo`.
+- ✅ `useAreaColaboradorArquivos`: `canUpload`, `enviarDocumento` (recarrega a lista em sucesso; `400/403/404/413` via toast, sem crash), `uploadingPastaId`.
+- ✅ Testes unit: `useAreaColaboradorArquivos` (+5), `AreaColaboradorArquivosPage` (+2 visibilidade), `AreaColaboradorUploadDialog` (novo, 2). `yarn typecheck` + `yarn test:unit` (200) verdes.
+
+### Critérios de Conclusão (original)
 
 - RF-DOC-UPLOAD-001 consumido na UI, restrito a `ADMINISTRADOR`.
 - Testes aprovados.
@@ -190,5 +197,6 @@ Define **como**, **quando**, **por quem** e **em qual ordem** — fora do escopo
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — 3 tasks (1 migration/DBA, 1 backend, 1 frontend) |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review: TK-DOC-UPLOAD-001 passa a cobrir `SQ_CAT_DOC_COD_CAT_DOC` + DML das 4 categorias de mídia; TK-DOC-UPLOAD-002 detalha resolução de categoria por `TIP_MIME`, `COD_COLABORADOR` da sessão, teto `413` e `400` |
 | 1.2 | 2026-08-27 | Claude Code | TK-DOC-UPLOAD-001: script `V009` (SQL simples, 2 sequences + grants + 4 `INSERT` de categoria) + `VAL-DB-03` propostos; README explica a pasta (não é Flyway); `SQ_CAT_DOC_COD_CAT_DOC` sai do escopo (app não insere categoria) |
+| 1.5 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-003 concluída** — upload na página de Arquivos (`portal-comunicacao-app` `5f887f2`); `test:unit` 200 |
 | 1.4 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-002 concluída** — endpoint de upload no backend (`portal-comunicacao-api` `57c22d9`), `mvn verify` 341/0 |
 | 1.3 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-001 concluída** — `V009` executado pelo usuário e validado via JDBC (2 sequences + grants + 4 categorias) |
