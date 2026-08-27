@@ -49,7 +49,8 @@ Instalações **greenfield** após homologação: **somente** `000-install.sql`.
 | V006 | `V006__drop_auth_sessao_organizational_context.sql` | Remove `COD_*_CTX` de `AUTH_SESSAO` (REF-DB-CTX-01) em ambientes que aplicaram evolução com colunas de contexto na sessão |
 | V007 | `V007__colaborador_ssot_alignment.sql` | Remove `DES_CARGO`/`NUM_CPF`, alinha `NOM_COLABORADOR`, `ID_ZIMBRA` e `DES_BIOGRAFIA` ao SSOT FT-COLABORADOR |
 | V008 | `V008__singular_email_domain.sql` | Brownfield: `SINGULAR.DES_DOMINIO_EMAIL` + `UK_SINGULAR_DOMINIO_EMAIL` + domínios Ceará/Cariri (GAP-028-04 / DEC-ORG-003 / DH-PA-02). **Não** aplicar após `000-install` (coluna/UK já no DDL). Execução DBA pendente no Oracle atual. |
-| V009 | `V009__documento_upload_sequences_e_categorias.sql` | Brownfield FT-DOCUMENTO-UPLOAD (TK-DOC-UPLOAD-001). SQL simples: cria `SQ_ARQUIVO_BINARIO` e `SQ_DOCUMENTO_VERSAO` (ausentes de `002`) + `GRANT SELECT` p/ `UNMPORTCOM_APP_ROLE` (DEC-DB-024) + 4 linhas em `CATEGORIA_DOCUMENTAL` — taxonomia por tipo de mídia `Documentos`/`Imagens`/`Vídeos`/`Outros`, IDs explícitos (DEC-CMS-002). Pré-check: `VAL-DB-03-verify-documento-upload-prereqs.sql`. **Execução pendente.** |
+| V009 | `V009__documento_upload_sequences_e_categorias.sql` | Brownfield FT-DOCUMENTO-UPLOAD (TK-DOC-UPLOAD-001). SQL simples: cria `SQ_ARQUIVO_BINARIO` e `SQ_DOCUMENTO_VERSAO` (ausentes de `002`) + `GRANT SELECT` p/ `UNMPORTCOM_APP_ROLE` (DEC-DB-024) + 4 linhas em `CATEGORIA_DOCUMENTAL` — taxonomia por tipo de mídia `Documentos`/`Imagens`/`Vídeos`/`Outros`, IDs explícitos (DEC-CMS-002). Pré-check: `VAL-DB-03-verify-documento-upload-prereqs.sql`. **Executado e validado 2026-08-27.** |
+| V010 | `V010__pasta_permissao_pasta_sequences.sql` | Brownfield FT-DOCUMENTO-GESTAO (TK-DOC-GESTAO-001). SQL simples: cria `SQ_PASTA` e `SQ_PERMISSAO_PASTA` (ausentes de `002` — verificado via JDBC) + `GRANT SELECT` p/ `UNMPORTCOM_APP_ROLE` (DEC-DB-024). `START WITH 1` — as tabelas `PASTA`/`PERMISSAO_PASTA` existem, o app já tem DML e estão com 0 linhas no TST. Sem alteração de tabela. Pré-check: `VAL-DB-04-verify-pasta-write-prereqs.sql`. **Execução pendente.** |
 
 Evoluções futuras: novos scripts SQL simples nesta pasta.
 
@@ -59,11 +60,12 @@ Evoluções futuras: novos scripts SQL simples nesta pasta.
 
 | Arquivo | Ajuste |
 |---------|--------|
-| `ddl/002-create-sequences.sql` | adicionar `SQ_ARQUIVO_BINARIO`, `SQ_DOCUMENTO_VERSAO` (contagem 12 → 14) |
-| `ddl/007-create-grants.sql`, `security/V902__application_user_sequences.sql` | `GRANT SELECT` das duas |
+| `ddl/002-create-sequences.sql` | adicionar `SQ_ARQUIVO_BINARIO`, `SQ_DOCUMENTO_VERSAO` (V009), `SQ_PASTA`, `SQ_PERMISSAO_PASTA` (V010) — contagem 12 → 16 |
+| `ddl/007-create-grants.sql`, `security/V902__application_user_sequences.sql` | `GRANT SELECT` das quatro sequences novas |
 | `ddl/008-initial-data.sql` | trocar o `MERGE` de `CATEGORIA_DOCUMENTAL` (5 categorias históricas, e ainda referencia `SQ_CAT_DOC_COD_CAT_DOC` inexistente) pelas 4 de mídia — DEC-CMS-002. Se optar por manter a sequence, criá-la em `002`. |
 
-Enquanto isso, `000-install.sql` **não** suporta upload de documentos.
+Enquanto isso, `000-install.sql` **não** suporta upload de documentos (V009) nem
+gestão de pastas (V010).
 
 ### VAL-DB-02 — Verificação antes de aplicar V004
 

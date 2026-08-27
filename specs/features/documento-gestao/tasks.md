@@ -67,18 +67,20 @@ Flyway) criando as sequences que faltam para a **escrita de pastas**:
 
 ### Componentes Esperados
 
-- `database/migrations/V010__pasta_permissao_pasta_sequences.sql` (análogo ao
-  `V009`): 2× `CREATE SEQUENCE ... START WITH 1 INCREMENT BY 1 CACHE 20 NOCYCLE` +
-  2× `GRANT SELECT ... TO UNMPORTCOM_APP_ROLE` (DEC-DB-024) + seção de conferência.
-- `database/migrations/VAL-DB-04-verify-pasta-write-prereqs.sql`: conferência
-  read-only pré-`V010`.
-- `database/migrations/README.md`: linha `V010`.
+- **[feito — 2026-08-27]** `database/migrations/V010__pasta_permissao_pasta_sequences.sql`
+  (análogo ao `V009`): 2× `CREATE SEQUENCE ... START WITH 1 INCREMENT BY 1 CACHE 20
+  NOCYCLE` + 2× `GRANT SELECT ... TO UNMPORTCOM_APP_ROLE` (DEC-DB-024) + seção de
+  conferência. Sem alteração de tabela.
+- **[feito — 2026-08-27]** `database/migrations/VAL-DB-04-verify-pasta-write-prereqs.sql`:
+  conferência read-only pré-`V010`.
+- **[feito — 2026-08-27]** `database/migrations/README.md`: linha `V010` + reconciliação
+  greenfield (12 → 16 sequences).
 
 ### Critérios de Conclusão
 
-- `V010` executado pelo usuário na IDE do banco.
-- Validado via consulta read-only (JDBC): `SQ_PASTA` e `SQ_PERMISSAO_PASTA` criadas,
-  ambas com `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`.
+- **[pendente]** `V010` executado pelo usuário na IDE do banco.
+- **[pendente]** Validado via consulta read-only (JDBC): `SQ_PASTA` e
+  `SQ_PERMISSAO_PASTA` criadas, ambas com `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`.
 
 ---
 
@@ -271,3 +273,4 @@ e `traceability.md`.
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — TK-DOC-GESTAO-001 (`V010`), -002 (pastas BE), -003 (documentos BE), -004 (frontend); extraído da proposta "Fase 2" de `FT-DOCUMENTO-UPLOAD` |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | TK-DOC-GESTAO-001: pré-check JDBC executado no Oracle TST — `SQ_PASTA`/`SQ_PERMISSAO_PASTA` confirmadas ausentes; tabelas existem com DML já concedido e **0 linhas** → `V010` usa `START WITH 1`. Mantém `APPROVED`. |
+| 1.2 | 2026-08-27 | Claude Code (Implement) | TK-DOC-GESTAO-001: `V010__pasta_permissao_pasta_sequences.sql` + `VAL-DB-04` + linha no README produzidos. Falta o usuário executar `V010` na IDE do banco e a validação JDBC pós-execução. |
