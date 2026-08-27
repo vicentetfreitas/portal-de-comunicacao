@@ -1,7 +1,13 @@
 import { Dark } from "quasar";
 import { computed, readonly, ref } from "vue";
 
-export type ThemeMode = "light" | "dark" | "auto";
+import {
+  THEME_MODES,
+  THEME_STORAGE_KEY,
+  type ThemeMode
+} from "@/constants/theme";
+
+export type { ThemeMode };
 
 export const THEME_ATTRIBUTE = "data-theme";
 
@@ -46,10 +52,43 @@ function bindSystemThemeListener(): void {
   mediaQuery.addEventListener("change", onSystemThemeChange);
 }
 
+function readStoredMode(): ThemeMode | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return stored && (THEME_MODES as readonly string[]).includes(stored)
+      ? (stored as ThemeMode)
+      : null;
+  } catch {
+    // Storage unavailable (private mode, disabled, quota) — fall back to
+    // system preference for this session.
+    return null;
+  }
+}
+
+function persistMode(newMode: ThemeMode): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(THEME_STORAGE_KEY, newMode);
+  } catch {
+    // Same fallback as readStoredMode — theme still applies, just won't
+    // survive a reload.
+  }
+}
+
 /**
- * Initializes theme infrastructure — called from boot/theme.ts.
+ * Initializes theme infrastructure — called from boot/theme.ts. Restores an
+ * explicit user choice from storage (DEC-FA-005); falls back to following
+ * the OS preference (`auto`) when nothing was saved yet.
  */
 export function initTheme(): void {
+  mode.value = readStoredMode() ?? "auto";
   applyTheme(resolveEffectiveTheme(mode.value));
   bindSystemThemeListener();
 }
@@ -60,6 +99,7 @@ export function useTheme() {
 
   function setMode(newMode: ThemeMode): void {
     mode.value = newMode;
+    persistMode(newMode);
     applyTheme(resolveEffectiveTheme(newMode));
   }
 
