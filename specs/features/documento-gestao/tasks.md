@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — Atualizar / Alterar Status / Mover; estende `FT-DOCUMENTO` e `FT-DOCUMENTO-UPLOAD`) |
-| Versão | 1.0 |
-| Status | DRAFT |
+| Versão | 1.1 |
+| Status | APPROVED |
 | Owner | Engineering Framework |
 
 ---
@@ -27,8 +27,9 @@ representa cronograma. Estende `FT-DOCUMENTO` (leitura, `DONE`) e
 `PermissaoPastaDomainService`/`ensureUploadGrant`, `ObjectStorageClient.upload`,
 `MediaCategoryResolver`, `PastaController`/`DocumentoController`.
 
-Feature em **`DRAFT`**. Nenhuma task inicia antes de Review de Spec (`APPROVED`) e
-DoR-Implementation.
+Feature em **`APPROVED`** — Review de Spec APPROVED WITH MINOR ISSUES (2026-08-27,
+NC-A corrigida em `traceability.md` v1.1). DoR-Implementation avaliado com
+verificação JDBC das pré-condições de banco (ver TK-DOC-GESTAO-001).
 
 ---
 
@@ -44,9 +45,17 @@ Flyway) criando as sequences que faltam para a **escrita de pastas**:
 - `SQ_PERMISSAO_PASTA` (`PERMISSAO_PASTA.COD_PERMISSAO_PASTA`) — a cópia snapshot de
   grants (`decisions.md` D-04) insere N linhas.
 
-Confirmado em 2026-08-27: `database/ddl/002-create-sequences.sql` tem 12 sequences
-do baseline homologado e **nenhuma** é de `PASTA`/`PERMISSAO_PASTA`; as tabelas
-(`003-create-tables.sql`) não têm coluna `IDENTITY`.
+**Verificado via JDBC no Oracle TST (`UNMPORTCOM_APP`, 2026-08-27):**
+
+- `SQ_PASTA` e `SQ_PERMISSAO_PASTA` **não existem** (as sequences visíveis de
+  documento são só `SQ_ARQUIVO_BINARIO`, `SQ_DOCUMENTO_COD_DOCUMENTO`,
+  `SQ_DOCUMENTO_VERSAO`).
+- Tabelas `UNMPORTCOM.PASTA` e `UNMPORTCOM.PERMISSAO_PASTA` **existem** e o
+  `UNMPORTCOM_APP_ROLE` já tem `SELECT/INSERT/UPDATE/DELETE` nas duas — **só falta a
+  sequence + o `GRANT SELECT` da sequence**.
+- Ambas as tabelas estão com **0 linhas** → `V010` usa `START WITH 1` (não há id
+  existente a evitar).
+- Colunas sem `IDENTITY` (DDL: `NUMBER(19) NOT NULL`) → PK via sequence.
 
 ### Requisitos Funcionais Relacionados
 
@@ -54,16 +63,13 @@ do baseline homologado e **nenhuma** é de `PASTA`/`PERMISSAO_PASTA`; as tabelas
 
 ### Dependências
 
-- Nenhuma. Pré-check: consulta read-only (`USER_SEQUENCES`) confirmando a ausência
-  antes de propor o script.
+- Nenhuma. Pré-check JDBC já executado (acima).
 
 ### Componentes Esperados
 
 - `database/migrations/V010__pasta_permissao_pasta_sequences.sql` (análogo ao
-  `V009`): 2× `CREATE SEQUENCE ... START WITH <MAX(COD_*)+1> INCREMENT BY 1 CACHE 20
-  NOCYCLE` + 2× `GRANT SELECT ... TO UNMPORTCOM_APP_ROLE` (DEC-DB-024) + seção de
-  conferência. `START WITH` calculado do maior `COD_*` existente (pastas de leitura
-  de `FT-DOCUMENTO` já podem ter linhas).
+  `V009`): 2× `CREATE SEQUENCE ... START WITH 1 INCREMENT BY 1 CACHE 20 NOCYCLE` +
+  2× `GRANT SELECT ... TO UNMPORTCOM_APP_ROLE` (DEC-DB-024) + seção de conferência.
 - `database/migrations/VAL-DB-04-verify-pasta-write-prereqs.sql`: conferência
   read-only pré-`V010`.
 - `database/migrations/README.md`: linha `V010`.
@@ -71,8 +77,8 @@ do baseline homologado e **nenhuma** é de `PASTA`/`PERMISSAO_PASTA`; as tabelas
 ### Critérios de Conclusão
 
 - `V010` executado pelo usuário na IDE do banco.
-- Validado via consulta read-only: `SQ_PASTA` e `SQ_PERMISSAO_PASTA` criadas, ambas
-  com `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`, `START WITH` > maior id existente.
+- Validado via consulta read-only (JDBC): `SQ_PASTA` e `SQ_PERMISSAO_PASTA` criadas,
+  ambas com `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`.
 
 ---
 
@@ -264,3 +270,4 @@ e `traceability.md`.
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — TK-DOC-GESTAO-001 (`V010`), -002 (pastas BE), -003 (documentos BE), -004 (frontend); extraído da proposta "Fase 2" de `FT-DOCUMENTO-UPLOAD` |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | TK-DOC-GESTAO-001: pré-check JDBC executado no Oracle TST — `SQ_PASTA`/`SQ_PERMISSAO_PASTA` confirmadas ausentes; tabelas existem com DML já concedido e **0 linhas** → `V010` usa `START WITH 1`. Mantém `APPROVED`. |

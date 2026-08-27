@@ -101,10 +101,12 @@ tem UC, API e AT. Governança pode catalogar uma BR posteriormente (ver
 ## Bloqueantes de execução (não de spec)
 
 - ✅ `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` — `V009` executado (2026-08-27).
-- ⏳ `SQ_PASTA` e `SQ_PERMISSAO_PASTA` **não existem** no baseline (12 sequences
-  homologadas, nenhuma de pasta/permissão; tabelas sem `IDENTITY`).
-  `RF-DOC-GESTAO-001` insere em ambas → requer `V010` (TK-DOC-GESTAO-001).
-- ⏳ Grants `PERMISSAO_PASTA` (`EDICAO`) institucionais nas pastas de homologação.
+- ⏳ `SQ_PASTA` e `SQ_PERMISSAO_PASTA` — **ausência confirmada via JDBC no Oracle TST
+  (2026-08-27).** Tabelas existem, `UNMPORTCOM_APP_ROLE` já tem DML, 0 linhas →
+  `V010` `START WITH 1` (TK-DOC-GESTAO-001).
+- ⏳ Pastas-raiz por Federação/Singular/Área/Equipe + seus `PERMISSAO_PASTA` (incl.
+  `EDICAO`) — dado institucional (`database/dml/`); o app só cria subpastas. Tabelas
+  vazias no TST.
 - ⏳ Provisionamento do Object Storage (DEC-013).
 
 ## Ação de governança (monorepo, não bloqueia a Feature)
@@ -131,4 +133,4 @@ tem UC, API e AT. Governança pode catalogar uma BR posteriormente (ver
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — matriz RF/UC/API/AT/TK-DOC-GESTAO-001..010; rastreabilidade de D-01..D-08 + DC-1..DC-4; bloqueante `SQ_PASTA`/`SQ_PERMISSAO_PASTA` (`V010`) |
-| 1.1 | 2026-08-27 | Claude Code (Specify) | Correção NC-A do Review de Spec: cobertura de Tasks 3→4; `TK-DOC-GESTAO-004` (frontend) incluída na matriz consolidada (RF-001..008). Mantém `APPROVED`. |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | Correção NC-A do Review de Spec: cobertura de Tasks 3→4; `TK-DOC-GESTAO-004` (frontend) incluída na matriz consolidada (RF-001..008). Pré-check JDBC do DoR-Implementation refletido em § Bloqueantes. Mantém `APPROVED`. |

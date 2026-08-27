@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — Atualizar / Alterar Status / Mover sobre `PASTA` e `DOCUMENTO` já existentes; cria `PASTA` e `DOCUMENTO_VERSAO`) |
-| Versão | 1.0 |
-| Status | DRAFT |
+| Versão | 1.1 |
+| Status | APPROVED |
 | Owner | Engineering Framework |
 
 ---
@@ -336,8 +336,8 @@ tabela e mesma lógica de `FT-DOCUMENTO-UPLOAD`:
 | `FT-DOCUMENTO` (`DONE`) | Pré-requisito | Reaproveita entidades, a query de leitura (`GET /api/v1/pastas`, `GET /api/v1/documentos/{id}/download` — já filtram `PASTA.FLG_ATIVO='N'` e `STA_DOCUMENTO='EXPIRADO'`), e o `PermissaoPastaDomainService` |
 | `FT-DOCUMENTO-UPLOAD` (`IMPLEMENTING`) | Pré-requisito | Reaproveita `PermissaoPastaDomainService.ensureUploadGrant` (generalizar → `ensureEdicaoGrant`), `ObjectStorageClient.upload` + `S3ObjectStorageClient`, `MediaCategoryResolver`, teto `25MB`/`413`, e o `@GeneratedValue` já aplicado a `Documento/DocumentoVersao/ArquivoBinario` |
 | Sequences `SQ_ARQUIVO_BINARIO`, `SQ_DOCUMENTO_VERSAO` | ✅ resolvida | `V009` executado e validado (2026-08-27) — `RF-005` reusa `SQ_DOCUMENTO_VERSAO` |
-| Sequences `SQ_PASTA`, `SQ_PERMISSAO_PASTA` | **Bloqueante (execução)** | **Não existem** — o baseline homologado tem 12 sequences (`database/ddl/002-create-sequences.sql`) e nenhuma é de `PASTA`/`PERMISSAO_PASTA`; as tabelas não têm coluna `IDENTITY`. `RF-DOC-GESTAO-001` faz `INSERT` em ambas. Requer `V010` análogo ao `V009` (2× `CREATE SEQUENCE START WITH <MAX(id)+1>` + `GRANT SELECT` p/ `UNMPORTCOM_APP_ROLE`, DEC-DB-024). Confirmar via JDBC no DoR-Implementation. Ver `tasks.md` TK-DOC-GESTAO-001. |
-| Grants `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) nas pastas de homologação | Bloqueante (execução) | Dado institucional (`database/dml/`), mesma pendência de `FT-DOCUMENTO-UPLOAD` |
+| Sequences `SQ_PASTA`, `SQ_PERMISSAO_PASTA` | **Bloqueante (execução)** | **Confirmado ausentes via JDBC no Oracle TST (2026-08-27).** As tabelas `PASTA`/`PERMISSAO_PASTA` existem, o `UNMPORTCOM_APP_ROLE` já tem `SELECT/INSERT/UPDATE/DELETE` nelas, e ambas estão com **0 linhas** — falta só a sequence + o `GRANT SELECT` da sequence. `RF-DOC-GESTAO-001` faz `INSERT` em ambas. Requer `V010` análogo ao `V009` (2× `CREATE SEQUENCE START WITH 1` + `GRANT SELECT` p/ `UNMPORTCOM_APP_ROLE`, DEC-DB-024). Ver `tasks.md` TK-DOC-GESTAO-001. |
+| Pastas-raiz + grants iniciais nas pastas de homologação | Bloqueante (execução) | Dado institucional (`database/dml/`), mesma pendência de `FT-DOCUMENTO-UPLOAD`. A aplicação só cria **subpastas** (`RF-DOC-GESTAO-001` exige `COD_PASTA_PAI`) — as pastas de topo por Federação/Singular/Área/Equipe e seus `PERMISSAO_PASTA` (`LEITURA`/`DOWNLOAD`/`EDICAO`) são provisionados pelo DBA. Tabelas hoje vazias no TST. |
 | Provisionamento do Object Storage (DEC-013) | Bloqueante (execução) | Mesma pendência já registrada em `FT-DOCUMENTO` |
 
 **Nenhuma outra migration é necessária:** renomear/mover são `UPDATE`; arquivamento
@@ -353,10 +353,13 @@ Nenhuma pendência de **spec** conhecida — as 8 decisões (D-01..D-08) e os 4
 refinamentos de consistência (DC-1..DC-4) estão em `decisions.md`. Situação das
 pendências de **execução** (para o DoR-Implementation):
 
-1. **`SQ_PASTA` / `SQ_PERMISSAO_PASTA` ausentes.** Bloqueia `RF-DOC-GESTAO-001`.
-   Propor `V010`, execução manual pelo DBA (`DEC-DB-019`). Confirmar ausência via
-   JDBC antes.
-2. **Grants `EDICAO` institucionais.** Mesma pendência de `FT-DOCUMENTO-UPLOAD`.
+1. **`SQ_PASTA` / `SQ_PERMISSAO_PASTA` ausentes.** ✅ **Ausência confirmada via JDBC
+   (2026-08-27).** Bloqueia `RF-DOC-GESTAO-001`. `V010` (`START WITH 1`, tabelas
+   vazias), execução manual pelo DBA (`DEC-DB-019`). Ver `tasks.md` TK-DOC-GESTAO-001.
+2. **Pastas-raiz + grants institucionais.** O app só cria subpastas; pastas de topo
+   por Federação/Singular/Área/Equipe e seus `PERMISSAO_PASTA` (incl. `EDICAO`) são
+   provisionados pelo DBA (`database/dml/`). Tabelas hoje vazias no TST — mesma
+   pendência de `FT-DOCUMENTO`/`FT-DOCUMENTO-UPLOAD`.
 3. **Exclusão real de documento (dívida registrada, não bloqueia).** Se o produto
    quiser que "excluir" some da leitura, será preciso um novo valor de
    `STA_DOCUMENTO` (ou `FLG` em `DOCUMENTO`) + ajuste da query de `FT-DOCUMENTO` —
@@ -388,3 +391,4 @@ parecer de Review de Spec de `FT-DOCUMENTO-UPLOAD` Fase 2 (2026-08-27, NC-1..NC-
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — extraída da proposta "Fase 2" de `FT-DOCUMENTO-UPLOAD` (opção 1a do Review de Spec). RF-DOC-GESTAO-001..010; regras transversais de estado do recurso fechando NC-1..NC-3; RN revisadas (NC-4); dependência `SQ_PASTA`/`SQ_PERMISSAO_PASTA` (`V010`) registrada |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | § Dependências: pré-check JDBC do DoR-Implementation — `SQ_PASTA`/`SQ_PERMISSAO_PASTA` confirmadas ausentes, tabelas existem com DML concedido e 0 linhas (`V010` `START WITH 1`); explicitado que pastas-raiz são dado institucional (app só cria subpastas). Mantém `APPROVED`. |
