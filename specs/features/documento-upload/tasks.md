@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — só criação, backend estende `FT-DOCUMENTO`) |
-| Versão | 1.3 |
+| Versão | 1.4 |
 | Status | APPROVED |
 | Owner | Engineering Framework |
 
@@ -21,11 +21,11 @@
 
 # Objetivo
 
-Decomposição funcional de `FT-DOCUMENTO-UPLOAD` em unidades de implementação. Não representa planejamento de construção/cronograma — responsabilidade de `construction/`. **Este `tasks.md` é plano prospectivo (Feature em `APPROVED`)** — não autoriza implementação; `IMPLEMENTING` exige DoR-Implementation, ainda não avaliado.
+Decomposição funcional de `FT-DOCUMENTO-UPLOAD` em unidades de implementação. Não representa planejamento de construção/cronograma. Feature em **`IMPLEMENTING`** (DoR-Implementation PASS, commit `cb90d28`).
 
 **Natureza da Feature:** estende `FT-DOCUMENTO` (backend/frontend já existentes e `DONE`) — reaproveita entidades (`CategoriaDocumentalEntity`/`Repository` inclusive), `PermissaoPastaDomainService`, `PastaController`/`DocumentoController`.
 
-**Bloqueio de banco (TK-DOC-UPLOAD-001) — ✅ resolvido 2026-08-27:** sequences `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` + grants + 4 categorias de mídia aplicados via `V009` e validados. Restam, para o DoR-Implementation: método de escrita no `ObjectStorageClient` (DEC-013), grants `PERMISSAO_PASTA` `EDICAO` (institucional), teto de tamanho de arquivo (decisão na implementação).
+**Progresso:** TK-DOC-UPLOAD-001 ✅ (V009 aplicado) · TK-DOC-UPLOAD-002 ✅ (backend, `portal-comunicacao-api` `57c22d9`) · TK-DOC-UPLOAD-003 ⬜ (frontend, `portal-comunicacao-app`). Pendências de execução para homologação (não de código): grants `PERMISSAO_PASTA` `EDICAO` institucionais, provisionamento do Object Storage no ambiente.
 
 ---
 
@@ -99,7 +99,16 @@ Endpoint `POST /api/v1/pastas/{id}/documentos` (multipart) criando `DOCUMENTO`/`
 - Controller: novo método em `PastaController` (`POST /api/v1/pastas/{id}/documentos`); validação de `arquivo`/`titulo` → `400`.
 - Testes (unit + aceitação): sucesso multi-nível (Área/Federação); categoria derivada por `TIP_MIME` (pdf→`Documentos`, png→`Imagens`, mp4→`Vídeos`, zip→`Outros`); `COD_COLABORADOR` = autenticado; `403` sem papel `ADMINISTRADOR`; `403` sem grant `EDICAO`; `403` com grant só `LEITURA`; `404` pasta inexistente; `400` request inválido.
 
-### Critérios de Conclusão
+### Critérios de Conclusão — ✅ ATENDIDA (2026-08-27, commit `portal-comunicacao-api` `57c22d9`)
+
+- ✅ RF-DOC-UPLOAD-001/002/003 implementados. `POST /api/v1/pastas/{id}/documentos` em `PastaController`; `PastaApplicationService.uploadDocumento`.
+- ✅ `@GeneratedValue` nas 3 entidades; `ObjectStorageClient.upload` + `S3ObjectStorageClient`; `PermissaoPastaDomainService.ensureUploadGrant` (papel `ADMINISTRADOR` + `EDICAO` no nível da atribuição); `MediaCategoryResolver` (`TIP_MIME` → `NOM_CATEGORIA`); `CategoriaDocumentalRepository.findByNomeIgnoreCaseAndAtivo`.
+- ✅ Storage gravado por último → falha reverte os INSERTs (mesma transação, FE-003).
+- ✅ `400` (arquivo/título ausentes/vazios) e `413` (`spring.servlet.multipart.max-file-size` = `25MB`, override por `DOCUMENTO_MAX_FILE_SIZE`) — novos handlers no `GlobalExceptionHandler`.
+- ✅ `DocumentoUploadAcceptanceIntegrationTest` (AT-DOC-UPLOAD-001/002/003 + multi-nível + derivação de categoria + `400`), `MediaCategoryResolverTest`, `PermissaoPastaDomainServiceTest` estendido. `./mvnw clean verify` = 341 testes, 0 falhas.
+- Restam **pendências de execução para homologação** (não de código): grants `PERMISSAO_PASTA` `EDICAO` institucionais nas pastas reais; provisionamento do Object Storage/MinIO no ambiente.
+
+### Critérios de Conclusão (original)
 
 - RF-DOC-UPLOAD-001/002/003 implementados.
 - AT-DOC-UPLOAD-001/002/003 atendidos.
@@ -181,4 +190,5 @@ Define **como**, **quando**, **por quem** e **em qual ordem** — fora do escopo
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — 3 tasks (1 migration/DBA, 1 backend, 1 frontend) |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review: TK-DOC-UPLOAD-001 passa a cobrir `SQ_CAT_DOC_COD_CAT_DOC` + DML das 4 categorias de mídia; TK-DOC-UPLOAD-002 detalha resolução de categoria por `TIP_MIME`, `COD_COLABORADOR` da sessão, teto `413` e `400` |
 | 1.2 | 2026-08-27 | Claude Code | TK-DOC-UPLOAD-001: script `V009` (SQL simples, 2 sequences + grants + 4 `INSERT` de categoria) + `VAL-DB-03` propostos; README explica a pasta (não é Flyway); `SQ_CAT_DOC_COD_CAT_DOC` sai do escopo (app não insere categoria) |
+| 1.4 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-002 concluída** — endpoint de upload no backend (`portal-comunicacao-api` `57c22d9`), `mvn verify` 341/0 |
 | 1.3 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-001 concluída** — `V009` executado pelo usuário e validado via JDBC (2 sequences + grants + 4 categorias) |
