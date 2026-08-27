@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — só criação, sem update/delete) |
-| Versão | 1.0 |
-| Status | DRAFT |
+| Versão | 1.1 |
+| Status | APPROVED |
 | Owner | Engineering Framework |
 
 ---
@@ -46,8 +46,10 @@ Criar um novo `DOCUMENTO` (com sua `DOCUMENTO_VERSAO` inicial e `ARQUIVO_BINARIO
 
 | Campo | Tipo | Obrigatório | Observação |
 |---|---|---|---|
-| arquivo | file | Sim | Binário do documento |
-| titulo | String | Sim | `DOCUMENTO.TIT_DOCUMENTO` |
+| arquivo | file | Sim | Binário do documento. Não vazio. `NOM_ARQUIVO`, `TIP_MIME`, `QTD_TAMANHO_BYTES`, `HASH_ARQUIVO` derivados dele. |
+| titulo | String | Sim | `DOCUMENTO.TIT_DOCUMENTO` (não em branco) |
+
+**Não há campo de categoria** — `COD_CATEGORIA_DOCUMENTAL` é derivado do `TIP_MIME` no backend (`specification.md` § Categorização por tipo de mídia). **Não há campo de escopo/nível** — resolvido da atribuição ativa.
 
 ### Response
 
@@ -62,8 +64,10 @@ ApiResponse<DocumentoResponse>
 | Código | Condição |
 |---|---|
 | 201 | Upload concluído; documento criado |
+| 400 | `arquivo` ausente/vazio ou `titulo` ausente/em branco (validação de request — `07-api-standards.md`) |
 | 403 | Atribuição ativa sem papel `ADMINISTRADOR`, ou sem `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) compatível com o nível dessa atribuição na pasta `{id}` |
 | 404 | Pasta `{id}` não existe |
+| 413 | Arquivo acima do teto de tamanho aceito (ver Regras Específicas) |
 
 ---
 
@@ -105,7 +109,9 @@ Reaproveita `DocumentoResponse` já definido em `specs/features/arquivos/api.md`
 
 - Único endpoint novo desta Feature: `POST /api/v1/pastas/{id}/documentos`. Nenhum `PUT`/`PATCH`/`DELETE` — fora de escopo (`specification.md` § Escopo).
 - `POST` não aceita parâmetro de escopo/nível — sempre resolvido da atribuição ativa (`JwtAuthenticatedPrincipal.papelAtribuicaoId`).
-- Tamanho máximo de arquivo aceito: **a definir em `tasks.md`/implementação** (`specification.md` § Decisão de produto/arquitetura pendente, item 4) — sem limite explícito definido pelo usuário nesta sessão.
+- **Categoria do `DOCUMENTO`**: sempre derivada de `TIP_MIME` no backend (`Documentos`/`Imagens`/`Vídeos`/`Outros`, resolvida por `NOM_CATEGORIA`) — nunca no request. Ver `specification.md` § Categorização por tipo de mídia.
+- **`COD_COLABORADOR`** de `DOCUMENTO` e `DOCUMENTO_VERSAO`: sempre o colaborador autenticado (sessão) — nunca no request.
+- Tamanho máximo de arquivo aceito: **a definir em `tasks.md`/implementação** (`specification.md` § Decisão de produto/arquitetura pendente, item 5); acima do teto → `413`.
 
 ---
 
@@ -124,3 +130,4 @@ Reaproveita `DocumentoResponse` já definido em `specs/features/arquivos/api.md`
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — 1 endpoint POST, reaproveitando DTOs de leitura de `FT-DOCUMENTO` |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review: categoria não é parâmetro (derivada de `TIP_MIME`); `COD_COLABORADOR` da sessão; adicionados `400` (validação de request) e `413` (teto de tamanho) |

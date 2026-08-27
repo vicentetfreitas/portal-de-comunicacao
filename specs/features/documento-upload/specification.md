@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — cria documento/versão/binário; sem CRUD de pasta) |
-| Versão | 1.0 |
-| Status | DRAFT |
+| Versão | 1.1 |
+| Status | APPROVED |
 | Owner | Engineering Framework |
 
 ---
@@ -17,7 +17,7 @@
 | Feature | Upload de Arquivos e Documentos |
 | Domínio | DOCUMENTO |
 | Tipo | Incremento de escrita sobre `FT-DOCUMENTO` (DONE, somente leitura) |
-| Status | DRAFT |
+| Status | APPROVED |
 
 ---
 
@@ -38,6 +38,7 @@ Permitir que colaboradores com papel `ADMINISTRADOR` — na atribuição escopad
 - Upload de um arquivo para uma pasta (`PASTA`) já existente, criando `DOCUMENTO` (novo) + `DOCUMENTO_VERSAO` (versão inicial, `NUM_VERSAO=1`, `FLG_VERSAO_ATUAL='S'`) + `ARQUIVO_BINARIO` (novo).
 - Autorização por papel: **somente** colaborador cuja atribuição ativa (Contexto Ativo) tem `papel = ADMINISTRADOR` — **reaproveitando o papel já existente em `PAPEL`**, escopado via `PAPEL_ATRIBUICAO` (`COD_FEDERACAO`/`COD_SINGULAR`/`COD_AREA`/`COD_EQUIPE`, um populado por atribuição). **Não** cria papéis novos (`ADMINISTRADOR_AREA`, `ADMINISTRADOR_SINGULAR`, `ADMINISTRADOR_FEDERACAO`, `ADMINISTRADOR_EQUIPE` não existem como valores de `PAPEL` — ver § Modelo de Autorização).
 - Metadados mínimos no upload: título do documento e o próprio arquivo (nome, mime, tamanho, hash — derivados do arquivo enviado).
+- **Categoria documental (`COD_CATEGORIA_DOCUMENTAL`) derivada automaticamente do tipo de mídia do arquivo** (`ARQUIVO_BINARIO.TIP_MIME` → `Documentos` | `Imagens` | `Vídeos` | `Outros`) — sem seletor no request nem no frontend, sem configuração. Decisão do usuário (2026-08-27): `CATEGORIA_DOCUMENTAL` está vazia no banco e a taxonomia do seed histórico (`Normativos`/`Manuais`/…) não reflete o produto; passa a ser tipo de mídia. Ver § Modelo de Dados → *Categorização por tipo de mídia*.
 
 ## Fora do Escopo — decidido (2026-08-27)
 
@@ -45,6 +46,8 @@ Permitir que colaboradores com papel `ADMINISTRADOR` — na atribuição escopad
 - **Gerenciar o documento após o upload inicial**: sem editar metadados, sem enviar nova versão (`DOCUMENTO_VERSAO` adicional) de um documento existente, sem excluir/arquivar (`STA_DOCUMENTO`) — decisão de produto explícita do usuário. Registrado para evoluir em próxima fase.
 - **Gerenciar `PERMISSAO_PASTA`** (criar/revogar grants) pela aplicação — fora de escopo; grants de `EDICAO` necessários para esta Feature são dado institucional (`database/dml/`), não uma tela da aplicação.
 - **Papel `GESTOR_DOCUMENTAL`** — já existe em `PAPEL` (seed, `database/ddl/008-initial-data.sql`) e nominalmente parece feito para gestão documental, mas o usuário só autorizou `ADMINISTRADOR` escopado nesta entrega. Não estender a este papel sem nova decisão de produto.
+- **Escolha de categoria no upload** — a categoria é derivada do tipo de mídia (ver § Incluído); um seletor de categoria (e a reconciliação da taxonomia de `CATEGORIA_DOCUMENTAL` com o produto) fica para uma Feature futura de categorização documental.
+- **`Comunicado` como categoria de documento** — decisão do usuário (2026-08-27): `Comunicado` é uma **publicação** (título, descrição, imagem de destaque opcional, arquivos anexos) servida por API do WordPress integrada ao backend (`FT-NOTICIA` / repo `portal-comunicacao-cms`), **não** um valor de `CATEGORIA_DOCUMENTAL`. Resolve o conflito registrado em `docs/domain/10-open-questions.md` OQ-004. Integração WordPress↔backend está fora do escopo desta Feature.
 - **Quota de armazenamento por colaborador** (`BR-023`, `docs/domain/09-business-rules.md`) — regra de domínio já catalogada, não implementada aqui; upload não valida quota nesta entrega. Risco aceito, registrado como dívida.
 - Migração de arquivos do CMS/legado — fora do escopo da reconstrução (`DS-RECONSTRUCTION-SCOPE-01` §3).
 
@@ -90,7 +93,7 @@ upload autorizado quando:
 | Campo | Valor |
 |--------|--------|
 | Identificador | RF-DOC-UPLOAD-001 |
-| Descrição | O sistema deve permitir que um colaborador com atribuição ativa `ADMINISTRADOR` envie um arquivo para uma pasta existente, criando um novo `DOCUMENTO` (`STA_DOCUMENTO='ATIVO'`), sua `DOCUMENTO_VERSAO` inicial (`NUM_VERSAO=1`, `FLG_VERSAO_ATUAL='S'`) e o `ARQUIVO_BINARIO` correspondente no Object Storage (DEC-013). |
+| Descrição | O sistema deve permitir que um colaborador com atribuição ativa `ADMINISTRADOR` envie um arquivo para uma pasta existente, criando um novo `DOCUMENTO` (`STA_DOCUMENTO='ATIVO'`, `COD_CATEGORIA_DOCUMENTAL` derivado do `TIP_MIME`, `COD_COLABORADOR` = colaborador autenticado), sua `DOCUMENTO_VERSAO` inicial (`NUM_VERSAO=1`, `FLG_VERSAO_ATUAL='S'`, `COD_COLABORADOR` = mesmo colaborador) e o `ARQUIVO_BINARIO` correspondente no Object Storage (DEC-013). |
 
 ## RF-DOC-UPLOAD-002 — Restringir upload por papel e grant de edição
 
@@ -109,25 +112,39 @@ upload autorizado quando:
 
 ---
 
+# Decisões resolvidas no Review (2026-08-27)
+
+Não conformidades do Review de Spec (`docs/…` — commit `7d643eb`), agora fechadas nesta spec:
+
+- **Origem de `COD_CATEGORIA_DOCUMENTAL`** (era "a definir"): derivada de `ARQUIVO_BINARIO.TIP_MIME` → `Documentos` / `Imagens` / `Vídeos` / `Outros`. Sem parâmetro, sem config. Ver § Modelo de Dados → *Categorização por tipo de mídia*.
+- **`DOCUMENTO_VERSAO.COD_COLABORADOR`** (não constava no modelo de dados): é o colaborador autenticado que fez o upload — mesmo valor de `DOCUMENTO.COD_COLABORADOR`. Nenhum `COD_COLABORADOR` vem do request.
+- **Códigos de erro de validação do multipart**: `400` para `titulo`/`arquivo` ausentes ou arquivo vazio (herda `docs/implementation/07-api-standards.md`); explicitados em `api.md`.
+
+---
+
 # Decisão de produto/arquitetura pendente
 
-1. **Sequences Oracle ausentes — BLOQUEANTE DE EXECUÇÃO (não de spec).** `database/ddl/002-create-sequences.sql` só tem `SQ_DOCUMENTO_COD_DOCUMENTO` entre as tabelas desta Feature. `ARQUIVO_BINARIO` (`COD_ARQUIVO_BINARIO`) e `DOCUMENTO_VERSAO` (`COD_DOCUMENTO_VERSAO`) **não têm sequence** — nunca precisaram, porque `FT-DOCUMENTO` só lia essas tabelas. Banco é DBA-administrado (`DEC-DB-019`, `database/README.md`) — a aplicação não cria schema. **Ação necessária:** propor migration Flyway (`database/migrations/V009__...sql`, seguindo o padrão de `V003`-`V008` já existentes) criando as duas sequences, para o DBA revisar e executar. Sem isso, `TK-DOC-UPLOAD-001` (backend) não pode ser implementada.
-2. **Dados institucionais — grants `EDICAO` ausentes.** Mesmo com o papel/mecanismo corretos, upload só funciona em pastas que já tenham `PERMISSAO_PASTA` com `TIP_ACESSO='EDICAO'` para o nível correspondente. Se o dado seed atual só tem `LEITURA`/`DOWNLOAD` (mesmo caso de `FT-DOCUMENTO`), isso é carga institucional (`database/dml/`) a confirmar/propor ao DBA — não uma tela desta Feature (grants continuam fora do escopo de escrita da aplicação, ver § Fora do Escopo).
-3. **`ObjectStorageClient` (backend, `documento/application/port/ObjectStorageClient.java`) só tem `download(referenciaObjeto)`.** Precisa de um método de escrita (ex. `upload(referenciaObjeto, InputStream, tamanho, tipoMime)`) — contrato novo sobre o mesmo Object Storage S3-compatível já decidido (DEC-013), sem mudar de provedor.
-4. **Tamanho/tipo de arquivo aceitos** — não definido pelo usuário nesta sessão. Sem limite explícito, backend deve pelo menos aplicar um teto operacional razoável (a definir em `tasks.md`/implementação) para não aceitar upload ilimitado — decisão técnica mínima de segurança, não uma feature de quota (`BR-023`, fora de escopo).
+Nenhuma pendência de **spec**. As pendências abaixo são de **execução** — devem ser resolvidas antes do DoR-Implementation:
+
+1. **Sequences Oracle ausentes.** `database/ddl/002-create-sequences.sql` só tem `SQ_DOCUMENTO_COD_DOCUMENTO`. Faltam: `SQ_ARQUIVO_BINARIO` (`ARQUIVO_BINARIO.COD_ARQUIVO_BINARIO`), `SQ_DOCUMENTO_VERSAO` (`DOCUMENTO_VERSAO.COD_DOCUMENTO_VERSAO`) e `SQ_CAT_DOC_COD_CAT_DOC` (referenciada pelo seed `008-initial-data.sql` mas inexistente no DDL e no schema live — confirmado 2026-08-27). Banco é DBA-administrado (`DEC-DB-019`) — a aplicação não cria schema. **Ação:** `TK-DOC-UPLOAD-001` propõe a migration Flyway (`V009__...`, padrão `V003`-`V008`) com as três sequences.
+2. **`CATEGORIA_DOCUMENTAL` sem dados.** Verificado 2026-08-27: 0 linhas no Oracle TST; o seed histórico nunca foi aplicado. **Ação:** `TK-DOC-UPLOAD-001` propõe também o DML das 4 categorias de mídia (`Documentos`, `Imagens`, `Vídeos`, `Outros`) ao DBA. Sem essas linhas, nenhum upload funciona (FK `NOT NULL`).
+3. **Dados institucionais — grants `EDICAO` ausentes.** Upload só funciona em pastas com `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) para o nível da atribuição. Se o seed atual só tem `LEITURA`/`DOWNLOAD` (caso de `FT-DOCUMENTO`), é carga institucional (`database/dml/`) a confirmar/propor ao DBA — não uma tela desta Feature.
+4. **`ObjectStorageClient` só tem `download(referenciaObjeto)`.** Precisa de método de escrita (ex. `upload(referenciaObjeto, InputStream, tamanho, tipoMime)`) — contrato novo sobre o mesmo Object Storage S3-compatível (DEC-013), sem mudar de provedor.
+5. **Teto de tamanho de arquivo** — sem limite explícito definido. Backend deve aplicar um teto operacional razoável (a definir em `tasks.md`/implementação; retorna `413`) — decisão técnica mínima de segurança, não a quota de `BR-023` (fora de escopo).
+6. **Registro de decisão da taxonomia** — a redefinição de `CATEGORIA_DOCUMENTAL` (doc institucional → tipo de mídia) e `Comunicado` = publicação WordPress precisa ser registrada em `docs/technology/04-decision-log.md` e `docs/domain/10-open-questions.md` (OQ-004). É ação de governança no monorepo, não bloqueia a implementação desta Feature.
 
 ---
 
 # Modelo de Dados
 
-**Físico, já instalado** — mesmas tabelas de `specs/features/arquivos/specification.md` § Modelo de Dados (`PASTA`, `DOCUMENTO`, `DOCUMENTO_VERSAO`, `ARQUIVO_BINARIO`, `PERMISSAO_PASTA`), mais `PAPEL`/`PAPEL_ATRIBUICAO` (`accesscontrol`, já usados por `FT-SESSION`). Esta Feature **não cria tabelas novas** — apenas passa a fazer `INSERT` em três delas (`DOCUMENTO`, `DOCUMENTO_VERSAO`, `ARQUIVO_BINARIO`), o que exige as sequences do item 1 acima.
+**Físico, já instalado** — mesmas tabelas de `specs/features/arquivos/specification.md` § Modelo de Dados (`PASTA`, `DOCUMENTO`, `DOCUMENTO_VERSAO`, `ARQUIVO_BINARIO`, `PERMISSAO_PASTA`, `CATEGORIA_DOCUMENTAL`), mais `PAPEL`/`PAPEL_ATRIBUICAO` (`accesscontrol`, já usados por `FT-SESSION`). Esta Feature **não cria tabelas novas** — apenas passa a fazer `INSERT` em três delas (`DOCUMENTO`, `DOCUMENTO_VERSAO`, `ARQUIVO_BINARIO`) e a **ler** `CATEGORIA_DOCUMENTAL`, o que exige as sequences e o DML dos itens 1–2 acima.
 
 ```text
 DOCUMENTO (INSERT novo)
-├── COD_DOCUMENTO (PK — via nova sequence a confirmar: SQ_DOCUMENTO_COD_DOCUMENTO já existe)
+├── COD_DOCUMENTO (PK — SQ_DOCUMENTO_COD_DOCUMENTO, já existe)
 ├── COD_PASTA (FK → PASTA, pasta alvo do upload)
-├── COD_CATEGORIA_DOCUMENTAL (FK — obrigatória; origem a definir em tasks.md: categoria padrão ou parâmetro do upload)
-├── COD_COLABORADOR (FK — autor: o próprio colaborador que fez upload)
+├── COD_CATEGORIA_DOCUMENTAL (FK NOT NULL — derivado do TIP_MIME do arquivo; ver "Categorização por tipo de mídia" abaixo. Nunca vem do request)
+├── COD_COLABORADOR (FK NOT NULL — colaborador autenticado que fez o upload; da sessão, não do request)
 ├── TIT_DOCUMENTO (do request)
 └── STA_DOCUMENTO = 'ATIVO' (sempre, na criação)
 
@@ -135,6 +152,7 @@ DOCUMENTO_VERSAO (INSERT novo — requer sequence nova, ver Decisão #1)
 ├── COD_DOCUMENTO_VERSAO (PK)
 ├── COD_DOCUMENTO (FK → DOCUMENTO recém-criado)
 ├── COD_ARQUIVO_BINARIO (FK → ARQUIVO_BINARIO recém-criado)
+├── COD_COLABORADOR (FK NOT NULL — autor desta versão; na criação inicial = DOCUMENTO.COD_COLABORADOR = colaborador que fez o upload)
 ├── NUM_VERSAO = 1
 └── FLG_VERSAO_ATUAL = 'S'
 
@@ -144,6 +162,21 @@ ARQUIVO_BINARIO (INSERT novo — requer sequence nova, ver Decisão #1)
 └── URL_ARQUIVO (referência ao objeto gravado no Object Storage — nunca exposta ao cliente, ADR-004)
 ```
 
+## Categorização por tipo de mídia
+
+`CATEGORIA_DOCUMENTAL` passa a classificar o documento pelo **tipo de mídia do arquivo** (decisão do usuário, 2026-08-27 — a tabela está vazia no banco e a taxonomia do seed histórico não reflete o produto). O backend resolve `COD_CATEGORIA_DOCUMENTAL` a partir de `ARQUIVO_BINARIO.TIP_MIME`, buscando a categoria por `NOM_CATEGORIA` (`FLG_ATIVO='S'`):
+
+| `NOM_CATEGORIA` | Regra sobre `TIP_MIME` (indicativo — refinar em `tasks.md`) |
+|---|---|
+| `Documentos` | `application/pdf`, `application/msword`, `application/vnd.openxmlformats-officedocument.*`, `application/vnd.ms-excel`, `text/plain`, `text/csv`, `application/vnd.oasis.opendocument.*` |
+| `Imagens` | `image/*` |
+| `Vídeos` | `video/*` |
+| `Outros` | qualquer outro `TIP_MIME` |
+
+- As 4 categorias são dado institucional (`database/dml/`), propostas ao DBA em `TK-DOC-UPLOAD-001` — não são criadas pela aplicação.
+- Se a categoria resolvida não existir no banco → erro explícito de configuração (fail-fast), nunca `DOCUMENTO` sem categoria.
+- IDs (`COD_CATEGORIA_DOCUMENTAL`) não são determinísticos (sequence) — o backend **sempre** resolve por `NOM_CATEGORIA`, nunca por ID fixo.
+
 **Resolução de RF-DOC-UPLOAD-002 (autorização):** ver § Modelo de Autorização.
 
 ---
@@ -152,9 +185,10 @@ ARQUIVO_BINARIO (INSERT novo — requer sequence nova, ver Decisão #1)
 
 | Dependência | Tipo | Observação |
 |---|---|---|
-| `FT-DOCUMENTO` (`DONE`) | Pré-requisito | Reaproveita entidades, `PermissaoPastaDomainService` (estender, não duplicar) e o padrão de `PastaController`/`DocumentoController` |
-| Sequences `SQ_ARQUIVO_BINARIO`, `SQ_DOCUMENTO_VERSAO` | Bloqueante (execução) | Não existem — propor migration Flyway para o DBA (ver Decisão #1). Aplicação não cria schema (`DEC-DB-019`) |
-| Grants `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) para os níveis pretendidos | Bloqueante (execução) | Dado institucional (`database/dml/`), a confirmar com o DBA (ver Decisão #2) |
+| `FT-DOCUMENTO` (`DONE`) | Pré-requisito | Reaproveita entidades (`CategoriaDocumentalEntity`/`Repository` já existem), `PermissaoPastaDomainService` (estender, não duplicar) e o padrão de `PastaController`/`DocumentoController` |
+| Sequences `SQ_ARQUIVO_BINARIO`, `SQ_DOCUMENTO_VERSAO`, `SQ_CAT_DOC_COD_CAT_DOC` | Bloqueante (execução) | Não existem — propor migration Flyway para o DBA (ver Decisão #1). Aplicação não cria schema (`DEC-DB-019`) |
+| Linhas de `CATEGORIA_DOCUMENTAL` (`Documentos`/`Imagens`/`Vídeos`/`Outros`) | Bloqueante (execução) | Tabela vazia no banco — DML a propor ao DBA (ver Decisão #2) |
+| Grants `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) para os níveis pretendidos | Bloqueante (execução) | Dado institucional (`database/dml/`), a confirmar com o DBA (ver Decisão #3) |
 | `ObjectStorageClient` — método de upload | Bloqueante (execução) | Contrato novo sobre a mesma decisão de storage (DEC-013) |
 | Provisionamento do Object Storage (DEC-013) | Bloqueante (execução) | Mesma pendência já registrada em `FT-DOCUMENTO`/`docs/governance/01-project-status.md` |
 
@@ -162,7 +196,7 @@ ARQUIVO_BINARIO (INSERT novo — requer sequence nova, ver Decisão #1)
 
 # Fontes
 
-`specs/features/arquivos/specification.md` (Feature predecessora, § Fora do Escopo origina esta Feature); `database/ddl/002-create-sequences.sql`, `003-create-tables.sql`, `008-initial-data.sql` (schema físico e seed de `PAPEL`); `docs/domain/09-business-rules.md` (BR-012, BR-015 a BR-024 — Gestão Documental); `docs/technology/04-decision-log.md` (DEC-013); `database/README.md`/`GOVERNANCE.md` (DEC-DB-019 — banco DBA-administrado); `database/migrations/README.md` (padrão de migration brownfield, `V003`-`V008`).
+`specs/features/arquivos/specification.md` (Feature predecessora, § Fora do Escopo origina esta Feature); `database/ddl/002-create-sequences.sql`, `003-create-tables.sql` (schema físico — `DOCUMENTO`, `DOCUMENTO_VERSAO`, `ARQUIVO_BINARIO`, `CATEGORIA_DOCUMENTAL`), `008-initial-data.sql` (seed de `PAPEL`; seed de `CATEGORIA_DOCUMENTAL` referencia sequence inexistente); `docs/domain/09-business-rules.md` (BR-012, BR-015 a BR-024 — Gestão Documental); `docs/domain/10-open-questions.md` (OQ-004 — `Comunicado` categoria vs publicação, resolvido para publicação WordPress); `docs/technology/04-decision-log.md` (DEC-013); `database/README.md`/`GOVERNANCE.md` (DEC-DB-019 — banco DBA-administrado); `database/migrations/README.md` (padrão de migration brownfield, `V003`-`V008`); evidência de banco: `CATEGORIA_DOCUMENTAL` vazia no Oracle TST e sequences ausentes verificadas via JDBC (2026-08-27).
 
 ---
 
@@ -171,3 +205,4 @@ ARQUIVO_BINARIO (INSERT novo — requer sequence nova, ver Decisão #1)
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — decompõe o "Fora do Escopo" de `FT-DOCUMENTO` em Feature própria (upload apenas, sem CRUD de pasta/documento), conforme decisões de produto do usuário nesta sessão |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review de Spec (`7d643eb`): `COD_CATEGORIA_DOCUMENTAL` derivado do `TIP_MIME` (`Documentos`/`Imagens`/`Vídeos`/`Outros`), sem parâmetro nem config; `DOCUMENTO_VERSAO.COD_COLABORADOR` explicitado; `Comunicado` deixa de ser categoria (é publicação WordPress — OQ-004); `CATEGORIA_DOCUMENTAL` vazia + `SQ_CAT_DOC_COD_CAT_DOC` ausente adicionadas às pendências de execução; erros `400`/`413` do multipart explicitados |

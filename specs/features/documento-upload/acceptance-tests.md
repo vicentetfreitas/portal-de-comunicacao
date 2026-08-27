@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — só criação) |
-| Versão | 1.0 |
-| Status | DRAFT |
+| Versão | 1.1 |
+| Status | APPROVED |
 | Owner | Engineering Framework |
 
 ---
@@ -42,14 +42,20 @@ Happy Path
 ### Cenário — sucesso
 
 **Given** colaborador com atribuição ativa `ADMINISTRADOR` no nível Área, e a pasta alvo tem `PERMISSAO_PASTA` (`TIP_DESTINATARIO='AREA'`, mesmo `COD_DESTINATARIO`, `TIP_ACESSO='EDICAO'`)
-**When** solicita `POST /api/v1/pastas/{id}/documentos` com um arquivo e título
-**Then** recebe `201`, o documento passa a aparecer em `GET /api/v1/pastas` com `STA_DOCUMENTO='ATIVO'` e a versão atual aponta para o binário enviado
+**When** solicita `POST /api/v1/pastas/{id}/documentos` com um arquivo `application/pdf` e título
+**Then** recebe `201`; o documento aparece em `GET /api/v1/pastas` com `STA_DOCUMENTO='ATIVO'`; a versão atual aponta para o binário enviado; `DOCUMENTO.COD_CATEGORIA_DOCUMENTAL` = categoria `Documentos`; `DOCUMENTO.COD_COLABORADOR` e `DOCUMENTO_VERSAO.COD_COLABORADOR` = o colaborador autenticado
 
 ### Cenário — sucesso em outro nível (Federação)
 
 **Given** colaborador com atribuição ativa `ADMINISTRADOR` no nível Federação, e a pasta alvo tem `PERMISSAO_PASTA` (`TIP_DESTINATARIO='FEDERACAO'`, mesma federação, `TIP_ACESSO='EDICAO'`)
 **When** solicita `POST /api/v1/pastas/{id}/documentos`
 **Then** recebe `201` — grant de Federação vale para qualquer Administrador daquela federação, mesmo padrão multi-nível de `FT-DOCUMENTO`
+
+### Cenário — categoria derivada do tipo de mídia
+
+**Given** colaborador `ADMINISTRADOR` com grant `EDICAO` na pasta alvo, e as categorias `Documentos`/`Imagens`/`Vídeos`/`Outros` existem em `CATEGORIA_DOCUMENTAL`
+**When** faz upload de um `image/png`, depois de um `video/mp4`, depois de um `application/zip`
+**Then** os `DOCUMENTO` criados recebem, respectivamente, `COD_CATEGORIA_DOCUMENTAL` das categorias `Imagens`, `Vídeos` e `Outros` — sem nenhum parâmetro de categoria no request
 
 ---
 
@@ -113,7 +119,10 @@ Negative
 
 - Usuário não autenticado → `401` (padrão corporativo, não redocumentado aqui).
 - Usuário autenticado sem Contexto Ativo resolvido → padrão de Primeiro Acesso/Sessão (`FT-PRIMEIRO-ACESSO`/`FT-SESSION`), não redocumentado aqui.
+- `arquivo` ausente/vazio ou `titulo` ausente/em branco → `400` (validação de request, `07-api-standards.md`).
+- Arquivo acima do teto de tamanho → `413` (teto a definir em `tasks.md`).
 - Falha ao gravar no Object Storage → erro explícito; nenhum `DOCUMENTO`/`DOCUMENTO_VERSAO`/`ARQUIVO_BINARIO` parcial persistido (ver UC-DOC-UPLOAD-001, FE-003) — cenário de integração, não coberto por teste de aceitação isolado nesta entrega.
+- Categoria de mídia resolvida ausente em `CATEGORIA_DOCUMENTAL` → erro de configuração explícito (fail-fast), nunca `DOCUMENTO` sem categoria — cenário de configuração, não coberto por AT isolado.
 
 ---
 
@@ -132,3 +141,4 @@ Negative
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — 3 ATs cobrindo os 3 RFs |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review: AT-DOC-UPLOAD-001 asserta categoria derivada do `TIP_MIME` e `COD_COLABORADOR`; novo cenário de categorização por mídia; cenários negativos `400`/`413`/categoria ausente |

@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — só Cadastrar; sem Atualizar/Alterar Status/Excluir) |
-| Versão | 1.0 |
-| Status | DRAFT |
+| Versão | 1.1 |
+| Status | APPROVED |
 | Owner | Engineering Framework |
 
 ---
@@ -50,9 +50,9 @@ Colaborador com atribuição ativa `ADMINISTRADOR` (Federação, Singular, Área
 
 ### Fluxo Principal
 
-1. Administrador seleciona uma pasta (já listada via `FT-DOCUMENTO`, `GET /api/v1/pastas`) e envia um arquivo com título.
+1. Administrador seleciona uma pasta (já listada via `FT-DOCUMENTO`, `GET /api/v1/pastas`) e envia um arquivo com título. Não escolhe categoria nem escopo.
 2. Sistema valida a atribuição ativa (papel `ADMINISTRADOR`) e o grant `EDICAO` da pasta para o nível dessa atribuição (ver UC-DOC-UPLOAD-002).
-3. Sistema grava o binário no Object Storage (DEC-013) e cria `DOCUMENTO` (`STA_DOCUMENTO='ATIVO'`), `DOCUMENTO_VERSAO` (`NUM_VERSAO=1`, `FLG_VERSAO_ATUAL='S'`) e `ARQUIVO_BINARIO`.
+3. Sistema deriva a categoria do `TIP_MIME` do arquivo (`Documentos`/`Imagens`/`Vídeos`/`Outros`), grava o binário no Object Storage (DEC-013) e cria, de forma atômica, `ARQUIVO_BINARIO`, `DOCUMENTO` (`STA_DOCUMENTO='ATIVO'`, `COD_CATEGORIA_DOCUMENTAL` = categoria derivada, `COD_COLABORADOR` = colaborador autenticado) e `DOCUMENTO_VERSAO` (`NUM_VERSAO=1`, `FLG_VERSAO_ATUAL='S'`, `COD_COLABORADOR` = mesmo colaborador).
 4. Sistema confirma o upload; o documento passa a aparecer na listagem (`GET /api/v1/pastas`) para todos com `PERMISSAO_PASTA` de leitura na pasta.
 
 ### Fluxos de Exceção
@@ -188,3 +188,4 @@ Atualizar (editar metadados/nova versão), Alterar Status (excluir/arquivar) e q
 | Versão | Data | Autor | Descrição |
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — 3 UCs (upload, negação por papel/grant, pasta inexistente) |
+| 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review: fluxo principal de UC-DOC-UPLOAD-001 explicita categoria derivada do `TIP_MIME` e `COD_COLABORADOR` da sessão |
