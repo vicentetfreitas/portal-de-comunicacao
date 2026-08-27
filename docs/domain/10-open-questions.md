@@ -31,7 +31,7 @@ Perguntas cuja resposta pode alterar significativamente o domínio, os aggregate
 | OQ-001 | Qual é o fluxo oficial de onboarding? | Colaborador Integrado, BR-011 | **Encerrada** — DEC-FA-001 |
 | OQ-002 | Parceiro autorizado e convidado são perfis distintos? Quais critérios de elegibilidade e permissões aplicam a cada um? | Afeta BR-001, BR-033 e governança de acesso externo | Aberta |
 | OQ-003 | O fluxo de solicitação de permissão opera de ponta a ponta (registro → decisão → notificação)? | Valida BR-029 a BR-032 e eventos do aggregate Controle de Acesso | Aberta |
-| OQ-004 | Comunicado é categoria de documento, publicação institucional independente ou ambos com regras distintas? | Define fronteira entre Gestão Documental e Comunicação Interna; afeta BR-039 | Aberta |
+| OQ-004 | Comunicado é categoria de documento, publicação institucional independente ou ambos com regras distintas? | Define fronteira entre Gestão Documental e Comunicação Interna; afeta BR-039 | **Encerrada** — DEC-CMS-002 (2026-08-27): Comunicado é publicação do CMS (WordPress), não categoria de documento; `CATEGORIA_DOCUMENTAL` passa a ser tipo de mídia |
 | OQ-005 | Compartilhamento definido em Gestão Documental e acesso efetivo em Controle de Acesso devem ser sempre equivalentes? | Risco de divergência entre audiência e permissão; afeta BR-020 e BR-003 | Aberta |
 | OQ-006 | Existe processo formal de revogação de permissão após Permissão Concedida? | Ciclo de vida de acesso incompleto nos aggregates Gestão Documental e Controle de Acesso | Aberta |
 
@@ -118,7 +118,7 @@ Registro das DECs: `docs/governance/03-open-decisions.md`.
 | BR-029 a BR-032 | O fluxo de solicitação de permissão está completo em produção? (OQ-003, OQ-016) |
 | BR-031 | Quem é responsável pelo recurso em cada tipo de escopo? (OQ-016) |
 | BR-033 | Convidado e parceiro autorizado são equivalentes operacionalmente? (OQ-002) |
-| BR-039 | Comunicado institucional segue regras de documento ou de canal interno? (OQ-004) |
+| BR-039 | Comunicado institucional segue regras de documento ou de canal interno? — **encerrada** via DEC-CMS-002: canal interno / publicação (CMS), não documento |
 
 ---
 
@@ -130,7 +130,7 @@ Registro das DECs: `docs/governance/03-open-decisions.md`.
 | Solicitação de Permissão Registrada | O fluxo completo até notificação está operacional? (OQ-003) |
 | Permissão Concedida | Existe evento de revogação correspondente? (OQ-006, OQ-017) |
 | Compartilhamento Definido | Alteração posterior gera qual evento? (OQ-011) |
-| Comunicado Institucional Publicado | Qual contexto origina o evento: Gestão Documental ou Comunicação Interna? (OQ-004) |
+| Comunicado Institucional Publicado | Comunicação Interna (CMS/WordPress) — **encerrada** via DEC-CMS-002 |
 | Publicação em Fique por Dentro Realizada | Qual processo de negócio sustenta este evento? (OQ-023) |
 | Perfil de Parceiro Autorizado Habilitado | Este evento deve existir no catálogo oficial? (OQ-018) |
 
@@ -141,7 +141,7 @@ Registro das DECs: `docs/governance/03-open-decisions.md`.
 | Aggregate | Questão Relacionada |
 | --------- | ------------------- |
 | Organização Corporativa | Qual fluxo consolidado de onboarding e modelo de equipe? (OQ-001, OQ-008, OQ-010) |
-| Gestão Documental | Qual dono de Comunicado Institucional Publicado e regras de herança em pastas? (OQ-004, OQ-012, OQ-014) |
+| Gestão Documental | Regras de herança em pastas? (OQ-012, OQ-014) — Comunicado saiu do escopo (DEC-CMS-002) |
 | Controle de Acesso | Ciclo de vida completo de solicitação e revogação de permissão? (OQ-003, OQ-006, OQ-017) |
 | Controle de Acesso | Invariantes operacionais de parceiro autorizado? (OQ-002, OQ-018) |
 | Gestão Documental ↔ Controle de Acesso | Como garantir equivalência entre compartilhamento e acesso efetivo? (OQ-005) |
@@ -201,7 +201,7 @@ Registro das DECs: `docs/governance/03-open-decisions.md`.
 | OQ-028 | Painel inicial implícito; Features de negócio sem home route |
 | OQ-002 | Acesso externo mal governado; violação de política institucional |
 | OQ-003 | Expectativa de fluxo de permissão não atendida; frustração de usuários |
-| OQ-004 | Duplicidade conceitual de comunicado; modelagem incorreta de aggregates |
+| OQ-004 | ~~Duplicidade conceitual de comunicado~~ — mitigado por DEC-CMS-002 |
 | OQ-005 | Colaborador vê recurso na audiência mas não acessa — ou o inverso |
 | OQ-006 | Permissões concedidas sem mecanismo de revogação; exposição indevida prolongada |
 | OQ-011 | Alteração de exposição sem regras; inconsistência documental |
@@ -222,7 +222,7 @@ Registro das DECs: `docs/governance/03-open-decisions.md`.
 | OQ-028 | Alta | **Encerrada** — DEC-FA-004 |
 | OQ-002 | Alta | Política institucional de acesso sem operacionalização |
 | OQ-003 | Alta | Fluxo central de concessão de acesso a recursos privados |
-| OQ-004 | Alta | Fronteira entre dois aggregates e catálogo de eventos |
+| OQ-004 | Alta | **Encerrada** — DEC-CMS-002 (2026-08-27) |
 | OQ-005 | Alta | Risco direto de inconsistência entre exposição e autorização |
 | OQ-006 | Alta | Ciclo de vida de permissão incompleto |
 | OQ-007 | Alta | Pré-condições do evento Colaborador Integrado (pós DEC-FA-001) |

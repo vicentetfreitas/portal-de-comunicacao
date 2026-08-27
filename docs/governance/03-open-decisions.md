@@ -1250,6 +1250,36 @@ O CMS é **exclusivamente** provedor de conteúdo. Autorização e organização
 
 ---
 
+## DEC-CMS-002 — Comunicado é publicação do CMS (encerra OQ-004)
+
+### Título
+
+Comunicado é conteúdo do CMS (WordPress), não categoria de documento.
+
+### Categoria
+
+Domínio / Arquitetura.
+
+### Criticidade
+
+Alta.
+
+### Status
+
+**Aprovada** (2026-08-27) — decisão de produto do usuário; encerra OQ-004 e estabiliza a fronteira Gestão Documental ↔ Comunicação Interna.
+
+### Decisão
+
+1. **Comunicado é uma publicação** (título, descrição/conteúdo, imagem de destaque opcional, arquivos anexos) servida por **API do WordPress** integrada ao Backend. Pertence a Comunicação Interna (`FT-NOTICIA`, repositório `portal-comunicacao-cms`). **Não** é um valor de `CATEGORIA_DOCUMENTAL` nem um `DOCUMENTO` do módulo de Gestão Documental. O item conflitante de **BR-039** ("Comunicado institucional segue regras de documento ou de canal interno?") resolve-se por **canal interno / publicação**, não documento.
+2. **Consequência — `CATEGORIA_DOCUMENTAL` passa a ser taxonomia por tipo de mídia.** Sem `Comunicado`, e como a taxonomia do seed histórico (`Normativos`/`Manuais`/`Políticas`/`Procedimentos`/`Comunicados` em `database/ddl/008-initial-data.sql`) nunca foi aplicada e não reflete o produto, `CATEGORIA_DOCUMENTAL` passa a classificar o documento pelo **tipo de mídia do arquivo**: `Documentos`, `Imagens`, `Vídeos`, `Outros`. A categoria de um documento é **derivada** do `TIP_MIME` no Backend, não escolhida pelo usuário nesta fase. Um seletor de categoria e a reconciliação plena da taxonomia ficam para uma Feature futura de categorização documental.
+3. **Integração WordPress ↔ Backend** (contrato, autenticação, cache, "boas práticas") é escopo de `FT-NOTICIA` / **GAP-DEC-010**, não desta decisão.
+
+### Registro definitivo
+
+`docs/domain/10-open-questions.md` (OQ-004 encerrada), `specs/features/documento-upload/specification.md` § Categorização por tipo de mídia (primeiro consumidor), `docs/domain/09-business-rules.md` BR-039 (referência cruzada). Compatível com DEC-CMS-001 (CMS é exclusivamente provedor de conteúdo).
+
+---
+
 # Decisões Críticas Abertas
 
 | ID      | Decisão                    | Sprint prevista |
@@ -1258,7 +1288,7 @@ O CMS é **exclusivamente** provedor de conteúdo. Autorização e organização
 | DEC-003 | Estratégia de mensageria   | Sprint futura   |
 | DEC-004 | Estratégia de deploy       | Sprint futura   |
 
-> **Atenção:** IDs `DEC-FA-*`, `DEC-ORG-*`, `DEC-CMS-*` evitam colisão com `docs/technology/04-decision-log.md` (DEC-008+). OQ-001/026/027/028 **encerradas** pelas DECs acima (2026-07-24).
+> **Atenção:** IDs `DEC-FA-*`, `DEC-ORG-*`, `DEC-CMS-*` evitam colisão com `docs/technology/04-decision-log.md` (DEC-008+). OQ-001/026/027/028 **encerradas** pelas DECs acima (2026-07-24); OQ-004 **encerrada** por DEC-CMS-002 (2026-08-27).
 
 ---
 

@@ -143,7 +143,7 @@ Regras cuja violação compromete o funcionamento do negócio.
 | Quota de Armazenamento Ultrapassada | BR-023 |
 | Notificação Dirigida ao Colaborador | BR-035, BR-036 |
 | Publicação em Fique por Dentro Realizada | BR-037, BR-039 |
-| Comunicado Institucional Publicado | BR-039, BR-004 — fronteira em lacuna |
+| Comunicado Institucional Publicado | BR-039, BR-004 — fronteira resolvida por DEC-CMS-002 (publicação do CMS) |
 
 ---
 
@@ -179,7 +179,7 @@ Regras cuja violação compromete o funcionamento do negócio.
 | ---- | ------- |
 | ~~Onboarding com fluxos coexistentes~~ | **Resolvido** — DEC-FA-001 / BR-011 (primeiro acesso = resolução de Contexto Ativo; solicitação admin obsoleta como onboarding oficial) |
 | Parceiro autorizado vs. convidado | BR-001 e BR-033 não cobrem critérios operacionais de parceiro autorizado |
-| Comunicado como categoria de documento vs. publicação institucional | BR-039 sem aggregate responsável único |
+| ~~Comunicado como categoria de documento vs. publicação institucional~~ | **Resolvido** — DEC-CMS-002: publicação institucional (CMS/WordPress, Comunicação Interna); não é categoria de documento |
 | Compartilhamento vs. acesso efetivo | BR-020 e BR-003 podem divergir se audiência definida não coincidir com permissão efetiva |
 | Federação como estrutura vs. escopo de compartilhamento | BR-020 pode aplicar "federação" com sentidos distintos |
 | Solicitação de permissão com operação parcial documentada | BR-029 a BR-032 podem não refletir operação completa em todos os cenários |
@@ -195,7 +195,7 @@ Regras cuja violação compromete o funcionamento do negócio.
 | Regras operacionais de parceiro autorizado | BR-001 sem detalhamento de elegibilidade e permissões |
 | Regras da Central de Colaboração | Sem políticas de interação entre colaboradores |
 | Regras de métricas administrativas | Sem léxico de indicadores e políticas de exibição |
-| Regras consolidadas de comunicado institucional | BR-039 sem distinção formal categoria vs. módulo |
+| Regras consolidadas de comunicado institucional | Distinção categoria vs. módulo **resolvida** por DEC-CMS-002 (é publicação do CMS); regras de conteúdo detalhadas em `FT-NOTICIA` |
 | Implementação física do mapeamento domínio de e-mail → Singular | **DH-PA-02 aprovada** (2026-08-15); cardinalidade e comportamento definidos (BR-044); artefatos no repositório (DDL, V008, DML); execução DBA no Oracle pendente — ver `docs/governance/03-open-decisions.md` (GAP-028-04) |
 | Credencial temporária de Primeiro Acesso (sem AUTH_SESSAO operacional) | **DH-PA-01 aprovada** (2026-08-15); implementação técnica pendente — ver `docs/governance/03-open-decisions.md` |
 | Política de CARGO na criação do COLABORADOR | **DH-CARGO-01 aprovada** (2026-08-17) — CARGO não obrigatório em qualquer cadastro; reconciliação DEC-DB-027 encerrada — ver `docs/governance/03-open-decisions.md` |

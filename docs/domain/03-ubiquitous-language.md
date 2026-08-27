@@ -52,7 +52,7 @@ A Linguagem Ubíqua deve ser utilizada de forma uniforme por stakeholders, negó
 | Recurso privado | Documento ou pasta com acesso restrito a escopo ou pessoas definidas | Controle de acesso a conteúdo restrito |
 | Recurso público | Documento ou conteúdo acessível sem restrição de escopo privado | Conteúdo aberto a convidados e consulta pública |
 | Responsável pelo recurso | Pessoa com autoridade para aprovar ou negar solicitação de acesso a recurso privado | Decisão em solicitações de permissão |
-| Comunicado | Tipo de conteúdo institucional de comunicação corporativa | Comunicação interna; requer qualificação de contexto (categoria vs. módulo) |
+| Comunicado | Publicação de comunicação corporativa (CMS/WordPress) | Comunicação Interna; **não** é categoria de documento — DEC-CMS-002 |
 | Fique por Dentro | Canal de publicações e informações internas destinado a colaboradores | Feed de informações internas |
 | Quota de armazenamento | Limite de espaço atribuído ao colaborador para armazenamento de documentos | Controle de uso de armazenamento |
 | Busca unificada | Pesquisa transversal em documentos, áreas, singulares e colaboradores | Localização de conteúdo e pessoas no portal |
@@ -105,7 +105,7 @@ Decisões adotadas com base nos conceitos aprovados. Não criam novos conceitos.
 | Convidado | Termo oficial do **papel de acesso** com escopo público limitado | Ator definido em `01-vision`; distinto de política institucional |
 | Parceiro autorizado | Termo institucional de **política de acesso**; não é sinônimo automático de Convidado | Definição operacional ainda em lacuna; manter separados até validação com stakeholders |
 | Equipe | Termo oficial para agrupamento operacional de colaboradores dentro de uma área | Conceito central aprovado; não substituir por representações alternativas não documentadas |
-| Comunicado | Qualificar sempre o contexto: **categoria de documento** ou **módulo corporativo**; não usar genericamente | Conflito documentado entre categoria em formulário de documento e módulo Comunicados |
+| Comunicado | **Publicação de Comunicação Interna** (CMS/WordPress): título, descrição, imagem de destaque opcional, anexos. **Não** é categoria de documento nem `CATEGORIA_DOCUMENTAL` — DEC-CMS-002 | Conflito histórico com "categoria de documento" **resolvido** por DEC-CMS-002 (2026-08-27) |
 | Onboarding | Termo oficial do processo de vinculação inicial à singular e área | Capacidade aprovada em `01-vision`; fluxos internos (seleção vs. solicitação) permanecem em lacuna |
 | Federação | Termo oficial para escopo institucional de compartilhamento entre singulares; não usar como sinônimo de Singular | Delimita compartilhamento institucional; distinto de unidade singular |
 | Organização | Substituir por **Singular** na documentação de domínio | Vocabulário paralelo identificado no glossário; Singular é o termo oficial |
