@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — só criação, backend estende `FT-DOCUMENTO`) |
-| Versão | 1.1 |
+| Versão | 1.2 |
 | Status | APPROVED |
 | Owner | Engineering Framework |
 
@@ -50,13 +50,15 @@ Ausências confirmadas em 2026-08-27 (`database/ddl/002-create-sequences.sql` s�
 
 ### Componentes Esperados
 
-- Script `database/migrations/V009__documento_upload_sequences_e_categorias.sql` (nome/número definitivo a confirmar contra o próximo `V*` livre), padrão `V003`-`V008`: as 3 sequences + o DML idempotente (`MERGE`) das 4 categorias.
-- Atualização de `database/migrations/README.md`.
+- **[proposto — 2026-08-27]** `database/migrations/V009__documento_upload_sequences_e_categorias.sql`: as 3 sequences (guardadas por `USER_SEQUENCES`) + `GRANT SELECT` p/ `UNMPORTCOM_APP_ROLE` (DEC-DB-024) + `MERGE` idempotente das 4 categorias de mídia + desativação da taxonomia histórica.
+- **[proposto — 2026-08-27]** `database/migrations/VAL-DB-03-verify-documento-upload-prereqs.sql`: verificação read-only pré-V009.
+- **[feito — 2026-08-27]** `database/migrations/README.md` atualizado (linha V009 + seção "Reconciliação greenfield pendente").
 
 ### Critérios de Conclusão
 
-- Script revisado e aprovado pelo DBA.
-- Sequences criadas e `CATEGORIA_DOCUMENTAL` populada no ambiente antes de `TK-DOC-UPLOAD-002`.
+- Script `V009` revisado e **executado pelo DBA** no ambiente (pendente).
+- Sequences criadas e `CATEGORIA_DOCUMENTAL` populada (`Documentos`/`Imagens`/`Vídeos`/`Outros`) antes de `TK-DOC-UPLOAD-002`.
+- Reconciliação greenfield do baseline (`002`/`007`/`008`/`V902`) — ver `database/migrations/README.md` — encaminhada ao DBA.
 
 ---
 
@@ -175,3 +177,4 @@ Define **como**, **quando**, **por quem** e **em qual ordem** — fora do escopo
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — 3 tasks (1 migration/DBA, 1 backend, 1 frontend) |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review: TK-DOC-UPLOAD-001 passa a cobrir `SQ_CAT_DOC_COD_CAT_DOC` + DML das 4 categorias de mídia; TK-DOC-UPLOAD-002 detalha resolução de categoria por `TIP_MIME`, `COD_COLABORADOR` da sessão, teto `413` e `400` |
+| 1.2 | 2026-08-27 | Claude Code | TK-DOC-UPLOAD-001: script `V009` + `VAL-DB-03` propostos (`database/migrations/`), README atualizado; execução DBA pendente |
