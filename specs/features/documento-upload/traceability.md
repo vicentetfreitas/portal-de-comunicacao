@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — só criação) |
-| Versão | 1.2 |
+| Versão | 1.3 |
 | Status | APPROVED |
 | Owner | Engineering Framework |
 
@@ -54,8 +54,8 @@ Consolida a rastreabilidade entre `specification.md`, `use-cases.md`, `api.md`, 
 - Papel `GESTOR_DOCUMENTAL` (seed em `PAPEL`) não estendido a esta Feature — só `ADMINISTRADOR` autorizado, decisão de produto explícita.
 - **Sem seletor de categoria no upload** — categoria derivada do `TIP_MIME`. A reconciliação da taxonomia de `CATEGORIA_DOCUMENTAL` com o produto e um seletor ficam para Feature futura de categorização.
 - Tamanho máximo de arquivo aceito não definido pelo usuário — a decidir em `tasks.md`/implementação (`specification.md` § Decisão de produto/arquitetura pendente, item 5); acima do teto → `413`.
-- **Bloqueante de execução, não de spec:** sequences `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` inexistentes — `V009` (SQL simples, `TK-DOC-UPLOAD-001`); `TK-DOC-UPLOAD-002` não inicia antes da execução. (`SQ_CAT_DOC_COD_CAT_DOC` não é bloqueio — app não insere categoria; é reconciliação greenfield.)
-- **Bloqueante de execução, não de spec:** `CATEGORIA_DOCUMENTAL` vazia no banco — `INSERT` das 4 categorias de mídia (ID explícito) no `V009`.
+- ✅ **RESOLVIDO (2026-08-27):** sequences `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` — `V009` executado e validado (JDBC); grants para `UNMPORTCOM_APP_ROLE` concedidos. (`SQ_CAT_DOC_COD_CAT_DOC` = reconciliação greenfield, não bloqueio.)
+- ✅ **RESOLVIDO (2026-08-27):** `CATEGORIA_DOCUMENTAL` — `V009` inseriu `Documentos`/`Imagens`/`Vídeos`/`Outros` (IDs 1–4), validado.
 - **Bloqueante de execução, não de spec:** grants `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) podem não existir ainda nos dados institucionais — a confirmar com o DBA antes de `TK-DOC-UPLOAD-002`.
 - **Ação de governança (monorepo, não bloqueia a Feature):** registrar em `docs/technology/04-decision-log.md` e `docs/domain/10-open-questions.md` (OQ-004) a redefinição de `CATEGORIA_DOCUMENTAL` (tipo de mídia) e `Comunicado` = publicação WordPress.
 
@@ -78,3 +78,4 @@ Consolida a rastreabilidade entre `specification.md`, `use-cases.md`, `api.md`, 
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — cobertura completa de RF/UC/API/AT/TK para futura DoR-Spec |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review de Spec — status APPROVED; dívidas atualizadas (categoria por mídia, `CATEGORIA_DOCUMENTAL` vazia, ação de governança OQ-004) |
 | 1.2 | 2026-08-27 | Claude Code | Ajuste: `V009` só cria `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` (bloqueio real); `SQ_CAT_DOC_COD_CAT_DOC` = reconciliação greenfield |
+| 1.3 | 2026-08-27 | Claude Code | `V009` executado e validado — 2 dívidas de execução (sequences, categorias) fechadas |

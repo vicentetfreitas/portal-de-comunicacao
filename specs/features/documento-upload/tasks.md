@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — só criação, backend estende `FT-DOCUMENTO`) |
-| Versão | 1.2 |
+| Versão | 1.3 |
 | Status | APPROVED |
 | Owner | Engineering Framework |
 
@@ -23,7 +23,9 @@
 
 Decomposição funcional de `FT-DOCUMENTO-UPLOAD` em unidades de implementação. Não representa planejamento de construção/cronograma — responsabilidade de `construction/`. **Este `tasks.md` é plano prospectivo (Feature em `APPROVED`)** — não autoriza implementação; `IMPLEMENTING` exige DoR-Implementation, ainda não avaliado.
 
-**Natureza da Feature:** estende `FT-DOCUMENTO` (backend/frontend já existentes e `DONE`) — reaproveita entidades (`CategoriaDocumentalEntity`/`Repository` inclusive), `PermissaoPastaDomainService`, `PastaController`/`DocumentoController`. Bloqueada por dependências de execução fora do controle da aplicação (sequences Oracle ausentes + `CATEGORIA_DOCUMENTAL` vazia — ver TK-DOC-UPLOAD-001).
+**Natureza da Feature:** estende `FT-DOCUMENTO` (backend/frontend já existentes e `DONE`) — reaproveita entidades (`CategoriaDocumentalEntity`/`Repository` inclusive), `PermissaoPastaDomainService`, `PastaController`/`DocumentoController`.
+
+**Bloqueio de banco (TK-DOC-UPLOAD-001) — ✅ resolvido 2026-08-27:** sequences `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` + grants + 4 categorias de mídia aplicados via `V009` e validados. Restam, para o DoR-Implementation: método de escrita no `ObjectStorageClient` (DEC-013), grants `PERMISSAO_PASTA` `EDICAO` (institucional), teto de tamanho de arquivo (decisão na implementação).
 
 ---
 
@@ -55,11 +57,11 @@ Ausências confirmadas em 2026-08-27 (`ddl/002-create-sequences.sql` só tem `SQ
 - **[proposto — 2026-08-27]** `database/migrations/VAL-DB-03-verify-documento-upload-prereqs.sql`: conferência read-only pré-V009.
 - **[feito — 2026-08-27]** `database/migrations/README.md`: linha V009 + seção "O que é esta pasta (não é Flyway)" + "Reconciliação greenfield pendente".
 
-### Critérios de Conclusão
+### Critérios de Conclusão — ✅ ATENDIDA (2026-08-27)
 
-- `V009` **executado** no ambiente (usuário/DBA na IDE) e validado (Claude confere via consulta read-only).
-- Sequences criadas + grants + 4 categorias ativas antes de `TK-DOC-UPLOAD-002`.
-- Reconciliação greenfield do baseline (`002`/`007`/`008`/`V902`) — ver `README.md` — registrada para o DBA.
+- ✅ `V009` **executado** pelo usuário na IDE do banco.
+- ✅ Validado via consulta read-only (JDBC, Claude): `SQ_ARQUIVO_BINARIO` e `SQ_DOCUMENTO_VERSAO` criadas (cache 20), ambas com `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`; `CATEGORIA_DOCUMENTAL` com 4 linhas ativas (IDs 1–4: Documentos/Imagens/Vídeos/Outros).
+- ✅ Reconciliação greenfield do baseline (`002`/`007`/`008`/`V902`) registrada em `database/migrations/README.md` para o DBA (sem urgência — conteúdo vem pelo frontend).
 
 ---
 
@@ -179,3 +181,4 @@ Define **como**, **quando**, **por quem** e **em qual ordem** — fora do escopo
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — 3 tasks (1 migration/DBA, 1 backend, 1 frontend) |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review: TK-DOC-UPLOAD-001 passa a cobrir `SQ_CAT_DOC_COD_CAT_DOC` + DML das 4 categorias de mídia; TK-DOC-UPLOAD-002 detalha resolução de categoria por `TIP_MIME`, `COD_COLABORADOR` da sessão, teto `413` e `400` |
 | 1.2 | 2026-08-27 | Claude Code | TK-DOC-UPLOAD-001: script `V009` (SQL simples, 2 sequences + grants + 4 `INSERT` de categoria) + `VAL-DB-03` propostos; README explica a pasta (não é Flyway); `SQ_CAT_DOC_COD_CAT_DOC` sai do escopo (app não insere categoria) |
+| 1.3 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-001 concluída** — `V009` executado pelo usuário e validado via JDBC (2 sequences + grants + 4 categorias) |

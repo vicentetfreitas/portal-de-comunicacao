@@ -3,7 +3,7 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — cria documento/versão/binário; sem CRUD de pasta) |
-| Versão | 1.2 |
+| Versão | 1.3 |
 | Status | APPROVED |
 | Owner | Engineering Framework |
 
@@ -124,10 +124,10 @@ Não conformidades do Review de Spec (`docs/…` — commit `7d643eb`), agora fe
 
 # Decisão de produto/arquitetura pendente
 
-Nenhuma pendência de **spec**. As pendências abaixo são de **execução** — devem ser resolvidas antes do DoR-Implementation:
+Nenhuma pendência de **spec**. Situação das pendências de **execução** (para o DoR-Implementation):
 
-1. **Sequences Oracle ausentes.** `database/ddl/002-create-sequences.sql` só tem `SQ_DOCUMENTO_COD_DOCUMENTO`. Faltam `SQ_ARQUIVO_BINARIO` (`ARQUIVO_BINARIO.COD_ARQUIVO_BINARIO`) e `SQ_DOCUMENTO_VERSAO` (`DOCUMENTO_VERSAO.COD_DOCUMENTO_VERSAO`) — necessárias para o backend inserir via JPA (`GenerationType.SEQUENCE`). Banco é DBA-administrado (`DEC-DB-019`, sem Flyway) — a aplicação não cria schema. **Ação:** `TK-DOC-UPLOAD-001` produz o script `V009` (SQL simples) para execução manual. `SQ_DOCUMENTO_COD_DOCUMENTO` já existe. `SQ_CAT_DOC_COD_CAT_DOC` (referenciada por `008-initial-data.sql`) **não** é necessária aqui — a aplicação nunca insere categoria; é item de reconciliação greenfield do baseline.
-2. **`CATEGORIA_DOCUMENTAL` sem dados.** Verificado 2026-08-27: 0 linhas no Oracle TST; o seed histórico nunca foi aplicado. **Ação:** `V009` insere as 4 categorias de mídia (`Documentos`, `Imagens`, `Vídeos`, `Outros`) com ID explícito. Sem essas linhas nenhum upload funciona (FK `NOT NULL`).
+1. ~~**Sequences Oracle ausentes.**~~ ✅ **RESOLVIDO (2026-08-27)** — `V009` executado: `SQ_ARQUIVO_BINARIO` e `SQ_DOCUMENTO_VERSAO` criadas + `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`, validado via JDBC. `SQ_DOCUMENTO_COD_DOCUMENTO` já existia. `SQ_CAT_DOC_COD_CAT_DOC` (referenciada por `008-initial-data.sql`) não é necessária — a aplicação nunca insere categoria; é item de reconciliação greenfield do baseline (`database/migrations/README.md`).
+2. ~~**`CATEGORIA_DOCUMENTAL` sem dados.**~~ ✅ **RESOLVIDO (2026-08-27)** — `V009` inseriu `Documentos`/`Imagens`/`Vídeos`/`Outros` (IDs 1–4, `FLG_ATIVO='S'`), validado via JDBC.
 3. **Dados institucionais — grants `EDICAO` ausentes.** Upload só funciona em pastas com `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) para o nível da atribuição. Se o seed atual só tem `LEITURA`/`DOWNLOAD` (caso de `FT-DOCUMENTO`), é carga institucional (`database/dml/`) a confirmar/propor ao DBA — não uma tela desta Feature.
 4. **`ObjectStorageClient` só tem `download(referenciaObjeto)`.** Precisa de método de escrita (ex. `upload(referenciaObjeto, InputStream, tamanho, tipoMime)`) — contrato novo sobre o mesmo Object Storage S3-compatível (DEC-013), sem mudar de provedor.
 5. **Teto de tamanho de arquivo** — sem limite explícito definido. Backend deve aplicar um teto operacional razoável (a definir em `tasks.md`/implementação; retorna `413`) — decisão técnica mínima de segurança, não a quota de `BR-023` (fora de escopo).
@@ -207,3 +207,4 @@ ARQUIVO_BINARIO (INSERT novo — requer sequence nova, ver Decisão #1)
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — decompõe o "Fora do Escopo" de `FT-DOCUMENTO` em Feature própria (upload apenas, sem CRUD de pasta/documento), conforme decisões de produto do usuário nesta sessão |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review de Spec (`7d643eb`): `COD_CATEGORIA_DOCUMENTAL` derivado do `TIP_MIME` (`Documentos`/`Imagens`/`Vídeos`/`Outros`), sem parâmetro nem config; `DOCUMENTO_VERSAO.COD_COLABORADOR` explicitado; `Comunicado` deixa de ser categoria (é publicação WordPress — OQ-004); `CATEGORIA_DOCUMENTAL` vazia + `SQ_CAT_DOC_COD_CAT_DOC` ausente adicionadas às pendências de execução; erros `400`/`413` do multipart explicitados |
 | 1.2 | 2026-08-27 | Claude Code | Ajuste após feedback: só `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` são bloqueio (app não insere categoria); `SQ_CAT_DOC_COD_CAT_DOC` vira item de reconciliação greenfield; remoção do termo "Flyway" (DEC-DB-019); categorias criadas por `INSERT` de ID explícito no `V009` |
+| 1.3 | 2026-08-27 | Claude Code | `V009` executado e validado — pendências de execução #1 (sequences) e #2 (categorias) resolvidas |
