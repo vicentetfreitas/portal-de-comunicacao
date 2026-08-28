@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — só criação, backend estende `FT-DOCUMENTO`) |
-| Versão | 1.5 |
-| Status | APPROVED |
+| Versão | 1.6 |
+| Status | DONE |
 | Owner | Engineering Framework |
 
 ---
@@ -25,7 +25,9 @@ Decomposição funcional de `FT-DOCUMENTO-UPLOAD` em unidades de implementação
 
 **Natureza da Feature:** estende `FT-DOCUMENTO` (backend/frontend já existentes e `DONE`) — reaproveita entidades (`CategoriaDocumentalEntity`/`Repository` inclusive), `PermissaoPastaDomainService`, `PastaController`/`DocumentoController`.
 
-**Progresso:** TK-DOC-UPLOAD-001 ✅ (V009 aplicado) · TK-DOC-UPLOAD-002 ✅ (backend, `portal-comunicacao-api` `57c22d9`) · TK-DOC-UPLOAD-003 ✅ (frontend, `portal-comunicacao-app` `5f887f2`). Pendências de execução para homologação (não de código): grants `PERMISSAO_PASTA` `EDICAO` institucionais, provisionamento do Object Storage no ambiente.
+**Progresso:** TK-DOC-UPLOAD-001 ✅ (V009 aplicado) · TK-DOC-UPLOAD-002 ✅ (backend, `portal-comunicacao-api` `57c22d9`) · TK-DOC-UPLOAD-003 ✅ (frontend, `portal-comunicacao-app` `5f887f2`).
+
+**`DONE` (2026-08-28).** `mvn clean verify` 399/0/2 (`DocumentoUploadAcceptanceIntegrationTest` 9/9); frontend typecheck + 209 unit. MinIO provisionado (`docker-compose.yml` em `portal-comunicacao-api`); caminho real upload → download validado end-to-end contra MinIO. Review de PR (Gate 3) PASS; DoD / Gate 6 PASS. Dívidas aceitas: sem E2E Playwright dedicada; grants `PERMISSAO_PASTA EDICAO` em pastas de produção = dado institucional (DBA) — homologação validada via `V011` (pasta 122). Ver `traceability.md` § Dívidas Documentais Aceitas.
 
 ---
 
@@ -200,3 +202,4 @@ Define **como**, **quando**, **por quem** e **em qual ordem** — fora do escopo
 | 1.5 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-003 concluída** — upload na página de Arquivos (`portal-comunicacao-app` `5f887f2`); `test:unit` 200 |
 | 1.4 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-002 concluída** — endpoint de upload no backend (`portal-comunicacao-api` `57c22d9`), `mvn verify` 341/0 |
 | 1.3 | 2026-08-27 | Claude Code | **TK-DOC-UPLOAD-001 concluída** — `V009` executado pelo usuário e validado via JDBC (2 sequences + grants + 4 categorias) |
+| 1.6 | 2026-08-28 | Claude Code (Review) | **Fechamento — `feature.yaml` `IMPLEMENTING` → `DONE`.** MinIO provisionado; caminho real validado end-to-end. `mvn verify` 399/0/2. Gate 3 + Gate 6 PASS. Dívida aceita: sem E2E Playwright; grants de produção = institucional. |

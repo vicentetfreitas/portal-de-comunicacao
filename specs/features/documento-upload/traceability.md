@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — só criação) |
-| Versão | 1.3 |
-| Status | APPROVED |
+| Versão | 1.4 |
+| Status | DONE |
 | Owner | Engineering Framework |
 
 ---
@@ -53,10 +53,12 @@ Consolida a rastreabilidade entre `specification.md`, `use-cases.md`, `api.md`, 
 - `BR-023` (quota de armazenamento, `docs/domain/09-business-rules.md`) catalogada mas **não implementada** nesta Feature — decisão de produto explícita (ver `specification.md` § Fora do Escopo).
 - Papel `GESTOR_DOCUMENTAL` (seed em `PAPEL`) não estendido a esta Feature — só `ADMINISTRADOR` autorizado, decisão de produto explícita.
 - **Sem seletor de categoria no upload** — categoria derivada do `TIP_MIME`. A reconciliação da taxonomia de `CATEGORIA_DOCUMENTAL` com o produto e um seletor ficam para Feature futura de categorização.
-- Tamanho máximo de arquivo aceito não definido pelo usuário — a decidir em `tasks.md`/implementação (`specification.md` § Decisão de produto/arquitetura pendente, item 5); acima do teto → `413`.
+- **Sem suíte E2E Playwright dedicada** (`AT-DOC-UPLOAD-*`) — decisão do usuário 2026-08-28 (fechar com cobertura unit + integração Oracle + smoke test manual end-to-end). Mesma dívida de `FT-DOCUMENTO-GESTAO`.
+- Teto de tamanho de arquivo definido na implementação: **25 MB** (`spring.servlet.multipart.max-file-size`, override por `DOCUMENTO_MAX_FILE_SIZE`); acima → `413`.
 - ✅ **RESOLVIDO (2026-08-27):** sequences `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` — `V009` executado e validado (JDBC); grants para `UNMPORTCOM_APP_ROLE` concedidos. (`SQ_CAT_DOC_COD_CAT_DOC` = reconciliação greenfield, não bloqueio.)
 - ✅ **RESOLVIDO (2026-08-27):** `CATEGORIA_DOCUMENTAL` — `V009` inseriu `Documentos`/`Imagens`/`Vídeos`/`Outros` (IDs 1–4), validado.
-- **Bloqueante de execução, não de spec:** grants `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) podem não existir ainda nos dados institucionais — a confirmar com o DBA antes de `TK-DOC-UPLOAD-002`.
+- ✅ **RESOLVIDO (2026-08-28):** Object Storage (DEC-013) — MinIO provisionado (`docker-compose.yml` em `portal-comunicacao-api`); caminho real upload → download validado end-to-end.
+- **Bloqueante de execução, não de spec:** grants `PERMISSAO_PASTA` (`TIP_ACESSO='EDICAO'`) nas pastas de **produção** são dado institucional (DBA). Homologação: `V011` provisionou a pasta 122 com grant `EDICAO` para a Área TI — AT-DOC-UPLOAD-001 validado contra ela.
 - **Ação de governança (monorepo, não bloqueia a Feature):** registrar em `docs/technology/04-decision-log.md` e `docs/domain/10-open-questions.md` (OQ-004) a redefinição de `CATEGORIA_DOCUMENTAL` (tipo de mídia) e `Comunicado` = publicação WordPress.
 
 ---
@@ -79,3 +81,4 @@ Consolida a rastreabilidade entre `specification.md`, `use-cases.md`, `api.md`, 
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Correções do Review de Spec — status APPROVED; dívidas atualizadas (categoria por mídia, `CATEGORIA_DOCUMENTAL` vazia, ação de governança OQ-004) |
 | 1.2 | 2026-08-27 | Claude Code | Ajuste: `V009` só cria `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` (bloqueio real); `SQ_CAT_DOC_COD_CAT_DOC` = reconciliação greenfield |
 | 1.3 | 2026-08-27 | Claude Code | `V009` executado e validado — 2 dívidas de execução (sequences, categorias) fechadas |
+| 1.4 | 2026-08-28 | Claude Code (Review) | Fechamento — `mvn verify` 399/0/2 (`DocumentoUploadAcceptanceIntegrationTest` 9/9); MinIO provisionado, caminho real validado; teto 25 MB registrado; dívida "sem E2E Playwright" registrada. Gate 3 + Gate 6 PASS. Header → `DONE`. |
