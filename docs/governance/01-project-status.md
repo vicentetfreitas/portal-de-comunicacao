@@ -22,9 +22,56 @@ Este documento é o **índice central do estado atual** do projeto. Ele não é 
 | Projeto                | Portal de Comunicação                      |
 | Status Geral           | Baseline documental **APROVADA COM RESSALVAS** (Exit Gate 2026-07-24) |
 | Versão da Documentação | 2.0 (Exit Gate)                                |
-| Última Atualização     | 2026-08-26                                 |
+| Última Atualização     | 2026-08-28                                 |
 | Responsável            | Project Manager / Arquitetura              |
 | Próxima Revisão        | Etapa 5 — infraestrutura local (Oracle)    |
+
+---
+
+# Estado Atual (leitura rápida)
+
+> Seção de leitura mínima. Para a maioria das perguntas de estado/próximo passo, **basta esta seção**.
+> As demais seções abaixo (Status por Camada, Marcos, Indicadores, Critério de Revalidação) são
+> referência sob demanda. Narrativas dos checkpoints históricos: `docs/governance/history/16-state-index-checkpoints.md`.
+
+**Etapa:** MVP Etapa 2 avançada + bloco **Gestão Documental** em andamento. Baseline documental
+APROVADA COM RESSALVAS (Exit Gate 2026-07-24). Nenhum impedimento ativo.
+
+**Repositórios (DEC-015):** deixou de ser monorepo. `backend/` → `portal-comunicacao-api`,
+`frontend/` → `portal-comunicacao-app`, CMS → `portal-comunicacao-cms` (scaffold). `specs/`,
+`docs/`, `construction/`, `database/` **permanecem neste monorepo** (SSOT compartilhada).
+Pontos abertos: onde a SSOT compartilhada vive em definitivo (#2), hospedagem/tema CMS (#5).
+
+## Features — status (SSOT de estado: `specs/features/<slug>/feature.yaml`)
+
+| Feature | slug | Status | Nota |
+|---|---|---|---|
+| FT-AUTH / FT-AREA / FT-SINGULAR / FT-EQUIPE / FT-SESSION | — | closed | Etapa 2 org + auth/sessão |
+| FT-COLABORADOR | `colaborador` | DONE | BE+FE+E2E (`AT-FE-COLABORADOR-001..005`) |
+| FT-PRIMEIRO-ACESSO | `primeiro-acesso` | DONE | 2 dívidas documentais aceitas (sem AT do wizard, sem `tasks.md`) |
+| FT-AREA-COLABORADOR | `area-colaborador` | DONE | TK-004 superseded (nav "Federação" cobre) |
+| FT-FEDERACAO-COLABORADOR | `federacao-colaborador` | DONE | escrita retroativamente |
+| FT-DOCUMENTO (leitura) | `arquivos` | DONE | — |
+| FT-DOCUMENTO-UPLOAD | `documento-upload` | IMPLEMENTING | código completo; pendências de **homologação** (grants `PERMISSAO_PASTA`, provisionar MinIO), não de código |
+| FT-DOCUMENTO-GESTAO | `documento-gestao` | IMPLEMENTING | **4/4 tasks feitas** (2026-08-27, `api 561683e` / `app 92b7fff`); falta `/validate` → `/review` → DoD/Gate 3/Gate 6 → `DONE` |
+| FT-DOCUMENTO-NAVEGACAO | `documento-navegacao` | DRAFT | spec v1.1, decisões D-01..D-07 fechadas; pronta para `/readiness` DoR-Spec (Gate 1) |
+| FT-HOME / FT-NOTICIA / FT-PERFIL / FT-SERVICOS | — | DRAFT | inertes; `/app` Home é spike sancionado sem DoR |
+
+## Próximas ações (ordem)
+
+1. **Fechar FT-DOCUMENTO-GESTAO:** `/validate` (mvn clean verify + lint/typecheck/unit) → `/review` de aderência → DoD/Gate → `feature.yaml` `DONE`. Pushar `api 561683e` / `app 92b7fff` (verificar se ainda locais).
+2. **FT-DOCUMENTO-UPLOAD:** destravar homologação — provisionar MinIO + grants institucionais; então fechar.
+3. **FT-DOCUMENTO-NAVEGACAO:** `/readiness` DoR-Spec → `DRAFT` → `READY_FOR_REVIEW`.
+4. Commitar working tree pendente: `docker-compose.yml` (Oracle), `.github/workflows/backend.yml`.
+5. Etapa 5 — validar ambiente local Oracle ponta a ponta.
+
+## Pendências abertas (detalhe na seção "Pendências / Divergências Registradas")
+
+`#4` roadmap desatualizado · `#5` colisão de ID entre 3 catálogos de decisão ·
+`#8` execução da migração de repositórios (proteção de branch GitLab manual pendente) ·
+`#9` `11-platform-decomposition.md` cita stack errada (GAP-DEC-004) · `#10` convenção de commit cross-cutting ·
+`#3` `PapelAtribuicaoService` sem `feature.yaml` associada.
+Baixa severidade / registro apenas: `#1`, `#2`, `#6`, `#7`.
 
 ---
 
@@ -53,33 +100,24 @@ Este documento é o **índice central do estado atual** do projeto. Ele não é 
 
 # Resumo Executivo
 
-## Situação Atual
+> Estado corrente e próximas ações: seção **`# Estado Atual (leitura rápida)`** acima.
+> Esta seção guarda o contexto histórico e os ponteiros de SSOT.
 
-O projeto concluiu a **Sprint 0 do backend**, múltiplas features de **Etapa 2** (org + auth/sessão) e a **revalidação SSOT (Etapa 3)** em 2026-08-14. Desde então, **FT-PRIMEIRO-ACESSO**, **FT-COLABORADOR** e **FT-AREA-COLABORADOR** encerraram formalmente (`DONE`) em 2026-08-26 — as três únicas features com implementação concluída e sem checkpoint de fechamento ficaram resolvidas nesta data. FT-COLABORADOR incluiu localizar o E2E Playwright (`AT-FE-COLABORADOR-001..005`) que faltava no checkpoint anterior; FT-PRIMEIRO-ACESSO exigiu migrar `feature.yaml` do esquema legado (`status.specification`) para o escalar atual e corrigir drift em `traceability.md` (duas dívidas documentais aceitas e registradas: sem AT dedicado à conclusão do wizard, sem `tasks.md`).
+## Contexto
 
-SSOT operacional: `specs/foundation/minimal-ssot.md`
-SSOT normativo documental: `docs/governance/07-documentation-architecture.md` v2.0
-Estado de implementação: evidência direta em código/testes do repositório (git log, `backend/src`, `frontend/src`) — **não** `construction/registry.yaml`
+Sprint 0 do backend concluída (2026-07-08); features de Etapa 2 (org + auth/sessão) e revalidação
+SSOT Etapa 3 (2026-08-14). FT-COLABORADOR, FT-PRIMEIRO-ACESSO e FT-AREA-COLABORADOR encerradas
+`DONE` em 2026-08-26 (ver `docs/governance/history/16-state-index-checkpoints.md`). Desde 2026-08-27,
+foco no bloco Gestão Documental (FT-DOCUMENTO*).
 
-**Separação em repositórios (DEC-015, 2026-08-26):** o projeto deixou de ser monorepo único. `backend/` e `frontend/` já foram extraídos para repositórios próprios e publicados no GitLab corporativo (`portal-comunicacao-api`, `portal-comunicacao-app`, branch `chore/repo-split-import`, `main` ainda sem merge); um terceiro repositório (`portal-comunicacao-cms`) recebeu o scaffold inicial do WordPress. `specs/`, `docs/`, `construction/` e `database/` **permanecem** neste monorepo (SSOT compartilhada) — a divisão ainda não define onde essa fonte única de verdade deve viver de forma definitiva (Ponto em Aberto 2 de DEC-015). CI (`.github/workflows/`) e estratégia de deploy por repositório também seguem em aberto (Pontos 5 e 6 de DEC-015). Ver registro completo em `docs/technology/04-decision-log.md` § DEC-015.
+* SSOT operacional: `specs/foundation/minimal-ssot.md`
+* SSOT normativo documental: `docs/governance/07-documentation-architecture.md` v2.0
+* Estado de implementação: evidência direta em código/testes do repositório — **não** `construction/registry.yaml`
+* Estado de cada Feature: `specs/features/<slug>/feature.yaml` (ver tabela na leitura rápida)
 
-**Progresso de construção (evidência: `feature.yaml` de cada feature + presença/execução de código e testes; ver detalhe na tabela de features abaixo):**
-
-* FT-AUTH, FT-AREA, FT-SINGULAR, FT-EQUIPE, FT-SESSION — **closed**
-* FT-COLABORADOR — **DONE** (`feature.yaml`, commit `a7be2ca`, 2026-08-26). BE closed (Controller/Service/Repository/Entity + testes verdes); FE implementado (5 rotas, service, composable, testes unitários); **E2E Playwright presente** (`frontend/test/e2e/colaborador/colaborador.spec.ts`, cobre `AT-FE-COLABORADOR-001..005`, commit `d00358e`) — corrige registro anterior deste documento, que dava a E2E como não localizada
-* FT-PRIMEIRO-ACESSO — **DONE** (`feature.yaml`, commit `170f005`, 2026-08-26). BE implementado e testado (`PrimeiroAcessoController`, `PrimeiroAcessoApplicationService`, 9 testes de aceitação verdes cobrindo PA-API-006 e PA-API-007) e FE implementado (`usePrimeiroAcessoPage.ts` + página, rota registrada) — corrige registro anterior deste documento, que descrevia BE como `not_started` e o fechamento como não confirmado. Duas dívidas documentais aceitas em `traceability.md`: RF-PA-011 sem AT formal dedicado à conclusão do wizard; sem `tasks.md` nesta feature
-* FT-AREA-COLABORADOR — **DONE** (`feature.yaml`, commit `2a9c953`, 2026-08-26). Spec passou de `DRAFT` para `APPROVED` (2026-08-20/21) e as 4 tasks (`tasks.md` v1.1) foram implementadas: hub, dados da Área, equipes da Área — TK-AREA-COLAB-004 (item de nav dedicado) foi **superseded** por decisão explícita de produto (2026-08-26): a entrada "Áreas" foi removida do menu principal a favor de "Federação", que cobre o mesmo escopo (ver `docs/architecture/decisions/AUDITORIA-DS-FIGMA-01.md`); rota `/app/area` permanece funcional — corrige registro anterior deste documento, que dava a implementação como não iniciada
-* Integration sprint-03-org-backend — **APPROVED** (2026-07-14)
-
----
-
-## Objetivos da Fase Atual
-
-* FT-COLABORADOR, FT-AREA-COLABORADOR e FT-PRIMEIRO-ACESSO confirmadas `DONE` em 2026-08-26 — nenhuma feature implementada aguarda checkpoint de fechamento neste momento.
-* Consolidar no git o trabalho já presente no working tree (`docker-compose.yml` → Oracle, `.github/workflows/backend.yml`).
-* Validar ambiente local Oracle (Etapa 5).
-* Manter aderência entre `specs/`, `docs/` e código.
-* Evoluir Etapas 3–5 do MVP conforme `docs/backlog/04-mvp-scope.md`.
+**Separação em repositórios (DEC-015, 2026-08-26):** resumo na leitura rápida; registro completo
+em `docs/technology/04-decision-log.md` § DEC-015. Pontos em aberto: onde a SSOT compartilhada
+vive em definitivo (#2), hospedagem/tema CMS (#5), proteção de branch GitLab (manual).
 
 ---
 
@@ -292,43 +330,16 @@ Nenhum impedimento ativo. Ambiente local requer Oracle acessível (`UNMPORTCOM_A
 
 # Próximas Ações
 
-## Curto Prazo
-
-1. Commitar o que já está pronto no working tree: `docker-compose.yml` (Oracle), `.github/workflows/backend.yml`.
-2. Etapa 5 — validar ambiente local Oracle de ponta a ponta com o `docker-compose.yml` já corrigido.
-3. Manter aderência ao fluxo simplificado (`specs/foundation/development-workflow.md`).
+Lista corrente e ordenada: seção **`# Estado Atual (leitura rápida)` → Próximas ações (ordem)**.
 
 ---
 
-# Checkpoint — 2026-08-26 (Reconciliação de Estado)
+# Checkpoints de Reconciliação
 
-**Natureza:** reconciliação do State Index contra evidência de código (`feature.yaml`, rotas/páginas/composables, testes E2E) para FT-COLABORADOR e FT-AREA-COLABORADOR. Nenhum SSOT, código, spec ou decisão foi alterado nesta reconciliação — apenas este documento.
-
-**Evidência consultada:**
-
-* `specs/features/{colaborador,area-colaborador}/feature.yaml` — ambos `status: DONE`.
-* `git log` — commit `a7be2ca` (encerramento FT-COLABORADOR), commit `d00358e` (E2E `AT-FE-COLABORADOR-001..005`), commit `2a9c953` (encerramento FT-AREA-COLABORADOR).
-* `frontend/test/e2e/colaborador/colaborador.spec.ts` — confirma as 5 suítes E2E (`AT-FE-COLABORADOR-001..005`) que o checkpoint anterior dava como não localizadas.
-* `frontend/src/pages/area-colaborador/*`, `frontend/src/composables/area-colaborador/*`, `frontend/src/router/routes/area-colaborador.routes.ts` — confirmam TK-AREA-COLAB-001..003 implementadas.
-* `frontend/src/constants/navigation.ts` (working tree) — comentário registra a decisão de produto de 2026-08-26 que supersede TK-AREA-COLAB-004 (item de nav dedicado removido a favor de "Federação"); `docs/architecture/decisions/AUDITORIA-DS-FIGMA-01.md`.
-
-**Resultado:** este documento estava desatualizado em relação a FT-COLABORADOR (E2E dado como ausente, quando já existe) e a FT-AREA-COLABORADOR (implementação dada como não iniciada, quando a feature já está `DONE`). Corrigido nas seções acima; Pendências #1–#3 do checkpoint anterior (2026-08-21) resolvidas — ver seção Pendências.
-
----
-
-# Checkpoint — 2026-08-21 (Reconciliação de Estado)
-
-**Natureza:** reconciliação do State Index contra evidência de código e artefatos de auditoria já existentes. Nenhum SSOT, código, spec ou decisão foi alterado nesta reconciliação — apenas este documento.
-
-**Evidência consultada:**
-
-* `git log` (commits `e94a23e`…`9306f94`, 2026-08-17 a 2026-08-20) e `git status`/`git diff` do working tree.
-* Código e testes de backend: `PrimeiroAcessoController`, `PrimeiroAcessoApplicationService` (9 testes de aceitação verdes), `ColaboradorController`/`ColaboradorApplicationService` (6 testes de aceitação verdes), `PapelAtribuicaoService` (novo, 2026-08-20).
-* Código de frontend: rotas/páginas de `colaborador` (Hub/Lista/Cadastro/Detalhe/Edição, registradas em `router/routes/index.ts`) e de `primeiro-acesso` (`usePrimeiroAcessoPage.ts` + página, registrada em `foundation.routes.ts`).
-* `specs/features/{colaborador,primeiro-acesso,area-colaborador}/feature.yaml` e `specification*.md`.
-* `docs/audit/12-structural-simplification-audit-w0-w1.md`, `docs/governance/structural-simplification-plan-w2.md`, `docs/audit/13-decision-inventory.md`, `docs/audit/14-governance-audit-inventory-status.md`, `docs/audit/15-migration-planning-inventory.md` (todos 2026-08-20, já existentes — não refeitos aqui).
-
-**Resultado:** este documento estava desatualizado em relação a FT-PRIMEIRO-ACESSO (BE registrado como `not_started`, quando há controller/service/testes) e omitia FT-AREA-COLABORADOR (feature nova desde o último checkpoint). Corrigido nas seções acima.
+As narrativas dos checkpoints (evidência consultada + correção aplicada) foram movidas para
+`docs/governance/history/16-state-index-checkpoints.md` em 2026-08-28 para manter este índice
+de leitura mínima. Último checkpoint: **2026-08-28** (redução do índice; Pendência #11 atendida).
+Anteriores: 2026-08-26 (FT-COLABORADOR / FT-AREA-COLABORADOR `DONE`), 2026-08-21 (FT-PRIMEIRO-ACESSO BE, FT-AREA-COLABORADOR).
 
 ---
 
@@ -348,7 +359,7 @@ Registradas aqui por escopo desta reconciliação (não corrigidas — correçã
 | 8 | DEC-015 (separação em repositórios) aprovada 2026-08-26. Ponto em Aberto 6 (CI por repositório) **resolvido** para backend/frontend. **2026-08-27:** `portal-comunicacao-api` e `portal-comunicacao-app` **ressincronizados via `git subtree split`** (preservando histórico; substitui o snapshot squash, que precedia o módulo `documento` e ~1 semana de trabalho); `development`/`stage` de ambos recriadas e force-pushed. `api` compila standalone (`./mvnw clean test-compile` OK). Ver `docs/technology/04-decision-log.md` § DEC-015 → Progresso da Execução. Seguem abertos: #2 (onde vivem `specs/`/`docs/`/`construction/`/`database/` pós-divisão — commits de spec/governança continuam só no monorepo), #5 (hospedagem/tema do CMS — CI ali é só placeholder), resync do `portal-comunicacao-cms` quando houver código. Proteção de branch no GitLab (`stage`/`main`) não configurada — fora do alcance de CLI, ação manual pendente do usuário na UI do GitLab | `docs/technology/04-decision-log.md` § DEC-015 | Média — bloqueia execução completa da migração de repositórios, não bloqueia trabalho de feature |
 | 9 | `docs/solution-design/11-platform-decomposition.md` descreve Frontend em **Next.js** e banco **PostgreSQL** — contradiz a stack aprovada (Vue 3/Quasar, DEC-007 Oracle) e o `docker-compose.yml` atual (só Oracle, sem Postgres). Mesmo padrão do documento já arquivado em `docs/governance/history/11-target-repository-structure.md`. Já registrado como GAP-DEC-004 (`docs/audit/13-decision-inventory.md`), ainda **Aberto** | `docs/solution-design/11-platform-decomposition.md` — reclassificar (Archive) ou corrigir | Média |
 | 10 | `docs/governance/10-project-organization.md` § Convenção Git exige `scope` de commit = slug de Feature e proíbe domínio genérico, mas não prevê trabalho cross-cutting sem Feature associada (governança/infra, ex.: DEC-015, branches/CI dos repositórios divididos). Commit `e5b9ce6` (`docs(governance): ...`) usa escopo genérico por essa lacuna — decisão do usuário: manter como está, registrar como gap em vez de corrigir | `docs/governance/10-project-organization.md` § Convenção Git — definir convenção para commits não ligados a Feature (branch/scope dedicados?) | Baixa |
-| 11 | **Este documento está defasado em relação ao trabalho de 2026-08-27** (não reflete): FT-DOCUMENTO / FT-DOCUMENTO-UPLOAD / FT-DOCUMENTO-GESTAO (Gestão Documental — leitura DONE; upload `IMPLEMENTING` code-complete; gestão de pastas/documentos `IMPLEMENTING`, 4/4 tasks feitas, `portal-comunicacao-api` `561683e` / `portal-comunicacao-app` `92b7fff`, **não pushed**); migrations `V009`/`V010` executadas + `V011` (homologação: admin de área); DEC-CMS-002. Também: `docs/jira-reconciliation-audit.md` (2026-08-27, commit `c69e46c`) propõe rebaselinar o Jira PUC — não executado. | reconciliação deste índice (checkpoint) quando priorizado | Média |
+| 11 | **Parcialmente atendida (2026-08-28).** Bloco Gestão Documental agora refletido em `# Estado Atual (leitura rápida)` e na tabela de Features (FT-DOCUMENTO `DONE`; FT-DOCUMENTO-UPLOAD `IMPLEMENTING` code-complete, pendências de homologação; FT-DOCUMENTO-GESTAO `IMPLEMENTING` 4/4 tasks; FT-DOCUMENTO-NAVEGACAO `DRAFT` D-01..D-07 fechadas). Reconciliação feita com evidência **local** deste monorepo (`feature.yaml`, `tasks.md`, `git log`). **Segue em aberto:** verificar estado de *push* de `portal-comunicacao-api` `561683e` / `portal-comunicacao-app` `92b7fff`; `docs/jira-reconciliation-audit.md` (commit `c69e46c`) não executado; DEC-CMS-002 não integrada às seções de decisão deste índice. | verificação de push + checkpoint completo quando priorizado | Baixa |
 
 ## Resolvidas em 2026-08-26
 
@@ -388,3 +399,4 @@ Registradas aqui por escopo desta reconciliação (não corrigidas — correçã
 | 2026-08-21 | Baseline (implantação do modelo) | Adicionadas ao mapa de SSOTs as referências a `docs/governance/10-project-organization.md` (modelo de organização) e a Foundation (aplicação); demais seções já representavam o modelo formalizado — sem outras alterações |
 | 2026-08-26 | Reconciliação (State Index) | FT-COLABORADOR e FT-AREA-COLABORADOR confirmadas `DONE` contra evidência de código; E2E de FT-COLABORADOR localizado; pendências #1–#3 do checkpoint 2026-08-21 resolvidas; Marcos M15/M16 concluídos |
 | 2026-08-26 | Fechamento de feature | FT-PRIMEIRO-ACESSO confirmada `DONE` (`feature.yaml` migrado do esquema legado, commit `170f005`); nenhuma feature implementada permanece sem checkpoint de fechamento; Marco M17 concluído |
+| 2026-08-28 | Redução do índice | Adicionada seção `# Estado Atual (leitura rápida)` no topo; narrativas dos checkpoints 2026-08-21/26 movidas para `docs/governance/history/16-state-index-checkpoints.md`; Pendência #11 atendida (bloco Gestão Documental refletido na tabela de Features) |
