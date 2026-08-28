@@ -54,12 +54,12 @@ Pontos abertos: onde a SSOT compartilhada vive em definitivo (#2), hospedagem/te
 | FT-DOCUMENTO (leitura) | `arquivos` | DONE | — |
 | FT-DOCUMENTO-UPLOAD | `documento-upload` | DONE | 2026-08-28. Gate 3 + Gate 6 PASS. Grants `PERMISSAO_PASTA` de produção = dado institucional (DBA); homologação validada via `V011`. Dívida aceita: sem E2E Playwright |
 | FT-DOCUMENTO-GESTAO | `documento-gestao` | DONE | 2026-08-28. `mvn verify` 399/0/2; Gate 3 + Gate 6 PASS. MinIO provisionado (`docker-compose.yml` no repo `api`), caminho real validado end-to-end. Dívida aceita: sem E2E Playwright |
-| FT-DOCUMENTO-NAVEGACAO | `documento-navegacao` | IMPLEMENTING | 2026-08-28. **TK-DOC-NAV-001** (`api b87f34d`) + **-002** explorador drill-in (`app cf3f119`, `test:unit` 220). Restam TK-DOC-NAV-003 (árvore) e -004 (busca + grade/lista) |
+| FT-DOCUMENTO-NAVEGACAO | `documento-navegacao` | IMPLEMENTING | 2026-08-28. **4/4 tasks feitas** (`api b87f34d`; `app cf3f119`→`bc2907b`→`2969042` — explorador + árvore + busca/grade-lista). `mvn verify` 400/0/2, `test:unit` 228. Falta `/validate` → `/review` de PR → DoD/Gate → `DONE`. Sem E2E (dívida aceita) |
 | FT-HOME / FT-NOTICIA / FT-PERFIL / FT-SERVICOS | — | DRAFT | inertes; `/app` Home é spike sancionado sem DoR |
 
 ## Próximas ações (ordem)
 
-1. **FT-DOCUMENTO-NAVEGACAO:** `/implement` TK-DOC-NAV-001 (BE) → 002/003/004 (FE); fechar as 5 ressalvas do Review de Spec no caminho.
+1. **FT-DOCUMENTO-NAVEGACAO:** código completo (4/4 tasks). `/validate` → `/review` de PR (Gate 3) → DoD / Gate 6 → `feature.yaml` `DONE`. Fecha o bloco documental por completo.
 2. Abrir MR `development` → `stage`/`main` em `portal-comunicacao-api` / `-app` quando quiser promover o bloco Gestão Documental (FT-DOCUMENTO / UPLOAD / GESTAO fechadas).
 3. Provisionar grants `PERMISSAO_PASTA` `EDICAO` institucionais nas pastas de produção (DBA) — não bloqueia features, é dado operacional.
 4. Commitar working tree pendente do monorepo: `docker-compose.yml` (Oracle), `.github/workflows/backend.yml`.
