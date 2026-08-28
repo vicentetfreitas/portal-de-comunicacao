@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — navegação/leitura; estende `FT-DOCUMENTO`) |
-| Versão | 1.1 |
-| Status | DRAFT — não iniciar antes de Review de Spec (`APPROVED`) e DoR-Implementation |
+| Versão | 1.5 |
+| Status | DONE |
 | Owner | Engineering Framework |
 
 ---
@@ -168,11 +168,12 @@ com preferência persistida (`RF-DOC-NAV-004`, `RF-DOC-NAV-005`).
 
 # Estado da Feature
 
-**Código completo (2026-08-28) — as 4 tasks feitas.** `feature.yaml` permanece
-`IMPLEMENTING` (falta `/validate` → `/review` de PR / Gate 3 → DoD / Gate 6). Commits em
-`origin/development` **não pushados**: `portal-comunicacao-api` `b87f34d`;
-`portal-comunicacao-app` `cf3f119` → `bc2907b` → `2969042`. Sem suíte E2E Playwright
-dedicada — mesma dívida aceita de FT-DOCUMENTO-GESTAO / -UPLOAD.
+**`DONE` (2026-08-28).** As 4 tasks implementadas; fechamento formal:
+`/validate` (`mvn clean verify` **400/0/2**; frontend typecheck + **228** unit) →
+Review de PR **PASS** (Gate 3) → DoD / **Gate 6 PASS**. Commits em `origin/development`
+**não pushados**: `portal-comunicacao-api` `b87f34d`; `portal-comunicacao-app`
+`cf3f119` → `bc2907b` → `2969042`. Dívida aceita: sem suíte E2E Playwright dedicada —
+ver `traceability.md` § Dívidas aceitas.
 
 ---
 

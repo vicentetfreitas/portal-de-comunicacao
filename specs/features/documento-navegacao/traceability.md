@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — navegação/leitura) |
-| Versão | 1.1 |
-| Status | DRAFT |
+| Versão | 1.2 |
+| Status | DONE |
 | Owner | Engineering Framework |
 
 ---
@@ -81,6 +81,14 @@ Nenhum — as 7 decisões de produto foram fechadas (`decisions.md` v1.1).
 
 ## Dívidas aceitas
 
+- **Sem suíte E2E Playwright dedicada** (`AT-DOC-NAV-*`) — decisão do usuário 2026-08-28
+  (fechar com unit + integração Oracle + `AT-DOC-NAV-001` em `PastaAcceptanceIntegrationTest`).
+- Árvore expandida por padrão (`default-expand-all`) em vez de "recolhida por padrão"
+  (`tasks.md` § Componentes Esperados — não é AT).
+- Resultado de busca de documento posiciona o explorador na pasta mas **não destaca** o
+  documento (AT-DOC-NAV-004 diz "e o destaca").
+- Preferência grade/lista em `localStorage` por dispositivo (D-07 = `DEC-FA-005`), não na
+  URL — o § Escopo menciona URL de forma mais solta; D-07 governa.
 - Busca e árvore montadas client-side sobre `GET /api/v1/pastas` — assume volume "baixo"
   por Área (premissa herdada de `FT-DOCUMENTO`). Se crescer → lazy por nível + busca
   server-side numa iteração futura (fora desta Feature).
@@ -107,3 +115,4 @@ Nenhum — as 7 decisões de produto foram fechadas (`decisions.md` v1.1).
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — RF/UC/API/AT/TK-DOC-NAV-001..007; 6 decisões abertas registradas como bloqueio de `READY_FOR_REVIEW` |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Decisões D-01..D-07 fechadas; nenhum bloqueio de `READY_FOR_REVIEW` restante; checklist de validação completo |
+| 1.2 | 2026-08-28 | Claude Code (Review) | Fechamento — 4 tasks implementadas (`api b87f34d`; `app cf3f119`→`2969042`); `mvn verify` 400/0/2, `test:unit` 228; Gate 3 + Gate 6 PASS. Dívidas aceitas registradas. Header → `DONE`. |

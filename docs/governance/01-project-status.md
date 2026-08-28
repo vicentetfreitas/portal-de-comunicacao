@@ -54,13 +54,13 @@ Pontos abertos: onde a SSOT compartilhada vive em definitivo (#2), hospedagem/te
 | FT-DOCUMENTO (leitura) | `arquivos` | DONE | — |
 | FT-DOCUMENTO-UPLOAD | `documento-upload` | DONE | 2026-08-28. Gate 3 + Gate 6 PASS. Grants `PERMISSAO_PASTA` de produção = dado institucional (DBA); homologação validada via `V011`. Dívida aceita: sem E2E Playwright |
 | FT-DOCUMENTO-GESTAO | `documento-gestao` | DONE | 2026-08-28. `mvn verify` 399/0/2; Gate 3 + Gate 6 PASS. MinIO provisionado (`docker-compose.yml` no repo `api`), caminho real validado end-to-end. Dívida aceita: sem E2E Playwright |
-| FT-DOCUMENTO-NAVEGACAO | `documento-navegacao` | IMPLEMENTING | 2026-08-28. **4/4 tasks feitas** (`api b87f34d`; `app cf3f119`→`bc2907b`→`2969042` — explorador + árvore + busca/grade-lista). `mvn verify` 400/0/2, `test:unit` 228. Falta `/validate` → `/review` de PR → DoD/Gate → `DONE`. Sem E2E (dívida aceita) |
+| FT-DOCUMENTO-NAVEGACAO | `documento-navegacao` | DONE | 2026-08-28. Gate 3 + Gate 6 PASS. `mvn verify` 400/0/2, `test:unit` 228. Explorador drill-in + árvore + busca + grade/lista (`api b87f34d`; `app cf3f119`→`2969042`). Sem E2E (dívida aceita) |
 | FT-HOME / FT-NOTICIA / FT-PERFIL / FT-SERVICOS | — | DRAFT | inertes; `/app` Home é spike sancionado sem DoR |
 
 ## Próximas ações (ordem)
 
-1. **FT-DOCUMENTO-NAVEGACAO:** código completo (4/4 tasks). `/validate` → `/review` de PR (Gate 3) → DoD / Gate 6 → `feature.yaml` `DONE`. Fecha o bloco documental por completo.
-2. Abrir MR `development` → `stage`/`main` em `portal-comunicacao-api` / `-app` quando quiser promover o bloco Gestão Documental (FT-DOCUMENTO / UPLOAD / GESTAO fechadas).
+1. **Bloco documental fechado** — FT-DOCUMENTO / UPLOAD / GESTAO / NAVEGACAO todos `DONE`. Abrir MR `development` → `stage`/`main` em `portal-comunicacao-api` / `-app` para promover.
+2. Decidir se há Feature de gestão de perfil/permissões para `ADMINISTRADOR` — hoje `PERMISSAO_PASTA` é dado institucional (D-03 de FT-DOCUMENTO-GESTAO), `FT-PERFIL` está `DRAFT`, e a administração de sessão/papel tem backend sem `feature.yaml` (Pendência #3).
 3. Provisionar grants `PERMISSAO_PASTA` `EDICAO` institucionais nas pastas de produção (DBA) — não bloqueia features, é dado operacional.
 4. Commitar working tree pendente do monorepo: `docker-compose.yml` (Oracle), `.github/workflows/backend.yml`.
 5. Etapa 5 — validar ambiente local Oracle ponta a ponta.
@@ -286,7 +286,7 @@ Resultado Atual:
 | M15   | FT-COLABORADOR — fechamento formal (`DONE`), E2E Playwright (`AT-FE-COLABORADOR-001..005`) confirmado | 2026-08-26 |
 | M16   | FT-AREA-COLABORADOR — spec `APPROVED` → implementada → fechamento formal (`DONE`) | 2026-08-26 |
 | M17   | FT-PRIMEIRO-ACESSO — fechamento formal (`DONE`); `feature.yaml` migrado do esquema legado; drift de `traceability.md` corrigido | 2026-08-26 |
-| M18   | **Bloco Gestão Documental fechado** — FT-DOCUMENTO (leitura), FT-DOCUMENTO-UPLOAD e FT-DOCUMENTO-GESTAO todos `DONE` (Gate 3 + Gate 6); MinIO provisionado e caminho de storage validado end-to-end | 2026-08-28 |
+| M18   | **Bloco documental fechado** — FT-DOCUMENTO (leitura), FT-DOCUMENTO-UPLOAD, FT-DOCUMENTO-GESTAO e FT-DOCUMENTO-NAVEGACAO todos `DONE` (Gate 3 + Gate 6); MinIO provisionado e caminho de storage validado end-to-end; navegação hierárquica (explorador + árvore + busca + deep-link) entregue | 2026-08-28 |
 
 ---
 
@@ -403,3 +403,4 @@ Registradas aqui por escopo desta reconciliação (não corrigidas — correçã
 | 2026-08-26 | Fechamento de feature | FT-PRIMEIRO-ACESSO confirmada `DONE` (`feature.yaml` migrado do esquema legado, commit `170f005`); nenhuma feature implementada permanece sem checkpoint de fechamento; Marco M17 concluído |
 | 2026-08-28 | Redução do índice | Adicionada seção `# Estado Atual (leitura rápida)` no topo; narrativas dos checkpoints 2026-08-21/26 movidas para `docs/governance/history/16-state-index-checkpoints.md`; Pendência #11 atendida (bloco Gestão Documental refletido na tabela de Features) |
 | 2026-08-28 | Fechamento de feature | FT-DOCUMENTO-GESTAO e FT-DOCUMENTO-UPLOAD `IMPLEMENTING` → `DONE` (Gate 3 + Gate 6 PASS; `mvn verify` 399/0/2; MinIO provisionado e caminho real validado). Bloco Gestão Documental fechado (M18). Próxima: FT-DOCUMENTO-NAVEGACAO `/readiness` |
+| 2026-08-28 | Fechamento de feature | FT-DOCUMENTO-NAVEGACAO `DRAFT` → Gate 1 → Review de Spec (APPROVED WITH MINOR ISSUES) → DoR-Implementation → `IMPLEMENTING` → 4 tasks (`api b87f34d`; `app cf3f119`→`2969042`) → Gate 3 + Gate 6 PASS → `DONE`. `mvn verify` 400/0/2, `test:unit` 228. **Bloco documental inteiro fechado.** |
