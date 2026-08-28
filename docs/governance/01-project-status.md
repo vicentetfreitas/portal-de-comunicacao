@@ -54,7 +54,7 @@ Pontos abertos: onde a SSOT compartilhada vive em definitivo (#2), hospedagem/te
 | FT-DOCUMENTO (leitura) | `arquivos` | DONE | — |
 | FT-DOCUMENTO-UPLOAD | `documento-upload` | DONE | 2026-08-28. Gate 3 + Gate 6 PASS. Grants `PERMISSAO_PASTA` de produção = dado institucional (DBA); homologação validada via `V011`. Dívida aceita: sem E2E Playwright |
 | FT-DOCUMENTO-GESTAO | `documento-gestao` | DONE | 2026-08-28. `mvn verify` 399/0/2; Gate 3 + Gate 6 PASS. MinIO provisionado (`docker-compose.yml` no repo `api`), caminho real validado end-to-end. Dívida aceita: sem E2E Playwright |
-| FT-DOCUMENTO-NAVEGACAO | `documento-navegacao` | IMPLEMENTING | 2026-08-28. **TK-DOC-NAV-001 feita** (`api b87f34d`, `PastaResponse` +2 campos, `mvn verify` 400/0/2). Restam TK-DOC-NAV-002/003/004 (FE). 5 ressalvas do Review de Spec para o `/implement` |
+| FT-DOCUMENTO-NAVEGACAO | `documento-navegacao` | IMPLEMENTING | 2026-08-28. **TK-DOC-NAV-001** (`api b87f34d`) + **-002** explorador drill-in (`app cf3f119`, `test:unit` 220). Restam TK-DOC-NAV-003 (árvore) e -004 (busca + grade/lista) |
 | FT-HOME / FT-NOTICIA / FT-PERFIL / FT-SERVICOS | — | DRAFT | inertes; `/app` Home é spike sancionado sem DoR |
 
 ## Próximas ações (ordem)

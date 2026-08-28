@@ -84,10 +84,20 @@ nível inicial = raízes; entrar numa pasta; `breadcrumb`; voltar
   lista carregada, mostrar "sem acesso".
 - Testes unit: raízes; entrar/voltar; raiz órfã; deep-link válido/ inválido.
 
-### Critérios de Conclusão
+### Critérios de Conclusão — ✅ ATENDIDA (2026-08-28, `portal-comunicacao-app` `cf3f119`, branch `development`)
 
-- AT-DOC-NAV-001, -002, -006 (parte explorador), -007 atendidos.
-- `yarn typecheck` + `yarn test:unit` verdes.
+- ✅ AT-DOC-NAV-001, -002, -006 (parte explorador), -007 atendidos.
+- ✅ `PastaApiService.listAll()` agrega todas as páginas de `GET /api/v1/pastas` (D-04;
+  fecha a ressalva #3 do Review de Spec). `useAreaColaboradorArquivos` ganhou índice
+  pai→filhos, `pastaAtualId`, `raizes` (raiz órfã incluída), `subpastasVisiveis`,
+  `documentosDoNivel`, `caminho` (breadcrumb), `entrarNaPasta`/`voltarUmNivel`/
+  `irParaPasta`, `resolverDeepLink` (id fora do escopo → `deepLinkSemAcesso`, nunca o
+  conteúdo — fecha as ressalvas #1/#2 na prática: sem endpoint de resolução por id, o
+  "sem acesso" é client-side).
+- ✅ `AreaColaboradorArquivosPage`: toolbar (voltar + breadcrumb + Enviar arquivo /
+  Nova subpasta no nível), grade de subpastas clicáveis, documentos do nível, estados
+  "pasta vazia" e "sem acesso", deep-link `?pasta=<id>` ↔ URL. Menus de gestão mantidos.
+- ✅ `yarn typecheck` limpo; `yarn test:unit` **220 verdes** (+11).
 
 ---
 
@@ -168,3 +178,4 @@ Conforme quando: todas as tasks têm ≥1 RF; não representa cronograma; consis
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — TK-DOC-NAV-001 (BE — `PastaResponse` + `pastaPaiId`), -002 (explorador FE), -003 (árvore FE), -004 (busca + grade/lista FE). Preliminares — dependem das decisões abertas. |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Decisões fechadas — removido o caveat "depende das decisões abertas"; tasks consolidadas. |
 | 1.2 | 2026-08-28 | Claude Code (Implement) | **TK-DOC-NAV-001 concluída** — `PastaResponse` + `pastaPaiId`/`dataAtualizacao` (`portal-comunicacao-api` `b87f34d`); `mvn clean verify` 400/0/2. Restam TK-DOC-NAV-002/003/004 (frontend). |
+| 1.3 | 2026-08-28 | Claude Code (Implement) | **TK-DOC-NAV-002 concluída** — explorador drill-in (`portal-comunicacao-app` `cf3f119`): `listAll()` paginado agregado, índice pai→filhos, breadcrumb, raiz órfã, deep-link `?pasta=<id>`. `test:unit` 220 verdes. Restam TK-DOC-NAV-003 (árvore) e -004 (busca + grade/lista). |
