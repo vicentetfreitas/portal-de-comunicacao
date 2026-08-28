@@ -94,17 +94,19 @@
 
 > **Import flat, sem consolidação de archive.** A movimentação de `construction/` + `docs/{audit,discovery,construction}/` + `reports/` para `docs/archive/` exige fixar ~250 referências espalhadas por `docs/`, `specs/` e `engineering/` — feito à parte, com validação, na **Fase F**. Importar preservando a estrutura = zero link quebrado agora.
 
-### Fase C — semear app e cms *(ação humana)*
+### Fase C — semear app e cms *(feita pelo agente — falta push)*
 
-1. `portal-comunicacao-app`: adicionar `docs/frontend/`, `docs/figma/`, `docs/brandbook-unimed-ceara.pdf` + `CLAUDE.md` (Apêndice A). Commit, push.
-2. `portal-comunicacao-cms`: adicionar `CLAUDE.md` (Apêndice B). Commit, push.
+- [x] `portal-comunicacao-app` (`development`, commit `ede60a5`): `docs/frontend/`, `docs/figma/` (sem os 13 screenshots "Captura de tela"), `docs/brandbook-unimed-ceara.pdf`, `CLAUDE.md` fino.
+- [x] `portal-comunicacao-cms` (`development`, commit `c9d00f1`): `CLAUDE.md` fino.
+- [ ] **Ação humana:** `git push origin development` nos dois; MR `development` → `stage`.
 
 ### Fase D — retirar código do monorepo *(ação humana)*
 
-1. `git rm -r backend/ frontend/ wordpress/ docker-compose.yml .github/workflows/` no monorepo.
-2. Commit: `chore(dec-015): remover código — repos GitLab passam a ser primários`.
-3. `README.md` do monorepo → aviso de arquivamento apontando para os 4 destinos.
-4. Arquivar o repositório GitHub (`Settings → Archive`) ou marcar read-only.
+1. `git rm -r backend/ frontend/ wordpress/ docker-compose.yml .github/` no monorepo (`main`).
+2. Também remover as cópias já migradas: `docs/frontend/`, `docs/figma/`, `docs/brandbook-unimed-ceara.pdf` (agora no app).
+3. Commit: `chore(dec-015): monorepo vira read-only — código e docs de camada migrados`.
+4. `README.md` do monorepo → aviso: SSOT no `portal-comunicacao-api`, código nos 3 repos GitLab.
+5. Arquivar o repositório no GitHub (`Settings → Archive`).
 
 ### Fase E — atualizar referências *(agente na próxima sessão)*
 
@@ -200,4 +202,4 @@ https://gitlab.unimedceara.com.br/unimedceara/portal-comunicacao/portal-comunica
 
 | Data | Autor | Alteração |
 |---|---|---|
-| 2026-08-28 | Governança | Criação. Resolve DEC-015 P.A. #2. Fases A e B executadas pelo agente (B em `chore/import-ssot` no api, sem push — commit `3d17549`). C–D pendem de ação humana; E–F ficam para o agente após merge. Consolidação de archive movida da Fase B para a Fase F (import flat = zero link quebrado). |
+| 2026-08-28 | Governança | Criação. Resolve DEC-015 P.A. #2. Fases A, B e C executadas pelo agente (commits `3d17549` no api, `ede60a5` no app, `c9d00f1` no cms — sem push). Monorepo limpo: só `main` (`d062e23`). Falta: push dos 3 repos-camada + MRs (humano); Fase D (`git rm` código + arquivar, humano); Fases E–F (agente). Consolidação de archive → Fase F (import flat = zero link quebrado). |
