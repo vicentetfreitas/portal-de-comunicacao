@@ -48,10 +48,15 @@ Adicionar `pastaPaiId` (`COD_PASTA_PAI`) e `dataAtualizacao` (`DAT_ATUALIZACAO`)
 - Testes: `PastaAcceptanceIntegrationTest` — assertar `pastaPaiId`/`dataAtualizacao`
   no payload; hierarquia de fixture (`PastaTestBuilder.pastaPai(...)` já existe).
 
-### Critérios de Conclusão
+### Critérios de Conclusão — ✅ ATENDIDA (2026-08-28, `portal-comunicacao-api` `b87f34d`, branch `development`)
 
-- `GET /api/v1/pastas` devolve os campos novos; clientes antigos não quebram.
-- `./mvnw clean verify` verde.
+- ✅ `PastaResponse` (record) + `pastaPaiId` (`Long|null`) + `dataAtualizacao` (`Instant|null`);
+  `PastaMapper.toResponse` mapeia os getters Lombok já existentes; assinatura do mapper
+  inalterada — `PastaApplicationService.list` e `PastaGestaoApplicationService` intactos.
+  Aditivo/retrocompatível (sem `@JsonInclude(NON_NULL)` global — campos nulos serializam).
+- ✅ `PastaTestBuilder.atualizadaEm(Instant)`; `PastaAcceptanceIntegrationTest` novo teste
+  `AT-DOC-NAV-001` (pasta filha expõe `pastaPaiId` da pai + `dataAtualizacao`; raiz ambos null).
+- ✅ `./mvnw clean verify` = **400 testes, 0 falhas, 2 skipped**.
 
 ---
 
@@ -162,3 +167,4 @@ Conforme quando: todas as tasks têm ≥1 RF; não representa cronograma; consis
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — TK-DOC-NAV-001 (BE — `PastaResponse` + `pastaPaiId`), -002 (explorador FE), -003 (árvore FE), -004 (busca + grade/lista FE). Preliminares — dependem das decisões abertas. |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Decisões fechadas — removido o caveat "depende das decisões abertas"; tasks consolidadas. |
+| 1.2 | 2026-08-28 | Claude Code (Implement) | **TK-DOC-NAV-001 concluída** — `PastaResponse` + `pastaPaiId`/`dataAtualizacao` (`portal-comunicacao-api` `b87f34d`); `mvn clean verify` 400/0/2. Restam TK-DOC-NAV-002/003/004 (frontend). |
