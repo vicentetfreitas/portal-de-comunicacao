@@ -70,7 +70,7 @@
 | `reports/` | `docs/archive/reports/` |
 
 > Base: `08-repository-governance.md` — Archive = "versionar, não evolui"; Working (`reports/`) = "remover após incorporação, Git guarda histórico". Mantidos como Archive por conterem evidência histórica (audits de fase, `session.md`).
-> **Movimentação feita na Fase B (no api), não agora** — ver §3.
+> **Import da Fase B é flat** — a movimentação para `docs/archive/` acontece na **Fase F** (tarefa isolada, com reescrita de links). Ver §3.
 
 `docs/governance/history/` já é sub-Archive e continua onde está (dentro de `docs/governance/`).
 
@@ -85,19 +85,18 @@
 - [x] `CLAUDE.md` mestre atualizado (arquitetura nova, tabela "Consultar primeiro", nota de arquivamento).
 - [x] `CLAUDE.md` finos de app e cms preparados (Apêndices A e B).
 
-> **Por que não movemos `construction/`/`docs/audit/`/`reports/` agora:** há uma teia de links entre `docs/governance/`, `docs/backlog/` e esses diretórios. Mover no monorepo — que vai ser congelado — cria um estado quebrado sem ganho. A consolidação para `docs/archive/` acontece **na Fase B**, dentro do api, com o conserto de links no mesmo passo.
+### Fase B — semear o api com a SSOT *(feita nesta sessão pelo agente — falta push)*
 
-### Fase B — semear o api com a SSOT + arquivar *(ação humana)*
+- [x] Branch `chore/import-ssot` (de `development`) no `portal-comunicacao-api` (`/home/projects/backend`).
+- [x] Importado do monorepo, **estrutura preservada** (`specs/`, `docs/` sem `frontend/`+`figma/`, `database/`, `engineering/`, `construction/`, `reports/`) + `docs/padrao-nomeclatura-banco-de-dados-oracle.pdf`. Commit `3d17549` (635 arq., +139.875).
+- [x] `CLAUDE.md` do api criado (adaptado: `./mvnw`, `.gitlab-ci.yml`, DS/figma → `portal-comunicacao-app`, regra de feature cross-camada).
+- [ ] **Ação humana:** revisar `chore/import-ssot`, push, MR `development` → `stage`.
 
-1. No working tree do `portal-comunicacao-api` (branch `development`), copiar do monorepo: `specs/`, `docs/` (sem `frontend/` e `figma/` — esses vão para o app), `database/`, `engineering/`, `CLAUDE.md`.
-   *(cópia simples + commit; specs/docs não têm histórico compartilhado relevante com o código do api. Alternativa: `git subtree add`/merge se quiser o histórico — não obrigatório.)*
-2. **No api**, mover para `docs/archive/`: `construction/`, `docs/discovery/`, `docs/audit/`, `docs/construction/`, `reports/`. Rodar um find-and-replace nos links (`construction/` → `docs/archive/construction/`, `docs/audit/` → `docs/archive/audit/`, etc.) e validar (§Fase E).
-3. Commit: `docs: importar SSOT do monorepo + arquivar Working/Archive (DEC-015 P.A. #2)`.
-4. Push `development` → abrir MR → `stage`.
+> **Import flat, sem consolidação de archive.** A movimentação de `construction/` + `docs/{audit,discovery,construction}/` + `reports/` para `docs/archive/` exige fixar ~250 referências espalhadas por `docs/`, `specs/` e `engineering/` — feito à parte, com validação, na **Fase F**. Importar preservando a estrutura = zero link quebrado agora.
 
 ### Fase C — semear app e cms *(ação humana)*
 
-1. `portal-comunicacao-app`: adicionar `docs/frontend/`, `docs/figma/` + `CLAUDE.md` (Apêndice A). Commit, push.
+1. `portal-comunicacao-app`: adicionar `docs/frontend/`, `docs/figma/`, `docs/brandbook-unimed-ceara.pdf` + `CLAUDE.md` (Apêndice A). Commit, push.
 2. `portal-comunicacao-cms`: adicionar `CLAUDE.md` (Apêndice B). Commit, push.
 
 ### Fase D — retirar código do monorepo *(ação humana)*
@@ -107,12 +106,20 @@
 3. `README.md` do monorepo → aviso de arquivamento apontando para os 4 destinos.
 4. Arquivar o repositório GitHub (`Settings → Archive`) ou marcar read-only.
 
-### Fase E — atualizar referências *(ação humana + agente na próxima sessão)*
+### Fase E — atualizar referências *(agente na próxima sessão)*
 
-1. Nos docs do api, trocar caminhos que assumiam o monorepo (ex.: "`cd backend && mvn`") por "no repo `portal-comunicacao-api`".
+1. Nos docs do api, trocar caminhos que assumiam o monorepo (ex.: "`cd backend && mvn`") por "no repo `portal-comunicacao-api`" / `./mvnw`.
 2. `docs/governance/01-project-status.md`: registrar a conclusão.
 3. `10-project-organization.md` §Camadas: refletir que a SSOT vive no api.
-4. Validar links quebrados (`docs/` que apontava para `../construction/` etc.).
+4. Ajustar `.github/workflows/` (some do monorepo) e menções a PR GitHub → MR GitLab.
+
+### Fase F — consolidar Archive/Working em `docs/archive/` *(agente, tarefa dedicada)*
+
+No `portal-comunicacao-api`, após a Fase B mergeada:
+1. `git mv construction docs/archive/construction`, `docs/audit → docs/archive/audit`, `docs/discovery → docs/archive/discovery`, `docs/construction → docs/archive/construction-docs`, `reports → docs/archive/reports`.
+2. Reescrever ~250 referências (`construction/` → `docs/archive/construction/`, etc.), com ordem correta de substituição (`docs/construction/` antes de `construction/`; cuidado com `reconstruction`, `database/reports/`, `runtime/reports/`, `surefire-reports`).
+3. `grep` de validação: nenhuma referência a `construction/`, `docs/audit/`, `docs/discovery/` fora de `docs/archive/`.
+4. Um commit isolado, revisável.
 
 ---
 
@@ -120,7 +127,7 @@
 
 | Risco | Mitigação |
 |---|---|
-| Links relativos entre `docs/` e `construction/`/`specs/` quebram após a movimentação | `construction/` vira `docs/archive/construction/` — mesmo repo, ajuste de path pontual; Fase E valida |
+| Links relativos entre `docs/` e `construction/`/`audit/` quebram na consolidação | Import da Fase B é **flat** (estrutura preservada) → zero quebra. Consolidação para `docs/archive/` isolada na Fase F, com reescrita das ~250 refs + `grep` de validação |
 | Feature spec cruza BE+FE e fica "longe" do dev de frontend | `specs/` fica no api; app referencia por URL. `feature.yaml` continua unidade única no api (não split) |
 | Dois lugares editáveis durante a transição | Fase D fecha a janela: assim que o código sai do monorepo, o api é a única fonte |
 | Histórico do monorepo "perdido" | Monorepo é arquivado, não deletado — histórico permanece consultável no GitHub |
@@ -193,4 +200,4 @@ https://gitlab.unimedceara.com.br/unimedceara/portal-comunicacao/portal-comunica
 
 | Data | Autor | Alteração |
 |---|---|---|
-| 2026-08-28 | Governança | Criação. Resolve DEC-015 P.A. #2. Fase A executada; B–E pendem de ação humana. |
+| 2026-08-28 | Governança | Criação. Resolve DEC-015 P.A. #2. Fases A e B executadas pelo agente (B em `chore/import-ssot` no api, sem push — commit `3d17549`). C–D pendem de ação humana; E–F ficam para o agente após merge. Consolidação de archive movida da Fase B para a Fase F (import flat = zero link quebrado). |
