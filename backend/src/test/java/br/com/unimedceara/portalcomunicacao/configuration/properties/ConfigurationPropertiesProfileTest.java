@@ -11,7 +11,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles({"test-slice", "local"})
-@TestPropertySource(locations = "classpath:pf-conf-profile-test.properties")
+@TestPropertySource(
+        locations = "classpath:pf-conf-profile-test.properties",
+        // application-local.yaml é gitignored (existe só na máquina de cada dev), então os valores
+        // do profile local são fixados aqui para o teste não depender desse arquivo. O que se
+        // valida é a ativação do profile e o binding das propriedades, não o conteúdo do arquivo.
+        properties = {
+                "application.security.cors-allowed-origins=http://localhost:4200,http://localhost:8080,http://localhost:9000",
+                "spring.jpa.show-sql=true"
+        })
 class ConfigurationPropertiesLocalProfileTest {
 
     @Autowired
@@ -23,7 +31,7 @@ class ConfigurationPropertiesLocalProfileTest {
     @Test
     void shouldLoadPropertiesForLocalProfile() {
         assertThat(securityProperties.corsAllowedOrigins())
-                .containsExactly("http://localhost:4200", "http://localhost:8080");
+                .containsExactly("http://localhost:4200", "http://localhost:8080", "http://localhost:9000");
         assertThat(showSql).isTrue();
     }
 }

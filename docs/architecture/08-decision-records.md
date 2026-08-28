@@ -740,8 +740,8 @@ Decisões físicas e operacionais do Oracle estão em `database/model/05-decisio
 
 ## Design System (reconstrução)
 
-Contrato de escopo da reconstrução do Design System da Frontend Foundation. Não é Feature (`FT-DS` não existe e não deve ser criado). Não é ADR de identidade DS-01–DS-10 (ainda pendente).
+Contrato de escopo da reconstrução do Design System da Frontend Foundation. Não é Feature (`FT-DS` não existe e não deve ser criado). Não é ADR de identidade DS-01–DS-10 (ainda pendente) — catálogo de componentes tecnicamente encerrado (§68 do documento), pendências arquiteturais de mais longo prazo (seção 15) e destino de 3 componentes órfãos (dependente de roadmap de produto) permanecem em aberto.
 
 | ID | Título | Status | Documento |
 |----|--------|--------|-----------|
-| DS-RECONSTRUCTION-SCOPE-01 | Escopo da reconstrução do Design System | `RECONSTRUCTION_SCOPE_DEFINED_WITH_PENDING_DECISIONS` | [decisions/DS-RECONSTRUCTION-SCOPE-01.md](decisions/DS-RECONSTRUCTION-SCOPE-01.md) |
+| DS-RECONSTRUCTION-SCOPE-01 | Escopo da reconstrução do Design System | `CATALOG_TECHNICALLY_CLOSED` | [decisions/DS-RECONSTRUCTION-SCOPE-01.md](decisions/DS-RECONSTRUCTION-SCOPE-01.md) |

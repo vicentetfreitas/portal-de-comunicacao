@@ -51,11 +51,12 @@ function goToCreate(): void {
 
   &__grid {
     display: grid;
+    // Same responsive pattern as SingularHubPage.vue/EquipeHubPage.vue —
+    // grows past 2 columns on wide desktop instead of staying capped there
+    // forever; minmax's own floor (240px) keeps it from ever exceeding a
+    // handful of columns within this app's own 1280px content max-width.
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: var(--spacing-md, 16px);
-
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 }
 </style>

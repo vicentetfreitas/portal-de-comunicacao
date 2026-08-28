@@ -10,6 +10,7 @@ import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persiste
 import br.com.unimedceara.portalcomunicacao.organization.infrastructure.persistence.repository.FederacaoRepository;
 import br.com.unimedceara.portalcomunicacao.shared.constants.SecurityConstants;
 import br.com.unimedceara.portalcomunicacao.support.annotation.IntegrationTest;
+import br.com.unimedceara.portalcomunicacao.support.fixture.builder.ColaboradorTestBuilder;
 import br.com.unimedceara.portalcomunicacao.support.security.TestSecurityContextFactory;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
@@ -136,12 +137,12 @@ class FederacaoAcceptanceIntegrationTest {
 
     private ColaboradorEntity ensureAdmin() {
         return colaboradorRepository
-                .findByEmailIgnoreCase("colaborador@unimedceara.com.br")
+                .findByEmailIgnoreCase(ColaboradorTestBuilder.SESSION_ADMINISTRATOR_EMAIL)
                 .orElseGet(() -> {
                     ColaboradorEntity c = new ColaboradorEntity();
-                    c.setEmail("colaborador@unimedceara.com.br");
+                    c.setEmail(ColaboradorTestBuilder.SESSION_ADMINISTRATOR_EMAIL);
                     c.setNome("Admin");
-                    c.setZimbraId("zimbra-admin");
+                    c.setZimbraId("zimbra-" + ColaboradorTestBuilder.SESSION_ADMINISTRATOR_EMAIL);
                     c.setAtivo(SingularStatus.ACTIVE.toFlag());
                     c.setFederacaoId(authProperties.defaultFederationId());
                     c.setDataCadastro(Instant.now());

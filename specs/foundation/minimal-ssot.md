@@ -79,6 +79,7 @@ docs/ → specs/ → construction/ → .cursor/
 | Registry construction | `construction/registry.yaml` | legacy registries | construction-state | manifest como SSOD |
 | Governança documental | `docs/governance/07-documentation-architecture.md` | — | `01-project-status.md` | `history/*` |
 | Processo SDD | `specs/foundation/` (DoR, DoD, conventions) | `workflow.md` | — | — |
+| Organização e execução do projeto | `docs/governance/10-project-organization.md` | — | `01-project-status.md` (State Index) | PKG/session v4.1 |
 | Arquitetura AUTH | `specs/architecture/authentication-architecture.md` | `authentication/decisions.md` | — | — |
 
 ---
@@ -102,3 +103,4 @@ docs/ → specs/ → construction/ → .cursor/
 - [`development-workflow.md`](development-workflow.md) — fluxo diário
 - [`docs/governance/09-framework-simplification-scope.md`](../../docs/governance/09-framework-simplification-scope.md) — escopo Etapa 2
 - [`docs/governance/07-documentation-architecture.md`](../../docs/governance/07-documentation-architecture.md) — arquitetura documental completa
+- [`docs/governance/10-project-organization.md`](../../docs/governance/10-project-organization.md) — organização e execução do projeto

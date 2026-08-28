@@ -32,6 +32,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
@@ -99,9 +101,28 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
     @Autowired
     private JsonMapper jsonMapper;
 
+    /**
+     * E-mail do usuário válido para cada método de teste. Único por execução
+     * ({@link IntegrationTestUniqueData}) — não depende de nenhuma identidade pré-existente
+     * no schema compartilhado (Oracle TST, sem limpeza automática — DEC-DB-023).
+     */
+    private String validUserEmail;
+
+    /**
+     * Registra o e-mail do usuário válido (único por execução) como administrador de sessão,
+     * substituindo a lista fixa de {@code application-test.yaml} — necessário para
+     * {@code acAuth010} ({@code DELETE /api/v1/admin/sessions/**}).
+     */
+    @DynamicPropertySource
+    static void sessionAdministratorEmails(DynamicPropertyRegistry registry) {
+        registry.add("application.auth.session-administrator-emails",
+                () -> TestIdentityProviderClient.DEFAULT_VALID_TOKEN_EMAIL);
+    }
+
     @BeforeEach
     void resetIdentityProvider() {
         testIdentityProviderClient().reset();
+        validUserEmail = testIdentityProviderClient().validTokenEmail();
     }
 
     @Test
@@ -120,7 +141,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
         mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.email").value("colaborador@unimedceara.com.br"))
+                .andExpect(jsonPath("$.data.email").value(validUserEmail))
                 .andExpect(jsonPath("$.data.name").value("Colaborador Teste"))
                 .andExpect(jsonPath("$.data.permissions").isArray())
                 .andExpect(jsonPath("$.data.sessionId").isNotEmpty());
@@ -139,7 +160,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
                         post("/api/v1/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                .param("email", "colaborador@unimedceara.com.br")
+                                .param("email", validUserEmail)
                                 .param("password", "secret")
                                 .param("remember_me", "false"))
                 .andExpect(status().isOk())
@@ -151,7 +172,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
 
         mockMvc.perform(get("/api/v1/auth/me").cookie(accessCookie))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.email").value("colaborador@unimedceara.com.br"));
+                .andExpect(jsonPath("$.data.email").value(validUserEmail));
     }
 
     @Test
@@ -310,7 +331,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
                         jsonMapper,
                         colaboradorId,
                         sessionId,
-                        "colaborador@unimedceara.com.br",
+                        validUserEmail,
                         "Colaborador Teste"));
 
         mockMvc.perform(get("/api/v1/auth/me").cookie(expiredAccessCookie))
@@ -351,7 +372,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.id").isNumber())
-                .andExpect(jsonPath("$.data.email").value("colaborador@unimedceara.com.br"))
+                .andExpect(jsonPath("$.data.email").value(validUserEmail))
                 .andExpect(jsonPath("$.data.name").value("Colaborador Teste"))
                 .andExpect(jsonPath("$.data.permissions").isArray())
                 .andExpect(jsonPath("$.data.sessionId").isNotEmpty())
@@ -379,7 +400,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
 
         mockMvc.perform(get("/api/v1/auth/me").cookie(newAccessCookie))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.email").value("colaborador@unimedceara.com.br"));
+                .andExpect(jsonPath("$.data.email").value(validUserEmail));
 
         AuthSessaoEntity sessao = authSessaoRepository
                 .findByRefreshTokenHash(hashRefreshToken(originalRefreshValue))
@@ -558,6 +579,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
 
     @Test
     void shouldPromotePrimeiroAcessoCredentialToOperationalSession() throws Exception {
+        long sessionsBefore = authSessaoRepository.count();
         String state = oAuthStateService.createState(false);
         MvcResult paResult = mockMvc.perform(get("/api/v1/auth/callback")
                         .param("token", TestIdentityProviderClient.VALID_TOKEN)
@@ -580,7 +602,7 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
         Cookie operationalRefresh = cookieFromSetCookieHeaders(response, SecurityConstants.REFRESH_TOKEN_COOKIE);
         assertThat(operationalAccess).isNotNull();
         assertThat(operationalRefresh).isNotNull();
-        assertThat(authSessaoRepository.count()).isEqualTo(1);
+        assertThat(authSessaoRepository.count()).isEqualTo(sessionsBefore + 1);
 
         mockMvc.perform(get("/api/v1/auth/me").cookie(operationalAccess))
                 .andExpect(status().isOk())
@@ -649,11 +671,16 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
         SingularTestBuilder.forFederation(authProperties.defaultFederationId())
                 .dominioEmail(domain)
                 .persist(singularRepository);
+        singularRepository.flush();
 
-        org.assertj.core.api.Assertions.assertThatThrownBy(() ->
-                        SingularTestBuilder.forFederation(authProperties.defaultFederationId())
-                                .dominioEmail(domain)
-                                .persist(singularRepository))
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> {
+                    SingularTestBuilder.forFederation(authProperties.defaultFederationId())
+                            .dominioEmail(domain)
+                            .persist(singularRepository);
+                    // flush explícito: o INSERT é diferido (id por SEQUENCE), então a violação de
+                    // UK_SINGULAR_DOMINIO_EMAIL só se materializa aqui, dentro do assertThatThrownBy.
+                    singularRepository.flush();
+                })
                 .isInstanceOf(org.springframework.dao.DataIntegrityViolationException.class);
     }
 
@@ -697,11 +724,12 @@ class AuthAcceptanceIntegrationTest extends AbstractTransactionalMockMvcIntegrat
     }
 
     private ColaboradorEntity ensureColaboradorExists() {
-        return ColaboradorTestBuilder.forFederation(authProperties.defaultFederationId())
-                .email("colaborador@unimedceara.com.br")
-                .nome("Colaborador Teste")
-                .zimbraId("zimbra-id-test")
-                .persist(colaboradorRepository);
+        return colaboradorRepository.findByEmailIgnoreCase(validUserEmail)
+                .orElseGet(() -> ColaboradorTestBuilder.forFederation(authProperties.defaultFederationId())
+                        .email(validUserEmail)
+                        .nome("Colaborador Teste")
+                        .zimbraId("zimbra-" + validUserEmail)
+                        .persist(colaboradorRepository));
     }
 
     private void createSessionForColaborador(ColaboradorEntity colaborador, String dispositivo, boolean rememberMe) {

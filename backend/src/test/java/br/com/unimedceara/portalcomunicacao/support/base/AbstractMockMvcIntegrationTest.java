@@ -11,7 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Testes de API autenticados como administrador de sessão ({@code colaborador@unimedceara.com.br}).
+ * Testes de API autenticados como administrador de sessão. A identidade é criada por
+ * {@link ColaboradorTestBuilder#sessionAdministrator(long)} com e-mail único por execução
+ * e revertida por rollback ({@code @IntegrationTest}).
  */
 public abstract class AbstractMockMvcIntegrationTest extends AbstractTransactionalMockMvcIntegrationTest {
 
@@ -29,7 +31,7 @@ public abstract class AbstractMockMvcIntegrationTest extends AbstractTransaction
     @BeforeEach
     void setUpSessionAdministrator() {
         sessionAdministrator = ColaboradorTestBuilder.sessionAdministrator(authProperties.defaultFederationId())
-                .persist(colaboradorRepository);
+                .persistOrGet(colaboradorRepository);
     }
 
     protected ColaboradorEntity sessionAdministrator() {

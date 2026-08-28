@@ -3,8 +3,8 @@
 | Item | Valor |
 |------|-------|
 | Status | **Approved — Exit Gate 2026-07-24 (com ressalvas conscientes)** |
-| Versão | 2.0 |
-| Última atualização | 2026-07-24 |
+| Versão | 2.1 |
+| Última atualização | 2026-08-21 |
 | Categoria documental | **SSOT** (governança documental) |
 
 ## Objetivo
@@ -138,6 +138,7 @@ docs → specs → construction → .cursor
 | Escopo MVP | `docs/backlog/04-mvp-scope.md` | SSOT |
 | Roadmap | `docs/governance/05-roadmap.md` + `docs/solution-design/10-delivery-roadmap.md` | SSOT |
 | OQs / DECs / Riscos de projeto | `docs/governance/` | SSOT |
+| Organização e execução do projeto | `docs/governance/10-project-organization.md` | SSOT |
 | Fluxo frontend alvo | `docs/frontend/frontend-flow.md` | SSOT |
 | Contrato API **implementado** | `docs/api/` | Evidence + espelho operacional |
 | Contrato API **SDD** | `specs/features/*/api.md` | SSOT |
@@ -256,3 +257,4 @@ Após este marco:
 | 1.0 | — | Camadas docs/specs/construction/.cursor |
 | 1.1 | 2026-07-24 | Audit = Archive; PENDING_REMOVAL |
 | 2.0 | 2026-07-24 | Gate Final — categorias SSOT/Evidence/Working/Archive; princípios; mapa SSOT; fluxo OQ→DEC |
+| 2.1 | 2026-08-21 | Mapa SSOT: organização e execução do projeto (`10-project-organization.md`) |

@@ -22,6 +22,14 @@ application:
   persistence:
     pool-max-size: 10
     pool-min-idle: 2
+  storage:
+    # DEC-013 — Object Storage S3-compatible (MinIO em desenvolvimento, FT-DOCUMENTO).
+    endpoint: ${STORAGE_ENDPOINT:http://localhost:9002}
+    region: ${STORAGE_REGION:us-east-1}
+    bucket: ${STORAGE_BUCKET:portal-comunicacao-documentos}
+    access-key: ${STORAGE_ACCESS_KEY:minioadmin}
+    secret-key: ${STORAGE_SECRET_KEY:minioadmin}
+    path-style-access: ${STORAGE_PATH_STYLE_ACCESS:true}
   integration:
     connect-timeout-ms: 5000
     read-timeout-ms: 5000

@@ -6,5 +6,4 @@ template:
   name: crud-feature
   version: "1.1"
 
-status:
-  specification: APPROVED
+status: DONE

@@ -584,7 +584,7 @@ A simplificação será considerada bem-sucedida quando o mecanismo de automaç�
 
 ## 20. Status
 
-**Estado:** APROVADA CONCEITUALMENTE
+**Estado:** CONCLUÍDA (todas as 5 fases executadas, 2026-08-26)
 
 **Decisões humanas:** D1–D5 aprovadas
 
@@ -592,4 +592,23 @@ A simplificação será considerada bem-sucedida quando o mecanismo de automaç�
 
 **Alterações no projeto:** `agent-commands.md` v1.2; orientação permanente `CLAUDE.md`; invocações em `.claude/commands/` (Specify, Readiness, Implement, Validate, Review, Status). `.cursor/` intacto.
 
-**Próximo passo:** validação operacional V01–V10 em sessão Claude Code; Fase 5 (destino do Cursor) permanece decisão humana. Não executar limpeza de `.cursor/` neste ciclo.
+**Fase 4 — Validação operacional (2026-08-26):** V01–V10 executada com base em evidência observada em sessão Claude Code real (fechamento de FT-COLABORADOR/FT-AREA-COLABORADOR/FT-PRIMEIRO-ACESSO, extração de repositórios).
+
+| # | Critério | Resultado |
+|---|----------|-----------|
+| V01 | Localização do SSOT | PASS — `feature.yaml`, `minimal-ssot.md`, decision logs consultados conforme a natureza de cada tarefa |
+| V02 | Precedência `specs > docs > código` | PASS — conflito achado entre `feature.yaml` legado e `feature-yaml.md` (ambos `specs/`) foi escalado para decisão humana, não resolvido por conta própria |
+| V03 | Implementação sem spec | N/A — nenhuma implementação de código sem spec foi solicitada nesta sessão |
+| V04 | Descoberta de paths via `path-conventions.md` | **FAIL** — exploração feita via `find`/`grep`/`ls` diretos, sem consultar `path-conventions.md` antes |
+| V05 | Registry não é SSOT | PASS — `construction/registry.yaml`/`pkg-XX/status.md` nunca tratados como fonte de estado |
+| V06 | Dependência exclusiva v4.1 → parar | N/A — nenhuma dependência desse tipo apareceu |
+| V07 | Implementação de task aprovada | N/A — nenhuma task de código executada nesta sessão |
+| V08 | Validação por camada alterada | PASS — `mvn clean verify` (backend) e `typecheck`/`lint`/`test:unit` (frontend) antes do fechamento de FT-PRIMEIRO-ACESSO |
+| V09 | Review sem alterar código | PASS — modos Review/Status não alteraram código; só `status` de `feature.yaml` quando aplicável |
+| V10 | Contexto mínimo (sem carregar tudo) | **PARTIAL** — não carregou `.cursor/` nem o framework completo, mas leu documentos inteiros grandes (`03-open-decisions.md` ~1300 linhas) em vez de leitura incremental — contribuiu para consumo de tokens acima do esperado |
+
+**Resultado:** 5 PASS, 3 N/A, 1 FAIL (V04), 1 PARTIAL (V10). Mecanismo opera corretamente quanto a SSOT/precedência/registry/validação/review; gap real em disciplina de leitura incremental (princípio 5) — corrigir em sessões futuras: consultar `path-conventions.md` antes de exploração ad-hoc e preferir leitura incremental/skills a arquivos inteiros.
+
+**Fase 5 — Pós-validação (2026-08-26):** decisão humana obtida — Cursor deve sair do projeto; foco exclusivo em Claude Code. `.cursor/` (44 arquivos: `agents/`, `orchestrator/`, `prompts/`, `rules/`, `archive/`, `settings.json`) removido do repositório neste commit. Histórico integral recuperável via `git log -- .cursor/` até este ponto; nenhum `legacy/` genérico criado — a remoção segue o critério de não-regressão da Seção 15 ("nenhum `legacy/` genérico for criado").
+
+**Migração concluída.** Todas as 5 fases (Decisão, Preparação, Implementação, Validação, Pós-validação) executadas.

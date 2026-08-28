@@ -10,27 +10,36 @@ export default {
   layout: {
     nav: {
       home: "Início",
-      app: "Área autenticada",
+      app: "Página inicial",
       showcase: "Design System",
       auth: "Autenticação",
       admin: "Administração"
     },
     header: {
       toggleMenu: "Alternar menu",
-      searchPlaceholder: "Buscar..."
+      search: "Pesquisar",
+      closeSearch: "Fechar pesquisa",
+      searchPlaceholder: "Buscar...",
+      switchToLightTheme: "Mudar para tema claro",
+      switchToDarkTheme: "Mudar para tema escuro"
     },
     footer: {
-      copyright: "© {year} Unimed Ceará",
-      foundation: "Frontend Foundation — Sprint 0"
+      copyright: "Portal de Comunicação - Unimed Ceará — Copyright {year}.",
+      foundation: "Todos os direitos reservados."
     },
     sidebar: {
       title: "Navegação",
       adminSection: "Administração",
-      collapse: "Recolher menu",
-      toggleCollapse: "Alternar menu colapsado",
       profileGreeting: "Olá,",
       profileName: "Colaborador",
-      profileEdit: "Editar perfil"
+      profileEdit: "Editar perfil",
+      federationLabel: "Federação",
+      federationSearchPlaceholder: "Buscar área...",
+      federationEmpty: "Nenhuma área encontrada",
+      singularLabel: "Singulares",
+      singularSearchPlaceholder: "Buscar singular...",
+      singularEmpty: "Nenhuma singular encontrada",
+      servicesLabel: "Sistemas e Serviços"
     },
     home: {
       title: "Portal de Comunicação",
@@ -89,11 +98,12 @@ export default {
         "Estrutura de layout administrativo pronta para extensão pelas Features."
     },
     app: {
-      title: "Área autenticada",
+      title: "Página inicial",
       subtitle: "Bem-vindo ao Portal de Comunicação",
       cardTitle: "Sessão ativa",
       placeholder: "Área autenticada protegida por FT-AUTH.",
-      welcome: "Olá, {name}"
+      welcome: "Olá, {name}",
+      newsSectionTitle: "Fique por dentro"
     },
     unauthorized: {
       title: "Acesso não autorizado",
@@ -393,11 +403,28 @@ export default {
     },
     list: {
       title: "Listagem de colaboradores",
-      subtitle: "Consulte e filtre colaboradores cadastrados"
+      subtitle: "Consulte e filtre colaboradores cadastrados",
+      cardTitle: "Resultados",
+      createAction: "Novo colaborador",
+      viewAction: "Ver detalhe",
+      emptyTitle: "Nenhum colaborador encontrado",
+      emptyDescription: "Ajuste os filtros ou cadastre um novo colaborador.",
+      columns: {
+        status: "Status",
+        actions: "Ações"
+      },
+      filters: {
+        title: "Filtros",
+        status: "Status",
+        apply: "Aplicar filtros",
+        clear: "Limpar"
+      }
     },
     create: {
       title: "Cadastrar colaborador",
-      subtitle: "Novo colaborador organizacional"
+      subtitle: "Novo colaborador organizacional",
+      cardTitle: "Dados cadastrais",
+      success: "Colaborador cadastrado com sucesso."
     },
     detail: {
       title: "Detalhe do colaborador",
@@ -407,6 +434,9 @@ export default {
         "Não foi possível localizar um colaborador com este identificador.",
       backToList: "Voltar para listagem",
       editAction: "Editar colaborador",
+      activateAction: "Ativar",
+      deactivateAction: "Inativar",
+      changeStatusAction: "Alterar status",
       fields: {
         id: "Identificador",
         email: "E-mail",
@@ -426,14 +456,128 @@ export default {
     },
     edit: {
       title: "Editar colaborador",
-      subtitle: "Identificador: {id}"
+      subtitle: "Identificador: {id}",
+      cardTitle: "Formulário de edição",
+      success: "Colaborador atualizado com sucesso."
+    },
+    form: {
+      singularId: "Singular",
+      singularHint: "Opcional — singular vinculada ao colaborador",
+      areaId: "Área",
+      areaHint: "Opcional — área vinculada ao colaborador",
+      teamId: "Equipe",
+      teamHint: "Opcional — equipe vinculada ao colaborador",
+      name: "Nome",
+      email: "E-mail",
+      emailEditHint: "O e-mail não pode ser alterado após o cadastro",
+      zimbraId: "Identificador Zimbra",
+      zimbraIdHint: "Identificador único do colaborador no Zimbra",
+      submitCreate: "Cadastrar colaborador",
+      submitEdit: "Salvar alterações",
+      cancel: "Cancelar"
     },
     status: {
       ACTIVE: "Ativo",
       INACTIVE: "Inativo"
     },
-    stub: {
-      placeholder: "Placeholder — implementação visual em PKG-FE-02 em diante."
+    statusDialog: {
+      cancel: "Cancelar",
+      successActivate: "Colaborador ativado com sucesso.",
+      successDeactivate: "Colaborador inativado com sucesso.",
+      activate: {
+        title: "Ativar colaborador",
+        subtitle: "Confirme a reativação de {name}",
+        message:
+          "O colaborador voltará ao status ativo e poderá ser utilizado normalmente.",
+        confirm: "Ativar colaborador"
+      },
+      deactivate: {
+        title: "Inativar colaborador",
+        subtitle: "Confirme a inativação de {name}",
+        message:
+          "O colaborador será marcado como inativo. A operação falhará se existirem subordinados ativos vinculados a ele.",
+        confirm: "Inativar colaborador"
+      }
+    }
+  },
+  perfil: {
+    title: "Meu perfil",
+    subtitle: "As alterações são salvas somente neste navegador",
+    localNotice:
+      "Nome, cargo, e-mail adicional, telefones, ramais e celulares são salvos apenas neste navegador (não sincronizam entre dispositivos) — o backend ainda não tem um endpoint de autoatendimento para isso.",
+    save: "Salvar",
+    saveSuccess: "Perfil salvo neste navegador.",
+    fields: {
+      loginEmail: "E-mail de login",
+      name: "Nome completo",
+      cargo: "Cargo",
+      additionalEmail: "E-mail adicional",
+      phones: "Telefones",
+      ramais: "Ramais",
+      celulares: "Celulares"
+    }
+  },
+  areaColaborador: {
+    hub: {
+      title: "Áreas",
+      subtitle: "Visão geral da área do seu contexto ativo",
+      notFoundTitle: "Área não encontrada",
+      notFoundDescription:
+        "Não foi possível localizar os dados da sua área. As demais seções continuam disponíveis.",
+      cardTitle: "Seções",
+      equipeAction: "Equipe",
+      equipeDescription: "Consulte as equipes vinculadas à sua área",
+      arquivosAction: "Arquivos e Documentos",
+      arquivosDescription: "Acesse os arquivos e documentos da sua área"
+    },
+    equipe: {
+      title: "Equipe",
+      subtitle: "Equipes vinculadas à área do seu contexto ativo",
+      emptyTitle: "Nenhuma equipe vinculada",
+      emptyDescription: "Sua área ainda não possui equipes cadastradas."
+    },
+    arquivos: {
+      title: "Arquivos e Documentos",
+      subtitle:
+        "Pastas e documentos com permissão de acesso para o seu contexto",
+      emptyTitle: "Nenhum arquivo disponível",
+      emptyDescription:
+        "Não há pastas com permissão para o seu contexto ativo.",
+      downloadLabel: "Baixar arquivo"
+    }
+  },
+  federacao: {
+    area: {
+      breadcrumbLabel: "Área",
+      equipeAction: "Equipe",
+      equipeDescription: "Consulte os colaboradores vinculados a esta área",
+      arquivosAction: "Arquivos e Documentos",
+      arquivosDescription: "Em breve",
+      notFoundTitle: "Área não encontrada",
+      notFoundDescription: "Não foi possível localizar os dados desta área."
+    },
+    equipe: {
+      title: "Equipe",
+      subtitle: "Colaboradores vinculados a {area}",
+      columnName: "Nome",
+      columnEmail: "E-mail",
+      cargoLabel: "Cargo",
+      emailsLabel: "E-mail",
+      phonesLabel: "Telefone",
+      ramaisLabel: "Ramal",
+      contatoSetorialTitle: "Contato setorial",
+      emptyTitle: "Nenhum colaborador vinculado",
+      emptyDescription: "Esta área ainda não possui colaboradores cadastrados."
+    },
+    singular: {
+      breadcrumbLabel: "Singular",
+      subtitle: "Áreas vinculadas a esta singular",
+      areasTitle: "Áreas",
+      areasEmptyTitle: "Nenhuma área encontrada",
+      areasEmptyDescription:
+        "Esta singular ainda não possui áreas cadastradas.",
+      notFoundTitle: "Singular não encontrada",
+      notFoundDescription: "Não foi possível localizar os dados desta singular."
     }
   }
 };

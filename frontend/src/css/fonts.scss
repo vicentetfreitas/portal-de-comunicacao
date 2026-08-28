@@ -2,12 +2,110 @@
 // Font files are expected at /fonts/ (not versioned — see R-FE-S0-04)
 // Fallback: Inter + system stack (production discovery evidence)
 
+// One @font-face per real weight/style file, not a single `font-weight: 300
+// 900` range on the Regular file alone: a range descriptor tells the
+// browser this face covers every weight in it, so any requested weight
+// (e.g. 800 for the Home title, `pages/app/index.vue`) matched the same
+// static Regular file with no synthesis — it rendered as if the heavier
+// weight had never been requested (confirmed via Playwright:
+// `getComputedStyle(title).fontWeight` read "800" while the rendered
+// glyphs were visibly Regular-weight). Each real weight file already sits
+// in `/fonts/` (`public/fonts/README.md`) — registering them individually
+// lets the browser actually pick the matching one.
 @font-face {
   font-family: "Unimed Sans";
   font-style: normal;
-  font-weight: 300 900;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-Light.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-LightItalic.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: normal;
+  font-weight: 400;
   font-display: swap;
   src: url("/fonts/UnimedSans-Regular.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-RegularItalic.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-SemiBold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-SemiBoldItalic.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-Bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-BoldItalic.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-ExtraBold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-ExtraBoldItalic.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-Black.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Unimed Sans";
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+  src: url("/fonts/UnimedSans-BlackItalic.otf") format("opentype");
 }
 
 @font-face {

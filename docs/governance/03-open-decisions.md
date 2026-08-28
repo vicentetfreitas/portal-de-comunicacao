@@ -605,6 +605,47 @@ OQ-028.
 
 ---
 
+## DEC-FA-005 — Tema claro/escuro e referência visual da Home
+
+### Título
+
+Seleção explícita e persistência de tema; frame Figma `Home` (node `7:3`) como referência visual oficial da Home desktop.
+
+### Categoria
+
+Produto/UX + Frontend Foundation.
+
+### Criticidade
+
+Média.
+
+### Status
+
+**Aprovada** (2026-08-25).
+
+### Contexto
+
+Infraestrutura de tema (`useTheme` composable, tokens `data-theme` claro/escuro) já existe desde os pacotes legados de Frontend Foundation (`PKG-FE-S0-02`/`PKG-FE-S0-08`, Construction v4.1), mas toggle de UI e persistência nunca foram entregues por nenhum dos dois pacotes. Não havia decisão formal registrada sobre o comportamento esperado de tema, nem sobre qual frame Figma é a referência oficial da Home desktop. Ambas as lacunas foram identificadas em investigação de reconciliação Figma × implementação desta sessão.
+
+### Decisão
+
+1. O usuário deve poder selecionar explicitamente o tema da aplicação entre **Claro** e **Escuro** — a aplicação não deve depender exclusivamente da preferência do navegador/sistema operacional (`prefers-color-scheme`).
+2. A preferência de tema selecionada deve ser **persistida** e permanecer após recarregar a aplicação.
+3. O frame Figma **Home** (arquivo `WHDHRAMXXslmxOIzK2dbJG`, node **`7:3`**) é a referência visual oficial para a reconciliação da Home desktop do colaborador.
+4. O **tema claro** é a referência visual atualmente disponível no Figma para essa validação — o arquivo Figma não possui frame em tema escuro.
+5. Medições/análise de código (comentários citando valores extraídos do Figma, comparação programática de propriedades CSS) **não substituem** validação visual formal contra o Figma. A conformidade visual deve ser verificada separadamente antes de qualquer item ser considerado definitivamente conforme.
+
+### Não incluído (implementação futura)
+
+- Implementação do toggle de UI, mecanismo de persistência e qualquer alteração em `useTheme.ts`, `boot/theme.ts`, tokens CSS, ou componentes de shell (`AppHeader`/`AppSidebar`/`AppFooter`/`AppShell`) — não fazem parte desta decisão; ficam para implementação e revisão separadas.
+- Esta DEC **não autoriza retroativamente** nenhuma alteração já presente no working tree relacionada a Home/AppShell — essas mudanças serão avaliadas em revisão separada.
+
+### Registro definitivo
+
+A definir na implementação — provável `docs/frontend/frontend-flow.md` (comportamento de tema) e `docs/architecture/decisions/AUDITORIA-DS-FIGMA-01.md` (referência de frame para reconciliação da Home). Não é uma Feature.
+
+---
+
 ## DEC-ORG-001 — Hierarquia organizacional oficial
 
 ### Título
@@ -1209,6 +1250,36 @@ O CMS é **exclusivamente** provedor de conteúdo. Autorização e organização
 
 ---
 
+## DEC-CMS-002 — Comunicado é publicação do CMS (encerra OQ-004)
+
+### Título
+
+Comunicado é conteúdo do CMS (WordPress), não categoria de documento.
+
+### Categoria
+
+Domínio / Arquitetura.
+
+### Criticidade
+
+Alta.
+
+### Status
+
+**Aprovada** (2026-08-27) — decisão de produto do usuário; encerra OQ-004 e estabiliza a fronteira Gestão Documental ↔ Comunicação Interna.
+
+### Decisão
+
+1. **Comunicado é uma publicação** (título, descrição/conteúdo, imagem de destaque opcional, arquivos anexos) servida por **API do WordPress** integrada ao Backend. Pertence a Comunicação Interna (`FT-NOTICIA`, repositório `portal-comunicacao-cms`). **Não** é um valor de `CATEGORIA_DOCUMENTAL` nem um `DOCUMENTO` do módulo de Gestão Documental. O item conflitante de **BR-039** ("Comunicado institucional segue regras de documento ou de canal interno?") resolve-se por **canal interno / publicação**, não documento.
+2. **Consequência — `CATEGORIA_DOCUMENTAL` passa a ser taxonomia por tipo de mídia.** Sem `Comunicado`, e como a taxonomia do seed histórico (`Normativos`/`Manuais`/`Políticas`/`Procedimentos`/`Comunicados` em `database/ddl/008-initial-data.sql`) nunca foi aplicada e não reflete o produto, `CATEGORIA_DOCUMENTAL` passa a classificar o documento pelo **tipo de mídia do arquivo**: `Documentos`, `Imagens`, `Vídeos`, `Outros`. A categoria de um documento é **derivada** do `TIP_MIME` no Backend, não escolhida pelo usuário nesta fase. Um seletor de categoria e a reconciliação plena da taxonomia ficam para uma Feature futura de categorização documental.
+3. **Integração WordPress ↔ Backend** (contrato, autenticação, cache, "boas práticas") é escopo de `FT-NOTICIA` / **GAP-DEC-010**, não desta decisão.
+
+### Registro definitivo
+
+`docs/domain/10-open-questions.md` (OQ-004 encerrada), `specs/features/documento-upload/specification.md` § Categorização por tipo de mídia (primeiro consumidor), `docs/domain/09-business-rules.md` BR-039 (referência cruzada). Compatível com DEC-CMS-001 (CMS é exclusivamente provedor de conteúdo).
+
+---
+
 # Decisões Críticas Abertas
 
 | ID      | Decisão                    | Sprint prevista |
@@ -1217,7 +1288,7 @@ O CMS é **exclusivamente** provedor de conteúdo. Autorização e organização
 | DEC-003 | Estratégia de mensageria   | Sprint futura   |
 | DEC-004 | Estratégia de deploy       | Sprint futura   |
 
-> **Atenção:** IDs `DEC-FA-*`, `DEC-ORG-*`, `DEC-CMS-*` evitam colisão com `docs/technology/04-decision-log.md` (DEC-008+). OQ-001/026/027/028 **encerradas** pelas DECs acima (2026-07-24).
+> **Atenção:** IDs `DEC-FA-*`, `DEC-ORG-*`, `DEC-CMS-*` evitam colisão com `docs/technology/04-decision-log.md` (DEC-008+). OQ-001/026/027/028 **encerradas** pelas DECs acima (2026-07-24); OQ-004 **encerrada** por DEC-CMS-002 (2026-08-27).
 
 ---
 
@@ -1281,3 +1352,4 @@ Uma decisão somente pode ser encerrada quando:
 | 2026-08-17 | Governança      | **DH-PA-03** aprovada — CARGO não é requisito para criação nem operação no Primeiro Acesso; reconciliação com DEC-DB-027 registrada como pendente (PONTO DE RECONCILIAÇÃO) |
 | 2026-08-17 | Governança      | **DH-CARGO-01** aprovada — CARGO não obrigatório na criação de qualquer COLABORADOR; supersession parcial DEC-DB-027; reconciliação DEC-DB-027 × DH-PA-03 encerrada; R1 decidida (escopo geral) |
 | 2026-08-17 | Engenharia      | **GAP-028-04** — artefatos de persistência no repositório (`DES_DOMINIO_EMAIL`, `UK_SINGULAR_DOMINIO_EMAIL`, V008, DML); execução DBA no Oracle pendente |
+| 2026-08-25 | Governança      | **DEC-FA-005** aprovada — tema claro/escuro (seleção explícita + persistência) e frame Figma `Home` (node `7:3`) como referência visual oficial da Home desktop |

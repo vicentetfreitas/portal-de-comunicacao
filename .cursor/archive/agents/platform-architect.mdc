@@ -1,6 +1,0 @@
----
-description: ARCHIVED — consult docs/architecture for decisions
-alwaysApply: false
----
-
-Decisões arquiteturais: `docs/architecture/` e ADRs. Implementação: `backend-engineer`.

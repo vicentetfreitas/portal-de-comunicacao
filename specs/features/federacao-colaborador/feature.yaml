@@ -1,0 +1,9 @@
+feature:
+  id: FT-FEDERACAO-COLABORADOR
+  name: Federação — Navegação do Colaborador
+
+template:
+  name: crud-feature
+  version: "1.1"
+
+status: DONE

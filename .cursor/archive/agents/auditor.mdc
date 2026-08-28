@@ -1,6 +1,0 @@
----
-description: ARCHIVED — formal gates use reviewer + CI evidence
-alwaysApply: false
----
-
-Substituto: `reviewer` + CI logs + `specs/foundation/definition-of-done.md`.

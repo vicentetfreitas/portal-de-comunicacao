@@ -87,4 +87,33 @@ export class BaseApiClient {
     const response = await this.client.delete<ApiResponse<void>>(url, config);
     this.unwrapOptionalData(response.data);
   }
+
+  /**
+   * GET returning a raw binary body (not an ApiResponse envelope) — e.g. file downloads.
+   * Reads the filename from Content-Disposition when present (FT-DOCUMENTO).
+   */
+  protected async getBlob(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<{ blob: Blob; filename: string | null }> {
+    const response = await this.client.get<Blob>(url, {
+      ...config,
+      responseType: "blob"
+    });
+
+    const disposition = response.headers["content-disposition"] as
+      | string
+      | undefined;
+    const filename = extractFilename(disposition);
+
+    return { blob: response.data, filename };
+  }
+}
+
+function extractFilename(disposition: string | undefined): string | null {
+  if (!disposition) {
+    return null;
+  }
+  const match = /filename="?([^";]+)"?/i.exec(disposition);
+  return match?.[1] ?? null;
 }

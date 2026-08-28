@@ -6,7 +6,7 @@
     :outline="outline"
     v-bind="$attrs"
   >
-    <slot>{{ label }}</slot>
+    <slot />
   </q-badge>
 </template>
 

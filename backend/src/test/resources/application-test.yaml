@@ -42,7 +42,7 @@ application:
     frontend-redirect-url: http://localhost:4200/
     default-federation-id: 1
     session-administrator-emails:
-      - colaborador@unimedceara.com.br
+      - vicentefreitas@unimedceara.com.br
   persistence:
     pool-max-size: 2
     pool-min-idle: 1

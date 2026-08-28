@@ -12,7 +12,7 @@ class IdentityProviderClientTest {
             @Override
             public IdentityValidationResult validateIdentity(IdentityValidationRequest request) {
                 return new IdentityValidationResult(
-                        "colaborador@unimedceara.com.br",
+                        "vicentefreitas@unimedceara.com.br",
                         "Colaborador Teste",
                         "zimbra-id-12345");
             }
@@ -26,7 +26,7 @@ class IdentityProviderClientTest {
         IdentityValidationResult result = client.validateIdentity(
                 new IdentityValidationRequest("callback-token-abc"));
 
-        assertThat(result.email()).isEqualTo("colaborador@unimedceara.com.br");
+        assertThat(result.email()).isEqualTo("vicentefreitas@unimedceara.com.br");
         assertThat(result.displayName()).isEqualTo("Colaborador Teste");
         assertThat(result.zimbraId()).isEqualTo("zimbra-id-12345");
     }

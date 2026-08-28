@@ -2,6 +2,8 @@
 
 Mecanismo de execução. **Não é SSOT.** Não duplicar `docs/`, `specs/`, `database/` ou `construction/`.
 
+> **Reorganização em curso (DEC-015 / 2026-08-28).** O código sai deste monorepo; os 3 repos GitLab (`portal-comunicacao-api` / `-app` / `-cms`) passam a ser primários. `portal-comunicacao-api` é o **repositório-líder da SSOT** (`specs/`, `docs/` transversal, `database/`, `engineering/`, este `CLAUDE.md`). Este monorepo será **arquivado (read-only)**. Plano e passos: `docs/governance/12-repository-reorganization.md`. Enquanto a migração não conclui, o trabalho de código continua aqui.
+
 ## Camadas
 
 ```text
@@ -26,19 +28,25 @@ Detalhes: `specs/foundation/minimal-ssot.md`.
 | Fluxo diário | `specs/foundation/development-workflow.md` |
 | Paths | `specs/foundation/path-conventions.md` |
 | Invocações | `specs/foundation/agent-commands.md` |
+| Organização e execução do projeto (camadas, Convenção Git, contratos Validate/Review) | `docs/governance/10-project-organization.md` |
+| Jira (modelo Epic↔EPIC-0XX / Story↔FEATURE-0XX, status, sync, automação) | `docs/governance/11-jira-integration.md` |
+| Reorganização de repositórios (DEC-015 — api como líder da SSOT) | `docs/governance/12-repository-reorganization.md` |
 | Etapa 2 | `docs/governance/09-framework-simplification-scope.md` |
 | Arquitetura documental | `docs/governance/07-documentation-architecture.md` |
 | Feature | `specs/features/<slug>/` |
+| Estado geral do projeto (não de uma Feature) | `docs/governance/01-project-status.md` — ler antes de `03-open-decisions.md`/`04-decision-log.md`/`docs/audit/*` inteiros; usar `/project-status` |
 | DoR / DoD | `specs/foundation/definition-of-ready.md`, `definition-of-done.md` |
 | Padrões de código | `docs/implementation/` |
 | Arquitetura | `docs/architecture/` |
 | Regras de negócio | `docs/domain/` |
 | Schema | `database/` |
 | CI | `.github/workflows/` |
+| Design / UI | DS em código: `frontend/src/components/` (`Ds*`) + tokens; frames existentes no Figma (plugin desligado neste projeto — reativar sob demanda: `claude plugin enable figma@claude-plugins-official --scope project`) |
 
 ## Guardrails
 
 - Não implementar sem especificação que atenda DoR.
+- Componente/página fora do layout Figma: a decisão de design (tokens, estados, comportamento visual) vai na spec da feature (`specs/features/<slug>/`) e reutiliza o DS em código (`frontend/src/components/` `Ds*`). Não há frame para apontar; não reativar o plugin Figma para isso.
 - Não explorar o repositório sem consultar `path-conventions.md`.
 - Não tratar `construction/registry.yaml` status, `session.md` ou `pkg-XX/status.md` como SSOT.
 - Construction v4.1 (Session, PKG, Snapshot, Cache, orchestrator) **não** é o fluxo diário.
@@ -46,12 +54,15 @@ Detalhes: `specs/foundation/minimal-ssot.md`.
 - Não carregar `.cursor/` nem o framework construction como contexto cotidiano.
 - Um único agente; modos em `agent-commands.md` (Specify, Readiness, Implement, Validate, Review, Status).
 - Review somente revisão: não editar código.
+- Para status/governança amplos (não de uma Feature específica): ler `01-project-status.md` primeiro; não ler `03-open-decisions.md`, `04-decision-log.md` ou `docs/audit/*` por inteiro — usar `grep` por ID quando precisar de item específico.
 
 ## Fluxo cotidiano
 
 ```text
-specs/features/<slug>/ → DoR → tasks.md → código → validação → CI → PR
+specs/features/<slug>/ → DoR → tasks.md → código → validação → review → merge local | PR externo → CI → merge
 ```
+
+PR/GitHub/CI são publicação e revisão **externas**, opcionais — não bloqueiam desenvolvimento, validação ou review locais. Sem PR, o fechamento local usa o vocabulário já existente (`READY_FOR_LOCAL_MERGE`); ver `docs/governance/10-project-organization.md`.
 
 ## Validação
 

@@ -6,6 +6,7 @@ import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.Id
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.client.IdentityValidationResult;
 import br.com.unimedceara.portalcomunicacao.infrastructure.integration.exception.IntegrationUnavailableException;
 import br.com.unimedceara.portalcomunicacao.shared.exception.UnauthorizedException;
+import br.com.unimedceara.portalcomunicacao.support.data.IntegrationTestUniqueData;
 
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,11 +22,22 @@ public class TestIdentityProviderClient implements IdentityProviderClient, Ident
     public static final String ZIMBRA_UNAVAILABLE_TOKEN = "zimbra-unavailable-token";
     public static final String INACTIVE_COLABORADOR_TOKEN = "inactive-colaborador-token";
 
+    /**
+     * E-mail do usuário válido resolvido por {@link #VALID_TOKEN}. Único por execução da JVM
+     * ({@link IntegrationTestUniqueData}) e estável dentro dela — não depende de nenhuma identidade
+     * pré-existente no schema compartilhado (Oracle TST, sem limpeza automática — DEC-DB-023).
+     * Estável para poder ser registrado como {@code session-administrator-emails} via
+     * {@code @DynamicPropertySource}.
+     */
+    public static final String DEFAULT_VALID_TOKEN_EMAIL = IntegrationTestUniqueData.colaboradorEmail("valid-token");
+
     private final AtomicInteger validationCallCount = new AtomicInteger();
 
     private Function<String, IdentityValidationResult> validationBehavior = this::defaultValidation;
 
     private boolean authorizationUnavailable;
+
+    private String validTokenEmail = DEFAULT_VALID_TOKEN_EMAIL;
 
     @Override
     public IdentityValidationResult validateIdentity(IdentityValidationRequest request) {
@@ -59,7 +71,7 @@ public class TestIdentityProviderClient implements IdentityProviderClient, Ident
         return new IdentityValidationResult(
                 email,
                 "Colaborador Teste",
-                "zimbra-id-test");
+                "zimbra-" + email);
     }
 
     @Override
@@ -74,6 +86,15 @@ public class TestIdentityProviderClient implements IdentityProviderClient, Ident
         validationCallCount.set(0);
         validationBehavior = this::defaultValidation;
         authorizationUnavailable = false;
+        validTokenEmail = DEFAULT_VALID_TOKEN_EMAIL;
+    }
+
+    /**
+     * E-mail que {@link #VALID_TOKEN} resolve na validação padrão. Use para as asserções
+     * ({@code $.data.email}) em vez de um literal.
+     */
+    public String validTokenEmail() {
+        return validTokenEmail;
     }
 
     public void setAuthorizationUnavailable(boolean authorizationUnavailable) {
@@ -91,9 +112,9 @@ public class TestIdentityProviderClient implements IdentityProviderClient, Ident
     private IdentityValidationResult defaultValidation(String token) {
         if (VALID_TOKEN.equals(token)) {
             return new IdentityValidationResult(
-                    "colaborador@unimedceara.com.br",
+                    validTokenEmail,
                     "Colaborador Teste",
-                    "zimbra-id-test");
+                    "zimbra-" + validTokenEmail);
         }
         if (INVALID_CREDENTIALS_TOKEN.equals(token)) {
             throw new UnauthorizedException("Credenciais inválidas");
