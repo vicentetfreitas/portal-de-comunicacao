@@ -60,7 +60,7 @@ Pontos abertos: onde a SSOT compartilhada vive em definitivo (#2), hospedagem/te
 ## Próximas ações (ordem)
 
 1. **Bloco documental fechado** — FT-DOCUMENTO / UPLOAD / GESTAO / NAVEGACAO todos `DONE`. Abrir MR `development` → `stage`/`main` em `portal-comunicacao-api` / `-app` para promover.
-2. Decidir se há Feature de gestão de perfil/permissões para `ADMINISTRADOR` — hoje `PERMISSAO_PASTA` é dado institucional (D-03 de FT-DOCUMENTO-GESTAO), `FT-PERFIL` está `DRAFT`, e a administração de sessão/papel tem backend sem `feature.yaml` (Pendência #3).
+2. Decidir se há Feature de gestão de perfil/permissões para `ADMINISTRADOR`. Estado: `PERMISSAO_PASTA` é dado institucional (D-03 de FT-DOCUMENTO-GESTAO, `OQ-006`); a **resolução** de contexto de papel já é de FT-SESSION (Pendência #3 classificada); a **administração** de `PAPEL_ATRIBUICAO` (conceder/revogar papel + escopo) e a matriz de permissões por papel são `OQ-020` — Feature futura, não existe hoje; `FT-PERFIL` (autoatendimento) está `DRAFT`.
 3. Provisionar grants `PERMISSAO_PASTA` `EDICAO` institucionais nas pastas de produção (DBA) — não bloqueia features, é dado operacional.
 4. Commitar working tree pendente do monorepo: `docker-compose.yml` (Oracle), `.github/workflows/backend.yml`.
 5. Etapa 5 — validar ambiente local Oracle ponta a ponta.
@@ -69,9 +69,9 @@ Pontos abertos: onde a SSOT compartilhada vive em definitivo (#2), hospedagem/te
 
 `#4` roadmap desatualizado · `#5` colisão de ID entre 3 catálogos de decisão ·
 `#8` execução da migração de repositórios (proteção de branch GitLab manual pendente) ·
-`#9` `11-platform-decomposition.md` cita stack errada (GAP-DEC-004) · `#10` convenção de commit cross-cutting ·
-`#3` `PapelAtribuicaoService` sem `feature.yaml` associada.
-Baixa severidade / registro apenas: `#1`, `#2`, `#6`, `#7`.
+`#9` `11-platform-decomposition.md` cita stack errada (GAP-DEC-004) · `#10` convenção de commit cross-cutting.
+Baixa severidade / registro apenas: `#1`, `#2`, `#6`, `#7`, `#12` (FT-SESSION `feature.yaml` legado + sem `traceability.md`).
+**Resolvidas:** `#3` (classificada — `PapelAtribuicaoService` é FT-SESSION, RN-SESSION-006..010).
 
 ---
 
@@ -199,7 +199,7 @@ Resultado Atual:
 
 | Item            | Status                                              |
 | --------------- | --------------------------------------------------- |
-| Backend         | 🟩 Etapa 2 avançada — org + auth/sessão + Colaborador + Primeiro Acesso implementados e testados; atribuição de papel (role) adicionada em 2026-08-20 (`PapelAtribuicaoService`, ainda não vinculada formalmente a nenhum `feature.yaml` — ver Pendências) |
+| Backend         | 🟩 Etapa 2 avançada — org + auth/sessão + Colaborador + Primeiro Acesso + bloco documental (FT-DOCUMENTO/UPLOAD/GESTAO/NAVEGACAO) implementados e testados; resolução de contexto operacional por `PAPEL_ATRIBUICAO` (2026-08-20) classificada como FT-SESSION (RN-SESSION-006..010) |
 | Frontend        | 🟩 Foundation + org CRUD (Singular, Equipe, Colaborador) + Primeiro Acesso + FT-AREA-COLABORADOR (`DONE`, 2026-08-26) implementados |
 | Banco de Dados  | 🟩 Oracle — baseline homologado; 6 entidades JPA alinhadas (Etapa 4) |
 | Testes          | 🟩 Unit + integração Oracle (features org/auth/colaborador/primeiro-acesso); E2E Playwright cobre `colaborador`, `equipe`, `singular`, `federacao`, `app-shell` (FT-COLABORADOR confirmado, `AT-FE-COLABORADOR-001..005`) |
@@ -294,7 +294,7 @@ Resultado Atual:
 
 | Marco | Descrição                              | Status          |
 | ----- | -------------------------------------- | --------------- |
-| M19   | FT-DOCUMENTO-NAVEGACAO — DoR-Spec / readiness | Planejado |
+| M19   | Promoção do bloco documental para `stage`/`main` (MRs nos repos-camada) | Planejado |
 | M20   | Etapa 5 — infraestrutura local Oracle  | Planejado       |
 
 ---
@@ -353,7 +353,7 @@ Registradas aqui por escopo desta reconciliação (não corrigidas — correçã
 |---|---|---|---|
 | 1 | `docker-compose.yml` já corrigido para Oracle no working tree, mas não commitado (D5) | commit + `docs/governance/03-open-decisions.md` | Baixa |
 | 2 | `.github/workflows/backend.yml` (CI, "Opção B") não commitado; "Opção A" (CI com Oracle real) permanece sem decisão (D6/GAP-DEC-003) | `docs/governance/03-open-decisions.md` | Baixa |
-| 3 | `PapelAtribuicaoService`/entidades de papel (commit `9306f94`) implementadas sem `feature.yaml`/spec associada nesta reconciliação | classificar contra spec existente (`session`/`authentication`) ou abrir nova feature | Média |
+| 3 | **CLASSIFICADA (2026-08-28) — pertence a FT-SESSION.** `PapelAtribuicaoService` (`listElegiveis`/`findElegivel`/`resolveAutomatica`/`resolveParaRefresh`, tudo `@Transactional(readOnly=true)` — resolução de contexto, não administração), `PapelEntity`/`PapelAtribuicaoEntity`/repos e `PapelAtribuicaoResponse` implementam `specs/features/session/specification.md` § "Contexto operacional por atribuição de papel", **RN-SESSION-006..010** (evolução de 2026-08-20, spec `APPROVED`; schema por `DEC-DB-020`). O Javadoc do próprio serviço cita "FT-SESSION" e "RN-SESSION-007". Testes: `PapelAtribuicaoServiceTest` (10) + `SessionAtribuicaoAcceptanceIntegrationTest` (10). **Nenhuma Feature nova necessária.** Criar/editar/revogar `PAPEL_ATRIBUICAO` e matriz de permissões por papel estão explicitamente fora de escopo de FT-SESSION (§ Non-goals) e registrados como **OQ-020** (`docs/domain/10-open-questions.md`) — Feature futura de administração. **Resíduos menores** (nova Pendência #12): `FT-SESSION/feature.yaml` no esquema legado (`status.specification`), sem `traceability.md`, e a spec nota que a evolução de 2026-08-20 não teve `DEC-XXX` dedicado. | — (classificada) | — |
 | 4 | `docs/governance/05-roadmap.md` desatualizado desde 2026-07-08 (ainda descreve FT-AUTH como "EM PREPARAÇÃO") — contradiz este documento | `docs/governance/05-roadmap.md` | Média |
 | 5 | Três catálogos de decisão com colisão de ID (`docs/governance/03-open-decisions.md`, `docs/architecture/08-decision-records.md`, `docs/technology/04-decision-log.md`) — D7/GAP-DEC-006, não implementada | catálogos de decisão | Baixa (sem bloqueio operacional) |
 | 6 | `docs/audit/12-...` e `structural-simplification-plan-w2.md` contêm 2 achados já defasados (D4 storage e D5 docker-compose) — já mapeado em `docs/audit/14-...` | não requer nova auditoria; já registrado | Baixa |
@@ -361,7 +361,8 @@ Registradas aqui por escopo desta reconciliação (não corrigidas — correçã
 | 8 | DEC-015 (separação em repositórios) aprovada 2026-08-26. Ponto em Aberto 6 (CI por repositório) **resolvido** para backend/frontend. **2026-08-27:** `portal-comunicacao-api` e `portal-comunicacao-app` **ressincronizados via `git subtree split`** (preservando histórico; substitui o snapshot squash, que precedia o módulo `documento` e ~1 semana de trabalho); `development`/`stage` de ambos recriadas e force-pushed. `api` compila standalone (`./mvnw clean test-compile` OK). Ver `docs/technology/04-decision-log.md` § DEC-015 → Progresso da Execução. Seguem abertos: #2 (onde vivem `specs/`/`docs/`/`construction/`/`database/` pós-divisão — commits de spec/governança continuam só no monorepo), #5 (hospedagem/tema do CMS — CI ali é só placeholder), resync do `portal-comunicacao-cms` quando houver código. Proteção de branch no GitLab (`stage`/`main`) não configurada — fora do alcance de CLI, ação manual pendente do usuário na UI do GitLab | `docs/technology/04-decision-log.md` § DEC-015 | Média — bloqueia execução completa da migração de repositórios, não bloqueia trabalho de feature |
 | 9 | `docs/solution-design/11-platform-decomposition.md` descreve Frontend em **Next.js** e banco **PostgreSQL** — contradiz a stack aprovada (Vue 3/Quasar, DEC-007 Oracle) e o `docker-compose.yml` atual (só Oracle, sem Postgres). Mesmo padrão do documento já arquivado em `docs/governance/history/11-target-repository-structure.md`. Já registrado como GAP-DEC-004 (`docs/audit/13-decision-inventory.md`), ainda **Aberto** | `docs/solution-design/11-platform-decomposition.md` — reclassificar (Archive) ou corrigir | Média |
 | 10 | `docs/governance/10-project-organization.md` § Convenção Git exige `scope` de commit = slug de Feature e proíbe domínio genérico, mas não prevê trabalho cross-cutting sem Feature associada (governança/infra, ex.: DEC-015, branches/CI dos repositórios divididos). Commit `e5b9ce6` (`docs(governance): ...`) usa escopo genérico por essa lacuna — decisão do usuário: manter como está, registrar como gap em vez de corrigir | `docs/governance/10-project-organization.md` § Convenção Git — definir convenção para commits não ligados a Feature (branch/scope dedicados?) | Baixa |
-| 11 | **Parcialmente atendida (2026-08-28).** Bloco Gestão Documental agora refletido em `# Estado Atual (leitura rápida)` e na tabela de Features (FT-DOCUMENTO `DONE`; FT-DOCUMENTO-UPLOAD `IMPLEMENTING` code-complete, pendências de homologação; FT-DOCUMENTO-GESTAO `IMPLEMENTING` 4/4 tasks; FT-DOCUMENTO-NAVEGACAO `DRAFT` D-01..D-07 fechadas). Reconciliação feita com evidência **local** deste monorepo (`feature.yaml`, `tasks.md`, `git log`). **2026-08-28:** commits pushados para `origin/development`; **bloco Gestão Documental fechado** — FT-DOCUMENTO, FT-DOCUMENTO-UPLOAD e FT-DOCUMENTO-GESTAO todos `DONE` (Gate 3 + Gate 6; `mvn verify` 399/0/2; MinIO provisionado e caminho real validado end-to-end). **Segue em aberto:** `docs/jira-reconciliation-audit.md` (commit `c69e46c`) não executado; DEC-CMS-002 não integrada às seções de decisão deste índice; checkpoint completo quando priorizado. | checkpoint completo quando priorizado | Baixa |
+| 11 | **Parcialmente atendida (2026-08-28).** Bloco documental refletido em `# Estado Atual (leitura rápida)` e na tabela de Features — FT-DOCUMENTO / UPLOAD / GESTAO / NAVEGACAO todos `DONE` (Gate 3 + Gate 6; `mvn verify` 400/0/2; MinIO provisionado e caminho real validado end-to-end). **Segue em aberto:** `docs/jira-reconciliation-audit.md` (commit `c69e46c`) não executado; DEC-CMS-002 não integrada às seções de decisão deste índice; checkpoint completo quando priorizado. | checkpoint completo quando priorizado | Baixa |
+| 12 | **FT-SESSION — dívida documental** (desdobrada da #3, agora classificada). `feature.yaml` no esquema legado (`status.specification: APPROVED`) — mesma migração já feita em FT-PRIMEIRO-ACESSO (2026-08-26). Sem `traceability.md` — RN-SESSION-001..010 (incl. a evolução `PAPEL_ATRIBUICAO` de 2026-08-20) não rastreadas a código/testes numa matriz, embora `PapelAtribuicaoServiceTest` (10) + `SessionAtribuicaoAcceptanceIntegrationTest` (10) cubram. A "Nota de rastreabilidade (2026-08-20)" da spec registra que a evolução foi feita sem `DEC-XXX` dedicado. | `specs/features/session/` — trabalho de `/specify` (migrar `feature.yaml`, criar `traceability.md`) quando priorizado | Baixa |
 
 ## Resolvidas em 2026-08-26
 
@@ -404,3 +405,4 @@ Registradas aqui por escopo desta reconciliação (não corrigidas — correçã
 | 2026-08-28 | Redução do índice | Adicionada seção `# Estado Atual (leitura rápida)` no topo; narrativas dos checkpoints 2026-08-21/26 movidas para `docs/governance/history/16-state-index-checkpoints.md`; Pendência #11 atendida (bloco Gestão Documental refletido na tabela de Features) |
 | 2026-08-28 | Fechamento de feature | FT-DOCUMENTO-GESTAO e FT-DOCUMENTO-UPLOAD `IMPLEMENTING` → `DONE` (Gate 3 + Gate 6 PASS; `mvn verify` 399/0/2; MinIO provisionado e caminho real validado). Bloco Gestão Documental fechado (M18). Próxima: FT-DOCUMENTO-NAVEGACAO `/readiness` |
 | 2026-08-28 | Fechamento de feature | FT-DOCUMENTO-NAVEGACAO `DRAFT` → Gate 1 → Review de Spec (APPROVED WITH MINOR ISSUES) → DoR-Implementation → `IMPLEMENTING` → 4 tasks (`api b87f34d`; `app cf3f119`→`2969042`) → Gate 3 + Gate 6 PASS → `DONE`. `mvn verify` 400/0/2, `test:unit` 228. **Bloco documental inteiro fechado.** |
+| 2026-08-28 | Classificação (Pendência #3) | `PapelAtribuicaoService` + entidades/repo/DTO de papel classificados como **FT-SESSION** (§ Contexto operacional por atribuição de papel, RN-SESSION-006..010, evolução 2026-08-20 já `APPROVED`) — nenhuma Feature nova. Administração de `PAPEL_ATRIBUICAO` + matriz de permissões = `OQ-020` (Feature futura). Resíduos → Pendência #12 (FT-SESSION `feature.yaml` legado + sem `traceability.md`). |
