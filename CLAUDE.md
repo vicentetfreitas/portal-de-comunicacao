@@ -37,10 +37,12 @@ Detalhes: `specs/foundation/minimal-ssot.md`.
 | Regras de negócio | `docs/domain/` |
 | Schema | `database/` |
 | CI | `.github/workflows/` |
+| Design / UI | DS em código: `frontend/src/components/` (`Ds*`) + tokens; frames existentes no Figma (plugin desligado neste projeto — reativar sob demanda: `claude plugin enable figma@claude-plugins-official --scope project`) |
 
 ## Guardrails
 
 - Não implementar sem especificação que atenda DoR.
+- Componente/página fora do layout Figma: a decisão de design (tokens, estados, comportamento visual) vai na spec da feature (`specs/features/<slug>/`) e reutiliza o DS em código (`frontend/src/components/` `Ds*`). Não há frame para apontar; não reativar o plugin Figma para isso.
 - Não explorar o repositório sem consultar `path-conventions.md`.
 - Não tratar `construction/registry.yaml` status, `session.md` ou `pkg-XX/status.md` como SSOT.
 - Construction v4.1 (Session, PKG, Snapshot, Cache, orchestrator) **não** é o fluxo diário.
