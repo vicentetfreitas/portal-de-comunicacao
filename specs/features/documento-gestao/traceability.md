@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — Atualizar / Alterar Status / Mover) |
-| Versão | 1.1 |
-| Status | APPROVED |
+| Versão | 1.2 |
+| Status | DONE |
 | Owner | Engineering Framework |
 
 ---
@@ -86,6 +86,9 @@ tem UC, API e AT. Governança pode catalogar uma BR posteriormente (ver
 
 # Dívidas Documentais Aceitas
 
+- **Sem suíte E2E Playwright dedicada** (`AT-DOC-GESTAO-*`) — decisão do usuário
+  2026-08-28 (fechar com cobertura unit + integração Oracle + smoke test manual
+  end-to-end). Precedente: `FT-PRIMEIRO-ACESSO`.
 - `BR-023` (quota de armazenamento) — catalogada, não implementada (herdado de
   `FT-DOCUMENTO-UPLOAD`).
 - Papel `GESTOR_DOCUMENTAL` não estendido — só `ADMINISTRADOR` (`decisions.md` D-02).
@@ -98,16 +101,20 @@ tem UC, API e AT. Governança pode catalogar uma BR posteriormente (ver
   snapshot, não as fecha.
 - Operações estruturais sem RN dedicada (DC-4).
 
-## Bloqueantes de execução (não de spec)
+## Bloqueantes de execução (não de spec) — resolvidos no fechamento
 
 - ✅ `SQ_ARQUIVO_BINARIO`/`SQ_DOCUMENTO_VERSAO` — `V009` executado (2026-08-27).
-- ⏳ `SQ_PASTA` e `SQ_PERMISSAO_PASTA` — **ausência confirmada via JDBC no Oracle TST
-  (2026-08-27).** Tabelas existem, `UNMPORTCOM_APP_ROLE` já tem DML, 0 linhas →
-  `V010` `START WITH 1` (TK-DOC-GESTAO-001).
-- ⏳ Pastas-raiz por Federação/Singular/Área/Equipe + seus `PERMISSAO_PASTA` (incl.
-  `EDICAO`) — dado institucional (`database/dml/`); o app só cria subpastas. Tabelas
-  vazias no TST.
-- ⏳ Provisionamento do Object Storage (DEC-013).
+- ✅ `SQ_PASTA` e `SQ_PERMISSAO_PASTA` — `V010` executado pelo usuário e validado via
+  JDBC no Oracle TST (2026-08-27); ambas com `GRANT SELECT` para `UNMPORTCOM_APP_ROLE`.
+- ✅ Pasta-raiz + `PERMISSAO_PASTA` (`LEITURA`/`DOWNLOAD`/`EDICAO`) de homologação —
+  `V011` executado (2026-08-27): colaborador 1335 = `ADMINISTRADOR` da Área TI,
+  `PASTA` 122 + grants. Pastas-raiz de produção seguem sendo dado institucional
+  provisionado pelo DBA (`database/dml/`); o app só cria subpastas.
+- ✅ Object Storage (DEC-013) — MinIO provisionado localmente (`docker-compose.yml`
+  em `portal-comunicacao-api`, API `:9002`, bucket `portal-comunicacao-documentos`);
+  caminho real upload → nova versão → download validado end-to-end em 2026-08-28.
+  Object storage do ambiente corporativo de homologação = pedido de ops (não bloqueia
+  o DoD — o caminho está validado).
 
 ## Ação de governança (monorepo, não bloqueia a Feature)
 
@@ -134,3 +141,4 @@ tem UC, API e AT. Governança pode catalogar uma BR posteriormente (ver
 |--------|------|--------|-----------|
 | 1.0 | 2026-08-27 | Claude Code (Specify) | Criação — matriz RF/UC/API/AT/TK-DOC-GESTAO-001..010; rastreabilidade de D-01..D-08 + DC-1..DC-4; bloqueante `SQ_PASTA`/`SQ_PERMISSAO_PASTA` (`V010`) |
 | 1.1 | 2026-08-27 | Claude Code (Specify) | Correção NC-A do Review de Spec: cobertura de Tasks 3→4; `TK-DOC-GESTAO-004` (frontend) incluída na matriz consolidada (RF-001..008). Pré-check JDBC do DoR-Implementation refletido em § Bloqueantes. Mantém `APPROVED`. |
+| 1.2 | 2026-08-28 | Claude Code (Review) | Fechamento: bloqueantes de execução resolvidos (`V010`/`V011` executados; MinIO provisionado e caminho real validado end-to-end); dívida aceita "sem E2E Playwright" registrada. Header → `DONE`. |

@@ -3,8 +3,8 @@
 | Campo | Valor |
 |--------|--------|
 | Template | CRUD Feature (adaptado — Atualizar / Alterar Status / Mover; estende `FT-DOCUMENTO` e `FT-DOCUMENTO-UPLOAD`) |
-| Versão | 1.1 |
-| Status | APPROVED |
+| Versão | 1.7 |
+| Status | DONE |
 | Owner | Engineering Framework |
 
 ---
@@ -274,11 +274,21 @@ desabilitadas — mesma regra de `FT-DOCUMENTO-UPLOAD`):
 
 # Estado da Feature
 
-**Todas as 4 tasks concluídas** (2026-08-27). Código não pushed:
-`portal-comunicacao-api` `561683e` (backend), `portal-comunicacao-app` `92b7fff` (frontend),
-`database/migrations/V010` (executado) + `V011` (homologação — execução pendente).
-`feature.yaml` permanece `IMPLEMENTING`: falta `DONE` exigir DoD / Gate 3 / Gate 6 /
-Review de PR / evidências — e as pendências de homologação (V011, Object Storage/MinIO).
+**`DONE` (2026-08-28).** As 4 tasks foram concluídas em 2026-08-27; o fechamento formal
+ocorreu em 2026-08-28:
+
+- Código em `origin/development`: `portal-comunicacao-api` até `4863029` (inclui o fix
+  de fixture `PapelTestBuilder` idempotente vs. seed `V011`) + `docker-compose.yml`
+  do MinIO (`b2d9a57`); `portal-comunicacao-app` `92b7fff`.
+- `V010` executado e validado via JDBC (2026-08-27); `V011` (homologação) executado
+  e validado (2026-08-27).
+- MinIO provisionado (`docker-compose.yml` no repo backend); caminho real
+  upload → nova versão → download → re-derivação de categoria validado end-to-end
+  contra MinIO (2026-08-28).
+- `/validate`: `mvn clean verify` **399/0/2**; frontend typecheck + **209** unit.
+- Review de PR (Gate 3): **PASS** (observações menores, não bloqueantes).
+- DoD / Gate 6: **PASS**. Dívida aceita: sem suíte E2E Playwright dedicada
+  (`AT-DOC-GESTAO-*`) — ver `traceability.md` § Dívidas Documentais Aceitas.
 
 ---
 
@@ -313,3 +323,4 @@ e `traceability.md`.
 | 1.4 | 2026-08-27 | Claude Code (Implement) | **TK-DOC-GESTAO-001 concluída** — `V010` executado pelo usuário e validado via JDBC. **TK-DOC-GESTAO-002 concluída** — `portal-comunicacao-api` `0446e13`; `PastaGestaoAcceptanceIntegrationTest` (12) + `.gitlab-ci.yml` atualizado; `mvn clean verify` 371/0. |
 | 1.5 | 2026-08-27 | Claude Code (Implement) | **TK-DOC-GESTAO-003 concluída** — `portal-comunicacao-api` `561683e`; `DocumentoBinarioFactory` extraído (comum upload/nova versão); `DocumentoGestaoApplicationServiceTest` (15) + `DocumentoGestaoAcceptanceIntegrationTest` (13); `mvn clean verify` 399/0. Restam: TK-DOC-GESTAO-004 (frontend). |
 | 1.6 | 2026-08-27 | Claude Code (Implement) | **TK-DOC-GESTAO-004 concluída** — `portal-comunicacao-app` `92b7fff`; menus de gestão na página de Arquivos (5 diálogos), `yarn test:unit` 209/0. **Todas as tasks concluídas.** `V011` (homologação: vicentefreitas admin da Área TI) produzido — execução pendente. |
+| 1.7 | 2026-08-28 | Claude Code (Validate/Review) | **Fechamento — `feature.yaml` `IMPLEMENTING` → `DONE`.** `V010`/`V011` executados+validados; MinIO provisionado (`docker-compose.yml` no repo backend), caminho real validado end-to-end. Fix `test(documento-gestao): PapelTestBuilder idempotente vs. seed V011` (`4863029`) — 24 falhas locais de `mvn verify` (colisão `UK_PAPEL_NOME` com o catálogo `PAPEL` semeado por `V011`) → **399/0/2**. Review de PR (Gate 3) PASS; DoD/Gate 6 PASS. Dívida aceita: sem E2E Playwright. |

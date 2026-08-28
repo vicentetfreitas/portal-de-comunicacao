@@ -52,17 +52,17 @@ Pontos abertos: onde a SSOT compartilhada vive em definitivo (#2), hospedagem/te
 | FT-AREA-COLABORADOR | `area-colaborador` | DONE | TK-004 superseded (nav "Federação" cobre) |
 | FT-FEDERACAO-COLABORADOR | `federacao-colaborador` | DONE | escrita retroativamente |
 | FT-DOCUMENTO (leitura) | `arquivos` | DONE | — |
-| FT-DOCUMENTO-UPLOAD | `documento-upload` | IMPLEMENTING | código completo; pendências de **homologação** (grants `PERMISSAO_PASTA`, provisionar MinIO), não de código |
-| FT-DOCUMENTO-GESTAO | `documento-gestao` | IMPLEMENTING | **4/4 tasks feitas** (2026-08-27, `api 561683e` / `app 92b7fff`); falta `/validate` → `/review` → DoD/Gate 3/Gate 6 → `DONE` |
+| FT-DOCUMENTO-UPLOAD | `documento-upload` | IMPLEMENTING | código completo; MinIO provisionado (2026-08-28) — resta grants `PERMISSAO_PASTA` institucionais e fechar (DoD/Gate) |
+| FT-DOCUMENTO-GESTAO | `documento-gestao` | DONE | 2026-08-28. `mvn verify` 399/0/2; Gate 3 + Gate 6 PASS. MinIO provisionado (`docker-compose.yml` no repo `api`), caminho real validado end-to-end. Dívida aceita: sem E2E Playwright |
 | FT-DOCUMENTO-NAVEGACAO | `documento-navegacao` | DRAFT | spec v1.1, decisões D-01..D-07 fechadas; pronta para `/readiness` DoR-Spec (Gate 1) |
 | FT-HOME / FT-NOTICIA / FT-PERFIL / FT-SERVICOS | — | DRAFT | inertes; `/app` Home é spike sancionado sem DoR |
 
 ## Próximas ações (ordem)
 
-1. **Fechar FT-DOCUMENTO-GESTAO:** `/validate` (mvn clean verify + lint/typecheck/unit) → `/review` de aderência → DoD/Gate → `feature.yaml` `DONE`. (`api 561683e` / `app 92b7fff` já em `origin/development` — 2026-08-28; sem MR para `stage`/`main`.)
-2. **FT-DOCUMENTO-UPLOAD:** destravar homologação — provisionar MinIO + grants institucionais; então fechar.
-3. **FT-DOCUMENTO-NAVEGACAO:** `/readiness` DoR-Spec → `DRAFT` → `READY_FOR_REVIEW`.
-4. Commitar working tree pendente: `docker-compose.yml` (Oracle), `.github/workflows/backend.yml`.
+1. **Fechar FT-DOCUMENTO-UPLOAD:** MinIO já provisionado; resta provisionar os grants `PERMISSAO_PASTA` `EDICAO` institucionais nas pastas reais → `/validate` → `/review` → DoD/Gate → `DONE`.
+2. **FT-DOCUMENTO-NAVEGACAO:** `/readiness` DoR-Spec → `DRAFT` → `READY_FOR_REVIEW`.
+3. Abrir MR `development` → `stage`/`main` em `portal-comunicacao-api` / `-app` quando quiser promover o bloco Gestão Documental.
+4. Commitar working tree pendente do monorepo: `docker-compose.yml` (Oracle), `.github/workflows/backend.yml`.
 5. Etapa 5 — validar ambiente local Oracle ponta a ponta.
 
 ## Pendências abertas (detalhe na seção "Pendências / Divergências Registradas")
@@ -286,6 +286,7 @@ Resultado Atual:
 | M15   | FT-COLABORADOR — fechamento formal (`DONE`), E2E Playwright (`AT-FE-COLABORADOR-001..005`) confirmado | 2026-08-26 |
 | M16   | FT-AREA-COLABORADOR — spec `APPROVED` → implementada → fechamento formal (`DONE`) | 2026-08-26 |
 | M17   | FT-PRIMEIRO-ACESSO — fechamento formal (`DONE`); `feature.yaml` migrado do esquema legado; drift de `traceability.md` corrigido | 2026-08-26 |
+| M18   | FT-DOCUMENTO (leitura) `DONE`; FT-DOCUMENTO-GESTAO `DONE` (Gate 3 + Gate 6); MinIO provisionado e caminho de storage validado end-to-end | 2026-08-28 |
 
 ---
 
@@ -293,7 +294,8 @@ Resultado Atual:
 
 | Marco | Descrição                              | Status          |
 | ----- | -------------------------------------- | --------------- |
-| M18   | Etapa 5 — infraestrutura local Oracle  | Planejado       |
+| M19   | FT-DOCUMENTO-UPLOAD — fechamento (resta grants institucionais) | Em andamento |
+| M20   | Etapa 5 — infraestrutura local Oracle  | Planejado       |
 
 ---
 
@@ -359,7 +361,7 @@ Registradas aqui por escopo desta reconciliação (não corrigidas — correçã
 | 8 | DEC-015 (separação em repositórios) aprovada 2026-08-26. Ponto em Aberto 6 (CI por repositório) **resolvido** para backend/frontend. **2026-08-27:** `portal-comunicacao-api` e `portal-comunicacao-app` **ressincronizados via `git subtree split`** (preservando histórico; substitui o snapshot squash, que precedia o módulo `documento` e ~1 semana de trabalho); `development`/`stage` de ambos recriadas e force-pushed. `api` compila standalone (`./mvnw clean test-compile` OK). Ver `docs/technology/04-decision-log.md` § DEC-015 → Progresso da Execução. Seguem abertos: #2 (onde vivem `specs/`/`docs/`/`construction/`/`database/` pós-divisão — commits de spec/governança continuam só no monorepo), #5 (hospedagem/tema do CMS — CI ali é só placeholder), resync do `portal-comunicacao-cms` quando houver código. Proteção de branch no GitLab (`stage`/`main`) não configurada — fora do alcance de CLI, ação manual pendente do usuário na UI do GitLab | `docs/technology/04-decision-log.md` § DEC-015 | Média — bloqueia execução completa da migração de repositórios, não bloqueia trabalho de feature |
 | 9 | `docs/solution-design/11-platform-decomposition.md` descreve Frontend em **Next.js** e banco **PostgreSQL** — contradiz a stack aprovada (Vue 3/Quasar, DEC-007 Oracle) e o `docker-compose.yml` atual (só Oracle, sem Postgres). Mesmo padrão do documento já arquivado em `docs/governance/history/11-target-repository-structure.md`. Já registrado como GAP-DEC-004 (`docs/audit/13-decision-inventory.md`), ainda **Aberto** | `docs/solution-design/11-platform-decomposition.md` — reclassificar (Archive) ou corrigir | Média |
 | 10 | `docs/governance/10-project-organization.md` § Convenção Git exige `scope` de commit = slug de Feature e proíbe domínio genérico, mas não prevê trabalho cross-cutting sem Feature associada (governança/infra, ex.: DEC-015, branches/CI dos repositórios divididos). Commit `e5b9ce6` (`docs(governance): ...`) usa escopo genérico por essa lacuna — decisão do usuário: manter como está, registrar como gap em vez de corrigir | `docs/governance/10-project-organization.md` § Convenção Git — definir convenção para commits não ligados a Feature (branch/scope dedicados?) | Baixa |
-| 11 | **Parcialmente atendida (2026-08-28).** Bloco Gestão Documental agora refletido em `# Estado Atual (leitura rápida)` e na tabela de Features (FT-DOCUMENTO `DONE`; FT-DOCUMENTO-UPLOAD `IMPLEMENTING` code-complete, pendências de homologação; FT-DOCUMENTO-GESTAO `IMPLEMENTING` 4/4 tasks; FT-DOCUMENTO-NAVEGACAO `DRAFT` D-01..D-07 fechadas). Reconciliação feita com evidência **local** deste monorepo (`feature.yaml`, `tasks.md`, `git log`). **2026-08-28:** `portal-comunicacao-api` (`57c22d9..561683e`) e `portal-comunicacao-app` (`5f887f2..92b7fff`) pushados para `origin/development` (fast-forward, sem MR para `stage`/`main`). **Segue em aberto:** `docs/jira-reconciliation-audit.md` (commit `c69e46c`) não executado; DEC-CMS-002 não integrada às seções de decisão deste índice; checkpoint completo quando priorizado. | checkpoint completo quando priorizado | Baixa |
+| 11 | **Parcialmente atendida (2026-08-28).** Bloco Gestão Documental agora refletido em `# Estado Atual (leitura rápida)` e na tabela de Features (FT-DOCUMENTO `DONE`; FT-DOCUMENTO-UPLOAD `IMPLEMENTING` code-complete, pendências de homologação; FT-DOCUMENTO-GESTAO `IMPLEMENTING` 4/4 tasks; FT-DOCUMENTO-NAVEGACAO `DRAFT` D-01..D-07 fechadas). Reconciliação feita com evidência **local** deste monorepo (`feature.yaml`, `tasks.md`, `git log`). **2026-08-28:** commits pushados para `origin/development`; **FT-DOCUMENTO-GESTAO fechada (`DONE`)** — `mvn verify` 399/0/2, Gate 3 + Gate 6 PASS, MinIO provisionado e caminho real validado end-to-end. **Segue em aberto:** `docs/jira-reconciliation-audit.md` (commit `c69e46c`) não executado; DEC-CMS-002 não integrada às seções de decisão deste índice; checkpoint completo quando priorizado. | checkpoint completo quando priorizado | Baixa |
 
 ## Resolvidas em 2026-08-26
 
@@ -400,3 +402,4 @@ Registradas aqui por escopo desta reconciliação (não corrigidas — correçã
 | 2026-08-26 | Reconciliação (State Index) | FT-COLABORADOR e FT-AREA-COLABORADOR confirmadas `DONE` contra evidência de código; E2E de FT-COLABORADOR localizado; pendências #1–#3 do checkpoint 2026-08-21 resolvidas; Marcos M15/M16 concluídos |
 | 2026-08-26 | Fechamento de feature | FT-PRIMEIRO-ACESSO confirmada `DONE` (`feature.yaml` migrado do esquema legado, commit `170f005`); nenhuma feature implementada permanece sem checkpoint de fechamento; Marco M17 concluído |
 | 2026-08-28 | Redução do índice | Adicionada seção `# Estado Atual (leitura rápida)` no topo; narrativas dos checkpoints 2026-08-21/26 movidas para `docs/governance/history/16-state-index-checkpoints.md`; Pendência #11 atendida (bloco Gestão Documental refletido na tabela de Features) |
+| 2026-08-28 | Fechamento de feature | FT-DOCUMENTO-GESTAO `IMPLEMENTING` → `DONE` (Gate 3 + Gate 6 PASS; `mvn verify` 399/0/2; MinIO provisionado e caminho real validado). Próximas ações reordenadas: FT-DOCUMENTO-UPLOAD passa a ser o próximo fechamento |
