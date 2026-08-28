@@ -216,7 +216,7 @@ Todas as chaves `PUC` geradas nas Fases 1–2 (2026-08-28). Épicos: PUC-218…P
 | PUC-241 | FEATURE-021 | Gestão de Sessão | `specs/features/session/` (FT-SESSION) | closed | Concluído |
 | PUC-242 | FEATURE-022 | Gestão de Papéis | — (`PapelAtribuicaoService`) | Parcial — mecanismo escopado no BE; sem UI | Em andamento |
 | PUC-243 | FEATURE-023 | Autorização por Escopo | — (application-service `@PreAuthorize`) | Concluído (núcleo) | Concluído |
-| PUC-244 | FEATURE-024 | Gestão de Permissões de Pastas | `specs/features/arquivos/` + `documento-gestao/` | Em andamento — leitura DONE; edição IMPLEMENTING | Em andamento |
+| PUC-244 | FEATURE-024 | Gestão de Permissões de Pastas | `specs/features/arquivos/` + `documento-gestao/` | Enforcement multi-nível DONE (leitura+escrita); administração = D-03/DBA (fora) | Concluído |
 | PUC-245 | FEATURE-025 | Auditoria | — (`AuditableEntity`) | Parcial | A fazer |
 | PUC-246 | FEATURE-026 | Gestão de Solicitações de Permissão | — | Não iniciado (OQ-003) | A fazer · `pos-mvp` |
 | PUC-247 | FEATURE-027 | Gestão de Perfis Externos (convidado/parceiro) | — | Não iniciado (OQ-002) | A fazer · `pos-mvp` |
@@ -227,13 +227,13 @@ Todas as chaves `PUC` geradas nas Fases 1–2 (2026-08-28). Épicos: PUC-218…P
 
 | PUC | FEATURE | Nome | Spec detalhada | Estado real | Status Jira |
 |---|---|---|---|---|---|
-| PUC-250 | FEATURE-030 | Gestão de Documentos | `specs/features/arquivos/` (FT-DOCUMENTO) + `documento-gestao/` | Em andamento — consulta/download DONE; gestão IMPLEMENTING | Em andamento |
-| PUC-251 | FEATURE-031 | Gestão de Pastas | `specs/features/documento-navegacao/` (DRAFT) | Em andamento — `PastaController`; navegação hierárquica DRAFT | Em andamento |
+| PUC-250 | FEATURE-030 | Gestão de Documentos | `specs/features/arquivos/` + `documento-gestao/` (ambos DONE 2026-08-28) | Concluído | Concluído |
+| PUC-251 | FEATURE-031 | Gestão de Pastas | `specs/features/documento-navegacao/` (DONE 2026-08-28) | Concluído — explorador drill-in + árvore + busca | Concluído |
 | PUC-252 | FEATURE-032 | Gestão de Visibilidade | `specs/features/arquivos/` (`PERMISSAO_PASTA`) | Parcial | A fazer |
 | PUC-253 | FEATURE-033 | Gestão de Compartilhamento | — | Não iniciado (OQ-005) | A fazer |
-| PUC-254 | FEATURE-034 | Gestão de Armazenamento (upload/download/quota) | `specs/features/documento-upload/` (IMPLEMENTING) | Em andamento — download DONE; upload IMPLEMENTING; quota não | Em andamento |
+| PUC-254 | FEATURE-034 | Gestão de Armazenamento (upload/download) | `specs/features/documento-upload/` (DONE 2026-08-28, MinIO provisionado) | Concluído — quota BR-023 fica p/ futuro | Concluído |
 | PUC-255 | FEATURE-035 | Busca Documental | — | Não iniciado | A fazer |
-| PUC-256 | FEATURE-036 | Apresentação Documental | `specs/features/arquivos/` + `documento-navegacao/` | Em andamento — listagem+download DONE | Em andamento |
+| PUC-256 | FEATURE-036 | Apresentação Documental | `specs/features/arquivos/` + `documento-navegacao/` (DONE) | Concluído — explorador + grade/lista + upload UI | Concluído |
 | PUC-257 | FEATURE-037 | Modelo de Categoria Documental | — (`CategoriaDocumentalEntity`) | Concluído (modelo) | Concluído |
 | PUC-258 | _(pós-MVP)_ | Deduplicação por hash · Conversão WebP | — (`docs/domain/09-business-rules.md`) | Não iniciado | A fazer · `pos-mvp` |
 
