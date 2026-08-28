@@ -2,6 +2,8 @@
 
 Mecanismo de execução. **Não é SSOT.** Não duplicar `docs/`, `specs/`, `database/` ou `construction/`.
 
+> **Reorganização em curso (DEC-015 / 2026-08-28).** O código sai deste monorepo; os 3 repos GitLab (`portal-comunicacao-api` / `-app` / `-cms`) passam a ser primários. `portal-comunicacao-api` é o **repositório-líder da SSOT** (`specs/`, `docs/` transversal, `database/`, `engineering/`, este `CLAUDE.md`). Este monorepo será **arquivado (read-only)**. Plano e passos: `docs/governance/12-repository-reorganization.md`. Enquanto a migração não conclui, o trabalho de código continua aqui.
+
 ## Camadas
 
 ```text
@@ -27,6 +29,8 @@ Detalhes: `specs/foundation/minimal-ssot.md`.
 | Paths | `specs/foundation/path-conventions.md` |
 | Invocações | `specs/foundation/agent-commands.md` |
 | Organização e execução do projeto (camadas, Convenção Git, contratos Validate/Review) | `docs/governance/10-project-organization.md` |
+| Jira (modelo Epic↔EPIC-0XX / Story↔FEATURE-0XX, status, sync, automação) | `docs/governance/11-jira-integration.md` |
+| Reorganização de repositórios (DEC-015 — api como líder da SSOT) | `docs/governance/12-repository-reorganization.md` |
 | Etapa 2 | `docs/governance/09-framework-simplification-scope.md` |
 | Arquitetura documental | `docs/governance/07-documentation-architecture.md` |
 | Feature | `specs/features/<slug>/` |
